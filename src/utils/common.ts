@@ -1,19 +1,20 @@
 // GENERAL
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING = NETWORK === 'LOCALHOST' ? true : false;
+export const BASE_URL = 'pintswap.eth.link/';
 
 // DEFAULT VALS
 export const EMPTY_TRADE: ITradeProps = {
-    'Input Token': '',
-    'Input Amount': '',
-    'Output Token': '',
-    'Output Amount': '',
+    tokenIn: '',
+    amountIn: '',
+    tokenOut: '',
+    amountOut: '',
 };
 
 // TYPES
 export type ITradeProps = {
-    'Input Token': string;
-    'Input Amount': string;
-    'Output Token': string;
-    'Output Amount': string;
+    tokenIn: string;
+    amountIn: string;
+    tokenOut: string;
+    amountOut: string;
 };

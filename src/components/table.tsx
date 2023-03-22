@@ -4,21 +4,17 @@ type ITableProps = {
     items: any[];
     onClick?: MouseEventHandler<HTMLTableRowElement>;
     emptyContent?: string | ReactNode;
+    headers: string[];
 };
 
-export const Table = ({ items, onClick, emptyContent }: ITableProps) => {
+export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) => {
     if (items.length > 0) {
         return (
             <table className="table-fixed w-full">
                 <thead>
                     <tr className="border-b-2 border-neutral-800">
-                        {Object.keys(items[0]).map((el: any, i) => (
-                            <th
-                                key={`table-header-${el}-${i}`}
-                                className={`px-2 pb-1 ${
-                                    isNaN(items[i][el]) ? 'text-left' : 'text-right'
-                                }`}
-                            >
+                        {headers.map((el: any, i) => (
+                            <th key={`table-header-${el}-${i}`} className={`px-2 pb-1 text-left`}>
                                 {el}
                             </th>
                         ))}
@@ -34,10 +30,7 @@ export const Table = ({ items, onClick, emptyContent }: ITableProps) => {
                             onClick={() => (onClick ? onClick(el) : {})}
                         >
                             {Object.values(el).map((el: any, i) => (
-                                <td
-                                    key={`table-cell-${i}`}
-                                    className={`p-2 ${isNaN(el) ? 'text-left' : 'text-right'}`}
-                                >
+                                <td key={`table-cell-${i}`} className={`p-2 text-left text-sm`}>
                                     {el}
                                 </td>
                             ))}

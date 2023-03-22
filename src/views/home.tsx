@@ -13,6 +13,7 @@ export const HomeView = () => {
             </div>
             <Card header="Open Trades" scroll>
                 <Table
+                    headers={['In Token', 'In Amount', 'Out Token', 'Out Amount']}
                     onClick={console.log}
                     items={openTrades}
                     emptyContent={
