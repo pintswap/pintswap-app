@@ -15,7 +15,7 @@ export const Base = ({ children }: IBaseProps) => {
         return (
             <>
                 <Navbar />
-                <main className="flex justify-center font-sans">
+                <main className="flex justify-center">
                     <div className="max-w-4xl w-full p-4">{children}</div>
                 </main>
                 <Footer />

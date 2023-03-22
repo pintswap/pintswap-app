@@ -1,8 +1,11 @@
+import { MouseEventHandler } from 'react';
+
 type ITableProps = {
     items: any[];
+    onClick?: MouseEventHandler<HTMLTableRowElement>;
 };
 
-export const Table = ({ items }: ITableProps) => {
+export const Table = ({ items, onClick }: ITableProps) => {
     return (
         <table className="table-fixed">
             <thead>
@@ -23,7 +26,10 @@ export const Table = ({ items }: ITableProps) => {
                 {items.map((el, i) => (
                     <tr
                         key={`table-row-${i}`}
-                        className={`border-b border-neutral-800 last-of-type:border-0`}
+                        className={`border-b border-neutral-800 last-of-type:border-0 transition duration-150 ${
+                            onClick ? 'cursor-pointer hover:backdrop-brightness-110' : ''
+                        }`}
+                        onClick={() => (onClick ? onClick(el) : {})}
                     >
                         {Object.values(el).map((el: any, i) => (
                             <td

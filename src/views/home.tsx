@@ -1,25 +1,27 @@
-import { Card, Table } from '../components';
+import { Card, CopyClipboard, Table } from '../components';
 
 export const HomeView = () => {
     return (
-        <div>
-            <Card>
+        <div className="flex flex-col gap-6">
+            <div className="text-center self-center">
+                <p className="text-sm">Multi Address</p>
+                <CopyClipboard value={'0x3...2kS'} icon lg />
+            </div>
+            <Card header="Open Trades">
                 <Table
+                    onClick={console.log}
                     items={[
                         {
-                            'Something 1': 'bang',
-                            'Something 2': '123',
-                            'Something 3': 'John',
+                            'Token Offered': 'ETH',
+                            Amount: '123',
                         },
                         {
-                            'Something 1': 'jeez',
-                            'Something 2': '678',
-                            'Something 3': 'Jones',
+                            'Token Offered': 'WXRP',
+                            Amount: '678',
                         },
                         {
-                            'Something 1': 'sheesh',
-                            'Something 2': '890',
-                            'Something 3': 'Ray',
+                            'Token Offered': 'WBTC',
+                            Amount: '890',
                         },
                     ]}
                 />
