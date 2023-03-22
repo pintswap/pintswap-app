@@ -12,20 +12,13 @@ export const HomeView = () => {
             <Card header="Open Trades" scroll>
                 <Table
                     onClick={console.log}
-                    items={[
-                        {
-                            'Token Offered': 'ETH',
-                            Amount: '123',
-                        },
-                        {
-                            'Token Offered': 'WXRP',
-                            Amount: '678',
-                        },
-                        {
-                            'Token Offered': 'WBTC',
-                            Amount: '890',
-                        },
-                    ]}
+                    items={[]}
+                    emptyContent={
+                        <span>
+                            You currently have no open trades.{' '}
+                            <a href="/create">Create a trade now!</a>
+                        </span>
+                    }
                 />
             </Card>
             <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
