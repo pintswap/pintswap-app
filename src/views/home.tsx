@@ -1,6 +1,8 @@
-import { Card, CopyClipboard, Table } from '../components';
+import { useNavigate } from 'react-router-dom';
+import { Button, Card, CopyClipboard, Table } from '../components';
 
 export const HomeView = () => {
+    const navigate = useNavigate();
     return (
         <div className="flex flex-col gap-6">
             <div className="text-center self-center">
@@ -26,6 +28,9 @@ export const HomeView = () => {
                     ]}
                 />
             </Card>
+            <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
+                Create Order
+            </Button>
         </div>
     );
 };
