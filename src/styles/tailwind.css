@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Pathway+Gothic+One&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+    font-family: 'Dela Gothic One', cursive;
+    background-color: #212121;
+    color: #fff;
+  }
+  button, input {
+    font-family: 'Dela Gothic One', cursive;
+  
+  }
+}
