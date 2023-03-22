@@ -3,7 +3,7 @@ import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { hardhat, mainnet, goerli } from 'wagmi/chains';
-import { TESTING } from './constants';
+import { TESTING } from './common';
 
 export const { chains, provider } = configureChains(
     [TESTING ? hardhat : mainnet, goerli],

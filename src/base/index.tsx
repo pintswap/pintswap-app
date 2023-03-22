@@ -23,7 +23,7 @@ export const Base = ({ children }: IBaseProps) => {
                     <div className="max-w-4xl w-full p-4">
                         {pathname !== '/' && (
                             <Button
-                                className="absolute"
+                                className="gap-1 mb-6"
                                 type="transparent"
                                 onClick={() => navigate('/')}
                             >

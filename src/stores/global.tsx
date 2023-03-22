@@ -1,8 +1,9 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useState } from 'react';
+import { ITradeProps } from '../utils/common';
 
 // Types
 export type IGlobalStoreProps = {
-    openTrades: any[];
+    openTrades: ITradeProps[];
     addTrade: (tokenA: string, amountA: string, tokenB: string, amountB: string) => void;
 };
 
@@ -14,7 +15,7 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
-    const [openTrades, setOpenTrades] = useState<any[]>([]);
+    const [openTrades, setOpenTrades] = useState<ITradeProps[]>([]);
 
     const addTrade = (tokenA: string, amountA: string, tokenB: string, amountB: string) => {
         const shallow = [...openTrades];
