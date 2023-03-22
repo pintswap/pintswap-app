@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
+import { MdChevronLeft } from 'react-icons/md';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { Wallet } from '../components';
+import { Button, Wallet } from '../components';
 import { Footer } from './footer';
 import { Navbar } from './navbar';
 
@@ -10,13 +12,27 @@ type IBaseProps = {
 
 export const Base = ({ children }: IBaseProps) => {
     const { address } = useAccount();
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
 
     if (address) {
         return (
             <>
                 <Navbar />
                 <main className="flex justify-center">
-                    <div className="max-w-4xl w-full p-4">{children}</div>
+                    <div className="max-w-4xl w-full p-4">
+                        {pathname !== '/' && (
+                            <Button
+                                className="absolute"
+                                type="transparent"
+                                onClick={() => navigate('/')}
+                            >
+                                <MdChevronLeft />
+                                Back
+                            </Button>
+                        )}
+                        {children}
+                    </div>
                 </main>
                 <Footer />
             </>

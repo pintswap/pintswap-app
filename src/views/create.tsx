@@ -1,3 +1,3 @@
 export const CreateView = () => {
-    return <div>Create</div>;
+    return <div className="text-center">Create</div>;
 };
