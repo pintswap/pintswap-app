@@ -1,5 +1,6 @@
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdContentCopy } from 'react-icons/md';
+import { Button } from './button';
 
 type ICopyClipboardProps = {
     icon?: boolean;
@@ -10,14 +11,10 @@ type ICopyClipboardProps = {
 export const CopyClipboard = ({ icon, value, lg }: ICopyClipboardProps) => {
     return (
         <CopyToClipboard text={value}>
-            <button
-                className={`flex items-center gap-2 mx-auto transition duration-150 hover:text-neutral-300 ${
-                    lg ? 'text-lg' : ''
-                }`}
-            >
+            <Button className={`mx-auto ${lg ? 'text-lg' : ''}`} type="transparent">
                 <span>{value}</span>
                 {icon && <MdContentCopy />}
-            </button>
+            </Button>
         </CopyToClipboard>
     );
 };
