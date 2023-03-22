@@ -7,7 +7,7 @@ type ITableProps = {
 
 export const Table = ({ items, onClick }: ITableProps) => {
     return (
-        <table className="table-fixed">
+        <table className="table-fixed w-full">
             <thead>
                 <tr className="border-b-2 border-neutral-800">
                     {Object.keys(items[0]).map((el: any, i) => (

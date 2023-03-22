@@ -9,7 +9,7 @@ export const HomeView = () => {
                 <p className="text-sm">Multi Address</p>
                 <CopyClipboard value={'0x3...2kS'} icon lg />
             </div>
-            <Card header="Open Trades">
+            <Card header="Open Trades" scroll>
                 <Table
                     onClick={console.log}
                     items={[
