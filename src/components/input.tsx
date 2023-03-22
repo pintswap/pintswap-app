@@ -7,6 +7,7 @@ type IInputProps = {
     className?: string;
     max?: number;
     type?: 'text' | 'number';
+    title?: string;
 };
 
 export const Input = ({
@@ -16,15 +17,19 @@ export const Input = ({
     className,
     max,
     type = 'text',
+    title,
 }: IInputProps) => {
     return (
-        <input
-            className={`p-2 bg-neutral-600 rounded ${className}`}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            maxLength={max}
-            type={type}
-        />
+        <div className="flex flex-col gap-1 justify-end">
+            {title && <p className="text-sm">{title}</p>}
+            <input
+                className={`p-2 bg-neutral-600 rounded ${className}`}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                maxLength={max}
+                type={type}
+            />
+        </div>
     );
 };

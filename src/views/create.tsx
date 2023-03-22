@@ -7,8 +7,9 @@ export const CreateView = () => {
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
-                <div className="grid grid-cols-1 gap-2 lg:grid-cols-2 lg:gap-4">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
                     <Input
+                        title="In Details"
                         max={8}
                         placeholder="Token to Trade"
                         value={trade['Input Token']}
@@ -31,6 +32,7 @@ export const CreateView = () => {
                         type="number"
                     />
                     <Input
+                        title="Out Details"
                         max={8}
                         placeholder="Token to Recieve"
                         value={trade['Output Token']}
