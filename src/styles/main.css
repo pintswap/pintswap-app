@@ -482,17 +482,24 @@ button, input {
   --tw-backdrop-saturate:  ;
   --tw-backdrop-sepia:  ;
 }
+.mx-auto{
+  margin-left: auto;
+  margin-right: auto;
+}
 .flex{
   display: flex;
 }
-.h-screen{
-  height: 100vh;
+.grid{
+  display: grid;
+}
+.h-\[80vh\]{
+  height: 80vh;
 }
 .w-full{
   width: 100%;
 }
-.w-screen{
-  width: 100vw;
+.grid-cols-3{
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .items-center{
   align-items: center;
@@ -500,20 +507,31 @@ button, input {
 .justify-center{
   justify-content: center;
 }
+.justify-self-end{
+  justify-self: end;
+}
 .rounded{
   border-radius: 0.25rem;
 }
-.bg-slate-500{
+.bg-sky-800{
   --tw-bg-opacity: 1;
-  background-color: rgb(100 116 139 / var(--tw-bg-opacity));
+  background-color: rgb(7 89 133 / var(--tw-bg-opacity));
+}
+.px-3{
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
 }
 .px-4{
   padding-left: 1rem;
   padding-right: 1rem;
 }
-.py-3{
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+.py-2{
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.py-2\.5{
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
 }
 .shadow{
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -530,7 +548,19 @@ button, input {
 .duration-150{
   transition-duration: 150ms;
 }
-.hover\:bg-slate-600:hover{
+.hover\:bg-sky-900:hover{
   --tw-bg-opacity: 1;
-  background-color: rgb(71 85 105 / var(--tw-bg-opacity));
+  background-color: rgb(12 74 110 / var(--tw-bg-opacity));
+}
+@media (min-width: 1024px){
+
+  .lg\:px-6{
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .lg\:py-4{
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
 }
