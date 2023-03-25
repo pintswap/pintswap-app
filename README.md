@@ -1,6 +1,6 @@
-# PintSwap UI
+# pintswap-app
 
-Pintswap is a ERC20 swapping protocol brought to you by DripDAO
+Frontend for pintswap, the ERC20 swap protocol, brought to you by dripDAO.
 
 ## Installation
 
