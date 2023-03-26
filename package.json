@@ -3,8 +3,8 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "start": "yarn build:css && react-scripts start",
-        "build": "yarn build:css && react-scripts build",
+        "start": "yarn build:css && react-app-rewired start",
+        "build": "yarn build:css && react-app-rewired build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
@@ -23,6 +23,7 @@
         "@types/react-icons": "^3.0.0",
         "@types/websocket": "^1.0.5",
         "ethers": "^5.7.2",
+        "pintswap-sdk": "git+https://github.com/pintswap/pintswap-sdk.git",
         "react": "^18.2.0",
         "react-copy-to-clipboard": "^5.1.0",
         "react-dom": "^18.2.0",
@@ -31,8 +32,7 @@
         "react-scripts": "5.0.1",
         "typescript": "^5.0.2",
         "wagmi": "^0.12.6",
-        "web-vitals": "^2.1.4",
-        "pintswap-sdk": "git+https://github.com/pintswap/pintswap-sdk.git" 
+        "web-vitals": "^2.1.4"
     },
     "devDependencies": {
         "@types/react-copy-to-clipboard": "^5.0.4",
@@ -51,6 +51,7 @@
         "postcss": "^8.4.21",
         "postcss-cli": "^10.1.0",
         "prettier": "^2.8.6",
+        "react-app-rewired": "^2.2.1",
         "tailwindcss": "^3.2.7"
     },
     "eslintConfig": {
