@@ -31,7 +31,8 @@
         "react-scripts": "5.0.1",
         "typescript": "^5.0.2",
         "wagmi": "^0.12.6",
-        "web-vitals": "^2.1.4"
+        "web-vitals": "^2.1.4",
+        "pintswap-sdk": "git+https://github.com/pintswap/pintswap-sdk.git" 
     },
     "devDependencies": {
         "@types/react-copy-to-clipboard": "^5.0.4",
