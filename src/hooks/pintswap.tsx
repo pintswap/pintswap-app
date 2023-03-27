@@ -1,7 +1,8 @@
 import React, { useState, useEffect, FC } from "react";
 import { useGlobalContext } from "../stores/global";
 import { BASE_URL, EMPTY_TRADE, ITradeProps } from "../utils/common";
-import { Pintswap } from "pintswap-sdk";
+import { PintP2P, Pintswap } from "pintswap-sdk";
+import { useSigner } from "wagmi";
 
 /*
  * this is probably all wrong, it needs to wait for a signer to be connected then
@@ -17,13 +18,19 @@ export const usePintswap = () => {
     const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState<Error | null>(null);
     const [ peer, setPeer ] = useState<any | undefined>(undefined);
+    const { data: signer } = useSigner();
 
     useEffect(() => {
         async function initializePintswap() {
             try {
-                setPeer(
-                    null
-                );
+                if(signer) {
+                    const peerId = await PintP2P.peerIdFromSeed(await signer.getAddress())
+                    setPeer(peerId)
+                } else {
+                    setPeer(
+                        null
+                    );
+                }
                 setLoading(false);
             } catch (error) {
                setError(new Error("failed to initialize Pintswap")) 

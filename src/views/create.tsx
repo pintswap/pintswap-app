@@ -49,7 +49,7 @@ export const CreateView = () => {
                     className="mt-6 w-full"
                     loadingText="Broadcasting"
                     loading={loading}
-                    onClick={() => broadcastTrade({}, trade)}
+                    onClick={broadcastTrade}
                     disabled={
                         !trade.amountIn || !trade.amountOut || !trade.tokenIn || !trade.tokenOut
                     }

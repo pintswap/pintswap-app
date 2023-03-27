@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useGlobalContext } from '../stores/global';
 import { BASE_URL, EMPTY_TRADE, ITradeProps } from '../utils/common';
-import { Pintswap } from 'pintswap-sdk';
 import { usePintswap } from './pintswap';
+import { Pintswap } from 'pintswap-sdk';
+import { useSigner } from 'wagmi';
 
 export const useTrade = () => {
     const { addTrade } = useGlobalContext();
@@ -10,24 +11,25 @@ export const useTrade = () => {
     const [generatedAddress, setGeneratedAddress] = useState(BASE_URL);
     const [trade, setTrade] = useState<ITradeProps>(EMPTY_TRADE);
     const { peer } = usePintswap()
+    const { data: signer } = useSigner();
 
-    const broadcastTrade = async (signer: any, tradeProps: ITradeProps) => {
+    const broadcastTrade = async () => {
         setLoading(true);
         // TODO: implement broadcast trade here and generate address
-        if(peer) {
-            setTrade(tradeProps)
+        if(peer && signer) {
+            // Breaking 
             const pintswap = new Pintswap({ signer, peerId: peer });
-            // await pintswap.createTrade(peer, {
-            //     givesToken: tradeProps.tokenIn,
-            //     getsToken: tradeProps.tokenOut,
-            //     givesAmount: tradeProps.amountIn,
-            //     getsAmount: tradeProps.amountOut
-            // })
+            await pintswap.createTrade(peer, {
+                givesToken: trade.tokenIn,
+                getsToken: trade.tokenOut,
+                givesAmount: trade.amountIn,
+                getsAmount: trade.amountOut
+            })
         }
         setGeneratedAddress(`${BASE_URL}${peer}/<order>`);
         setTrade(EMPTY_TRADE);
         setLoading(false);
-        addTrade(tradeProps);
+        addTrade(trade);
     };
 
     const updateTrade = (key: 'tokenIn' | 'tokenOut' | 'amountIn' | 'amountOut', val: string) => {
