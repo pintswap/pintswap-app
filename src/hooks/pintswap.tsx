@@ -24,8 +24,8 @@ export const usePintswap = () => {
         async function initializePintswap() {
             try {
                 if(signer) {
-                    const peerId = await PintP2P.peerIdFromSeed(await signer.getAddress())
-                    setPeer(peerId)
+                    // const peerId = await PintP2P.peerIdFromSeed(await signer.getAddress())
+                    // setPeer(peerId)
                 } else {
                     setPeer(
                         null
