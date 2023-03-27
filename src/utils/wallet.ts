@@ -2,16 +2,16 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { hardhat, mainnet, goerli } from 'wagmi/chains';
+import { hardhat, mainnet } from 'wagmi/chains';
 import { TESTING } from './common';
 
 export const { chains, provider } = configureChains(
-    [TESTING ? hardhat : mainnet, goerli],
+    [TESTING ? hardhat : mainnet],
     [publicProvider()],
 );
 
 export const { connectors } = getDefaultWallets({
-    appName: 'ZERO App',
+    appName: 'Pintswap',
     chains,
 });
 
