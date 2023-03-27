@@ -4,6 +4,16 @@ import { BASE_URL, EMPTY_TRADE, ITradeProps } from "../utils/common";
 import { Pintswap } from "pintswap-sdk";
 import { useSigner } from "wagmi";
 
+/*
+ * this is probably all wrong, it needs to wait for a signer to be connected then
+ * it should initialize pintswap with Pintswap.initialize({ signer: signer })
+ * that the Pintswap class extends both Libp2p functionality as well as EventEmitter functionality
+ * on top of that it has its own method Pintswap#createTrade that takes I believe an (offer, signer)
+ * or something of that nature. just double check
+ * you have to have a node running btw for it to connect properly. Im going to add back in the hardhat dev dependencies so that you can run additional hardhat scripts that are useful
+ *
+ *
+ */
 export const usePintswap = () => {
     const [ loading, setLoading ] = useState(true);
     const [ error, setError ] = useState<Error | null>(null);
@@ -13,14 +23,16 @@ export const usePintswap = () => {
     useEffect(() => {
         async function initializePintswap() {
             try {
-                setPeer(await Pintswap.initialize({ signer }))
+                setPeer(
+                    null
+                );
                 setLoading(false);
             } catch (error) {
                setError(new Error("failed to initialize Pintswap")) 
             }
         }
 
-        if (typeof peer != undefined) { 
+        if (typeof peer != "undefined") { 
             initializePintswap()
         }
     }, []);

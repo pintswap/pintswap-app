@@ -13,13 +13,13 @@ root.render(
     <>
         <WagmiConfig client={wagmiClient}>
             <RainbowKitProvider chains={chains}>
-                <PintswapContext>
                     <GlobalStore>
                         <HashRouter>
-                            <App />
+                            <PintswapContext>
+                                <App />
+                            </PintswapContext>
                         </HashRouter>
                     </GlobalStore>
-                </PintswapContext>
             </RainbowKitProvider>
         </WagmiConfig>
     </>,
