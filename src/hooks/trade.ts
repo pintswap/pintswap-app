@@ -17,14 +17,14 @@ export const useTrade = () => {
         // TODO: implement broadcast trade here and generate address
         if(signer) {
             // Breaking 
-            const ps = await Pintswap.initialize({ signer });
-            await ps.createTrade(ps.peerId, {
-                givesToken: trade.tokenIn,
-                getsToken: trade.tokenOut,
-                givesAmount: trade.amountIn,
-                getsAmount: trade.amountOut
-            })
-            setGeneratedAddress(`${BASE_URL}${ps.peerId}/<order>`);
+            // const ps = await Pintswap.initialize({ signer });
+            // await ps.createTrade(ps.peerId, {
+            //     givesToken: trade.tokenIn,
+            //     getsToken: trade.tokenOut,
+            //     givesAmount: trade.amountIn,
+            //     getsAmount: trade.amountOut
+            // })
+            // setGeneratedAddress(`${BASE_URL}${ps.peerId}/<order>`);
         }
         setTrade(EMPTY_TRADE);
         setLoading(false);
