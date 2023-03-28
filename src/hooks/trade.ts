@@ -24,7 +24,7 @@ export const useTrade = () => {
         console.log("CREATE TRADE:", trade)
         if(signer) {
             // Breaking 
-            // const ps = await Pintswap.initialize({ signer });
+            const ps = await Pintswap.initialize({ signer });
             // await ps.startNode()
             // await ps.createTrade(ps.peerId, {
             //     givesToken: trade.tokenIn,
@@ -34,8 +34,6 @@ export const useTrade = () => {
             // })
             // setOrder({ multiAddr: ps.peerId, orderHash: '' })
         }
-        setTrade(EMPTY_TRADE);
-        setLoading(false);
         addTrade(trade);
     };
 
