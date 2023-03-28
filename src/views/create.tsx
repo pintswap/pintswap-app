@@ -1,6 +1,7 @@
 import { Transition } from '@headlessui/react';
 import { Button, Card, CopyClipboard, Input } from '../components';
 import { Dropdown } from '../components/dropdown';
+import { ProgressIndicator } from '../components/progress-indicator';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 import { TOKENS } from '../utils/token-list';
@@ -56,6 +57,11 @@ export const CreateView = () => {
                     Broadcast Trade
                 </Button>
             </Card>
+            
+            <div>
+            <ProgressIndicator />
+            </div>
+
             <Transition
                 show={!!order.orderHash && !!order.multiAddr}
                 enter="transition-opacity duration-75"

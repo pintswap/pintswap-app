@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 
 type IOrderStateProps = {
     orderHash: string;
-    multiAddr: string;
+    multiAddr: string | any;
 }
 
 export const useTrade = () => {
@@ -20,19 +20,19 @@ export const useTrade = () => {
 
     const broadcastTrade = async () => {
         setLoading(true);
-        // TODO: implement broadcast trade here and generate address
         console.log("CREATE TRADE:", trade)
         if(signer) {
-            // Breaking 
+            // TODO: return orderHash from pintswapSdk#createTrade
+            // TODO: confirm amounts being sent are in appropriate values with ethers
             const ps = await Pintswap.initialize({ signer });
-            // await ps.startNode()
-            // await ps.createTrade(ps.peerId, {
-            //     givesToken: trade.tokenIn,
-            //     getsToken: trade.tokenOut,
-            //     givesAmount: trade.amountIn,
-            //     getsAmount: trade.amountOut
-            // })
-            // setOrder({ multiAddr: ps.peerId, orderHash: '' })
+            await ps.startNode()
+            const res = await ps.createTrade(ps.peerId, {
+                givesToken: trade.tokenIn,
+                getsToken: trade.tokenOut,
+                givesAmount: trade.amountIn,
+                getsAmount: trade.amountOut
+            })
+            setOrder({ multiAddr: ps.peerId, orderHash: '' })
         }
         addTrade(trade);
     };
