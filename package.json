@@ -23,6 +23,7 @@
         "@types/react-icons": "^3.0.0",
         "@types/websocket": "^1.0.5",
         "ethers": "^5.7.2",
+        "lodash.merge": "^4.6.2",
         "pintswap-sdk": "git+https://github.com/pintswap/pintswap-sdk",
         "react": "^18.2.0",
         "react-copy-to-clipboard": "^5.1.0",
@@ -35,6 +36,7 @@
         "web-vitals": "^2.1.4"
     },
     "devDependencies": {
+        "@types/lodash.merge": "^4.6.7",
         "@types/react-copy-to-clipboard": "^5.0.4",
         "@typescript-eslint/eslint-plugin": "^5.56.0",
         "@typescript-eslint/parser": "^5.56.0",

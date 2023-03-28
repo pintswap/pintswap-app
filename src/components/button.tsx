@@ -9,6 +9,7 @@ type IButtonProps = {
     disabled?: boolean;
     loading?: boolean;
     loadingText?: string;
+    form?: boolean;
 };
 
 export const Button = ({
@@ -19,6 +20,7 @@ export const Button = ({
     disabled,
     loading,
     loadingText,
+    form
 }: IButtonProps) => {
     const renderType = () => {
         switch (type) {
@@ -32,6 +34,7 @@ export const Button = ({
     };
     return (
         <button
+            type={form ? 'submit' : 'button'}
             onClick={onClick}
             disabled={disabled}
             className={`${className} ${renderType()} px-2.5 py-1.5 lg:px-4 lg:py-2.5 rounded shadow disabled:cursor-not-allowed transition duration-150 border-2 border-indigo-800 hover:border-indigo-900 flex items-center gap-2 text-center justify-center`}
