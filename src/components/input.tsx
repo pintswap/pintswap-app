@@ -23,7 +23,7 @@ export const Input = ({
         <div className="flex flex-col gap-1 justify-end">
             {title && <p className="text-sm">{title}</p>}
             <input
-                className={`p-2 bg-neutral-600 rounded ${className}`}
+                className={`p-2 bg-neutral-600 rounded ${className} ${type === 'number' ? 'text-right' : ''}`}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}

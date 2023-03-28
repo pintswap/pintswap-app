@@ -17,6 +17,7 @@ export const useTrade = () => {
         if(signer) {
             // Breaking 
             // const ps = await Pintswap.initialize({ signer });
+            // await ps.startNode()
             // await ps.createTrade(ps.peerId, {
             //     givesToken: trade.tokenIn,
             //     getsToken: trade.tokenOut,

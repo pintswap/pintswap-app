@@ -1,8 +1,10 @@
 import { Transition } from '@headlessui/react';
 import { useAccount } from 'wagmi';
 import { Button, Card, CopyClipboard, Input } from '../components';
+import { Dropdown } from '../components/dropdown';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
+import { TOKENS } from '../utils/token-list';
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, generatedAddress, updateTrade } = useTrade();
@@ -11,14 +13,12 @@ export const CreateView = () => {
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
-                    <Input
+                    <Dropdown 
                         title="In Details"
-                        max={8}
-                        placeholder="Token to Trade"
-                        value={trade.tokenIn}
-                        onChange={({ currentTarget }) =>
-                            updateTrade('tokenIn', currentTarget.value.toUpperCase())
-                        }
+                        placeholder="Please select a token..."
+                        state={TOKENS.find((el) => el.address === trade.tokenIn)?.symbol}
+                        setState={updateTrade}
+                        type="tokenIn"
                     />
                     <Input
                         placeholder="Amount to Trade"
@@ -28,14 +28,12 @@ export const CreateView = () => {
                         }
                         type="number"
                     />
-                    <Input
+                    <Dropdown 
                         title="Out Details"
-                        max={8}
-                        placeholder="Token to Recieve"
-                        value={trade.tokenOut}
-                        onChange={({ currentTarget }) =>
-                            updateTrade('tokenOut', currentTarget.value.toUpperCase())
-                        }
+                        placeholder="Please select a token..."
+                        state={TOKENS.find((el) => el.address === trade.tokenOut)?.symbol}
+                        setState={updateTrade}
+                        type="tokenOut"
                     />
                     <Input
                         placeholder="Amount to Receive"
@@ -43,6 +41,7 @@ export const CreateView = () => {
                         onChange={({ currentTarget }) =>
                             updateTrade('amountOut', currentTarget.value.toUpperCase())
                         }
+                        type="number"
                     />
                 </div>
                 <Button
