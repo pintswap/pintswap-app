@@ -3,11 +3,13 @@ import { FormEvent } from 'react';
 type IInputProps = {
     placeholder?: string;
     value: string;
-    onChange: (e: FormEvent<HTMLInputElement>) => void;
+    onChange?: (e: FormEvent<HTMLInputElement>) => void;
     className?: string;
     max?: number;
     type?: 'text' | 'number';
     title?: string;
+    disabled?: boolean;
+    loading?: boolean;
 };
 
 export const Input = ({
@@ -18,6 +20,8 @@ export const Input = ({
     max,
     type = 'text',
     title,
+    disabled,
+    loading
 }: IInputProps) => {
     return (
         <div className="flex flex-col gap-1 justify-end">
@@ -29,6 +33,7 @@ export const Input = ({
                 placeholder={placeholder}
                 maxLength={max}
                 type={type}
+                disabled={disabled}
             />
         </div>
     );

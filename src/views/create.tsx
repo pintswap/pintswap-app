@@ -1,5 +1,4 @@
 import { Transition } from '@headlessui/react';
-import { useAccount } from 'wagmi';
 import { Button, Card, CopyClipboard, Input } from '../components';
 import { Dropdown } from '../components/dropdown';
 import { useTrade } from '../hooks/trade';
@@ -7,8 +6,7 @@ import { BASE_URL } from '../utils/common';
 import { TOKENS } from '../utils/token-list';
 
 export const CreateView = () => {
-    const { broadcastTrade, loading, trade, generatedAddress, updateTrade } = useTrade();
-    const { address } = useAccount();
+    const { broadcastTrade, loading, trade, order, updateTrade } = useTrade();
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
@@ -59,7 +57,7 @@ export const CreateView = () => {
                 </Button>
             </Card>
             <Transition
-                show={generatedAddress !== BASE_URL}
+                show={!!order.orderHash && !!order.multiAddr}
                 enter="transition-opacity duration-75"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
@@ -69,7 +67,7 @@ export const CreateView = () => {
                 className="flex flex-col justify-center items-center text-center"
             >
                 <p className="text-sm">Trade Link:</p>
-                <CopyClipboard value={generatedAddress} icon lg />
+                <CopyClipboard value={`${BASE_URL}${order.multiAddr}/${order.orderHash}`} icon lg />
             </Transition>
         </div>
     );
