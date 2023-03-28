@@ -14,6 +14,7 @@ export const useTrade = () => {
     const broadcastTrade = async () => {
         setLoading(true);
         // TODO: implement broadcast trade here and generate address
+        console.log("TRADE:", trade)
         if(signer) {
             // Breaking 
             // const ps = await Pintswap.initialize({ signer });

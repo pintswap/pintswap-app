@@ -13,4 +13,10 @@
     background-color: #212121;
     color: #fff;
   }
+  @supports (-webkit-touch-callout: none) {
+  .max-w-available {
+    /* for ios safari 15, safe-area-inset-bottom is 0, so a special fix apply here */
+    max-width: -webkit-fill-available;
+  }
+}
 }
