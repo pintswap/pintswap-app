@@ -1,4 +1,4 @@
-import { Fragment, MouseEventHandler } from 'react'
+import { ChangeEvent, Fragment, MouseEventHandler, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { MdChevronRight } from 'react-icons/md'
 import { alphaTokenSort, classNames } from '../utils/common'
@@ -11,9 +11,32 @@ type IDropdownProps = {
   placeholder?: string;
   type: 'tokenIn' | 'tokenOut' | 'string';
   title?: string;
+  search?: boolean;
 }
 
-export const Dropdown = ({ state, setState, options, placeholder, type, title }: IDropdownProps) => {
+export const Dropdown = ({ state, setState, options, placeholder, type, title, search }: IDropdownProps) => {
+  const isToken = type === 'tokenIn' || type === 'tokenOut';
+  const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] })
+  
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      let results;
+      if(isToken) {
+        results = TOKENS.filter((el: ITokenProps) => {
+          if (e.target.value === "") return TOKENS;
+          return el.symbol.toLowerCase().includes(e.target.value.toLowerCase())
+        })
+      } else {
+        results = (searchState.list as string[]).filter((el) => {
+          if (e.target.value === "") return searchState.list;
+          return el.toLowerCase().includes(e.target.value.toLowerCase())
+        })
+      }
+      setSearchState({
+        query: e.target.value,
+        list: results
+      })
+  };
+
   return (
     <div className="flex flex-col gap-1 justify-end">
     {title && <p className="text-sm">{title}</p>}
@@ -34,22 +57,31 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title }:
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 origin-top rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full max-h-60 overflow-y-auto">
-          {type === 'tokenIn' || type === 'tokenOut' ? TOKENS.sort(alphaTokenSort).map((el: ITokenProps, i) => (
+        <Menu.Items className="absolute right-0 z-10 mt-2 origin-top rounded-md bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full max-h-60 overflow-y-auto overflow-x-hidden">
+          {search && (
+              <input 
+                value={searchState.query}
+                onChange={handleChange}
+                className="bg-gray-700 text-neutral-200 px-4 py-2 text-sm ring-2 ring-gray-600 w-full"
+                placeholder="Search here..."
+              />
+          )}
+          {isToken ? (searchState.list as ITokenProps[]).sort(alphaTokenSort).map((el: ITokenProps, i) => (
             <Menu.Item key={`dropdown-item-${el.symbol}-${i}`}>
             {({ active }) => (
               <button
                 className={classNames(
-                  active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                  'block px-4 py-2 text-sm transition duration-150'
+                  active ? 'bg-gray-800 text-neutral-200' : 'text-neutral-300',
+                  'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full'
                 )}
                 onClick={() => setState(type, el.address)}
               >
+                <img src={el.logoURI} alt={el.asset} width="25" height="25" />
                 {el.symbol}
               </button>
             )}
           </Menu.Item>
-          )) : options?.map((el, i) => (
+          )) : (searchState.list as string[]).map((el, i) => (
             <Menu.Item key={`dropdown-item-${el}-${i}`}>
             {({ active }) => (
               <button

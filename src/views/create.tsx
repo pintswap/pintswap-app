@@ -19,6 +19,7 @@ export const CreateView = () => {
                         state={TOKENS.find((el) => el.address === trade.tokenIn)?.symbol}
                         setState={updateTrade}
                         type="tokenIn"
+                        search
                     />
                     <Input
                         placeholder="Amount to Trade"
@@ -34,6 +35,7 @@ export const CreateView = () => {
                         state={TOKENS.find((el) => el.address === trade.tokenOut)?.symbol}
                         setState={updateTrade}
                         type="tokenOut"
+                        search
                     />
                     <Input
                         placeholder="Amount to Receive"
