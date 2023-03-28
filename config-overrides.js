@@ -1,8 +1,4 @@
 const webpack = require("webpack");
-const stdLibBrowser = require('node-stdlib-browser');
-const {
-	NodeProtocolUrlPlugin
-} = require('node-stdlib-browser/helpers/webpack/plugin');
 
 // module.exports = function override(config) {
 //     const fallback = config.resolve.fallback || {};
@@ -43,18 +39,16 @@ const {
 // };
 
 module.exports = {
-    target: 'node',
     webpack: function (config, env) {
       config.plugins = [
         ...config.plugins,
-        new NodeProtocolUrlPlugin(),
         new webpack.ProvidePlugin({
           process: "process/browser.js",
           Buffer: ["buffer", "Buffer"],
         }),
       ];
       config.resolve = {
-        alias: stdLibBrowser,
+        extensions: [".ts", ".tsx", ".js", "jsx", ".json"],
         fallback: {
             crypto: require.resolve("crypto-browserify"),
             stream: require.resolve("stream-browserify"),
@@ -69,7 +63,6 @@ module.exports = {
             path: require.resolve('path-browserify'),
             net: require.resolve("net-browserify"),
             tls: require.resolve("tls-browserify"),
-            "crypto-browserify": require.resolve('crypto-browserify'),
     
             process: require.resolve('process/browser'),
             console: require.resolve('console-browserify'),
