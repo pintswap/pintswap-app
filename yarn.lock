@@ -14743,6 +14743,11 @@ wrtc@^0.4.7:
   optionalDependencies:
     domexception "^1.0.1"
 
+ws-browserify@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ws-browserify/-/ws-browserify-1.0.0.tgz#2700c287e9c8381c031f17dee2baf28a623e9afc"
+  integrity sha512-3VCutqr6GrHcmnxD09UJSML3f0nMcXYYIA7447I6JNyugc7A9J97WmaUerRgpmbiPT6U92LF6hHACJsse+nYeA==
+
 ws@7.4.6:
   version "7.4.6"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
