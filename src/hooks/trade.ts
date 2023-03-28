@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useGlobalContext } from '../stores/global';
 import { BASE_URL, EMPTY_TRADE, ITradeProps } from '../utils/common';
-import { usePintswap } from './pintswap';
 import { Pintswap } from 'pintswap-sdk';
 import { useSigner } from 'wagmi';
 
