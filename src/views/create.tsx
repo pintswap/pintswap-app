@@ -1,10 +1,12 @@
 import { Transition } from '@headlessui/react';
+import { useAccount } from 'wagmi';
 import { Button, Card, CopyClipboard, Input } from '../components';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, generatedAddress, updateTrade } = useTrade();
+    const { address } = useAccount();
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
@@ -47,7 +49,7 @@ export const CreateView = () => {
                     className="mt-6 w-full"
                     loadingText="Broadcasting"
                     loading={loading}
-                    onClick={() => broadcastTrade(trade)}
+                    onClick={broadcastTrade}
                     disabled={
                         !trade.amountIn || !trade.amountOut || !trade.tokenIn || !trade.tokenOut
                     }
