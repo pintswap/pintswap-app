@@ -6,15 +6,17 @@ import { ITokenProps, TOKENS } from '../utils/token-list'
 
 type IDropdownProps = {
   state: any;
-  setState: any;
+  setState?: any;
   options?: string[];
   placeholder?: string;
   type: 'tokenIn' | 'tokenOut' | 'string';
   title?: string;
   search?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
 }
 
-export const Dropdown = ({ state, setState, options, placeholder, type, title, search }: IDropdownProps) => {
+export const Dropdown = ({ state, setState, options, placeholder, type, title, search, disabled, loading }: IDropdownProps) => {
   const isToken = type === 'tokenIn' || type === 'tokenOut';
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] })
   
@@ -42,8 +44,8 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title, s
     {title && <p className="text-sm">{title}</p>}
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex w-full justify-between items-center gap-x-1.5 rounded bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150">
-          <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />
+        <Menu.Button className="inline-flex w-full justify-between items-center gap-x-1.5 rounded bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600" disabled={disabled}>
+          {!disabled && <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />}
           {state ? state : <span className="text-gray-400">{placeholder || 'Select one...'}</span>}
         </Menu.Button>
       </div>

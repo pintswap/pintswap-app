@@ -1,18 +1,17 @@
 import { Transition } from '@headlessui/react';
-import { useAccount } from 'wagmi';
 import { Button, Card, CopyClipboard, Input } from '../components';
 import { Dropdown } from '../components/dropdown';
+import { ProgressIndicator } from '../components/progress-indicator';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 import { TOKENS } from '../utils/token-list';
 
 export const CreateView = () => {
-    const { broadcastTrade, loading, trade, generatedAddress, updateTrade } = useTrade();
-    const { address } = useAccount();
+    const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-x-4 lg:gap-y-0 items-start">
                     <Dropdown 
                         title="In Details"
                         placeholder="Please select a token..."
@@ -28,6 +27,7 @@ export const CreateView = () => {
                             updateTrade('amountIn', currentTarget.value)
                         }
                         type="number"
+                        token
                     />
                     <Dropdown 
                         title="Out Details"
@@ -44,6 +44,7 @@ export const CreateView = () => {
                             updateTrade('amountOut', currentTarget.value.toUpperCase())
                         }
                         type="number"
+                        token
                     />
                 </div>
                 <Button
@@ -58,8 +59,13 @@ export const CreateView = () => {
                     Broadcast Trade
                 </Button>
             </Card>
+            
+            <div className="mx-auto">
+                <ProgressIndicator steps={steps} />
+            </div>
+
             <Transition
-                show={generatedAddress !== BASE_URL}
+                show={!!order.orderHash && !!order.multiAddr}
                 enter="transition-opacity duration-75"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
@@ -69,7 +75,7 @@ export const CreateView = () => {
                 className="flex flex-col justify-center items-center text-center"
             >
                 <p className="text-sm">Trade Link:</p>
-                <CopyClipboard value={generatedAddress} icon lg />
+                <CopyClipboard value={`${BASE_URL}${order.multiAddr}/${order.orderHash}`} icon lg />
             </Transition>
         </div>
     );
