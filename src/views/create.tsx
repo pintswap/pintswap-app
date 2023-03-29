@@ -1,7 +1,5 @@
 import { Transition } from '@headlessui/react';
-import { Button, Card, CopyClipboard, Input } from '../components';
-import { Dropdown } from '../components/dropdown';
-import { ProgressIndicator } from '../components/progress-indicator';
+import { Button, Card, CopyClipboard, Input, Dropdown, Skeleton, ProgressIndicator } from '../components';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 import { TOKENS } from '../utils/token-list';
@@ -27,7 +25,8 @@ export const CreateView = () => {
                             updateTrade('amountIn', currentTarget.value)
                         }
                         type="number"
-                        token
+                        token={trade.tokenIn || true}
+                        maxClick={updateTrade}
                     />
                     <Dropdown 
                         title="Out Details"
@@ -44,7 +43,8 @@ export const CreateView = () => {
                             updateTrade('amountOut', currentTarget.value.toUpperCase())
                         }
                         type="number"
-                        token
+                        token={trade.tokenOut || true}
+                        maxClick={updateTrade}
                     />
                 </div>
                 <Button

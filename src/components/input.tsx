@@ -1,5 +1,7 @@
-import { FormEvent } from 'react';
-import { useBalance } from 'wagmi';
+import { FormEvent, useEffect, useState } from 'react';
+import { fetchBalance } from '@wagmi/core'
+import { useAccount } from 'wagmi';
+import { Skeleton } from './skeleton';
 
 type IInputProps = {
     placeholder?: string;
@@ -12,6 +14,7 @@ type IInputProps = {
     disabled?: boolean;
     loading?: boolean;
     token?: string | any;
+    maxClick?: (key: 'tokenIn' | 'tokenOut' | 'amountIn' | 'amountOut', val: string) => void;
 };
 
 export const Input = ({
@@ -24,8 +27,31 @@ export const Input = ({
     title,
     disabled,
     loading,
-    token
+    token,
+    maxClick
 }: IInputProps) => {
+    const { address } = useAccount();
+    const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
+    const tradeObjKey = placeholder?.includes('Receive') ? 'amountOut' : 'amountIn';
+
+    useEffect(() => {
+        const getBalance = async () => {
+            setBalance({ ...balance, loading: true });
+            try {
+                if(address) {
+                    const params = token === 'eth' ? { address } : { address, token }
+                    const { formatted, symbol } = await fetchBalance(params)
+                    console.log(symbol, formatted, token)
+                    if(formatted) setBalance({ loading: false, formatted, symbol });
+                }
+            } catch (err) {
+                setBalance({ ...balance, loading: false })
+                console.error(`Error fetching balance:`, err)
+            }
+        }
+        if(typeof token === 'string') getBalance()
+    }, [token])
+
     return (
         <div className="flex flex-col gap-1 justify-end">
             {title ? <p className="text-sm">{title}</p> : <div className="w-full lg:h-5" />}
@@ -38,7 +64,14 @@ export const Input = ({
                 type={type}
                 disabled={disabled}
             />
-            {token && <button className="text-xs text-indigo-600 text-right">MAX: {'0.00'}</button>}
+            {token && maxClick && (
+                <button className="text-xs text-indigo-600 text-right flex gap-1 justify-end" onClick={() => maxClick(tradeObjKey, balance.formatted)}>
+                    MAX: 
+                    <Skeleton loading={balance.loading}>
+                        {balance.formatted} {balance.symbol}
+                    </Skeleton>
+                </button>
+            )}
         </div>
     );
 };
