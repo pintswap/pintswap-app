@@ -6,7 +6,7 @@ import { Pintswap, IOffer } from 'pintswap-sdk';
 export type IGlobalStoreProps = {
     openTrades: Map<string, IOffer>;
     addTrade: (hash: string, { givesToken, givesAmount, getsToken, getsAmount }: IOffer) => void;
-    pintswap: any;
+    pintswap: Pintswap | undefined;
     pintswapLoading: boolean;
 };
 
@@ -14,7 +14,7 @@ export type IGlobalStoreProps = {
 const GlobalContext = createContext<IGlobalStoreProps>({
     openTrades: new Map(),
     addTrade(hash, { givesToken, givesAmount, getsToken, getsAmount }) {},
-    pintswap: {},
+    pintswap: undefined,
     pintswapLoading: true
 });
 
