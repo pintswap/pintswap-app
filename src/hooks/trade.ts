@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
-import { EMPTY_TRADE, getDecimals, ITradeProps } from '../utils/common';
+import { EMPTY_TRADE, getDecimals } from '../utils/common';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS } from '../components/progress-indicator';
 import { ethers } from 'ethers';
-import { protocol } from 'pintswap-sdk';
+import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 
 type IOrderStateProps = {
@@ -16,7 +16,7 @@ export const useTrade = () => {
     const { pathname } = useLocation();
     const { addTrade, pintswap } = useGlobalContext();
     const [loading, setLoading] = useState(false);
-    const [trade, setTrade] = useState<ITradeProps>(EMPTY_TRADE);
+    const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
     
@@ -24,19 +24,20 @@ export const useTrade = () => {
     const broadcastTrade = async () => {
         setLoading(true);
         const tradeObj = {
-            givesToken: TOKENS.find((el) => el.symbol === trade.tokenIn)?.address,
-            getsToken: TOKENS.find((el) => el.symbol === trade.tokenOut)?.address,
-            givesAmount: ethers.utils.parseUnits(trade.amountIn, getDecimals(trade.tokenIn)).toHexString(),
-            getsAmount: ethers.utils.parseUnits(trade.amountOut, getDecimals(trade.tokenOut)).toHexString()
+            givesToken: TOKENS.find((el) => el.symbol === trade.givesToken)?.address,
+            getsToken: TOKENS.find((el) => el.symbol === trade.getsToken)?.address,
+            givesAmount: ethers.utils.parseUnits(trade.givesAmount, getDecimals(trade.givesToken)).toHexString(),
+            getsAmount: ethers.utils.parseUnits(trade.getsAmount, getDecimals(trade.getsToken)).toHexString()
         }
         console.log("CREATE TRADE:", tradeObj)
 
         if(pintswap) {
             try {
                 // TODO: if ETH, convert to WETH first
-                const res = await pintswap.createTrade(pintswap.peerId, tradeObj)
-                setOrder({ multiAddr: pintswap.peerId, orderHash: res.orderHash });
-                addTrade(trade);
+                const res = await pintswap.createTrade(pintswap.peerId, tradeObj);
+                const orderHash = hashOffer(tradeObj);
+                setOrder({ multiAddr: pintswap.peerId, orderHash });
+                addTrade(orderHash, trade);
                 updateSteps('Create', 'complete');
                 updateSteps('Fulfill', 'current');
             } catch (err) {
@@ -73,7 +74,7 @@ export const useTrade = () => {
     }
 
     // Update order form
-    const updateTrade = (key: 'tokenIn' | 'tokenOut' | 'amountIn' | 'amountOut', val: string) => {
+    const updateTrade = (key: 'givesToken' | 'getsToken' | 'givesAmount' | 'getsAmount', val: string) => {
         setTrade({
             ...trade,
             [key]: val,

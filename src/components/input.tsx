@@ -14,7 +14,7 @@ type IInputProps = {
     disabled?: boolean;
     loading?: boolean;
     token?: string | any;
-    maxClick?: (key: 'tokenIn' | 'tokenOut' | 'amountIn' | 'amountOut', val: string) => void;
+    maxClick?: (key: 'givesToken' | 'getsToken' | 'givesAmount' | 'getsAmount', val: string) => void;
 };
 
 export const Input = ({
@@ -32,7 +32,7 @@ export const Input = ({
 }: IInputProps) => {
     const { address } = useAccount();
     const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
-    const tradeObjKey = placeholder?.includes('Receive') ? 'amountOut' : 'amountIn';
+    const tradeObjKey = placeholder?.includes('Receive') ? 'getsAmount' : 'givesAmount';
 
     useEffect(() => {
         const getBalance = async () => {

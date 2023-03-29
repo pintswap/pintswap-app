@@ -9,7 +9,7 @@ type IDropdownProps = {
   setState?: any;
   options?: string[];
   placeholder?: string;
-  type: 'tokenIn' | 'tokenOut' | 'string';
+  type: 'givesToken' | 'getsToken' | 'string';
   title?: string;
   search?: boolean;
   disabled?: boolean;
@@ -17,7 +17,7 @@ type IDropdownProps = {
 }
 
 export const Dropdown = ({ state, setState, options, placeholder, type, title, search, disabled, loading }: IDropdownProps) => {
-  const isToken = type === 'tokenIn' || type === 'tokenOut';
+  const isToken = type === 'givesToken' || type === 'getsToken';
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] })
   
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

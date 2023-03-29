@@ -1,8 +1,7 @@
 import { Transition } from '@headlessui/react';
-import { Button, Card, CopyClipboard, Input, Dropdown, Skeleton, ProgressIndicator } from '../components';
+import { Button, Card, CopyClipboard, Input, Dropdown, ProgressIndicator } from '../components';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
-import { TOKENS } from '../utils/token-list';
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
@@ -13,37 +12,37 @@ export const CreateView = () => {
                     <Dropdown 
                         title="In Details"
                         placeholder="Please select a token..."
-                        state={trade.tokenIn}
+                        state={trade.givesToken}
                         setState={updateTrade}
-                        type="tokenIn"
+                        type="givesToken"
                         search
                     />
                     <Input
                         placeholder="Amount to Trade"
-                        value={trade.amountIn}
+                        value={trade.givesAmount}
                         onChange={({ currentTarget }) =>
-                            updateTrade('amountIn', currentTarget.value)
+                            updateTrade('givesAmount', currentTarget.value)
                         }
                         type="number"
-                        token={trade.tokenIn || true}
+                        token={trade.givesToken || true}
                         maxClick={updateTrade}
                     />
                     <Dropdown 
                         title="Out Details"
                         placeholder="Please select a token..."
-                        state={trade.tokenOut}
+                        state={trade.getsToken}
                         setState={updateTrade}
-                        type="tokenOut"
+                        type="getsToken"
                         search
                     />
                     <Input
                         placeholder="Amount to Receive"
-                        value={trade.amountOut}
+                        value={trade.getsAmount}
                         onChange={({ currentTarget }) =>
-                            updateTrade('amountOut', currentTarget.value.toUpperCase())
+                            updateTrade('getsAmount', currentTarget.value.toUpperCase())
                         }
                         type="number"
-                        token={trade.tokenOut || true}
+                        token={trade.getsToken || true}
                         maxClick={updateTrade}
                     />
                 </div>
@@ -53,7 +52,7 @@ export const CreateView = () => {
                     loading={loading}
                     onClick={broadcastTrade}
                     disabled={
-                        !trade.amountIn || !trade.amountOut || !trade.tokenIn || !trade.tokenOut
+                        !trade.givesToken || !trade.givesAmount || !trade.getsToken || !trade.getsAmount
                     }
                 >
                     Broadcast Trade

@@ -1,3 +1,4 @@
+import { IOffer } from "pintswap-sdk";
 import { ITokenProps, TOKENS } from "./token-list";
 
 // GENERAL
@@ -6,19 +7,11 @@ export const TESTING = NETWORK === 'LOCALHOST' ? true : false;
 export const BASE_URL = 'pintswap.eth.link/';
 
 // DEFAULT VALS
-export const EMPTY_TRADE: ITradeProps = {
-    tokenIn: '',
-    amountIn: '',
-    tokenOut: '',
-    amountOut: '',
-};
-
-// TYPES
-export type ITradeProps = {
-    tokenIn: string;
-    amountIn: string;
-    tokenOut: string;
-    amountOut: string;
+export const EMPTY_TRADE: IOffer = {
+    getsToken: '',
+    getsAmount: '',
+    givesToken: '',
+    givesAmount: '',
 };
 
 // CSS

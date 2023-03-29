@@ -21,7 +21,12 @@ export const HomeView = () => {
                 <Table
                     headers={['In Token', 'In Amount', 'Out Token', 'Out Amount']}
                     onClick={console.log}
-                    items={openTrades}
+                    items={Array.from(openTrades, (entry) => ({ 
+                        inToken: entry[1].givesToken,
+                        inAmount: entry[1].givesAmount,
+                        outToken: entry[1].getsToken,
+                        outAmount: entry[1].getsAmount
+                    }))}
                     emptyContent={
                         pintswapLoading ? (
                             <ImSpinner9 className="animate-spin" size="20px" />
