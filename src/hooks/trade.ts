@@ -45,6 +45,8 @@ export const useTrade = () => {
         setLoading(true);
         if(signer) {
             console.log("FULFILL TRADE:", trade);
+            updateSteps('Fulfill', 'complete');
+            updateSteps('Complete', 'current');
         }
         setLoading(false);
     }
@@ -64,7 +66,7 @@ export const useTrade = () => {
     };
 
     const updateSteps = (name: 'Create' | 'Fulfill' | 'Complete', status: 'upcoming' | 'current' | 'complete') => {
-        setSteps(steps.map(el => (el.name === name ? Object.assign({}, el, { status }) : el)))
+        setSteps(steps.map(el => (el.name === name ? Object.assign({}, el, { status }) : el)));
     }
 
     useEffect(() => {
