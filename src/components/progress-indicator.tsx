@@ -1,78 +1,82 @@
-export const ProgressIndicator = () => {
+import { classNames } from "../utils/common"
+import { MdCheck } from 'react-icons/md'
+
+export type IOrderProgressProps = {
+	name: string;
+	status: 'complete' | 'current' | 'upcoming';
+	orderHash?: string;
+}
+
+export type IProgressIndicatorProps = {
+	steps: IOrderProgressProps[]
+}
+
+export const DEFAULT_PROGRESS: IOrderProgressProps[] = [
+	{
+		name: 'Create',
+		status: 'current'
+	},
+	{
+		name: 'Fulfill',
+		status: 'upcoming'
+	},
+	{
+		name: 'Complete',
+		status: 'upcoming'
+	}
+]
+
+export const ProgressIndicator = ({ steps }: IProgressIndicatorProps) => {
   return (
-    <div className="max-w-xl mx-auto my-4 border-b-2 pb-4">	
-	<div className="flex pb-3">
-		<div className="flex-1">
-		</div>
-
-		<div className="flex-1">
-			<div className="w-10 h-10 bg-green mx-auto rounded-full text-lg text-white flex items-center">
-				<span className="text-white text-center w-full"><i className="fa fa-check w-full fill-current white"></i></span>
-			</div>
-		</div>
-
-
-		<div className="w-1/6 align-center items-center align-middle content-center flex">
-			<div className="w-full bg-grey-light rounded items-center align-middle align-center flex-1">
-        <div className="bg-green-light text-xs leading-none py-1 text-center text-grey-darkest rounded " style={{width: "100%"}}></div>
-			</div>
-		</div>
-	
-		
-		<div className="flex-1">
-			<div className="w-10 h-10 bg-green mx-auto rounded-full text-lg text-white flex items-center">
-				<span className="text-white text-center w-full"><i className="fa fa-check w-full fill-current white"></i></span>
-			</div>
-		</div>
-	
-		<div className="w-1/6 align-center items-center align-middle content-center flex">
-			<div className="w-full bg-grey-light rounded items-center align-middle align-center flex-1">
-			<div className="bg-green-light text-xs leading-none py-1 text-center text-grey-darkest rounded " style={{width: "20%"}}></div>
-			</div>
-		</div>
-	
-		<div className="flex-1">
-			<div className="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
-				<span className="text-grey-darker text-center w-full">3</span>
-			</div>
-		</div>
-	
-	
-		<div className="w-1/6 align-center items-center align-middle content-center flex">
-			<div className="w-full bg-grey-light rounded items-center align-middle align-center flex-1">
-			<div className="bg-green-light text-xs leading-none py-1 text-center text-grey-darkest rounded " style={{width: "0%"}}></div>
-			</div>
-		</div>
-
-
-		<div className="flex-1">
-			<div className="w-10 h-10 bg-white border-2 border-grey-light mx-auto rounded-full text-lg text-white flex items-center">
-				<span className="text-grey-darker text-center w-full">4</span>
-			</div>
-		</div>
-	
-	
-		<div className="flex-1">
-		</div>		
-	</div>
-	
-	<div className="flex text-xs content-center text-center">
-		<div className="w-1/4">
-			Invitation received
-		</div>
-		
-		<div className="w-1/4">
-			Personal details
-		</div>
-		
-		<div className="w-1/4">
-			Application details
-		</div>
-		
-		<div className="w-1/4">
-			Confirmation
-		</div>			
-	</div>
-</div>
+		<ol role="list" className="flex items-center">
+		{steps.map((step, stepIdx) => (
+			<li key={step.name} className={classNames(stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : '', 'relative', 'flex flex-col items-center justify-center')}>
+				{step.status === 'complete' ? (
+					<>
+						<div className={`absolute inset-0 flex items-center -translate-y-2.5 ${step.name === 'Complete' ? 'w-[42px]' : 'translate-x-5'}`} aria-hidden="true">
+							<div className="h-0.5 w-full bg-indigo-600" />
+						</div>
+						<span
+							className="relative flex h-8 w-8 items-center justify-center rounded-full bg-indigo-700"
+						>
+							<MdCheck className="h-5 w-5 text-white" aria-hidden="true" />
+							<span className="sr-only">{step.name}</span>
+						</span>
+					</>
+				) : step.status === 'current' ? (
+					<>
+						<div className={`absolute inset-0 flex items-center -translate-y-2.5 ${step.name === 'Complete' ? 'w-0' : 'translate-x-5'}`} aria-hidden="true">
+							<div className="h-0.5 w-full bg-gray-200" />
+						</div>
+						<span
+							className="relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-indigo-700 bg-white"
+							aria-current="step"
+						>
+							<span className="h-2.5 w-2.5 rounded-full bg-indigo-700 animate-ping-slow" aria-hidden="true" />
+							<span className="sr-only">{step.name}</span>
+						</span>
+					</>
+				) : (
+					<>
+						<div className={`absolute inset-0 flex items-center -translate-y-2.5 ${step.name === 'Complete' ? 'w-[42px]' : 'translate-x-5'}`} aria-hidden="true">
+							<div className="h-0.5 w-full bg-gray-200" />
+						</div>
+						<span
+							className="group relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white"
+						>
+							<span
+								className="h-2.5 w-2.5 rounded-full bg-transparent"
+								aria-hidden="true"
+							/>
+							<span className="sr-only">{step.name}</span>
+						</span>
+					</>
+				)}
+				<div className="">
+					<span className="text-xs">{step.name}</span>
+				</div>
+			</li>
+		))}
+	</ol>
   )
 }

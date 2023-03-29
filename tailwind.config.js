@@ -5,6 +5,9 @@ module.exports = {
     theme: {
         extend: {
             colors: {},
+            animation: {
+                'ping-slow': 'ping 1.2s linear infinite',
+              }        
         },
     },
     plugins: [],

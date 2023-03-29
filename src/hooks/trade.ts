@@ -4,6 +4,7 @@ import { EMPTY_TRADE, ITradeProps } from '../utils/common';
 import { Pintswap } from 'pintswap-sdk';
 import { useSigner } from 'wagmi';
 import { useLocation } from 'react-router-dom';
+import { DEFAULT_PROGRESS, IProgressIndicatorProps } from '../components/progress-indicator';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -17,6 +18,7 @@ export const useTrade = () => {
     const [trade, setTrade] = useState<ITradeProps>(EMPTY_TRADE);
     const { data: signer } = useSigner();
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
+    const [steps, setSteps] = useState(DEFAULT_PROGRESS);
 
     const broadcastTrade = async () => {
         setLoading(true);
@@ -35,6 +37,8 @@ export const useTrade = () => {
             setOrder({ multiAddr: ps.peerId, orderHash: '' })
         }
         addTrade(trade);
+        updateSteps('Create', 'complete');
+        updateSteps('Fulfill', 'current');
     };
 
     const fulfillTrade = async () => {
@@ -59,6 +63,10 @@ export const useTrade = () => {
         });
     };
 
+    const updateSteps = (name: 'Create' | 'Fulfill' | 'Complete', status: 'upcoming' | 'current' | 'complete') => {
+        setSteps(steps.map(el => (el.name === name ? Object.assign({}, el, { status }) : el)))
+    }
+
     useEffect(() => {
         if(pathname.includes('/')) {
             const splitUrl = pathname.split('/');
@@ -77,5 +85,7 @@ export const useTrade = () => {
         fulfillTrade,
         getTrade,
         order,
+        steps,
+        updateSteps
     };
 };
