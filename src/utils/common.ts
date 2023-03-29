@@ -4,7 +4,8 @@ import { ITokenProps, TOKENS } from "./token-list";
 // GENERAL
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING = NETWORK === 'LOCALHOST' ? true : false;
-export const BASE_URL = 'pintswap.eth.link/';
+export const BASE_URL = 'pintswap.eth.link';
+export const WS_URL = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`
 
 // DEFAULT VALS
 export const EMPTY_TRADE: IOffer = {

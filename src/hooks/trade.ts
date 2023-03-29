@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
-import { EMPTY_TRADE, getDecimals } from '../utils/common';
+import { EMPTY_TRADE, getDecimals, WS_URL } from '../utils/common';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS } from '../components/progress-indicator';
 import { ethers } from 'ethers';
 import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
+import useWebSocket from 'react-use-websocket';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -19,6 +20,12 @@ export const useTrade = () => {
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
+
+    useWebSocket(WS_URL, {
+        onOpen: () => {
+          console.log('WebSocket connection established.');
+        }
+      });
     
     // Create trade
     const broadcastTrade = async () => {
