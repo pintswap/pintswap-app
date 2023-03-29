@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Pathway+Gothic+One&display=swap');
 
 /*
-! tailwindcss v3.2.7 | MIT License | https://tailwindcss.com
+! tailwindcss v3.3.0 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -30,6 +30,7 @@
 3. Use a more readable tab size.
 4. Use the user's configured `sans` font-family by default.
 5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
 */
 
 html {
@@ -38,6 +39,7 @@ html {
   tab-size: 4; /* 3 */
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */
   font-feature-settings: normal; /* 5 */
+  font-variation-settings: normal; /* 6 */
 }
 
 /*
@@ -495,10 +497,7 @@ html,
   position: relative;
 }
 .inset-0{
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  inset: 0px;
 }
 .right-0{
   right: 0px;
@@ -639,6 +638,15 @@ html,
 .animate-ping-slow{
   animation: ping 1.2s linear infinite;
 }
+@keyframes pulse{
+
+  50%{
+    opacity: .5;
+  }
+}
+.animate-pulse{
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
 @keyframes spin{
 
   to{
@@ -665,9 +673,6 @@ html,
 }
 .items-center{
   align-items: center;
-}
-.justify-start{
-  justify-content: flex-start;
 }
 .justify-end{
   justify-content: flex-end;
@@ -713,6 +718,11 @@ html,
 }
 .overflow-x-hidden{
   overflow-x: hidden;
+}
+.truncate{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .rounded{
   border-radius: 0.25rem;
@@ -792,6 +802,10 @@ html,
 .bg-neutral-600{
   --tw-bg-opacity: 1;
   background-color: rgb(82 82 82 / var(--tw-bg-opacity));
+}
+.bg-neutral-700{
+  --tw-bg-opacity: 1;
+  background-color: rgb(64 64 64 / var(--tw-bg-opacity));
 }
 .bg-neutral-900{
   --tw-bg-opacity: 1;
@@ -910,6 +924,9 @@ html,
 .text-sky-400{
   --tw-text-opacity: 1;
   color: rgb(56 189 248 / var(--tw-text-opacity));
+}
+.text-transparent{
+  color: transparent;
 }
 .text-white{
   --tw-text-opacity: 1;

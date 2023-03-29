@@ -14,26 +14,26 @@ export const FulfillView = () => {
                     <Dropdown 
                         title="In Details"
                         placeholder="Please select a token..."
-                        state={TOKENS.find((el) => el.address === trade.tokenIn)?.symbol}
-                        type="tokenIn"
+                        state={trade.givesToken}
+                        type="givesToken"
                         disabled
                     />
                     <Input
                         placeholder="Amount to Trade"
-                        value={trade.amountIn}
+                        value={trade.givesAmount}
                         type="number"
                     />
                     <Dropdown 
                         title="Out Details"
                         placeholder="Please select a token..."
-                        state={TOKENS.find((el) => el.address === trade.tokenOut)?.symbol}
-                        type="tokenOut"
+                        state={trade.getsToken}
+                        type="getsToken"
                         disabled
 
                     />
                     <Input
                         placeholder="Amount to Receive"
-                        value={trade.amountOut}
+                        value={trade.getsAmount}
                         type="number"
                     />
                 </div>
@@ -43,7 +43,7 @@ export const FulfillView = () => {
                     loading={loading}
                     onClick={fulfillTrade}
                     disabled={
-                        !trade.amountIn || !trade.amountOut || !trade.tokenIn || !trade.tokenOut
+                        !trade.getsAmount || !trade.givesAmount || !trade.getsToken || !trade.givesToken
                     }
                 >
                     Fulfill Trade

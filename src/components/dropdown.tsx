@@ -1,4 +1,4 @@
-import { ChangeEvent, Fragment, MouseEventHandler, useState } from 'react'
+import { ChangeEvent, Fragment, MouseEventHandler, useRef, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { MdChevronRight } from 'react-icons/md'
 import { alphaTokenSort, classNames } from '../utils/common'
@@ -9,7 +9,7 @@ type IDropdownProps = {
   setState?: any;
   options?: string[];
   placeholder?: string;
-  type: 'tokenIn' | 'tokenOut' | 'string';
+  type: 'givesToken' | 'getsToken' | 'string';
   title?: string;
   search?: boolean;
   disabled?: boolean;
@@ -17,7 +17,7 @@ type IDropdownProps = {
 }
 
 export const Dropdown = ({ state, setState, options, placeholder, type, title, search, disabled, loading }: IDropdownProps) => {
-  const isToken = type === 'tokenIn' || type === 'tokenOut';
+  const isToken = type === 'givesToken' || type === 'getsToken';
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] })
   
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +44,10 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title, s
     {title && <p className="text-sm">{title}</p>}
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex w-full justify-between items-center gap-x-1.5 rounded bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600" disabled={disabled}>
+        <Menu.Button 
+          className="inline-flex w-full justify-between items-center gap-x-1.5 rounded bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600" 
+          disabled={disabled} 
+        >
           {!disabled && <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />}
           {state ? state : <span className="text-gray-400">{placeholder || 'Select one...'}</span>}
         </Menu.Button>
@@ -76,7 +79,7 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title, s
                   active ? 'bg-gray-800 text-neutral-200' : 'text-neutral-300',
                   'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full'
                 )}
-                onClick={() => setState(type, el.address)}
+                onClick={() => setState(type, el.symbol)}
               >
                 <img src={el.logoURI} alt={el.asset} width="25" height="25" />
                 {el.symbol}

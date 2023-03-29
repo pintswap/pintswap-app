@@ -9,6 +9,16 @@ export type ITokenProps = {
 }
 
 export const TOKENS:ITokenProps[] = [
+    {
+        "asset": "c60_t0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
+        "type": "ERC20",
+        "address": "eth",
+        "name": "ETH",
+        "symbol": "ETH",
+        "decimals": 18,
+        "logoURI": "https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png",
+          
+    },
       {
           "asset": "c60_t0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
           "type": "ERC20",
