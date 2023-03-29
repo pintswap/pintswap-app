@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
 import { EMPTY_TRADE, getDecimals, ITradeProps } from '../utils/common';
-// import { Pintswap } from 'pintswap-sdk';
-import { useSigner } from 'wagmi';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS } from '../components/progress-indicator';
 import { ethers } from 'ethers';
+import { protocol } from 'pintswap-sdk';
+import { TOKENS } from '../utils/token-list';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -24,10 +24,10 @@ export const useTrade = () => {
     const broadcastTrade = async () => {
         setLoading(true);
         const tradeObj = {
-            givesToken: trade.tokenIn,
-            getsToken: trade.tokenOut,
-            givesAmount: ethers.utils.parseUnits(trade.amountIn, getDecimals(trade.tokenIn)),
-            getsAmount: ethers.utils.parseUnits(trade.amountOut, getDecimals(trade.tokenOut))
+            givesToken: TOKENS.find((el) => el.symbol === trade.tokenIn)?.address,
+            getsToken: TOKENS.find((el) => el.symbol === trade.tokenOut)?.address,
+            givesAmount: ethers.utils.parseUnits(trade.amountIn, getDecimals(trade.tokenIn)).toHexString(),
+            getsAmount: ethers.utils.parseUnits(trade.amountOut, getDecimals(trade.tokenOut)).toHexString()
         }
         console.log("CREATE TRADE:", tradeObj)
 

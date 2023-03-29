@@ -13,7 +13,7 @@ export const CreateView = () => {
                     <Dropdown 
                         title="In Details"
                         placeholder="Please select a token..."
-                        state={TOKENS.find((el) => el.address === trade.tokenIn)?.symbol}
+                        state={trade.tokenIn}
                         setState={updateTrade}
                         type="tokenIn"
                         search
@@ -31,7 +31,7 @@ export const CreateView = () => {
                     <Dropdown 
                         title="Out Details"
                         placeholder="Please select a token..."
-                        state={TOKENS.find((el) => el.address === trade.tokenOut)?.symbol}
+                        state={trade.tokenOut}
                         setState={updateTrade}
                         type="tokenOut"
                         search

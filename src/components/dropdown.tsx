@@ -76,7 +76,7 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title, s
                   active ? 'bg-gray-800 text-neutral-200' : 'text-neutral-300',
                   'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full'
                 )}
-                onClick={() => setState(type, el.address)}
+                onClick={() => setState(type, el.symbol)}
               >
                 <img src={el.logoURI} alt={el.asset} width="25" height="25" />
                 {el.symbol}

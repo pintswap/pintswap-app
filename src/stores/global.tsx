@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 import { ITradeProps } from '../utils/common';
+import { Pintswap } from 'pintswap-sdk';
 
 // Types
 export type IGlobalStoreProps = {
@@ -20,8 +21,8 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
-    const [openTrades, setOpenTrades] = useState<ITradeProps[]>([]);
-    const [pintswap, setPintswap] = useState<any>();
+    const [openTrades, setOpenTrades] = useState<any>([]);
+    const [pintswap, setPintswap] = useState<Pintswap>();
     const [pintswapLoading, setPintswapLoading] = useState(true);
     const { data: signer } = useSigner();
 
@@ -35,18 +36,22 @@ export function GlobalStore(props: { children: ReactNode }) {
     useEffect(() => {
         const initialize = async () => {
             try {
-                console.log("signer:", signer);
-                // const ps = await Pintswap.initialize({ signer });
-                // await ps.startNode();
-                // setPintswap(ps);
+                const ps: Pintswap | Error = await Pintswap.initialize({ signer });
+                const res =await ps.startNode();
+                if(ps.isStarted()) setPintswap(ps);
                 setPintswapLoading(false);
             } catch (err) {
                 console.error("Initializing error:", err);
                 setPintswapLoading(false)
             }
         }
-        if(!pintswap) initialize(); 
-    }, [signer])
+        if(!pintswap && signer) initialize(); 
+    }, [signer]);
+
+    // Get Active Trades
+    useEffect(() => {
+        if(pintswap) setOpenTrades(pintswap.offers)
+    }, [pintswap])
 
     return (
         <GlobalContext.Provider
