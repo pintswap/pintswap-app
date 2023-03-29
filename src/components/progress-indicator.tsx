@@ -29,7 +29,7 @@ export const DEFAULT_PROGRESS: IOrderProgressProps[] = [
 export const ProgressIndicator = ({ steps }: IProgressIndicatorProps) => {
   return (
 		<ol role="list" className="flex items-center">
-		{steps.map((step, stepIdx) => (
+		{steps && steps.map((step, stepIdx) => (
 			<li key={step.name} className={classNames(stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : '', 'relative', 'flex flex-col items-center justify-center')}>
 				{step.status === 'complete' ? (
 					<>

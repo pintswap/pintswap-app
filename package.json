@@ -4,6 +4,7 @@
     "private": true,
     "scripts": {
         "start": "yarn build:css && react-app-rewired start",
+        "start:dev": "REACT_APP_NETWORK=LOCALHOST GENERATE_SOURCEMAP=false BROWSER=none yarn start",
         "build": "yarn build:css && react-app-rewired build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",

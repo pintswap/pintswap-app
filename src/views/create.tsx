@@ -11,7 +11,7 @@ export const CreateView = () => {
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-x-4 lg:gap-y-0 items-start">
                     <Dropdown 
                         title="In Details"
                         placeholder="Please select a token..."
@@ -27,6 +27,7 @@ export const CreateView = () => {
                             updateTrade('amountIn', currentTarget.value)
                         }
                         type="number"
+                        token
                     />
                     <Dropdown 
                         title="Out Details"
@@ -43,6 +44,7 @@ export const CreateView = () => {
                             updateTrade('amountOut', currentTarget.value.toUpperCase())
                         }
                         type="number"
+                        token
                     />
                 </div>
                 <Button
