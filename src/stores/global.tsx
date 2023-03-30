@@ -20,6 +20,22 @@ const GlobalContext = createContext<IGlobalStoreProps>({
     pintswapLoading: true,
 });
 
+const defer = () => {
+    let resolve,
+        reject,
+        promise = new Promise((_resolve, _reject) => {
+            resolve = _resolve;
+            reject = _reject;
+        });
+    return {
+        resolve,
+        reject,
+        promise,
+    };
+};
+
+(window as any).discoveryDeferred = defer();
+
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const [openTrades, setOpenTrades] = useState<Map<string, IOffer>>(new Map());
@@ -34,26 +50,37 @@ export function GlobalStore(props: { children: ReactNode }) {
     // Initialize Pintswap
     useEffect(() => {
         const initialize = async () => {
-            const ps: Pintswap = await new Promise(async (resolve) => { // eslint-disable-line
-                try {
-                    const ps: Pintswap | Error | any = await Pintswap.initialize({ signer });
-                    await ps.startNode();
-                    resolve(ps)
-                } catch (err) {
-                    console.error("Initializing error:", err);
-                    setPintswapLoading(false)
-                }
-            })
-            if(ps.isStarted()) setPintswap(ps);
+            const ps: Pintswap = await new Promise((resolve, reject) => {
+                (async () => {
+                    // eslint-disable-line
+                    try {
+                        const ps: Pintswap | Error | any = await Pintswap.initialize({ signer });
+                        (window as any).ps = ps;
+                        ps.on('pintswap/node/status', (s: any) => {
+                            console.log('emit', s);
+                        });
+                        await ps.startNode();
+                        ps.on('peer:discovery', (peer: any) => {
+                            console.log('discovered peer', peer);
+                            (window as any).discoveryDeferred.resolve(peer);
+                        });
+                        resolve(ps);
+                    } catch (err) {
+                        console.error('Initializing error:', err);
+                        setPintswapLoading(false);
+                    }
+                })().catch(reject);
+            });
+            if (ps.isStarted()) setPintswap(ps);
             setPintswapLoading(false);
-        }
-        if(!pintswap && signer) initialize(); 
+        };
+        if (!pintswap && signer) initialize();
     }, [signer]);
 
     // Get Active Trades
     useEffect(() => {
-        if(pintswap) setOpenTrades(pintswap.offers)
-    }, [pintswap])
+        if (pintswap) setOpenTrades(pintswap.offers);
+    }, [pintswap]);
 
     return (
         <GlobalContext.Provider

@@ -82,7 +82,11 @@ export const useTrade = () => {
             // TAKER
             else {
                 if(pintswap) {
+                    console.log(multiAddr);
                     const peeredUp = PeerId.createFromB58String(multiAddr);
+                    console.log(peeredUp);
+                    console.log('discovery', await (window as any).discoveryDeferred.promise);
+
                     const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
                     console.log("makerPeerId", makerPeerId)
                     // const oBlock = await pintswap.getTradesByPeerId(`/${makerPeerId.id.toB58String()}`);
