@@ -1,12 +1,12 @@
 import { Transition } from "@headlessui/react";
-import { Button, Card, CopyClipboard, Input } from "../components";
+import { Button, Card, CopyClipboard, Input, ProgressIndicator } from "../components";
 import { Dropdown } from "../components/dropdown";
 import { useTrade } from "../hooks/trade";
 import { BASE_URL } from "../utils/common";
 import { TOKENS } from "../utils/token-list";
 
 export const FulfillView = () => {
-    const { fulfillTrade, loading, trade, order } = useTrade();
+    const { fulfillTrade, loading, trade, order, steps } = useTrade();
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Fulfill Trade">
@@ -56,6 +56,10 @@ export const FulfillView = () => {
                     <CopyClipboard value={order.multiAddr} icon lg />
                 </div> */}
             </Card>
+
+            <div className="mx-auto">
+                <ProgressIndicator steps={steps} />
+            </div>
         </div>
     );
 };

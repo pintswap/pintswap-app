@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
 import { EMPTY_TRADE, getDecimals, WS_URL } from '../utils/common';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { DEFAULT_PROGRESS } from '../components/progress-indicator';
+import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { ethers } from 'ethers';
 import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
@@ -46,8 +46,7 @@ export const useTrade = () => {
                 const orderHash = hashOffer(buildTradeObj());
                 setOrder({ multiAddr: pintswap.peerId, orderHash });
                 addTrade(orderHash, trade);
-                updateSteps('Create', 'complete');
-                updateSteps('Fulfill', 'current');
+                updateSteps('Fulfill');
             } catch (err) {
                 console.error(err);
             }
@@ -64,8 +63,7 @@ export const useTrade = () => {
                 const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
                 const res = await pintswap.createTrade(makerPeerId, buildTradeObj());
                 console.log("FULFILL TRADE:", res);
-                updateSteps('Fulfill', 'complete');
-                updateSteps('Complete', 'current');
+                updateSteps('Complete');
             } catch (err) {
                 console.error(err);
             }
@@ -97,8 +95,13 @@ export const useTrade = () => {
     };
 
     // Update progress indicator
-    const updateSteps = (name: 'Create' | 'Fulfill' | 'Complete', status: 'upcoming' | 'current' | 'complete') => {
-        setSteps(steps.map(el => (el.name === name ? Object.assign({}, el, { status }) : el)));
+    const updateSteps = (nextStep: 'Create' | 'Fulfill' | 'Complete') => {
+        const updated: IOrderProgressProps[] = steps.map((step, i) => {
+            if(step.status === 'current') return { ...step, status: 'complete' }
+            else if(step.name === nextStep) return { ...step, status: 'current' }
+            else return step
+        });
+        setSteps(updated)
     }
 
     // Get trade based on URL
@@ -107,7 +110,8 @@ export const useTrade = () => {
             const splitUrl = pathname.split('/');
             if(splitUrl.length === 3) {
                 setOrder({ orderHash: splitUrl[2], multiAddr: splitUrl[1] })
-                getTrade(splitUrl[1], splitUrl[2])
+                getTrade(splitUrl[1], splitUrl[2]);
+                updateSteps('Fulfill');
             }
         }
     }, []);
