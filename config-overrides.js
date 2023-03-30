@@ -10,7 +10,7 @@ module.exports = {
         }),
       ];
       config.resolve = {
-        extensions: [".ts", ".tsx", ".js", "jsx", ".json"],
+        extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
         fallback: {
             crypto: require.resolve("crypto-browserify"),
             stream: require.resolve("stream-browserify"),

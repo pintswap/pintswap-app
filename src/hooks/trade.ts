@@ -8,8 +8,8 @@ import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 import { usePeerContext } from '../stores';
 import PeerId from 'peer-id';
-import * as lp from 'it-length-prefixed';
-import { pipe } from 'it-pipe';
+import { pipe } from "it-pipe";
+import * as lp from "it-length-prefixed";
 
 type IOrderStateProps = {
     orderHash: string;
@@ -85,11 +85,13 @@ export const useTrade = () => {
                     const peeredUp = PeerId.createFromB58String(multiAddr);
                     const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
                     console.log("makerPeerId", makerPeerId)
+                    // const oBlock = await pintswap.getTradesByPeerId(`/${makerPeerId.id.toB58String()}`);
                     const { stream } = await pintswap.dialProtocol(makerPeerId.id, '/pintswap/0.1.0/orders');
                     // TODO: decode stream and set trade
-                    console.log("stream", stream)
-                    // const res = (await (pipe(stream.source, lp.decode()).next())).value;
-                    // console.log("stream res", stream)
+                    console.log("oBlock:", stream)
+                    const res = (await (await pipe(stream.source, lp.decode()).next())).value;
+                    console.log("stream res", res)
+                    
                 }
             }
         } catch (err) {
@@ -122,7 +124,7 @@ export const useTrade = () => {
             if(pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
                 if(splitUrl.length === 3) {
-                    setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] })
+                    setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] });
                     await getTrade(splitUrl[1], splitUrl[2]);
                     updateSteps('Fulfill');
                 }

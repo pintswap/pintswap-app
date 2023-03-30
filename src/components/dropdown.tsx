@@ -45,7 +45,7 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title, s
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button 
-          className="inline-flex w-full justify-between items-center gap-x-1.5 rounded bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600" 
+          className={`inline-flex w-full ${!disabled ? 'justify-between' : 'justify-end'} items-center gap-x-1.5 rounded bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600`}
           disabled={disabled} 
         >
           {!disabled && <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />}
