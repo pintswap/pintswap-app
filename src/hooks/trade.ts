@@ -23,6 +23,16 @@ export const useTrade = () => {
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
 
+    const buildTradeObj = (): IOffer => {
+        if(!trade.getsToken || !trade.getsAmount || !trade.givesAmount || !trade.givesToken) return EMPTY_TRADE;
+        return {
+            givesToken: TOKENS.find((el) => el.symbol === trade.givesToken)?.address || '',
+            getsToken: TOKENS.find((el) => el.symbol === trade.getsToken)?.address || '',
+            givesAmount: ethers.utils.parseUnits(trade.givesAmount, getDecimals(trade.givesToken)).toHexString(),
+            getsAmount: ethers.utils.parseUnits(trade.getsAmount, getDecimals(trade.getsToken)).toHexString()
+        }
+    }
+
     useWebSocket(`${WS_URL}`, {
         onOpen() {
           console.log('WebSocket connection established.');
@@ -35,19 +45,13 @@ export const useTrade = () => {
     // Create trade
     const broadcastTrade = async () => {
         setLoading(true);
-        const tradeObj = {
-            givesToken: TOKENS.find((el) => el.symbol === trade.givesToken)?.address,
-            getsToken: TOKENS.find((el) => el.symbol === trade.getsToken)?.address,
-            givesAmount: ethers.utils.parseUnits(trade.givesAmount, getDecimals(trade.givesToken)).toHexString(),
-            getsAmount: ethers.utils.parseUnits(trade.getsAmount, getDecimals(trade.getsToken)).toHexString()
-        }
-        console.log("CREATE TRADE:", tradeObj)
+        console.log("CREATE TRADE:", buildTradeObj())
 
         if(pintswap && peer.id) {
             try {
                 // TODO: if ETH, convert to WETH first
-                const res = await pintswap.createTrade(`/${peer.id}`, tradeObj);
-                const orderHash = hashOffer(tradeObj);
+                pintswap.broadcastOffer(buildTradeObj());
+                const orderHash = hashOffer(buildTradeObj());
                 setOrder({ multiAddr: pintswap.peerId, orderHash });
                 addTrade(orderHash, trade);
                 updateSteps('Create', 'complete');
@@ -64,6 +68,7 @@ export const useTrade = () => {
         setLoading(true);
         if(pintswap) {
             try {
+                const res = await pintswap.createTrade(`/${peer.id}`, buildTradeObj());
                 console.log("FULFILL TRADE:", trade);
                 updateSteps('Fulfill', 'complete');
                 updateSteps('Complete', 'current');
@@ -73,7 +78,7 @@ export const useTrade = () => {
         }
         setLoading(false);
     }
-    setLoading
+    
     // TODO: connect to sdk
     const getTrade = async (multiAddr: string, orderHash: string) => {
         setLoading(true);

@@ -16,6 +16,7 @@ export const CreateView = () => {
                         setState={updateTrade}
                         type="givesToken"
                         search
+                        disabled={!!order.orderHash}
                     />
                     <Input
                         placeholder="Amount to Trade"
@@ -26,6 +27,7 @@ export const CreateView = () => {
                         type="number"
                         token={trade.givesToken || true}
                         maxClick={updateTrade}
+                        disabled={!!order.orderHash}
                     />
                     <Dropdown 
                         title="Out Details"
@@ -34,6 +36,7 @@ export const CreateView = () => {
                         setState={updateTrade}
                         type="getsToken"
                         search
+                        disabled={!!order.orderHash}
                     />
                     <Input
                         placeholder="Amount to Receive"
@@ -44,6 +47,7 @@ export const CreateView = () => {
                         type="number"
                         token={trade.getsToken || true}
                         maxClick={updateTrade}
+                        disabled={!!order.orderHash}
                     />
                 </div>
                 <Button
@@ -52,7 +56,7 @@ export const CreateView = () => {
                     loading={loading}
                     onClick={broadcastTrade}
                     disabled={
-                        !trade.givesToken || !trade.givesAmount || !trade.getsToken || !trade.getsAmount
+                        !trade.givesToken || !trade.givesAmount || !trade.getsToken || !trade.getsAmount || !!order.orderHash
                     }
                 >
                     Broadcast Trade
@@ -74,7 +78,7 @@ export const CreateView = () => {
                 className="flex flex-col justify-center items-center text-center"
             >
                 <p className="text-sm">Trade Link:</p>
-                <CopyClipboard value={`${BASE_URL}/${order.multiAddr}/${order.orderHash}`} icon lg />
+                <CopyClipboard value={`${BASE_URL}/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
             </Transition>
         </div>
     );
