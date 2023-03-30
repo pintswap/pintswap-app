@@ -25,6 +25,7 @@
         "@types/websocket": "^1.0.5",
         "ethers": "^5.7.2",
         "lodash.merge": "^4.6.2",
+        "peer-id": "^0.16.0",
         "pintswap-sdk": "git+https://github.com/pintswap/pintswap-sdk",
         "react": "^18.2.0",
         "react-copy-to-clipboard": "^5.1.0",
@@ -32,6 +33,7 @@
         "react-icons": "^4.8.0",
         "react-router-dom": "^6.9.0",
         "react-scripts": "5.0.1",
+        "react-use-websocket": "^4.3.1",
         "typescript": "^5.0.2",
         "wagmi": "^0.12.6",
         "web-vitals": "^2.1.4"

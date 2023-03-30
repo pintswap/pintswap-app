@@ -3,7 +3,6 @@ import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
 import { useGlobalContext } from '../stores/global';
-import { truncate } from '../utils/common';
 
 export const HomeView = () => {
     const navigate = useNavigate();
@@ -14,18 +13,17 @@ export const HomeView = () => {
             <div className="text-center self-center">
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswapLoading}>
-                    <CopyClipboard value={pintswap?.peerId.toHexString() || ethers.constants.AddressZero} isTruncated icon lg />
+                    <CopyClipboard value={pintswap?.peerId.toB58String() || ethers.constants.AddressZero} isTruncated icon lg />
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
                 <Table
-                    headers={['In Token', 'In Amount', 'Out Token', 'Out Amount']}
-                    onClick={console.log}
+                    headers={['Hash', 'Giving', 'Getting']}
+                    onClick={(order: any) => navigate(`/${pintswap?.peerId.toB58String()}/${order.hash}`)}
                     items={Array.from(openTrades, (entry) => ({ 
-                        inToken: entry[1].givesToken,
-                        inAmount: entry[1].givesAmount,
-                        outToken: entry[1].getsToken,
-                        outAmount: entry[1].getsAmount
+                        hash: entry[0],
+                        gives: `${entry[1].givesAmount} ${entry[1].givesToken}`,
+                        gets: `${entry[1].getsAmount} ${entry[1].getsToken}`,
                     }))}
                     emptyContent={
                         pintswapLoading ? (

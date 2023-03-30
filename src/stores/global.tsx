@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 import { Pintswap, IOffer } from 'pintswap-sdk';
+import { usePeerContext } from './peer';
 
 // Types
 export type IGlobalStoreProps = {
@@ -15,7 +16,7 @@ const GlobalContext = createContext<IGlobalStoreProps>({
     openTrades: new Map(),
     addTrade(hash, { givesToken, givesAmount, getsToken, getsAmount }) {},
     pintswap: undefined,
-    pintswapLoading: true
+    pintswapLoading: true,
 });
 
 // Wrapper
@@ -49,7 +50,9 @@ export function GlobalStore(props: { children: ReactNode }) {
     }, [signer]);
 
     // Get Active Trades
+    // TODO: fix to look at 'makers' trades
     useEffect(() => {
+        console.log(pintswap?.offers)
         if(pintswap) setOpenTrades(pintswap.offers)
     }, [pintswap])
 
@@ -59,7 +62,7 @@ export function GlobalStore(props: { children: ReactNode }) {
                 openTrades,
                 addTrade,
                 pintswap,
-                pintswapLoading
+                pintswapLoading,
             }}
         >
             {props.children}

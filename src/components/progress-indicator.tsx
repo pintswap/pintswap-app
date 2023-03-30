@@ -26,8 +26,7 @@ export const DEFAULT_PROGRESS: IOrderProgressProps[] = [
 	}
 ]
 
-export const ProgressIndicator = ({ steps }: IProgressIndicatorProps) => {
-  return (
+export const ProgressIndicator = ({ steps }: IProgressIndicatorProps) => (
 		<ol role="list" className="flex items-center">
 		{steps && steps.map((step, stepIdx) => (
 			<li key={step.name} className={classNames(stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : '', 'relative', 'flex flex-col items-center justify-center')}>
@@ -79,4 +78,3 @@ export const ProgressIndicator = ({ steps }: IProgressIndicatorProps) => {
 		))}
 	</ol>
   )
-}
