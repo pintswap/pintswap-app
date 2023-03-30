@@ -7,6 +7,7 @@ import { ethers } from 'ethers';
 import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 import useWebSocket from 'react-use-websocket';
+import { usePeerContext } from '../stores';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -16,15 +17,19 @@ type IOrderStateProps = {
 export const useTrade = () => {
     const { pathname } = useLocation();
     const { addTrade, pintswap } = useGlobalContext();
+    const { peer } = usePeerContext();
     const [loading, setLoading] = useState(false);
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
 
-    useWebSocket(WS_URL, {
-        onOpen: () => {
+    useWebSocket(`${WS_URL}`, {
+        onOpen() {
           console.log('WebSocket connection established.');
-        }
+        },
+        onMessage(event) {
+            console.log("event", event)
+        },
       });
     
     // Create trade
@@ -38,10 +43,10 @@ export const useTrade = () => {
         }
         console.log("CREATE TRADE:", tradeObj)
 
-        if(pintswap) {
+        if(pintswap && peer.id) {
             try {
                 // TODO: if ETH, convert to WETH first
-                const res = await pintswap.createTrade(pintswap.peerId, tradeObj);
+                const res = await pintswap.createTrade(`/${peer.id}`, tradeObj);
                 const orderHash = hashOffer(tradeObj);
                 setOrder({ multiAddr: pintswap.peerId, orderHash });
                 addTrade(orderHash, trade);
@@ -51,6 +56,7 @@ export const useTrade = () => {
                 console.error(err);
             }
         }
+        setLoading(false);
     };
 
     // Fulfill trade

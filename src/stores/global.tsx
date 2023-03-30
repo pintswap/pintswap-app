@@ -15,7 +15,7 @@ const GlobalContext = createContext<IGlobalStoreProps>({
     openTrades: new Map(),
     addTrade(hash, { givesToken, givesAmount, getsToken, getsAmount }) {},
     pintswap: undefined,
-    pintswapLoading: true
+    pintswapLoading: true,
 });
 
 // Wrapper
@@ -59,7 +59,7 @@ export function GlobalStore(props: { children: ReactNode }) {
                 openTrades,
                 addTrade,
                 pintswap,
-                pintswapLoading
+                pintswapLoading,
             }}
         >
             {props.children}

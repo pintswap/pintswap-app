@@ -2,19 +2,20 @@ import { ethers } from 'ethers';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
+import { usePeerContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
-import { truncate } from '../utils/common';
 
 export const HomeView = () => {
     const navigate = useNavigate();
     const { openTrades, pintswap, pintswapLoading } = useGlobalContext();
+    const { peer } = usePeerContext();
     
     return (
         <div className="flex flex-col gap-6">
             <div className="text-center self-center">
-                <p className="text-sm">Multi Address</p>
+                <p className="text-sm">Peer ID</p>
                 <Skeleton loading={pintswapLoading}>
-                    <CopyClipboard value={pintswap?.peerId.toHexString() || ethers.constants.AddressZero} isTruncated icon lg />
+                    <CopyClipboard value={peer.id || ethers.constants.AddressZero} isTruncated icon lg />
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
