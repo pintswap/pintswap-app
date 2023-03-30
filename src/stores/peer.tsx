@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import PeerId, { JSONPeerId } from 'peer-id';
+import { TESTING } from '../utils/common';
 
 // Types
 export type IPeerStoreProps = {
@@ -27,7 +28,7 @@ export function PeerStore(props: { children: ReactNode }) {
       const getPeer = async () => {
         const key = 'peerId';
         const localPeerId = localStorage.getItem(key);
-        if(localPeerId && localPeerId != null) {
+        if(localPeerId && localPeerId != null && !TESTING) {
           setPeer(JSON.parse(localPeerId))
         } else {
           const id = await PeerId.create();

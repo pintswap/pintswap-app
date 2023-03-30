@@ -78,7 +78,7 @@ export const CreateView = () => {
                 className="flex flex-col justify-center items-center text-center"
             >
                 <p className="text-sm">Trade Link:</p>
-                <CopyClipboard value={`${BASE_URL}/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
+                <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
             </Transition>
         </div>
     );
