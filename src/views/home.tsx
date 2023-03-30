@@ -8,14 +8,13 @@ import { useGlobalContext } from '../stores/global';
 export const HomeView = () => {
     const navigate = useNavigate();
     const { openTrades, pintswap, pintswapLoading } = useGlobalContext();
-    const { peer } = usePeerContext();
     
     return (
         <div className="flex flex-col gap-6">
             <div className="text-center self-center">
-                <p className="text-sm">Peer ID</p>
+                <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswapLoading}>
-                    <CopyClipboard value={peer.id || ethers.constants.AddressZero} isTruncated icon lg />
+                    <CopyClipboard value={pintswap?.peerId.toB58String() || ethers.constants.AddressZero} isTruncated icon lg />
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
