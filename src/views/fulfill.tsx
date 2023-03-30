@@ -22,6 +22,7 @@ export const FulfillView = () => {
                         placeholder="Amount to Trade"
                         value={trade.givesAmount}
                         type="number"
+                        disabled
                     />
                     <Dropdown 
                         title="Out Details"
@@ -35,6 +36,7 @@ export const FulfillView = () => {
                         placeholder="Amount to Receive"
                         value={trade.getsAmount}
                         type="number"
+                        disabled
                     />
                 </div>
                 <Button

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
 import { EMPTY_TRADE, getDecimals, WS_URL } from '../utils/common';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { DEFAULT_PROGRESS } from '../components/progress-indicator';
 import { ethers } from 'ethers';
 import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
-import useWebSocket from 'react-use-websocket';
 import { usePeerContext } from '../stores';
+import PeerId from 'peer-id';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -15,8 +15,9 @@ type IOrderStateProps = {
 }
 
 export const useTrade = () => {
+    const navigate = useNavigate();
     const { pathname } = useLocation();
-    const { addTrade, pintswap } = useGlobalContext();
+    const { addTrade, pintswap, openTrades } = useGlobalContext();
     const { peer } = usePeerContext();
     const [loading, setLoading] = useState(false);
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
@@ -32,15 +33,6 @@ export const useTrade = () => {
             getsAmount: ethers.utils.parseUnits(trade.getsAmount, getDecimals(trade.getsToken)).toHexString()
         }
     }
-
-    useWebSocket(`${WS_URL}`, {
-        onOpen() {
-          console.log('WebSocket connection established.');
-        },
-        onMessage(event) {
-            console.log("event", event)
-        },
-      });
     
     // Create trade
     const broadcastTrade = async () => {
@@ -68,8 +60,10 @@ export const useTrade = () => {
         setLoading(true);
         if(pintswap) {
             try {
-                const res = await pintswap.createTrade(`/${peer.id}`, buildTradeObj());
-                console.log("FULFILL TRADE:", trade);
+                const peeredUp = PeerId.createFromB58String(order.multiAddr);
+                const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
+                const res = await pintswap.createTrade(makerPeerId, buildTradeObj());
+                console.log("FULFILL TRADE:", res);
                 updateSteps('Fulfill', 'complete');
                 updateSteps('Complete', 'current');
             } catch (err) {
@@ -79,12 +73,15 @@ export const useTrade = () => {
         setLoading(false);
     }
     
-    // TODO: connect to sdk
     const getTrade = async (multiAddr: string, orderHash: string) => {
         setLoading(true);
         try {
-            console.log("multi address:", multiAddr)
-            console.log("order hash:", orderHash)
+            const trade = openTrades.get(orderHash);
+            if(trade) setTrade(trade);
+            else {
+                navigate('/');
+                alert('Trade not found.')
+            }
         } catch (err) {
             console.error(err);
         }
@@ -109,7 +106,7 @@ export const useTrade = () => {
         if(pathname.includes('/')) {
             const splitUrl = pathname.split('/');
             if(splitUrl.length === 3) {
-                setOrder({ orderHash: splitUrl[1], multiAddr: splitUrl[2] })
+                setOrder({ orderHash: splitUrl[2], multiAddr: splitUrl[1] })
                 getTrade(splitUrl[1], splitUrl[2])
             }
         }
