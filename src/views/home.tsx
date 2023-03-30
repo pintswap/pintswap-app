@@ -19,13 +19,12 @@ export const HomeView = () => {
             </div>
             <Card header="Open Trades" scroll>
                 <Table
-                    headers={['In Token', 'In Amount', 'Out Token', 'Out Amount']}
+                    headers={['Hash', 'Giving', 'Getting']}
                     onClick={console.log}
                     items={Array.from(openTrades, (entry) => ({ 
-                        inToken: entry[1].givesToken,
-                        inAmount: entry[1].givesAmount,
-                        outToken: entry[1].getsToken,
-                        outAmount: entry[1].getsAmount
+                        hash: entry[0],
+                        gives: `${entry[1].givesAmount} ${entry[1].givesToken}`,
+                        gets: `${entry[1].getsAmount} ${entry[1].getsToken}`,
                     }))}
                     emptyContent={
                         pintswapLoading ? (

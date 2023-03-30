@@ -1,4 +1,6 @@
 import { MouseEventHandler, ReactNode } from 'react';
+import { useWindowSize } from '../hooks/window-size';
+import { truncate } from '../utils/common';
 
 type ITableProps = {
     items: any[];
@@ -8,13 +10,14 @@ type ITableProps = {
 };
 
 export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) => {
+    const { width, breakpoint } = useWindowSize();
     if (items.length > 0) {
         return (
             <table className="table-fixed w-full">
                 <thead>
                     <tr className="border-b-2 border-neutral-800">
                         {headers.map((el: any, i) => (
-                            <th key={`table-header-${el}-${i}`} className={`px-2 pb-1 text-left`}>
+                            <th key={`table-header-${el}-${i}`} className={`px-2 pb-1 ${i === 0 ? 'text-left' : 'text-right'}`}>
                                 {el}
                             </th>
                         ))}
@@ -30,8 +33,8 @@ export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) =>
                             onClick={() => (onClick ? onClick(el) : {})}
                         >
                             {Object.values(el).map((el: any, i) => (
-                                <td key={`table-cell-${i}`} className={`p-2 text-left text-sm`}>
-                                    {el}
+                                <td key={`table-cell-${i}`} className={`p-2 ${i === 0 ? 'text-left' : 'text-right'} text-sm`}>
+                                    {el.includes('0x') ? truncate(el, width > breakpoint ? 5 : 3) : el}
                                 </td>
                             ))}
                         </tr>
