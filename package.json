@@ -24,6 +24,8 @@
         "@types/react-icons": "^3.0.0",
         "@types/websocket": "^1.0.5",
         "ethers": "^5.7.2",
+        "it-length-prefixed": "^8.0.4",
+        "it-pipe": "^2.0.5",
         "lodash.merge": "^4.6.2",
         "peer-id": "^0.16.0",
         "pintswap-sdk": "git+https://github.com/pintswap/pintswap-sdk",

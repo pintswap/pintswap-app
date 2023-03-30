@@ -8,6 +8,8 @@ import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 import { usePeerContext } from '../stores';
 import PeerId from 'peer-id';
+import * as lp from 'it-length-prefixed';
+import { pipe } from 'it-pipe';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -44,7 +46,7 @@ export const useTrade = () => {
                 // TODO: if ETH, convert to WETH first
                 pintswap.broadcastOffer(buildTradeObj());
                 const orderHash = hashOffer(buildTradeObj());
-                setOrder({ multiAddr: pintswap.peerId, orderHash });
+                setOrder({ multiAddr: pintswap.peerId.toB58String(), orderHash });
                 addTrade(orderHash, trade);
                 updateSteps('Fulfill');
             } catch (err) {
@@ -70,15 +72,25 @@ export const useTrade = () => {
         }
         setLoading(false);
     }
-    
+
     const getTrade = async (multiAddr: string, orderHash: string) => {
         setLoading(true);
         try {
             const trade = openTrades.get(orderHash);
+            // MAKER
             if(trade) setTrade(trade);
+            // TAKER
             else {
-                navigate('/');
-                alert('Trade not found.')
+                if(pintswap) {
+                    const peeredUp = PeerId.createFromB58String(multiAddr);
+                    const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
+                    console.log("makerPeerId", makerPeerId)
+                    const { stream } = await pintswap.dialProtocol(makerPeerId.id, '/pintswap/0.1.0/orders');
+                    // TODO: decode stream and set trade
+                    console.log("stream", stream)
+                    // const res = (await (pipe(stream.source, lp.decode()).next())).value;
+                    // console.log("stream res", stream)
+                }
             }
         } catch (err) {
             console.error(err);
@@ -106,15 +118,18 @@ export const useTrade = () => {
 
     // Get trade based on URL
     useEffect(() => {
-        if(pathname.includes('/')) {
-            const splitUrl = pathname.split('/');
-            if(splitUrl.length === 3) {
-                setOrder({ orderHash: splitUrl[2], multiAddr: splitUrl[1] })
-                getTrade(splitUrl[1], splitUrl[2]);
-                updateSteps('Fulfill');
+        const getTrades = async () => {
+            if(pathname.includes('/')) {
+                const splitUrl = pathname.split('/');
+                if(splitUrl.length === 3) {
+                    setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] })
+                    await getTrade(splitUrl[1], splitUrl[2]);
+                    updateSteps('Fulfill');
+                }
             }
         }
-    }, []);
+        getTrades()
+    }, [pintswap]);
 
     return {
         loading,

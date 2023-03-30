@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 import { Pintswap, IOffer } from 'pintswap-sdk';
-import { usePeerContext } from './peer';
+import PeerId from 'peer-id';
+import { useLocation } from 'react-router-dom';
 
 // Types
 export type IGlobalStoreProps = {
@@ -50,9 +51,7 @@ export function GlobalStore(props: { children: ReactNode }) {
     }, [signer]);
 
     // Get Active Trades
-    // TODO: fix to look at 'makers' trades
     useEffect(() => {
-        console.log(pintswap?.offers)
         if(pintswap) setOpenTrades(pintswap.offers)
     }, [pintswap])
 
