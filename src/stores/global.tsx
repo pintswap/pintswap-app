@@ -50,7 +50,9 @@ export function GlobalStore(props: { children: ReactNode }) {
     }, [signer]);
 
     // Get Active Trades
+    // TODO: fix to look at 'makers' trades
     useEffect(() => {
+        console.log(pintswap?.offers)
         if(pintswap) setOpenTrades(pintswap.offers)
     }, [pintswap])
 
