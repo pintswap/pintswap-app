@@ -2,7 +2,6 @@ import { ethers } from 'ethers';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
-import { usePeerContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
 
 export const HomeView = () => {
@@ -20,7 +19,7 @@ export const HomeView = () => {
             <Card header="Open Trades" scroll>
                 <Table
                     headers={['Hash', 'Giving', 'Getting']}
-                    onClick={console.log}
+                    onClick={(order: any) => navigate(`/${pintswap?.peerId.toB58String()}/${order.hash}`)}
                     items={Array.from(openTrades, (entry) => ({ 
                         hash: entry[0],
                         gives: `${entry[1].givesAmount} ${entry[1].givesToken}`,
