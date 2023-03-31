@@ -1,3 +1,5 @@
+import { ethers } from "ethers";
+
 export type ITokenProps = {
     asset: string;
     type: string;
@@ -12,7 +14,7 @@ export const TOKENS:ITokenProps[] = [
     {
         "asset": "c60_t0xA0Cf798816D4b9b9866b5330EEa46a18382f251e",
         "type": "ERC20",
-        "address": "eth",
+        "address": ethers.constants.AddressZero,
         "name": "ETH",
         "symbol": "ETH",
         "decimals": 18,
