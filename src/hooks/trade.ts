@@ -27,6 +27,7 @@ export const useTrade = () => {
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
+    const [loadingTrade, setLoadingTrade] = useState(false);
 
     const buildTradeObj = (): IOffer => {
         if(!trade.getsToken || !trade.getsAmount || !trade.givesAmount || !trade.givesToken) return EMPTY_TRADE;
@@ -76,7 +77,7 @@ export const useTrade = () => {
     }
 
     const getTrade = async (multiAddr: string, orderHash: string) => {
-        setLoading(true);
+        setLoadingTrade(true);
         try {
             const trade = openTrades.get(orderHash);
             // MAKER
@@ -105,7 +106,7 @@ export const useTrade = () => {
         } catch (err) {
             console.error(err);
         }
-        setLoading(false);
+        setLoadingTrade(false);
     }
 
     // Update order form
@@ -150,6 +151,7 @@ export const useTrade = () => {
         getTrade,
         order,
         steps,
-        updateSteps
+        updateSteps,
+        loadingTrade
     };
 };

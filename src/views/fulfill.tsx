@@ -6,7 +6,7 @@ import { BASE_URL } from "../utils/common";
 import { TOKENS } from "../utils/token-list";
 
 export const FulfillView = () => {
-    const { fulfillTrade, loading, trade, order, steps } = useTrade();
+    const { fulfillTrade, loading, trade, loadingTrade, steps } = useTrade();
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Fulfill Trade">
@@ -17,12 +17,14 @@ export const FulfillView = () => {
                         state={trade.givesToken}
                         type="givesToken"
                         disabled
+                        loading={loadingTrade}
                     />
                     <Input
                         placeholder="Amount to Trade"
                         value={trade.givesAmount}
                         type="number"
                         disabled
+                        loading={loadingTrade}
                     />
                     <Dropdown 
                         title="Out Details"
@@ -30,13 +32,14 @@ export const FulfillView = () => {
                         state={trade.getsToken}
                         type="getsToken"
                         disabled
-
+                        loading={loadingTrade}
                     />
                     <Input
                         placeholder="Amount to Receive"
                         value={trade.getsAmount}
                         type="number"
                         disabled
+                        loading={loadingTrade}
                     />
                 </div>
                 <Button
@@ -45,7 +48,7 @@ export const FulfillView = () => {
                     loading={loading}
                     onClick={fulfillTrade}
                     disabled={
-                        !trade.getsAmount || !trade.givesAmount || !trade.getsToken || !trade.givesToken
+                        !trade.getsAmount || !trade.givesAmount || !trade.getsToken || !trade.givesToken || loadingTrade
                     }
                 >
                     Fulfill Trade
