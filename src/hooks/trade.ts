@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
-import { EMPTY_TRADE, getDecimals, WS_URL } from '../utils/common';
+import { EMPTY_TRADE, getDecimals, TESTING, WS_URL } from '../utils/common';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { ethers } from 'ethers';
@@ -8,12 +8,14 @@ import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 import { usePeerContext } from '../stores';
 import PeerId from 'peer-id';
-import { pipe } from "it-pipe";
-import * as lp from "it-length-prefixed";
 
 type IOrderStateProps = {
     orderHash: string;
     multiAddr: string | any;
+}
+
+type IOrderbookProps = {
+    value: IOffer
 }
 
 export const useTrade = () => {
@@ -82,20 +84,19 @@ export const useTrade = () => {
             // TAKER
             else {
                 if(pintswap) {
-                    console.log(multiAddr);
                     const peeredUp = PeerId.createFromB58String(multiAddr);
-                    console.log(peeredUp);
-                    console.log('discovery', await (window as any).discoveryDeferred.promise);
-
+                    if(TESTING) console.log('discovery', await (window as any).discoveryDeferred.promise);
                     const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
-                    console.log("makerPeerId", makerPeerId)
-                    // const oBlock = await pintswap.getTradesByPeerId(`/${makerPeerId.id.toB58String()}`);
-                    const { stream } = await pintswap.dialProtocol(makerPeerId.id, '/pintswap/0.1.0/orders');
-                    // TODO: decode stream and set trade
-                    console.log("oBlock:", stream)
-                    const res = (await (await pipe(stream.source, lp.decode()).next())).value;
-                    console.log("stream res", res)
-                    
+                    if(TESTING) console.log("makerPeerId", makerPeerId)
+                    const { value }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
+                    const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === value.givesToken.toLowerCase());
+                    const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === value.getsToken.toLowerCase())
+                    if(value) setTrade({
+                        givesToken: foundGivesToken?.symbol || value.givesToken,
+                        givesAmount: ethers.utils.formatUnits(value.givesAmount, foundGivesToken?.decimals || 18),
+                        getsToken: foundGetsToken?.symbol || value.getsToken,
+                        getsAmount: ethers.utils.formatUnits(value.getsAmount, foundGetsToken?.decimals || 18)
+                    })
                 }
             }
         } catch (err) {

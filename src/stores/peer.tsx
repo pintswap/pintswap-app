@@ -1,10 +1,12 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
 import PeerId, { JSONPeerId } from 'peer-id';
 import { TESTING } from '../utils/common';
+import { useGlobalContext } from './global';
 
 // Types
 export type IPeerStoreProps = {
     peer: JSONPeerId;
+    peerLoading: boolean;
 };
 
 // Utils
@@ -16,13 +18,14 @@ const DEFAULT_PEER = {
 
 // Context
 const PeerContext = createContext<IPeerStoreProps>({
-  peer: DEFAULT_PEER
+  peer: DEFAULT_PEER,
+  peerLoading: true,
 });
 
 // Wrapper
 export function PeerStore(props: { children: ReactNode }) {
     const [peer, setPeer] = useState<JSONPeerId>(DEFAULT_PEER);
-    // const []
+    const [peerLoading, setPeerLoading] = useState(false);
 
     useEffect(() => {
       const getPeer = async () => {
@@ -42,7 +45,8 @@ export function PeerStore(props: { children: ReactNode }) {
     return (
         <PeerContext.Provider
             value={{
-                peer
+                peer,
+                peerLoading,
             }}
         >
             {props.children}
