@@ -15,7 +15,7 @@ type IOrderStateProps = {
 }
 
 type IOrderbookProps = {
-    value: IOffer
+    offers: IOffer[]
 }
 
 export const useTrade = () => {
@@ -88,15 +88,18 @@ export const useTrade = () => {
                     if(TESTING) console.log('discovery', await (window as any).discoveryDeferred.promise);
                     const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
                     if(TESTING) console.log("makerPeerId", makerPeerId)
-                    const { value }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
-                    const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === value.givesToken.toLowerCase());
-                    const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === value.getsToken.toLowerCase())
-                    if(value) setTrade({
-                        givesToken: foundGivesToken?.symbol || value.givesToken,
-                        givesAmount: ethers.utils.formatUnits(value.givesAmount, foundGivesToken?.decimals || 18),
-                        getsToken: foundGetsToken?.symbol || value.getsToken,
-                        getsAmount: ethers.utils.formatUnits(value.getsAmount, foundGetsToken?.decimals || 18)
-                    })
+                    const { offers }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
+                    if(TESTING) console.log("Offers:", offers)
+                    if(offers?.length > 0) {
+                        const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].givesToken.toLowerCase());
+                        const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].getsToken.toLowerCase())
+                        setTrade({
+                            givesToken: foundGivesToken?.symbol || offers[0].givesToken,
+                            givesAmount: ethers.utils.formatUnits(offers[0].givesAmount, foundGivesToken?.decimals || 18),
+                            getsToken: foundGetsToken?.symbol || offers[0].getsToken,
+                            getsAmount: ethers.utils.formatUnits(offers[0].getsAmount, foundGetsToken?.decimals || 18)
+                        })
+                    }
                 }
             }
         } catch (err) {
