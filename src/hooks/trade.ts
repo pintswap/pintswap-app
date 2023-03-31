@@ -15,7 +15,7 @@ type IOrderStateProps = {
 }
 
 type IOrderbookProps = {
-    value: IOffer
+    offers: IOffer[]
 }
 
 export const useTrade = () => {
@@ -27,6 +27,7 @@ export const useTrade = () => {
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
+    const [loadingTrade, setLoadingTrade] = useState(false);
 
     const buildTradeObj = (): IOffer => {
         if(!trade.getsToken || !trade.getsAmount || !trade.givesAmount || !trade.givesToken) return EMPTY_TRADE;
@@ -76,7 +77,7 @@ export const useTrade = () => {
     }
 
     const getTrade = async (multiAddr: string, orderHash: string) => {
-        setLoading(true);
+        setLoadingTrade(true);
         try {
             const trade = openTrades.get(orderHash);
             // MAKER
@@ -88,21 +89,24 @@ export const useTrade = () => {
                     if(TESTING) console.log('discovery', await (window as any).discoveryDeferred.promise);
                     const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
                     if(TESTING) console.log("makerPeerId", makerPeerId)
-                    const { value }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
-                    const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === value.givesToken.toLowerCase());
-                    const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === value.getsToken.toLowerCase())
-                    if(value) setTrade({
-                        givesToken: foundGivesToken?.symbol || value.givesToken,
-                        givesAmount: ethers.utils.formatUnits(value.givesAmount, foundGivesToken?.decimals || 18),
-                        getsToken: foundGetsToken?.symbol || value.getsToken,
-                        getsAmount: ethers.utils.formatUnits(value.getsAmount, foundGetsToken?.decimals || 18)
-                    })
+                    const { offers }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
+                    if(TESTING) console.log("Offers:", offers)
+                    if(offers?.length > 0) {
+                        const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].givesToken.toLowerCase());
+                        const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].getsToken.toLowerCase())
+                        setTrade({
+                            givesToken: foundGivesToken?.symbol || offers[0].givesToken,
+                            givesAmount: ethers.utils.formatUnits(offers[0].givesAmount, foundGivesToken?.decimals || 18),
+                            getsToken: foundGetsToken?.symbol || offers[0].getsToken,
+                            getsAmount: ethers.utils.formatUnits(offers[0].getsAmount, foundGetsToken?.decimals || 18)
+                        })
+                    }
                 }
             }
         } catch (err) {
             console.error(err);
         }
-        setLoading(false);
+        setLoadingTrade(false);
     }
 
     // Update order form
@@ -147,6 +151,7 @@ export const useTrade = () => {
         getTrade,
         order,
         steps,
-        updateSteps
+        updateSteps,
+        loadingTrade
     };
 };

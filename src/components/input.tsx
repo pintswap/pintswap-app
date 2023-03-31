@@ -56,7 +56,7 @@ export const Input = ({
         <div className="flex flex-col gap-1 justify-end">
             {title ? <p className="text-sm">{title}</p> : <div className="w-full lg:h-5" />}
             <input
-                className={`p-2 bg-neutral-600 rounded ${className} ${type === 'number' ? 'text-right' : ''}`}
+                className={`p-2 bg-neutral-600 rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}

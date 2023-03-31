@@ -6,7 +6,7 @@ import { BASE_URL } from "../utils/common";
 import { TOKENS } from "../utils/token-list";
 
 export const FulfillView = () => {
-    const { fulfillTrade, loading, trade, order, steps } = useTrade();
+    const { fulfillTrade, loading, trade, loadingTrade, steps, order } = useTrade();
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Fulfill Trade">
@@ -17,12 +17,14 @@ export const FulfillView = () => {
                         state={trade.givesToken}
                         type="givesToken"
                         disabled
+                        loading={loadingTrade}
                     />
                     <Input
                         placeholder="Amount to Trade"
                         value={trade.givesAmount}
                         type="number"
                         disabled
+                        loading={loadingTrade}
                     />
                     <Dropdown 
                         title="Out Details"
@@ -30,13 +32,14 @@ export const FulfillView = () => {
                         state={trade.getsToken}
                         type="getsToken"
                         disabled
-
+                        loading={loadingTrade}
                     />
                     <Input
                         placeholder="Amount to Receive"
                         value={trade.getsAmount}
                         type="number"
                         disabled
+                        loading={loadingTrade}
                     />
                 </div>
                 <Button
@@ -45,21 +48,30 @@ export const FulfillView = () => {
                     loading={loading}
                     onClick={fulfillTrade}
                     disabled={
-                        !trade.getsAmount || !trade.givesAmount || !trade.getsToken || !trade.givesToken
+                        !trade.getsAmount || !trade.givesAmount || !trade.getsToken || !trade.givesToken || loadingTrade || loading
                     }
                 >
                     Fulfill Trade
                 </Button>
-                
-                {/* <div>
-                    <p className="text-sm">Multi Address:</p>
-                    <CopyClipboard value={order.multiAddr} icon lg />
-                </div> */}
             </Card>
 
             <div className="mx-auto">
                 <ProgressIndicator steps={steps} />
             </div>
+
+            <Transition
+                    show={!!order.orderHash && !!order.multiAddr}
+                    enter="transition-opacity duration-75"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-150"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                    className="flex flex-col justify-center items-center text-center"
+                >
+                    <p className="text-sm">Trade Link:</p>
+                    <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
+                </Transition>
         </div>
     );
 };

@@ -499,11 +499,11 @@ html,
 .inset-0{
   inset: 0px;
 }
-.right-0{
-  right: 0px;
-}
 .left-0{
   left: 0px;
+}
+.right-0{
+  right: 0px;
 }
 .top-0{
   top: 0px;
@@ -513,9 +513,6 @@ html,
 }
 .z-50{
   z-index: 50;
-}
-.m-auto{
-  margin: auto;
 }
 .mx-auto{
   margin-left: auto;
@@ -572,11 +569,11 @@ html,
 .h-8{
   height: 2rem;
 }
-.h-screen{
-  height: 100vh;
-}
 .h-full{
   height: 100%;
+}
+.h-screen{
+  height: 100vh;
 }
 .max-h-60{
   max-height: 15rem;
@@ -627,14 +624,6 @@ html,
 }
 .translate-x-5{
   --tw-translate-x: 1.25rem;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-.translate-y-1\/2{
-  --tw-translate-y: 50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-.translate-y-full{
-  --tw-translate-y: 100%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 .rotate-90{
@@ -742,8 +731,8 @@ html,
 .justify-self-end{
   justify-self: end;
 }
-.overflow-hidden{
-  overflow: hidden;
+.overflow-scroll{
+  overflow: scroll;
 }
 .overflow-y-auto{
   overflow-y: auto;
