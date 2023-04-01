@@ -731,9 +731,6 @@ html,
 .justify-self-end{
   justify-self: end;
 }
-.overflow-scroll{
-  overflow: scroll;
-}
 .overflow-y-auto{
   overflow-y: auto;
 }

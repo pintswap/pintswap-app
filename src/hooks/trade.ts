@@ -31,9 +31,10 @@ export const useTrade = () => {
 
     const buildTradeObj = (): IOffer => {
         if(!trade.getsToken || !trade.getsAmount || !trade.givesAmount || !trade.givesToken) return EMPTY_TRADE;
+        console.log(trade);
         return {
-            givesToken: TOKENS.find((el) => el.symbol === trade.givesToken)?.address || '',
-            getsToken: TOKENS.find((el) => el.symbol === trade.getsToken)?.address || '',
+            givesToken: trade.givesToken, //TOKENS.find((el) => el.symbol === trade.givesToken)?.address || '',
+            getsToken: trade.getsToken, //TOKENS.find((el) => el.symbol === trade.getsToken)?.address || '',
             givesAmount: ethers.utils.parseUnits(trade.givesAmount, getDecimals(trade.givesToken)).toHexString(),
             getsAmount: ethers.utils.parseUnits(trade.getsAmount, getDecimals(trade.getsToken)).toHexString()
         }
@@ -64,9 +65,11 @@ export const useTrade = () => {
         setLoading(true);
         if(pintswap) {
             try {
+                console.log(await pintswap.signer.getChainId())
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
                 const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
-                const res = await pintswap.createTrade(makerPeerId, buildTradeObj());
+                console.log(buildTradeObj());
+                const res = await pintswap.createTrade(peeredUp, buildTradeObj());
                 console.log("FULFILL TRADE:", res);
                 updateSteps('Complete');
             } catch (err) {
