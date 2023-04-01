@@ -15,6 +15,7 @@ type IInputProps = {
     loading?: boolean;
     token?: string | any;
     maxClick?: (key: 'givesToken' | 'getsToken' | 'givesAmount' | 'getsAmount', val: string) => void;
+    noSpace?: boolean;
 };
 
 export const Input = ({
@@ -28,7 +29,8 @@ export const Input = ({
     disabled,
     loading,
     token,
-    maxClick
+    maxClick,
+    noSpace
 }: IInputProps) => {
     const { address } = useAccount();
     const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
@@ -54,7 +56,7 @@ export const Input = ({
 
     return (
         <div className="flex flex-col gap-1 justify-end">
-            {title ? <p className="text-sm">{title}</p> : <div className="w-full lg:h-5" />}
+            {title ? <p className="text-sm">{title}</p> : !noSpace && <div className="w-full lg:h-5" />}
             <input
                 className={`p-2 bg-neutral-600 rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}
                 value={value}

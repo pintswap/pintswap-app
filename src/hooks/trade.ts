@@ -31,9 +31,11 @@ export const useTrade = () => {
 
     const buildTradeObj = (): IOffer => {
         if(!trade.getsToken || !trade.getsAmount || !trade.givesAmount || !trade.givesToken) return EMPTY_TRADE;
+        const foundGivesToken = TOKENS.find((el) => el.symbol === trade.givesToken);
+        const foundGetsToken = TOKENS.find((el) => el.symbol === trade.getsToken);
         return {
-            givesToken: TOKENS.find((el) => el.symbol === trade.givesToken)?.address || '',
-            getsToken: TOKENS.find((el) => el.symbol === trade.getsToken)?.address || '',
+            givesToken: foundGivesToken ? foundGivesToken.address : trade.givesToken,
+            getsToken: foundGetsToken ? foundGetsToken.address : trade.getsToken,
             givesAmount: ethers.utils.parseUnits(trade.givesAmount, getDecimals(trade.givesToken)).toHexString(),
             getsAmount: ethers.utils.parseUnits(trade.getsAmount, getDecimals(trade.getsToken)).toHexString()
         }
