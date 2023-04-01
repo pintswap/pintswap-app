@@ -3,6 +3,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { MdChevronRight } from 'react-icons/md'
 import { alphaTokenSort, classNames } from '../utils/common'
 import { ITokenProps, TOKENS } from '../utils/token-list'
+import { MdOutlineAddCircleOutline } from 'react-icons/md'
 
 type IDropdownProps = {
   state: any;
@@ -14,9 +15,10 @@ type IDropdownProps = {
   search?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  customInput?: boolean;
 }
 
-export const Dropdown = ({ state, setState, options, placeholder, type, title, search, disabled, loading }: IDropdownProps) => {
+export const Dropdown = ({ state, setState, options, placeholder, type, title, search, disabled, loading, customInput }: IDropdownProps) => {
   const isToken = type === 'givesToken' || type === 'getsToken';
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] })
   
@@ -41,7 +43,15 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title, s
 
   return (
     <div className="flex flex-col gap-1 justify-end">
-    {title && <p className="text-sm">{title}</p>}
+      <div className="flex justify-between items-center text-sm">
+        {title && (<p>{title}</p>)}
+        {customInput && (
+          <button className="text-indigo-600 flex gap-1 items-center">
+            Custom Token
+            <MdOutlineAddCircleOutline size="16px" />
+          </button>
+        )}
+      </div>
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button 
