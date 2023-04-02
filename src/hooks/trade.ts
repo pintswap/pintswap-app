@@ -66,9 +66,11 @@ export const useTrade = () => {
         setLoading(true);
         if(pintswap) {
             try {
+                console.log(await pintswap.signer.getChainId())
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
                 const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
-                const res = await pintswap.createTrade(makerPeerId, buildTradeObj());
+                console.log(buildTradeObj());
+                const res = await pintswap.createTrade(peeredUp, buildTradeObj());
                 console.log("FULFILL TRADE:", res);
                 updateSteps('Complete');
             } catch (err) {

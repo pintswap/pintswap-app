@@ -20,7 +20,7 @@ import {
 import merge from 'lodash.merge';
 
 export const { chains, provider } = configureChains(
-    [TESTING ? localhost : mainnet],
+    [TESTING ? hardhat : mainnet],
     [publicProvider()],
 );
 
