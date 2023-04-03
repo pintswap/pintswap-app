@@ -89,21 +89,25 @@ export const useTrade = () => {
             // TAKER
             else {
                 if(pintswap) {
-                    const peeredUp = PeerId.createFromB58String(multiAddr);
-                    if(TESTING) console.log('discovery', await (window as any).discoveryDeferred.promise);
-                    const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
-                    if(TESTING) console.log("makerPeerId", makerPeerId)
-                    const { offers }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
-                    if(TESTING) console.log("Offers:", offers)
-                    if(offers?.length > 0) {
-                        const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].givesToken.toLowerCase());
-                        const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].getsToken.toLowerCase())
-                        setTrade({
-                            givesToken: foundGivesToken?.symbol || offers[0].givesToken,
-                            givesAmount: ethers.utils.formatUnits(offers[0].givesAmount, foundGivesToken?.decimals || 18),
-                            getsToken: foundGetsToken?.symbol || offers[0].getsToken,
-                            getsAmount: ethers.utils.formatUnits(offers[0].getsAmount, foundGetsToken?.decimals || 18)
-                        })
+                    try {
+                        const peeredUp = PeerId.createFromB58String(multiAddr);
+                        if(TESTING) console.log('discovery', await (window as any).discoveryDeferred.promise);
+                        const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
+                        if(TESTING) console.log("makerPeerId", makerPeerId)
+                        const { offers }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
+                        if(TESTING) console.log("Offers:", offers)
+                        if(offers?.length > 0) {
+                            const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].givesToken.toLowerCase());
+                            const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].getsToken.toLowerCase())
+                            setTrade({
+                                givesToken: foundGivesToken?.symbol || offers[0].givesToken,
+                                givesAmount: ethers.utils.formatUnits(offers[0].givesAmount, foundGivesToken?.decimals || 18),
+                                getsToken: foundGetsToken?.symbol || offers[0].getsToken,
+                                getsAmount: ethers.utils.formatUnits(offers[0].getsAmount, foundGetsToken?.decimals || 18)
+                            })
+                        }
+                    } catch (err) {
+                        console.error("Error in trade#getTrade:", err);
                     }
                 }
             }
