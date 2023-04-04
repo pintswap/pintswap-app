@@ -2,8 +2,6 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { useSigner } from 'wagmi';
 import { Pintswap, IOffer } from 'pintswap-sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
-import { useLocation } from 'react-router-dom';
-import { usePeerContext } from './peer';
 import { TESTING } from '../utils/common';
 
 // Types
@@ -57,7 +55,7 @@ export function GlobalStore(props: { children: ReactNode }) {
     const [pintswapLoading, setPintswapLoading] = useState(true);
     const { data: signer } = useSigner();
     const [peer, setPeer] = useState<JSONPeerId>(DEFAULT_PEER);
-    const [peerLoading, setPeerLoading] = useState(false); // TODO: fix
+    const [peerLoading, setPeerLoading] = useState(true); // TODO: fix
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
         setOpenTrades(openTrades.set(hash, tradeProps));
@@ -75,14 +73,16 @@ export function GlobalStore(props: { children: ReactNode }) {
                             if(TESTING) console.log('Node emitting', s);
                         });
                         await ps.startNode();
-                        const discovered = ps.on('peer:discovery', (peer: any) => {
+                        const discovered = ps.on('peer:discovery', async (peer: any) => {
                             if(TESTING) console.log('discovered peer', peer);
+                            setPeerLoading(false);
                             (window as any).discoveryDeferred.resolve(peer);
                         });
                         resolve(ps);
                     } catch (err) {
                         console.error('Initializing error:', err);
                         setPintswapLoading(false);
+                        setPeerLoading(false);
                     }
                 })().catch(reject);
             });

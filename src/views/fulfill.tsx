@@ -2,7 +2,7 @@ import { Transition } from "@headlessui/react";
 import { Button, Card, CopyClipboard, Input, ProgressIndicator } from "../components";
 import { Dropdown } from "../components/dropdown";
 import { useTrade } from "../hooks/trade";
-import { BASE_URL } from "../utils/common";
+import { BASE_URL, truncate } from "../utils/common";
 import { TOKENS } from "../utils/token-list";
 
 export const FulfillView = () => {
@@ -14,7 +14,7 @@ export const FulfillView = () => {
                     <Dropdown 
                         title="In Details"
                         placeholder="Please select a token..."
-                        state={trade.givesToken}
+                        state={trade.givesToken.startsWith('0x') ? truncate(trade.givesToken) : trade.givesToken}
                         type="givesToken"
                         disabled
                         loading={loadingTrade}
@@ -29,7 +29,7 @@ export const FulfillView = () => {
                     <Dropdown 
                         title="Out Details"
                         placeholder="Please select a token..."
-                        state={trade.getsToken}
+                        state={trade.getsToken.startsWith('0x') ? truncate(trade.getsToken) : trade.getsToken}
                         type="getsToken"
                         disabled
                         loading={loadingTrade}
@@ -44,7 +44,7 @@ export const FulfillView = () => {
                 </div>
                 <Button
                     className="mt-6 w-full"
-                    loadingText="Broadcasting"
+                    loadingText="Fulfilling"
                     loading={loading}
                     onClick={fulfillTrade}
                     disabled={

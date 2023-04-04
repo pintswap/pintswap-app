@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import { Base } from './base';
-import { useGlobalContext, usePeerContext } from './stores';
+import { useGlobalContext } from './stores';
 import { CreateView, FulfillView, HomeView } from './views';
 
 function App() {

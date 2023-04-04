@@ -23,7 +23,7 @@ export const Base = ({ children, loading }: IBaseProps) => {
                 {loading && (
                     <div className="absolute z-50 h-screen w-screen top-0 left-0 bg-neutral-900">
                         <div className="flex flex-col justify-center items-center h-full gap-3">
-                            <img src="/logo/logo-only.png" alt="PintSwap Logo" height="100" width="100" />
+                            <img src="/logo/ps-logo.png" alt="PintSwap Logo" height="100" width="100" />
                             <span>Connecting to peer</span>
                             <ImSpinner9 className="animate-spin" size="24px" />
                         </div>

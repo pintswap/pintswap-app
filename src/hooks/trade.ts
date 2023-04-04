@@ -6,7 +6,6 @@ import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-in
 import { ethers } from 'ethers';
 import { IOffer, hashOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
-import { usePeerContext } from '../stores';
 import PeerId from 'peer-id';
 
 type IOrderStateProps = {
@@ -21,8 +20,7 @@ type IOrderbookProps = {
 export const useTrade = () => {
     const navigate = useNavigate();
     const { pathname } = useLocation();
-    const { addTrade, pintswap, openTrades } = useGlobalContext();
-    const { peer } = usePeerContext();
+    const { addTrade, pintswap, openTrades, peer } = useGlobalContext();
     const [loading, setLoading] = useState(false);
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
@@ -66,10 +64,9 @@ export const useTrade = () => {
         setLoading(true);
         if(pintswap) {
             try {
-                console.log(await pintswap.signer.getChainId())
+                if(TESTING) console.log(await pintswap.signer.getChainId())
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
-                const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
-                console.log(buildTradeObj());
+                if(TESTING) console.log(buildTradeObj());
                 const res = await pintswap.createTrade(peeredUp, buildTradeObj());
                 console.log("FULFILL TRADE:", res);
                 updateSteps('Complete');
@@ -107,7 +104,7 @@ export const useTrade = () => {
                             })
                         }
                     } catch (err) {
-                        console.error("Error in trade#getTrade:", err);
+                        console.error("Error in trade.ts#getTrade:", err);
                     }
                 }
             }
@@ -142,8 +139,8 @@ export const useTrade = () => {
                 const splitUrl = pathname.split('/');
                 if(splitUrl.length === 3) {
                     setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] });
-                    await getTrade(splitUrl[1], splitUrl[2]);
                     updateSteps('Fulfill');
+                    await getTrade(splitUrl[1], splitUrl[2]);
                 }
             }
         }
