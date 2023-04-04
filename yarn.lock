@@ -11849,7 +11849,7 @@ pino@7.11.0:
 
 "pintswap-sdk@https://github.com/pintswap/pintswap-sdk":
   version "0.1.1"
-  resolved "https://github.com/pintswap/pintswap-sdk#05923b79ca02f4dd11c29cf16ef5d1fde0acc627"
+  resolved "https://github.com/pintswap/pintswap-sdk#eac2dc204911050ba39c9be6e06fae70fda17fe0"
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
