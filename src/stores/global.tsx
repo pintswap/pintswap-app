@@ -55,7 +55,7 @@ export function GlobalStore(props: { children: ReactNode }) {
     const [pintswapLoading, setPintswapLoading] = useState(true);
     const { data: signer } = useSigner();
     const [peer, setPeer] = useState<JSONPeerId>(DEFAULT_PEER);
-    const [peerLoading, setPeerLoading] = useState(true); // TODO: fix
+    const [peerLoading, setPeerLoading] = useState(true); 
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
         setOpenTrades(openTrades.set(hash, tradeProps));
