@@ -49,7 +49,7 @@ export const useTrade = () => {
                 pintswap.module.broadcastOffer(buildTradeObj());
                 const orderHash = hashOffer(buildTradeObj());
                 setOrder({ multiAddr: pintswap.module.peerId.toB58String(), orderHash });
-                addTrade(orderHash, trade);
+                addTrade(orderHash, buildTradeObj());
                 updateSteps('Fulfill');
             } catch (err) {
                 console.error(err);
@@ -92,9 +92,10 @@ export const useTrade = () => {
                     try {
                         const peeredUp = PeerId.createFromB58String(multiAddr);
                         console.log('discovery', await (window as any).discoveryDeferred.promise);
-                        const makerPeerId = await pintswap.module?.peerRouting.findPeer(peeredUp);
-                        const { offers }: IOrderbookProps = await pintswap.module.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
-                        if(TESTING) console.log("Offers:", offers)
+//                        const makerPeerId = await pintswap.module?.peerRouting.findPeer(peeredUp);
+//			console.log('got makerPeerId', makerPeerId);
+                        const { offers }: IOrderbookProps = await pintswap.module.getTradesByPeerId(multiAddr);
+                        console.log("Offers:", offers)
                         if(offers?.length > 0) {
                             const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].givesToken.toLowerCase());
                             const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].getsToken.toLowerCase())

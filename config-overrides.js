@@ -2,13 +2,14 @@ const webpack = require("webpack");
 
 module.exports = {
     webpack: function (config, env) {
-      config.plugins = [
-        ...config.plugins,
-        new webpack.ProvidePlugin({
-          process: "process/browser.js",
-          Buffer: ["buffer", "Buffer"],
-        }),
-      ];
+	    /*
+      config.plugins.push(new webpack.ProvidePlugin({
+        process: "process/browser",
+      }));
+      */
+      config.plugins.push(new webpack.ProvidePlugin({
+        Buffer: ["buffer", "Buffer"],
+      }));
       config.resolve = {
         extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
         fallback: {
@@ -19,7 +20,7 @@ module.exports = {
             https: require.resolve("https-browserify"),
             os: require.resolve("os-browserify/browser"),
             zlib: require.resolve("browserify-zlib"),
-            url: require.resolve("url"),
+            url: require.resolve("url/"),
             buffer: require.resolve("buffer"),
             ws: require.resolve('ws-browserify'),
             path: require.resolve('path-browserify'),
