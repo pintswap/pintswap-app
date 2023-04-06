@@ -5,7 +5,12 @@ import { useTrade } from "../hooks/trade";
 import { BASE_URL, truncate } from "../utils/common";
 
 export const FulfillView = () => {
-    const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
+    const { fulfillTrade, loading, trade, loadingTrade, steps, order, error, updateSteps } = useTrade();
+
+    const onComplete = () => {
+        console.log("Swap Successful")
+    }
+
     return (
         <>
         {error && <FullPageStatus type="error" />}
@@ -74,6 +79,18 @@ export const FulfillView = () => {
                     <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
                 </Transition>
         </div>
+        <Transition
+            show={steps[2].status === 'current'}
+            enter="transition-opacity duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            className="flex flex-col justify-center items-center text-center"
+        >
+            <FullPageStatus type="success" fx={onComplete} />
+        </Transition>
         </>
     );
 };

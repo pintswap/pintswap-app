@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
-import { EMPTY_TRADE, getDecimals, TESTING, WS_URL } from '../utils/common';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { EMPTY_TRADE, getDecimals, TESTING } from '../utils/common';
+import { useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { ethers } from 'ethers';
 import { IOffer, hashOffer } from 'pintswap-sdk';
@@ -18,7 +18,6 @@ type IOrderbookProps = {
 }
 
 export const useTrade = () => {
-    const navigate = useNavigate();
     const { pathname } = useLocation();
     const { addTrade, pintswap, openTrades, peer } = useGlobalContext();
     const [loading, setLoading] = useState(false);
