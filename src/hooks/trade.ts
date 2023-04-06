@@ -44,9 +44,8 @@ export const useTrade = () => {
         e.preventDefault();
         setLoading(true);
         if(TESTING) console.log("CREATE TRADE:", buildTradeObj())
-        if(pintswap.module && peer.module.id) {
+        if(pintswap.module && peer.module?.id) {
             try {
-                // TODO: if ETH, convert to WETH first
                 pintswap.module.broadcastOffer(buildTradeObj());
                 const orderHash = hashOffer(buildTradeObj());
                 setOrder({ multiAddr: pintswap.module.peerId.toB58String(), orderHash });
