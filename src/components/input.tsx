@@ -66,14 +66,14 @@ export const Input = ({
                 type={type}
                 disabled={disabled}
             />
-            {token && maxClick && (
+            {/* {token && maxClick && (
                 <button className="text-xs text-indigo-600 text-right flex gap-1 justify-end" onClick={() => maxClick(tradeObjKey, balance.formatted)}>
                     MAX: 
                     <Skeleton loading={balance.loading}>
                         {balance.formatted} {balance.symbol}
                     </Skeleton>
                 </button>
-            )}
+            )} */}
         </div>
     );
 };
