@@ -50,7 +50,7 @@ export const Base = ({ children, loading }: IBaseProps) => {
                         <span className="text-pink-500">Pint</span>
                         <span className="text-sky-400">Swap</span>
                     </h1>
-                    <h3>The most secure peer-to-peer token swap</h3>
+                    <h3 className="text-center">The most secure peer-to-peer token swap</h3>
                 </div>
                 <Wallet />
             </div>

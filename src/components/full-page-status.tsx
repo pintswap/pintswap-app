@@ -22,7 +22,7 @@ export const FullPageStatus = ({ type ='loading', message, fx }: IFullPageStatus
 
   return (
     <div className="absolute z-50 h-screen w-screen top-0 left-0 bg-neutral-900">
-        <div className="flex flex-col justify-center items-center h-full gap-3">
+        <div className="flex flex-col justify-center items-center h-full gap-3 text-center">
             <img src="/logo/ps-logo.png" alt="PintSwap Logo" height="100" width="100" />
             {type === 'loading' && (
               <>
