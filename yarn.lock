@@ -11861,9 +11861,9 @@ pino@7.11.0:
     sonic-boom "^2.2.1"
     thread-stream "^0.15.1"
 
-"pintswap-sdk@git+https://github.com/pintswap/pintswap-sdk":
+"pintswap-sdk@https://github.com/pintswap/pintswap-sdk":
   version "0.1.1"
-  resolved "git+https://github.com/pintswap/pintswap-sdk#acb386b67eb750f3c0e04711ab93a8c7e4aae0af"
+  resolved "https://github.com/pintswap/pintswap-sdk#acb386b67eb750f3c0e04711ab93a8c7e4aae0af"
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
