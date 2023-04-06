@@ -7,9 +7,9 @@ import { setFallbackWETH } from "pintswap-sdk";
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
 function App() {
-    const { peerLoading } = useGlobalContext();
+    const { peer } = useGlobalContext();
     return (
-        <Base loading={peerLoading}>
+        <Base loading={peer.loading}>
             <Routes>
                 <Route path="/" element={<HomeView />} />
                 <Route path="/create" element={<CreateView />} />
