@@ -91,9 +91,8 @@ export const useTrade = () => {
                 if(pintswap.module) {
                     try {
                         const peeredUp = PeerId.createFromB58String(multiAddr);
-                        if(TESTING) console.log('discovery', await (window as any).discoveryDeferred.promise);
+                        console.log('discovery', await (window as any).discoveryDeferred.promise);
                         const makerPeerId = await pintswap.module?.peerRouting.findPeer(peeredUp);
-                        if(TESTING) console.log("makerPeerId", makerPeerId)
                         const { offers }: IOrderbookProps = await pintswap.module.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
                         if(TESTING) console.log("Offers:", offers)
                         if(offers?.length > 0) {
