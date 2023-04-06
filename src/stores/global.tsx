@@ -18,6 +18,8 @@ export type IGlobalStoreProps = {
         loading: boolean;
         error: boolean;
     }
+    setPeer?: any;
+    setPintswap?: any;
 };
 
 export type IPintswapProps = {
@@ -51,6 +53,18 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 // Peer
 (window as any).discoveryDeferred = defer();
 
+// Utils
+const onFulfillPage = () => {
+    if(window.location.hash.includes('/')) {
+        const splitUrl = window.location.hash.split('/');
+        if(splitUrl.length >= 2) {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const [openTrades, setOpenTrades] = useState<Map<string, IOffer>>(new Map());
@@ -62,7 +76,7 @@ export function GlobalStore(props: { children: ReactNode }) {
     });
     const [peer, setPeer] = useState<IPeerProps>({
         module: EMPTY_PEER,
-        loading: true,
+        loading: onFulfillPage() ? true : false,
         error: false
     });
 
@@ -84,7 +98,6 @@ export function GlobalStore(props: { children: ReactNode }) {
                         await ps.startNode();
                         const discovered = ps.on('peer:discovery', async (peer: any) => {
                             if(TESTING) console.log('discovered peer', peer);
-                            setPeer({...peer, loading: false});
                             (window as any).discoveryDeferred.resolve(peer);
                         });
                         resolve(ps);
@@ -129,6 +142,8 @@ export function GlobalStore(props: { children: ReactNode }) {
                 addTrade,
                 pintswap,
                 peer,
+                setPeer,
+                setPintswap
             }}
         >
             {props.children}

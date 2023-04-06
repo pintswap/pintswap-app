@@ -32,27 +32,27 @@ export const Input = ({
     maxClick,
     noSpace
 }: IInputProps) => {
-    const { address } = useAccount();
-    const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
-    const tradeObjKey = placeholder?.includes('Receive') ? 'getsAmount' : 'givesAmount';
+    // const { address } = useAccount();
+    // const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
+    // const tradeObjKey = placeholder?.includes('Receive') ? 'getsAmount' : 'givesAmount';
 
-    useEffect(() => {
-        const getBalance = async () => {
-            setBalance({ ...balance, loading: true });
-            try {
-                if(address) {
-                    const params = token === 'eth' ? { address } : { address, token }
-                    const { formatted, symbol } = await fetchBalance(params)
-                    console.log(symbol, formatted, token)
-                    if(formatted) setBalance({ loading: false, formatted, symbol });
-                }
-            } catch (err) {
-                setBalance({ ...balance, loading: false })
-                console.error(`Error fetching balance:`, err)
-            }
-        }
-        if(typeof token === 'string') getBalance()
-    }, [token])
+    // useEffect(() => {
+    //     const getBalance = async () => {
+    //         setBalance({ ...balance, loading: true });
+    //         try {
+    //             if(address) {
+    //                 const params = token === 'eth' ? { address } : { address, token }
+    //                 const { formatted, symbol } = await fetchBalance(params)
+    //                 console.log(symbol, formatted, token)
+    //                 if(formatted) setBalance({ loading: false, formatted, symbol });
+    //             }
+    //         } catch (err) {
+    //             setBalance({ ...balance, loading: false })
+    //             console.error(`Error fetching balance:`, err)
+    //         }
+    //     }
+    //     if(typeof token === 'string') getBalance()
+    // }, [token])
 
     return (
         <div className="flex flex-col gap-1 justify-end">
