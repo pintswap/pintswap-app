@@ -44,12 +44,12 @@ export const useTrade = () => {
         setLoading(true);
         console.log("CREATE TRADE:", buildTradeObj())
 
-        if(pintswap && peer.id) {
+        if(pintswap.module && peer.module.id) {
             try {
                 // TODO: if ETH, convert to WETH first
-                pintswap.broadcastOffer(buildTradeObj());
+                pintswap.module.broadcastOffer(buildTradeObj());
                 const orderHash = hashOffer(buildTradeObj());
-                setOrder({ multiAddr: pintswap.peerId.toB58String(), orderHash });
+                setOrder({ multiAddr: pintswap.module.peerId.toB58String(), orderHash });
                 addTrade(orderHash, trade);
                 updateSteps('Fulfill');
             } catch (err) {
@@ -62,12 +62,12 @@ export const useTrade = () => {
     // Fulfill trade
     const fulfillTrade = async () => {
         setLoading(true);
-        if(pintswap) {
+        if(pintswap.module) {
             try {
-                if(TESTING) console.log(await pintswap.signer.getChainId())
+                if(TESTING) console.log(await pintswap.module.signer.getChainId())
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
                 if(TESTING) console.log(buildTradeObj());
-                const res = await pintswap.createTrade(peeredUp, buildTradeObj());
+                const res = await pintswap.module.createTrade(peeredUp, buildTradeObj());
                 console.log("FULFILL TRADE:", res);
                 updateSteps('Complete');
             } catch (err) {
@@ -85,13 +85,13 @@ export const useTrade = () => {
             if(trade) setTrade(trade);
             // TAKER
             else {
-                if(pintswap) {
+                if(pintswap.module) {
                     try {
                         const peeredUp = PeerId.createFromB58String(multiAddr);
                         if(TESTING) console.log('discovery', await (window as any).discoveryDeferred.promise);
-                        const makerPeerId = await pintswap.peerRouting.findPeer(peeredUp);
+                        const makerPeerId = await pintswap.module?.peerRouting.findPeer(peeredUp);
                         if(TESTING) console.log("makerPeerId", makerPeerId)
-                        const { offers }: IOrderbookProps = await pintswap.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
+                        const { offers }: IOrderbookProps = await pintswap.module.getTradesByPeerId(`${makerPeerId.id.toB58String()}`);
                         if(TESTING) console.log("Offers:", offers)
                         if(offers?.length > 0) {
                             const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].givesToken.toLowerCase());

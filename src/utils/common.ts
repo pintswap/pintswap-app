@@ -1,15 +1,12 @@
-import { BigNumberish, Contract, ethers, Signer } from "ethers";
+import { JSONPeerId } from "peer-id";
 import { IOffer } from "pintswap-sdk";
 import { ITokenProps, TOKENS } from "./token-list";
-const WETH9 = require('./WETH9.json');
-import { WETH_ADDRESSES } from "pintswap-sdk";
 
 // GENERAL
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING = NETWORK === 'LOCALHOST' ? true : false;
 export const BASE_URL = TESTING ? 'http://localhost:3000' : 'pintswap.eth.link';
 export const WS_URL = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
-export type IAvailableChainIds = '42161' | '137' | '10' | '43112';
 
 // DEFAULT VALS
 export const EMPTY_TRADE: IOffer = {
@@ -18,6 +15,12 @@ export const EMPTY_TRADE: IOffer = {
     givesToken: '',
     givesAmount: '',
 };
+
+export const EMPTY_PEER: JSONPeerId = {
+    id: '',
+    privKey: '',
+    pubKey: ''
+}
 
 // CSS
 export function classNames(...classes: string[]) {
@@ -46,13 +49,16 @@ export function truncate(s: string, amount?: number) {
     return `${s.slice(0, amount ? amount : 4)}...${s.slice(amount ? (amount * -1) : -4)}`;
 }
 
-export async function wrapEther(signer: Signer, chainId: IAvailableChainIds, amount: BigNumberish) {
-    const WETH = new Contract(WETH_ADDRESSES[chainId], WETH9.abi, signer);
-    const tx = await WETH.deposit({
-        to: WETH9.address,
-        value: amount,
-    });
-    if(TESTING) console.log("WETH Deposit TX:", tx);
-    const tx2 = await WETH.approve(await signer.getAddress(), amount);
-    if(TESTING) console.log("WETH Approve TX:", tx2);
-}
+export const defer = () => {
+    let resolve,
+        reject,
+        promise = new Promise((_resolve, _reject) => {
+            resolve = _resolve;
+            reject = _reject;
+        });
+    return {
+        resolve,
+        reject,
+        promise,
+    };
+};

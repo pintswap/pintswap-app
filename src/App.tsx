@@ -4,9 +4,9 @@ import { useGlobalContext } from './stores';
 import { CreateView, FulfillView, HomeView } from './views';
 
 function App() {
-    const { peerLoading } = useGlobalContext();
+    const { peer } = useGlobalContext();
     return (
-        <Base loading={peerLoading}>
+        <Base loading={peer.loading}>
             <Routes>
                 <Route path="/" element={<HomeView />} />
                 <Route path="/create" element={<CreateView />} />
