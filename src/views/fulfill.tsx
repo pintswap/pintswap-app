@@ -1,15 +1,22 @@
 import { Transition } from "@headlessui/react";
+import { useEffect } from "react";
 import { Button, Card, CopyClipboard, FullPageStatus, Input, ProgressIndicator } from "../components";
 import { Dropdown } from "../components/dropdown";
 import { useTrade } from "../hooks/trade";
+import { useGlobalContext } from "../stores";
 import { BASE_URL, truncate } from "../utils/common";
 
 export const FulfillView = () => {
-    const { fulfillTrade, loading, trade, loadingTrade, steps, order, error, updateSteps } = useTrade();
+    const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
+    const { peer, setPeer } = useGlobalContext();
 
     const onComplete = () => {
         console.log("Swap Successful")
     }
+
+    useEffect(() => {
+        if((peer.module?.id || (peer.module as any)?._id)) setPeer({ ...peer, loading: false });
+    }, [peer.module])
 
     return (
         <>

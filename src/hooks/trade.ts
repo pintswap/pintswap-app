@@ -44,7 +44,7 @@ export const useTrade = () => {
         e.preventDefault();
         setLoading(true);
         if(TESTING) console.log("CREATE TRADE:", buildTradeObj())
-        if(pintswap.module && peer.module?.id) {
+        if(pintswap.module) {
             try {
                 pintswap.module.broadcastOffer(buildTradeObj());
                 const orderHash = hashOffer(buildTradeObj());
@@ -147,8 +147,8 @@ export const useTrade = () => {
                 }
             }
         }
-        if(pintswap.module) getTrades()
-    }, [pintswap]);
+        if(pintswap.module && (peer.module?.id || (peer.module as any)?._id)) getTrades();
+    }, [pintswap.module, peer.module]);
 
     return {
         loading,
