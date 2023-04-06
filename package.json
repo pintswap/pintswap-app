@@ -26,7 +26,7 @@
         "ethers": "^5.7.2",
         "lodash.merge": "^4.6.2",
         "peer-id": "^0.16.0",
-        "pintswap-sdk": "git+https://github.com/pintswap/pintswap-sdk",
+        "pintswap-sdk": "https://github.com/pintswap/pintswap-sdk",
         "react": "^18.2.0",
         "react-copy-to-clipboard": "^5.1.0",
         "react-dom": "^18.2.0",
