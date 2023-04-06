@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
 import { EMPTY_TRADE, getDecimals, TESTING, WS_URL } from '../utils/common';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -26,6 +26,7 @@ export const useTrade = () => {
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
     const [loadingTrade, setLoadingTrade] = useState(false);
+    const [error, setError] = useState(false);
 
     const buildTradeObj = (): IOffer => {
         if(!trade.getsToken || !trade.getsAmount || !trade.givesAmount || !trade.givesToken) return EMPTY_TRADE;
@@ -40,10 +41,10 @@ export const useTrade = () => {
     }
     
     // Create trade
-    const broadcastTrade = async () => {
+    const broadcastTrade = async (e: React.SyntheticEvent) => {
+        e.preventDefault();
         setLoading(true);
-        console.log("CREATE TRADE:", buildTradeObj())
-
+        if(TESTING) console.log("CREATE TRADE:", buildTradeObj())
         if(pintswap.module && peer.module.id) {
             try {
                 // TODO: if ETH, convert to WETH first
@@ -60,7 +61,8 @@ export const useTrade = () => {
     };
 
     // Fulfill trade
-    const fulfillTrade = async () => {
+    const fulfillTrade = async (e: React.SyntheticEvent) => {
+        e.preventDefault();
         setLoading(true);
         if(pintswap.module) {
             try {
@@ -68,10 +70,13 @@ export const useTrade = () => {
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
                 if(TESTING) console.log(buildTradeObj());
                 const res = await pintswap.module.createTrade(peeredUp, buildTradeObj());
-                console.log("FULFILL TRADE:", res);
-                updateSteps('Complete');
+                if(TESTING) console.log("FULFILL TRADE:", res);
+                if(res) updateSteps('Complete');
+                else setError(true);
             } catch (err) {
                 console.error(err);
+                setLoading(false);
+                setError(true)
             }
         }
         setLoading(false);
@@ -105,6 +110,7 @@ export const useTrade = () => {
                         }
                     } catch (err) {
                         console.error("Error in trade.ts#getTrade:", err);
+                        setError(true);
                     }
                 }
             }
@@ -139,12 +145,12 @@ export const useTrade = () => {
                 const splitUrl = pathname.split('/');
                 if(splitUrl.length === 3) {
                     setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] });
-                    updateSteps('Fulfill');
+                    if(steps[1].status !== 'current') updateSteps('Fulfill');
                     await getTrade(splitUrl[1], splitUrl[2]);
                 }
             }
         }
-        getTrades()
+        if(pintswap.module) getTrades()
     }, [pintswap]);
 
     return {
@@ -157,6 +163,7 @@ export const useTrade = () => {
         order,
         steps,
         updateSteps,
-        loadingTrade
+        loadingTrade,
+        error
     };
 };

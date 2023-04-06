@@ -1,13 +1,14 @@
 import { Transition } from "@headlessui/react";
-import { Button, Card, CopyClipboard, Input, ProgressIndicator } from "../components";
+import { Button, Card, CopyClipboard, FullPageStatus, Input, ProgressIndicator } from "../components";
 import { Dropdown } from "../components/dropdown";
 import { useTrade } from "../hooks/trade";
 import { BASE_URL, truncate } from "../utils/common";
-import { TOKENS } from "../utils/token-list";
 
 export const FulfillView = () => {
-    const { fulfillTrade, loading, trade, loadingTrade, steps, order } = useTrade();
+    const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
     return (
+        <>
+        {error && <FullPageStatus type="error" />}
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Fulfill Trade">
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
@@ -45,7 +46,7 @@ export const FulfillView = () => {
                 <Button
                     className="mt-6 w-full"
                     loadingText="Fulfilling"
-                    loading={loading}
+                    loading={loading && !error}
                     onClick={fulfillTrade}
                     disabled={
                         !trade.getsAmount || !trade.givesAmount || !trade.getsToken || !trade.givesToken || loadingTrade || loading
@@ -73,5 +74,6 @@ export const FulfillView = () => {
                     <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
                 </Transition>
         </div>
+        </>
     );
 };
