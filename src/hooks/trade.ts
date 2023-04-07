@@ -62,11 +62,11 @@ export const useTrade = () => {
         setLoading(true);
         if(pintswap.module) {
             try {
-                if(TESTING) console.log(await pintswap.module.signer.getChainId())
+                if(TESTING) console.log("Chain ID:", await pintswap.module.signer.getChainId())
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
-                if(TESTING) console.log(buildTradeObj());
+                if(TESTING) console.log("Trade Obj:", buildTradeObj());
                 const res = await pintswap.module.createTrade(peeredUp, buildTradeObj());
-                if(TESTING) console.log("FULFILL TRADE:", res);
+                if(TESTING) console.log("Fulfilled trade:", res);
                 if(res) updateSteps('Complete');
                 else setError(true);
             } catch (err) {
@@ -171,6 +171,28 @@ export const useTrade = () => {
                         break;
                     case 3:
                         console.log("returning offers");
+                        break;
+                }
+            });
+            module.on('pintswap/trade/fulfill', (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+                switch(step) {
+                    case 0:
+                        console.log("fulfilling trade");
+                        break;
+                    case 1:
+                        console.log("taker approving token swap");
+                        break;
+                    case 2:
+                        console.log("taker approved token swap");
+                        break;
+                    case 3:
+                        console.log("building transaction");
+                        break;
+                    case 4:
+                        console.log("transaction built");
+                        break;
+                    case 5:
+                        console.log("swap complete");
                         break;
                 }
             })
