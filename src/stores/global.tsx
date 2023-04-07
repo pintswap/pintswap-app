@@ -57,7 +57,7 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 const onFulfillPage = () => {
     if(window.location.hash.includes('/')) {
         const splitUrl = window.location.hash.split('/');
-        if(splitUrl.length >= 2) {
+        if(splitUrl.length > 2) {
             return true
         } else {
             return false
@@ -96,8 +96,8 @@ export function GlobalStore(props: { children: ReactNode }) {
                             if(TESTING) console.log('Node emitting', s);
                         });
                         await ps.startNode();
-                        const discovered = ps.on('peer:discovery', async (peer: any) => {
-                            if(TESTING) console.log('discovered peer', peer);
+                        ps.on('peer:discovery', async (peer: any) => {
+                            if(TESTING) console.log('Discovered peer:', peer);
                             (window as any).discoveryDeferred.resolve(peer);
                         });
                         resolve(ps);
