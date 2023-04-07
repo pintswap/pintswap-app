@@ -1,5 +1,6 @@
 import { Transition } from "@headlessui/react";
 import { useEffect } from "react";
+import { toast } from "react-toastify";
 import { Button, Card, CopyClipboard, FullPageStatus, Input, ProgressIndicator } from "../components";
 import { Dropdown } from "../components/dropdown";
 import { useTrade } from "../hooks/trade";
@@ -20,7 +21,7 @@ export const FulfillView = () => {
 
     return (
         <>
-        {error && <FullPageStatus type="error" />}
+        {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Fulfill Trade">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">

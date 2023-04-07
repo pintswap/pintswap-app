@@ -8,6 +8,7 @@ import { IOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
+import { updateToast } from '../utils/toast';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -149,6 +150,7 @@ export const useTrade = () => {
     useEffect(() => {
         const { module } = pintswap;
         if(module) {
+            const toastId = toast.loading('Connecting to peer...')
             module.on('pintswap/trade/broadcast', (hash: string) => {
                 if(TESTING) console.log("Trade Broadcasted", hash)
                 setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
@@ -162,7 +164,7 @@ export const useTrade = () => {
                         break;
                     case 1:
                         console.log("peer found");
-                        toast('Peer connected!')
+                        updateToast(toastId, 'success', 'Connected to peer!')
                         break;
                     case 2:
                         console.log("found peer offers");
