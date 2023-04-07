@@ -23,7 +23,7 @@ export const FulfillView = () => {
         {error && <FullPageStatus type="error" />}
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Fulfill Trade">
-                <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 lg:gap-4">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                     <Dropdown 
                         title="In Details"
                         placeholder="Please select a token..."

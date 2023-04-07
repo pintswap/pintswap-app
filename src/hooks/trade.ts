@@ -7,6 +7,7 @@ import { ethers } from 'ethers';
 import { IOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 import PeerId from 'peer-id';
+import { toast } from 'react-toastify';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -146,12 +147,30 @@ export const useTrade = () => {
 
     // Event manager
     useEffect(() => {
-        if(pintswap.module) {
-            pintswap.module.on('pintswap/trade/broadcast', (hash: string) => {
+        const { module } = pintswap;
+        if(module) {
+            module.on('pintswap/trade/broadcast', (hash: string) => {
                 if(TESTING) console.log("Trade Broadcasted", hash)
                 setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
                 addTrade(hash, buildTradeObj());
                 updateSteps('Fulfill');
+            });
+            module.on('pintswap/trade/peer', (step: 0 | 1 | 2 | 3) => {
+                switch(step) {
+                    case 0:
+                        console.log("finding peer orders");
+                        break;
+                    case 1:
+                        console.log("peer found");
+                        toast('Peer connected!')
+                        break;
+                    case 2:
+                        console.log("found peer offers");
+                        break;
+                    case 3:
+                        console.log("returning offers");
+                        break;
+                }
             })
         }
     }, [pintswap.module])
