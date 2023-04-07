@@ -9,7 +9,7 @@ export const CreateView = () => {
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
                 <div className="grid grid-cols-1 gap-6 lg:gap-y-2 items-start">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-end">
                         <Dropdown 
                             title="In Details"
                             placeholder="Please select a token..."
@@ -32,7 +32,7 @@ export const CreateView = () => {
                             disabled={!!order.orderHash}
                         />
                     </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 lg:gap-3 items-start">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-end">
                         <Dropdown 
                             title="Out Details"
                             placeholder="Please select a token..."

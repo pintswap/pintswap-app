@@ -3,6 +3,8 @@ import { useSigner } from 'wagmi';
 import { Pintswap, IOffer } from 'pintswap-sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
 import { defer, EMPTY_PEER, TESTING } from '../utils/common';
+import { toast } from 'react-toastify';
+import { ToastStatus, updateToast } from '../utils/toast';
 
 // Types
 export type IGlobalStoreProps = {
@@ -53,18 +55,6 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 // Peer
 (window as any).discoveryDeferred = defer();
 
-// Utils
-const onFulfillPage = () => {
-    if(window.location.hash.includes('/')) {
-        const splitUrl = window.location.hash.split('/');
-        if(splitUrl.length >= 2) {
-            return true
-        } else {
-            return false
-        }
-    }
-}
-
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const [openTrades, setOpenTrades] = useState<Map<string, IOffer>>(new Map());
@@ -76,7 +66,7 @@ export function GlobalStore(props: { children: ReactNode }) {
     });
     const [peer, setPeer] = useState<IPeerProps>({
         module: EMPTY_PEER,
-        loading: onFulfillPage() ? true : false,
+        loading: true,
         error: false
     });
 
@@ -96,8 +86,8 @@ export function GlobalStore(props: { children: ReactNode }) {
                             if(TESTING) console.log('Node emitting', s);
                         });
                         await ps.startNode();
-                        const discovered = ps.on('peer:discovery', async (peer: any) => {
-                            if(TESTING) console.log('discovered peer', peer);
+                        ps.on('peer:discovery', async (peer: any) => {
+                            if(TESTING) console.log('Discovered peer:', peer);
                             (window as any).discoveryDeferred.resolve(peer);
                         });
                         resolve(ps);
@@ -108,8 +98,11 @@ export function GlobalStore(props: { children: ReactNode }) {
                     }
                 })().catch(reject);
             });
-            if (ps.isStarted()) setPintswap({ ...pintswap, module: ps, loading: false});
-            else setPintswap({ ...pintswap, loading: false })
+            if (ps.isStarted()) {
+                setPintswap({ ...pintswap, module: ps, loading: false});
+            } else {
+                setPintswap({ ...pintswap, loading: false })
+            }
         };
         if (!pintswap.module && signer) initialize();
     }, [signer]);

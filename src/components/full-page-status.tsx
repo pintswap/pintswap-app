@@ -15,8 +15,7 @@ export const FullPageStatus = ({ type ='loading', message, fx }: IFullPageStatus
 
   useEffect(() => {
     if(fx) {
-      setTimeout(() => fx, 2000);
-      setTimeout(() => navigate('/#'), 6000);
+      fx()
     }
   }, [])
 
@@ -26,7 +25,7 @@ export const FullPageStatus = ({ type ='loading', message, fx }: IFullPageStatus
             <img src="/logo/ps-logo.png" alt="PintSwap Logo" height="100" width="100" />
             {type === 'loading' && (
               <>
-            <span>{message ? message : 'Connecting to peer'}</span>
+            <span>{message ? message : 'Filling up pints...'}</span>
             <ImSpinner9 className="animate-spin" size="24px" />
             </>
             )}
@@ -34,6 +33,8 @@ export const FullPageStatus = ({ type ='loading', message, fx }: IFullPageStatus
               <>
             <span>{message ? message : 'An error occured while swapping pints.'}</span>
             {!message && <Button onClick={() => navigate(0)}>Refresh</Button>}
+            <span className="text-xs">or</span>
+            <Button type="transparent" className="text-indigo-600 hover:text-indigo-500" onClick={() => navigate('/')}>Return Home</Button>
             </>
             )}
             {type === 'success' && (

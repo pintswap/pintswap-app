@@ -4,9 +4,11 @@ import { EMPTY_TRADE, getDecimals, TESTING } from '../utils/common';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { ethers } from 'ethers';
-import { IOffer, hashOffer } from 'pintswap-sdk';
+import { IOffer } from 'pintswap-sdk';
 import { TOKENS } from '../utils/token-list';
 import PeerId from 'peer-id';
+import { toast } from 'react-toastify';
+import { updateToast } from '../utils/toast';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -28,7 +30,7 @@ export const useTrade = () => {
     const [error, setError] = useState(false);
 
     const buildTradeObj = (): IOffer => {
-        if(!trade.getsToken || !trade.getsAmount || !trade.givesAmount || !trade.givesToken) return EMPTY_TRADE;
+        if(!trade.getsToken && !trade.getsAmount && !trade.givesAmount && !trade.givesToken) return EMPTY_TRADE;
         const foundGivesToken = TOKENS.find((el) => el.symbol === trade.givesToken);
         const foundGetsToken = TOKENS.find((el) => el.symbol === trade.getsToken);
         return {
@@ -43,14 +45,10 @@ export const useTrade = () => {
     const broadcastTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         setLoading(true);
-        if(TESTING) console.log("CREATE TRADE:", buildTradeObj())
+        if(TESTING) console.log("Broadcasting trade:", buildTradeObj())
         if(pintswap.module) {
             try {
                 pintswap.module.broadcastOffer(buildTradeObj());
-                const orderHash = hashOffer(buildTradeObj());
-                setOrder({ multiAddr: pintswap.module.peerId.toB58String(), orderHash });
-                addTrade(orderHash, buildTradeObj());
-                updateSteps('Fulfill');
             } catch (err) {
                 console.error(err);
             }
@@ -64,11 +62,11 @@ export const useTrade = () => {
         setLoading(true);
         if(pintswap.module) {
             try {
-                if(TESTING) console.log(await pintswap.module.signer.getChainId())
+                if(TESTING) console.log("Chain ID:", await pintswap.module.signer.getChainId())
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
-                if(TESTING) console.log(buildTradeObj());
+                if(TESTING) console.log("Trade Obj:", buildTradeObj());
                 const res = await pintswap.module.createTrade(peeredUp, buildTradeObj());
-                if(TESTING) console.log("FULFILL TRADE:", res);
+                if(TESTING) console.log("Fulfilled trade:", res);
                 if(res) updateSteps('Complete');
                 else setError(true);
             } catch (err) {
@@ -90,12 +88,9 @@ export const useTrade = () => {
             else {
                 if(pintswap.module) {
                     try {
-                        const peeredUp = PeerId.createFromB58String(multiAddr);
-                        console.log('discovery', await (window as any).discoveryDeferred.promise);
-//                        const makerPeerId = await pintswap.module?.peerRouting.findPeer(peeredUp);
-//			console.log('got makerPeerId', makerPeerId);
+                        console.log('Discovery:', await (window as any).discoveryDeferred.promise);
                         const { offers }: IOrderbookProps = await pintswap.module.getTradesByPeerId(multiAddr);
-                        console.log("Offers:", offers)
+                        if(TESTING) console.log("Offers:", offers)
                         if(offers?.length > 0) {
                             const foundGivesToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].givesToken.toLowerCase());
                             const foundGetsToken = TOKENS.find(el => el.address.toLowerCase() === offers[0].getsToken.toLowerCase())
@@ -150,6 +145,59 @@ export const useTrade = () => {
         }
         if(pintswap.module && (peer.module?.id || (peer.module as any)?._id)) getTrades();
     }, [pintswap.module, peer.module]);
+
+    // Event manager
+    useEffect(() => {
+        const { module } = pintswap;
+        if(module) {
+            const toastId = toast.loading('Connecting to peer...')
+            module.on('pintswap/trade/broadcast', (hash: string) => {
+                if(TESTING) console.log("Trade Broadcasted", hash)
+                setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
+                addTrade(hash, buildTradeObj());
+                updateSteps('Fulfill');
+            });
+            module.on('pintswap/trade/peer', (step: 0 | 1 | 2 | 3) => {
+                switch(step) {
+                    case 0:
+                        console.log("finding peer orders");
+                        break;
+                    case 1:
+                        console.log("peer found");
+                        updateToast(toastId, 'success', 'Connected to peer!')
+                        break;
+                    case 2:
+                        console.log("found peer offers");
+                        break;
+                    case 3:
+                        console.log("returning offers");
+                        break;
+                }
+            });
+            module.on('pintswap/trade/fulfill', (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+                switch(step) {
+                    case 0:
+                        console.log("fulfilling trade");
+                        break;
+                    case 1:
+                        console.log("taker approving token swap");
+                        break;
+                    case 2:
+                        console.log("taker approved token swap");
+                        break;
+                    case 3:
+                        console.log("building transaction");
+                        break;
+                    case 4:
+                        console.log("transaction built");
+                        break;
+                    case 5:
+                        console.log("swap complete");
+                        break;
+                }
+            })
+        }
+    }, [pintswap.module])
 
     return {
         loading,
