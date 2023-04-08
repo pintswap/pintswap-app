@@ -29,19 +29,19 @@ export const useTrade = () => {
     const [loadingTrade, setLoadingTrade] = useState(false);
     const [error, setError] = useState(false);
 
-    const buildTradeObj = (): IOffer => {
-        if (!trade.getsToken && !trade.getsAmount && !trade.givesAmount && !trade.givesToken)
+    const buildTradeObj = ({ getsAmount, getsToken, givesAmount, givesToken }: IOffer): IOffer => {
+        if (!getsToken && !getsAmount && !givesAmount && !givesToken)
             return EMPTY_TRADE;
-        const foundGivesToken = TOKENS.find((el) => el.symbol === trade.givesToken);
-        const foundGetsToken = TOKENS.find((el) => el.symbol === trade.getsToken);
+        const foundGivesToken = TOKENS.find((el) => el.symbol === givesToken);
+        const foundGetsToken = TOKENS.find((el) => el.symbol === getsToken);
         return {
-            givesToken: foundGivesToken ? foundGivesToken.address : trade.givesToken,
-            getsToken: foundGetsToken ? foundGetsToken.address : trade.getsToken,
+            givesToken: foundGivesToken ? foundGivesToken.address : givesToken,
+            getsToken: foundGetsToken ? foundGetsToken.address : getsToken,
             givesAmount: ethers.utils
-                .parseUnits(trade.givesAmount, getDecimals(trade.givesToken))
+                .parseUnits(givesAmount, getDecimals(givesToken))
                 .toHexString(),
             getsAmount: ethers.utils
-                .parseUnits(trade.getsAmount, getDecimals(trade.getsToken))
+                .parseUnits(getsAmount, getDecimals(getsToken))
                 .toHexString(),
         };
     };
@@ -50,10 +50,10 @@ export const useTrade = () => {
     const broadcastTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         setLoading(true);
-        if (TESTING) console.log('Broadcasting trade:', buildTradeObj());
+        if (TESTING) console.log('Broadcasting trade:', buildTradeObj(trade));
         if (pintswap.module) {
             try {
-                const tradeObj = buildTradeObj();
+                const tradeObj = buildTradeObj(trade);
                 console.log('tradeObj', tradeObj);
                 pintswap.module.broadcastOffer({
                     getsAmount: tradeObj.getsAmount,
@@ -76,8 +76,8 @@ export const useTrade = () => {
             try {
                 if (TESTING) console.log('Chain ID:', await pintswap.module.signer.getChainId());
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
-                if (TESTING) console.log('Trade Obj:', buildTradeObj());
-                const res = await pintswap.module.createTrade(peeredUp, buildTradeObj());
+                if (TESTING) console.log('Trade Obj:', buildTradeObj(trade));
+                const res = await pintswap.module.createTrade(peeredUp, buildTradeObj(trade));
                 if (TESTING) console.log('Fulfilled trade:', res);
                 if (res) updateSteps('Complete');
                 else setError(true);
@@ -182,90 +182,85 @@ export const useTrade = () => {
     // Event manager
     let [toastId, setToastId] = useState(null) as any;
     const isMaker = pathname === '/create';
+
+    const peerListener = (step: 0 | 1 | 2 | 3) => {
+        switch (step) {
+            case 0:
+                console.log('finding peer orders');
+                break;
+            case 1:
+                console.log('peer found');
+                updateToast(toastId, 'success', 'Connected to peer!');
+                break;
+            case 2:
+                console.log('found peer offers');
+                updateToast(toastId, 'success', 'Connected to peer!');
+                break;
+            case 3:
+                console.log('returning offers');
+                break;
+        }
+    };
+
+    const broadcastListener = (hash: string) => {
+        if (!toastId && isMaker)
+            setToastId((toastId = toast.loading('Connecting to peer...')));
+        if (TESTING) console.log(`Trade Broadcasted', ${hash}`);
+        setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
+        if(TESTING) console.log(buildTradeObj(trade))
+        addTrade(hash, buildTradeObj(trade));
+        updateSteps('Fulfill');
+    };
+
+    const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+        switch (step) {
+            case 0:
+                console.log('MAKER: fulfilling trade');
+                toast('Fulfilling trade...');
+                break;
+        }
+    };
+
+    const takerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+        switch (step) {
+            case 0:
+                console.log('TAKER: fulfilling trade');
+                break;
+            case 1:
+                console.log('TAKER: taker approving token swap');
+                break;
+            case 2:
+                console.log('TAKER: approved token swap');
+                break;
+            case 3:
+                console.log('TAKER: building transaction');
+                break;
+            case 4:
+                console.log('TAKER: transaction built');
+                break;
+            case 5:
+                console.log('TAKER: swap complete');
+                break;
+        }
+    };
+
     useEffect(() => {
-        const peerListener = (step: 0 | 1 | 2 | 3) => {
-            switch (step) {
-                case 0:
-                    console.log('finding peer orders');
-                    break;
-                case 1:
-                    console.log('peer found');
-                    updateToast(toastId, 'success', 'Connected to peer!');
-                    break;
-                case 2:
-                    console.log('found peer offers');
-                    updateToast(toastId, 'success', 'Connected to peer!');
-                    break;
-                case 3:
-                    console.log('returning offers');
-                    break;
-            }
-        };
-
-        const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-            switch (step) {
-                case 0:
-                    console.log('MAKER: fulfilling trade');
-                    toast('Fulfilling trade...');
-                    break;
-            }
-        };
-
-        const takerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-            switch (step) {
-                case 0:
-                    console.log('TAKER: fulfilling trade');
-                    break;
-                case 1:
-                    console.log('TAKER: taker approving token swap');
-                    break;
-                case 2:
-                    console.log('TAKER: approved token swap');
-                    break;
-                case 3:
-                    console.log('TAKER: building transaction');
-                    break;
-                case 4:
-                    console.log('TAKER: transaction built');
-                    break;
-                case 5:
-                    console.log('TAKER: swap complete');
-                    break;
-            }
-        };
         const { module } = pintswap;
         if (module) {
+            if (!toastId && !isMaker) setToastId((toastId = toast.loading('Connecting to peer...')));
+            module.on('pintswap/trade/broadcast', broadcastListener);
             module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);
             return () => {
+                module.removeListener('pintswap/trade/broadcast', broadcastListener);
+                module.removeListener('pintswap/trade/fulfill', takerListener);
                 module.removeListener('pintswap/trade/peer', peerListener);
-                module.removeListener('pintswap/trade/taker', takerListener);
-                module.removeListener('pintswap/trade/maker', makerListener);
-            };
-        } else return () => {};
-    }, [pintswap.module]);
-
-    useEffect(() => {
-        const { module } = pintswap;
-        if (module) {
-            if (!toastId && !isMaker)
-                setToastId((toastId = toast.loading('Connecting to peer...')));
-            const broadcastListener = (hash: string) => {
-                if (!toastId && isMaker)
-                    setToastId((toastId = toast.loading('Connecting to peer...')));
-                if (TESTING) console.log('Trade Broadcasted', hash);
-                setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
-                addTrade(hash, buildTradeObj());
-                updateSteps('Fulfill');
-            };
-            module.on('pintswap/trade/broadcast', broadcastListener);
-            return () => {
                 module.removeListener('pintswap/trade/broadcast', broadcastListener);
             };
         }
         return () => {};
-    }, [pintswap.module, trade]);
+    }, [pintswap.module]);
 
     return {
         loading,
