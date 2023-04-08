@@ -29,6 +29,9 @@ export const useTrade = () => {
     const [loadingTrade, setLoadingTrade] = useState(false);
     const [error, setError] = useState(false);
 
+    let [toastId, setToastId] = useState(null) as any; // To show when peers are connected
+    const isMaker = pathname === '/create';
+
     const buildTradeObj = ({ getsAmount, getsToken, givesAmount, givesToken }: IOffer): IOffer => {
         if (!getsToken && !getsAmount && !givesAmount && !givesToken)
             return EMPTY_TRADE;
@@ -65,6 +68,7 @@ export const useTrade = () => {
                 console.error(err);
             }
         }
+        if (!toastId && isMaker) setToastId((toastId = toast.loading('Connecting to peer...')));
         setLoading(false);
     };
 
@@ -179,10 +183,7 @@ export const useTrade = () => {
             getTrades().catch((err) => console.error(err));
     }, [pintswap.module, peer.module]);
 
-    // Event manager
-    let [toastId, setToastId] = useState(null) as any;
-    const isMaker = pathname === '/create';
-
+    // Event Listgeners
     const peerListener = (step: 0 | 1 | 2 | 3) => {
         switch (step) {
             case 0:
@@ -200,16 +201,6 @@ export const useTrade = () => {
                 console.log('returning offers');
                 break;
         }
-    };
-
-    const broadcastListener = (hash: string) => {
-        if (!toastId && isMaker)
-            setToastId((toastId = toast.loading('Connecting to peer...')));
-        if (TESTING) console.log(`Trade Broadcasted', ${hash}`);
-        setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
-        if(TESTING) console.log(buildTradeObj(trade))
-        addTrade(hash, buildTradeObj(trade));
-        updateSteps('Fulfill');
     };
 
     const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
@@ -248,19 +239,35 @@ export const useTrade = () => {
         const { module } = pintswap;
         if (module) {
             if (!toastId && !isMaker) setToastId((toastId = toast.loading('Connecting to peer...')));
-            module.on('pintswap/trade/broadcast', broadcastListener);
             module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);
             return () => {
-                module.removeListener('pintswap/trade/broadcast', broadcastListener);
-                module.removeListener('pintswap/trade/fulfill', takerListener);
+                module.removeListener('pintswap/trade/taker', takerListener);
                 module.removeListener('pintswap/trade/peer', peerListener);
-                module.removeListener('pintswap/trade/broadcast', broadcastListener);
+                module.removeListener('pintswap/trade/maker', makerListener);
             };
         }
         return () => {};
     }, [pintswap.module]);
+
+    useEffect(() => {
+        const { module } = pintswap;
+        if (module) {
+            const broadcastListener = (hash: string) => {
+                if (TESTING) console.log(`Trade Broadcasted', ${hash}`);
+                setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
+                if(TESTING) console.log(buildTradeObj(trade))
+                addTrade(hash, buildTradeObj(trade));
+                updateSteps('Fulfill');
+            };
+            module.on('pintswap/trade/broadcast', broadcastListener);
+            return () => {
+                module.removeListener('pintswap/trade/broadcast', broadcastListener);
+            };
+        }
+        return () => {};
+    }, [pintswap.module, trade]);
 
     return {
         loading,
