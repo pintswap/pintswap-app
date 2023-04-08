@@ -14,12 +14,12 @@ export type IGlobalStoreProps = {
         module: Pintswap | undefined;
         loading: boolean;
         error: boolean;
-    }
+    };
     peer: {
         module: JSONPeerId;
         loading: boolean;
         error: boolean;
-    }
+    };
     setPeer?: any;
     setPintswap?: any;
 };
@@ -28,13 +28,13 @@ export type IPintswapProps = {
     module: Pintswap | undefined;
     loading: boolean;
     error: boolean;
-}
+};
 
 export type IPeerProps = {
     module: JSONPeerId;
     loading: boolean;
     error: boolean;
-}
+};
 
 // Context
 const GlobalContext = createContext<IGlobalStoreProps>({
@@ -43,13 +43,13 @@ const GlobalContext = createContext<IGlobalStoreProps>({
     pintswap: {
         module: undefined,
         loading: true,
-        error: false
+        error: false,
     },
     peer: {
         module: EMPTY_PEER,
         loading: true,
-        error: false
-    }
+        error: false,
+    },
 });
 
 // Peer
@@ -62,12 +62,12 @@ export function GlobalStore(props: { children: ReactNode }) {
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
         loading: true,
-        error: false
+        error: false,
     });
     const [peer, setPeer] = useState<IPeerProps>({
         module: EMPTY_PEER,
         loading: true,
-        error: false
+        error: false,
     });
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
@@ -83,25 +83,27 @@ export function GlobalStore(props: { children: ReactNode }) {
                         const ps: Pintswap | Error | any = await Pintswap.initialize({ signer });
                         (window as any).ps = ps;
                         ps.on('pintswap/node/status', (s: any) => {
-                            if(TESTING) console.log('Node emitting', s);
+                            if (TESTING) console.log('Node emitting', s);
                         });
                         await ps.startNode();
+                        console.log('peer:discovery subscribed');
                         ps.on('peer:discovery', async (peer: any) => {
-                            if(TESTING) console.log('Discovered peer:', peer);
+                            console.log('got peer:discovery');
+                            if (TESTING) console.log('Discovered peer:', peer);
                             (window as any).discoveryDeferred.resolve(peer);
                         });
                         resolve(ps);
                     } catch (err) {
                         console.error('Initializing error:', err);
-                        setPintswap({...pintswap, loading: false});
-                        setPeer({ ...peer, loading: false })
+                        setPintswap({ ...pintswap, loading: false });
+                        setPeer({ ...peer, loading: false });
                     }
                 })().catch(reject);
             });
             if (ps.isStarted()) {
-                setPintswap({ ...pintswap, module: ps, loading: false});
+                setPintswap({ ...pintswap, module: ps, loading: false });
             } else {
-                setPintswap({ ...pintswap, loading: false })
+                setPintswap({ ...pintswap, loading: false });
             }
         };
         if (!pintswap.module && signer) initialize();
@@ -110,18 +112,18 @@ export function GlobalStore(props: { children: ReactNode }) {
     // Find Peer Id
     useEffect(() => {
         const getPeer = async () => {
-          const key = 'peerId';
-          const localPeerId = localStorage.getItem(key);
-          if(localPeerId && localPeerId != null && !TESTING) {
-            setPeer({...peer, module: JSON.parse(localPeerId)})
-          } else {
-            const id = await PeerId.create();
-            setPeer({...peer, module: id.toJSON()})
-            localStorage.setItem(key, JSON.stringify(id.toJSON()))
-          }
-        }
+            const key = 'peerId';
+            const localPeerId = localStorage.getItem(key);
+            if (localPeerId && localPeerId != null && !TESTING) {
+                setPeer({ ...peer, module: JSON.parse(localPeerId) });
+            } else {
+                const id = await PeerId.create();
+                setPeer({ ...peer, module: id.toJSON() });
+                localStorage.setItem(key, JSON.stringify(id.toJSON()));
+            }
+        };
         getPeer();
-      }, []);
+    }, []);
 
     // Get Active Trades
     useEffect(() => {
@@ -136,7 +138,7 @@ export function GlobalStore(props: { children: ReactNode }) {
                 pintswap,
                 peer,
                 setPeer,
-                setPintswap
+                setPintswap,
             }}
         >
             {props.children}
