@@ -5,7 +5,7 @@ import { BASE_URL } from '../utils/common';
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
-    console.log(trade);
+
     return (
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
