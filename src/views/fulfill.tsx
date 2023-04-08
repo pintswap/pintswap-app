@@ -34,7 +34,7 @@ export const FulfillView = () => {
                         loading={loadingTrade}
                     />
                     <Input
-                        placeholder="Amount to Trade"
+                        placeholder="Amount to Send"
                         value={trade.givesAmount}
                         type="number"
                         disabled

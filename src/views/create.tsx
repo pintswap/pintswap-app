@@ -22,7 +22,7 @@ export const CreateView = () => {
                             customInput
                         />
                         <Input
-                            placeholder="Amount to Trade"
+                            placeholder="Amount to Send"
                             value={trade.givesAmount}
                             onChange={({ currentTarget }) =>
                                 updateTrade('givesAmount', currentTarget.value)
