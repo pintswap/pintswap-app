@@ -26,7 +26,7 @@ export const FulfillView = () => {
             <Card className="self-center" header="Fulfill Trade">
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                     <Dropdown 
-                        title="In Details"
+                        title="Send Details"
                         placeholder="Please select a token..."
                         state={trade.givesToken.startsWith('0x') ? truncate(trade.givesToken) : trade.givesToken}
                         type="givesToken"
@@ -41,7 +41,7 @@ export const FulfillView = () => {
                         loading={loadingTrade}
                     />
                     <Dropdown 
-                        title="Out Details"
+                        title="Receive Details"
                         placeholder="Please select a token..."
                         state={trade.getsToken.startsWith('0x') ? truncate(trade.getsToken) : trade.getsToken}
                         type="getsToken"
