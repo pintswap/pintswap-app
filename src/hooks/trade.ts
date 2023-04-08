@@ -83,7 +83,6 @@ export const useTrade = () => {
                 if (TESTING) console.log('Trade Obj:', buildTradeObj(trade));
                 const res = await pintswap.module.createTrade(peeredUp, buildTradeObj(trade));
                 if (TESTING) console.log('Fulfilled trade:', res);
-                if (res) updateSteps('Complete');
                 else setError(true);
             } catch (err) {
                 console.error(err);
@@ -206,8 +205,16 @@ export const useTrade = () => {
     const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
         switch (step) {
             case 0:
-                console.log('MAKER: fulfilling trade');
-                toast('Fulfilling trade...');
+                console.log('MAKER: taker fulfilling trade');
+                toast('Taker is fulfilling trade...');
+                break;
+            case 1:
+                console.log("MAKER: taker approved trade");
+                toast('Taker is approving trade...')
+                break;
+            case 2:
+                console.log("MAKER: swap is complete");
+                updateSteps('Complete'); // only for maker
                 break;
         }
     };
@@ -231,6 +238,7 @@ export const useTrade = () => {
                 break;
             case 5:
                 console.log('TAKER: swap complete');
+                updateSteps('Complete'); // only for taker
                 break;
         }
     };
