@@ -12,7 +12,7 @@ export const CreateView = () => {
                 <div className="grid grid-cols-1 gap-6 lg:gap-y-2 items-start">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-end">
                         <Dropdown 
-                            title="In Details"
+                            title="Send Details"
                             placeholder="Please select a token..."
                             state={trade.givesToken}
                             setState={updateTrade}
@@ -22,7 +22,7 @@ export const CreateView = () => {
                             customInput
                         />
                         <Input
-                            placeholder="Amount to Trade"
+                            placeholder="Amount to Send"
                             value={trade.givesAmount}
                             onChange={({ currentTarget }) =>
                                 updateTrade('givesAmount', currentTarget.value)
@@ -35,7 +35,7 @@ export const CreateView = () => {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-end">
                         <Dropdown 
-                            title="Out Details"
+                            title="Receive Details"
                             placeholder="Please select a token..."
                             state={trade.getsToken}
                             setState={updateTrade}
