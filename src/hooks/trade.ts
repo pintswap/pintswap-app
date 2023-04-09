@@ -68,7 +68,7 @@ export const useTrade = () => {
                 console.error(err);
             }
         }
-        if (!toastId && isMaker) setToastId((toastId = toast.loading('Connecting to peer...')));
+        if (!toastId) setToastId((toastId = toast.loading('Connecting to peer...')));
         setLoading(false);
     };
 
@@ -193,6 +193,7 @@ export const useTrade = () => {
                 updateToast(toastId, 'success', 'Connected to peer!');
                 break;
             case 2:
+                console.log("toastId", toastId)
                 console.log('found peer offers');
                 updateToast(toastId, 'success', 'Connected to peer!');
                 break;
