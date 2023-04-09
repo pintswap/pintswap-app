@@ -29,7 +29,6 @@ export const useTrade = () => {
     const [loadingTrade, setLoadingTrade] = useState(false);
     const [error, setError] = useState(false);
 
-    let [toastId, setToastId] = useState(null) as any; // To show when peers are connected
     const isMaker = pathname === '/create';
 
     const buildTradeObj = ({ getsAmount, getsToken, givesAmount, givesToken }: IOffer): IOffer => {
@@ -68,7 +67,7 @@ export const useTrade = () => {
                 console.error(err);
             }
         }
-        if (!toastId) setToastId((toastId = toast.loading('Connecting to peer...')));
+        toast.loading('Connecting to peer...', { toastId: 'findPeer' });
         setLoading(false);
     };
 
@@ -190,12 +189,11 @@ export const useTrade = () => {
                 break;
             case 1:
                 console.log('peer found');
-                updateToast(toastId, 'success', 'Connected to peer!');
+                updateToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 2:
-                console.log("toastId", toastId)
                 console.log('found peer offers');
-                updateToast(toastId, 'success', 'Connected to peer!');
+                updateToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 3:
                 console.log('returning offers');
@@ -247,7 +245,7 @@ export const useTrade = () => {
     useEffect(() => {
         const { module } = pintswap;
         if (module) {
-            if (!toastId && !isMaker) setToastId((toastId = toast.loading('Connecting to peer...')));
+            if (!isMaker) toast.loading('Connecting to peer...', { toastId: 'findPeer' });
             module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);
