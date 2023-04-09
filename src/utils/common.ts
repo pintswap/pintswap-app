@@ -5,7 +5,7 @@ import { ITokenProps, TOKENS } from "./token-list";
 // GENERAL
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
-export const BASE_URL: string = TESTING ? 'http://localhost:3000' : 'pintswap.eth.link';
+export const BASE_URL: string = window.location.origin;
 export const WS_URL: string = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
 
 // DEFAULT VALS
