@@ -80,7 +80,7 @@ export function GlobalStore(props: { children: ReactNode }) {
             const ps: Pintswap = await new Promise((resolve, reject) => {
                 (async () => {
                     try {
-                        const ps: Pintswap | Error | any = await Pintswap.initialize({ signer });
+                        const ps = await Pintswap.initialize({ awaitReceipts: false, signer });
                         (window as any).ps = ps;
                         ps.on('pintswap/node/status', (s: any) => {
                             if (TESTING) console.log('Node emitting', s);

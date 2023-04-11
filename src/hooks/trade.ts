@@ -22,13 +22,13 @@ type IOrderbookProps = {
 export const useTrade = () => {
     const { pathname } = useLocation();
     const { addTrade, pintswap, openTrades, peer } = useGlobalContext();
-    const [loading, setLoading] = useState(false);
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
+    const [loading, setLoading] = useState(false);
     const [loadingTrade, setLoadingTrade] = useState(false);
     const [error, setError] = useState(false);
-    const [peerOrders, setPeerOrders] = useState<Map<string, IOffer>>(new Map())
+    const [peerOrders, setPeerOrders] = useState<Map<string, IOffer>>(new Map());
 
     const isMaker = pathname === '/create';
 
@@ -96,7 +96,6 @@ export const useTrade = () => {
     // Get single trade or all peer trades
     const getTrades = async (multiAddr: string, orderHash?: string) => {
         setLoadingTrade(true);
-        try {
             const trade = orderHash ? openTrades.get(orderHash) : undefined;
             // MAKER
             if (trade) setTrade(trade);
@@ -140,12 +139,10 @@ export const useTrade = () => {
                     } catch (err) {
                         console.error('Error in trade.ts#getTrade:', err);
                         setError(true);
+                        updateToast('findPeer', 'error', 'Error while finding peer')
                     }
                 }
             }
-        } catch (err) {
-            console.error(err);
-        }
         setLoadingTrade(false);
     };
 
@@ -181,6 +178,7 @@ export const useTrade = () => {
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     await getTrades(splitUrl[1], splitUrl[2]);
                 } else if (splitUrl.length === 2) { // Only multiAddr
+                    setOrder({ multiAddr: splitUrl[1], orderHash: '' });
                     await getTrades(splitUrl[1]); 
                 }
             }
@@ -189,7 +187,9 @@ export const useTrade = () => {
             getter().catch((err) => console.error(err));
     }, [pintswap.module, peer.module]);
 
-    // Event Listgeners
+    /*
+    * TRADE EVENT MANAGER - START
+    */
     const peerListener = (step: 0 | 1 | 2 | 3) => {
         switch (step) {
             case 0:
@@ -283,6 +283,9 @@ export const useTrade = () => {
         }
         return () => {};
     }, [pintswap.module, trade]);
+    /*
+    * TRADE EVENT MANAGER - END
+    */
 
     return {
         loading,

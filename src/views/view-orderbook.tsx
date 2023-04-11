@@ -8,14 +8,14 @@ import { useGlobalContext } from '../stores/global';
 export const ViewOrderbookView = () => {
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
-    const { peerOrders } = useTrade();
-    console.log("peerOrders", peerOrders);
+    const { peerOrders, error, order } = useTrade();
+    
     return (
         <div className="flex flex-col gap-6">
             <div className="text-center self-center">
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
-                    <CopyClipboard value={pintswap?.module?.peerId.toB58String() || ethers.constants.AddressZero} isTruncated icon lg />
+                    <CopyClipboard value={order.multiAddr || ethers.constants.AddressZero} truncate={5} icon lg />
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
@@ -32,16 +32,17 @@ export const ViewOrderbookView = () => {
                             <ImSpinner9 className="animate-spin" size="20px" />
                         ) : (
                             <span>
-                                You currently have no open trades.{' '}
-                                <button onClick={() => navigate('/create')}>Create a trade now!</button>
+                                {error ? 
+                                    <span>Error loading peer&apos;s trades.{" "}
+                                        <button onClick={() => navigate(0)} className="text-indigo-600 transition duration-200 hover:text-indigo-700">Try refreshing.</button>
+                                    </span> : 
+                                    "Loading peer's trades..."
+                                }
                             </span>
                         )
                     }
                 />
             </Card>
-            <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
-                Create Order
-            </Button>
         </div>
     );
 };

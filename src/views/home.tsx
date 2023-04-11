@@ -13,7 +13,7 @@ export const HomeView = () => {
             <div className="text-center self-center">
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
-                    <CopyClipboard value={pintswap?.module?.peerId.toB58String() || ethers.constants.AddressZero} isTruncated icon lg />
+                    <CopyClipboard value={pintswap?.module?.peerId.toB58String() || ethers.constants.AddressZero} truncate={5} icon lg />
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
