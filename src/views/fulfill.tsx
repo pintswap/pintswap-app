@@ -57,6 +57,7 @@ export const FulfillView = () => {
                     />
                 </div>
                 <Button
+                    checkNetwork
                     className="mt-6 w-full"
                     loadingText="Fulfilling"
                     loading={loading && !error}

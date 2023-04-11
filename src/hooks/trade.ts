@@ -111,7 +111,7 @@ export const useTrade = () => {
                             // If only multiAddr
                             if(!orderHash) {
                                 const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                                if(!peerTrades) setPeerTrades(map);
+                                if(peerTrades.size === 0) setPeerTrades(map);
                             }
                             // Set first found trade as trade state
                             const foundGivesToken = TOKENS.find(

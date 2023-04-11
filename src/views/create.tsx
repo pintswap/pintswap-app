@@ -58,6 +58,7 @@ export const CreateView = () => {
                     </div>
                 </div>
                 <Button
+                    checkNetwork
                     className="mt-6 w-full"
                     loadingText="Broadcasting"
                     loading={loading}

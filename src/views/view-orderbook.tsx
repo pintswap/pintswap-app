@@ -21,7 +21,7 @@ export const ViewOrderbookView = () => {
             <Card header="Open Trades" scroll>
                 <Table
                     headers={['Hash', 'Giving', 'Getting']}
-                    onClick={(order: any) => navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)}
+                    onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade.hash}`)}
                     items={Array.from(peerTrades, (entry) => ({ 
                         hash: entry[0],
                         gives: `${entry[1].givesAmount} ${entry[1].givesToken}`,
