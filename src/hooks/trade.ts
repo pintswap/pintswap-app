@@ -21,14 +21,13 @@ type IOrderbookProps = {
 
 export const useTrade = () => {
     const { pathname } = useLocation();
-    const { addTrade, pintswap, openTrades, peer } = useGlobalContext();
+    const { addTrade, pintswap, openTrades, peer, peerTrades, setPeerTrades } = useGlobalContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
     const [loading, setLoading] = useState(false);
     const [loadingTrade, setLoadingTrade] = useState(false);
     const [error, setError] = useState(false);
-    const [peerOrders, setPeerOrders] = useState<Map<string, IOffer>>(new Map());
 
     const isMaker = pathname === '/create';
 
@@ -112,7 +111,7 @@ export const useTrade = () => {
                             // If only multiAddr
                             if(!orderHash) {
                                 const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                                setPeerOrders(map);
+                                if(!peerTrades) setPeerTrades(map);
                             }
                             // Set first found trade as trade state
                             const foundGivesToken = TOKENS.find(
@@ -298,7 +297,6 @@ export const useTrade = () => {
         steps,
         updateSteps,
         loadingTrade,
-        error,
-        peerOrders
+        error
     };
 };
