@@ -1,5 +1,5 @@
 import { JSONPeerId } from "peer-id";
-import { IOffer } from "pintswap-sdk";
+import { IOffer } from "@pintswap/sdk";
 import { ITokenProps, TOKENS } from "./token-list";
 
 // GENERAL

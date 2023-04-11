@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
-import { Pintswap, IOffer } from 'pintswap-sdk';
+import { Pintswap, IOffer } from '@pintswap/sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
 import { defer, EMPTY_PEER, TESTING } from '../utils/common';
 

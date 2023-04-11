@@ -4,7 +4,7 @@ import { EMPTY_TRADE, getDecimals, TESTING } from '../utils/common';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { ethers } from 'ethers';
-import { hashOffer, IOffer } from 'pintswap-sdk';
+import { hashOffer, IOffer } from '@pintswap/sdk';
 import { TOKENS } from '../utils/token-list';
 import PeerId from 'peer-id';
 import { toast } from 'react-toastify';

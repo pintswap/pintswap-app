@@ -2,7 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import { Base } from './base';
 import { useGlobalContext } from './stores';
 import { CreateView, FulfillView, HomeView, ViewOrderbookView } from './views';
-import { setFallbackWETH } from "pintswap-sdk";
+import { setFallbackWETH } from "@pintswap/sdk";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
