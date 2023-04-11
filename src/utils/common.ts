@@ -78,7 +78,7 @@ export function convertAmount(to: 'hex' | 'number' | 'readable', amount: string,
         else output = amount;
     }
     if(TESTING) console.log("#convertAmount:", { amount, token, output })
-    return to === 'readable' ? `${output} ${getTokenAttributes(token, 'symbol') || 'N/A'}` : output;
+    return to === 'readable' ? `${output}  ${getTokenAttributes(token, 'symbol') || 'N/A'}` : output;
 }
 
 export function truncate(s: string, amount?: number) {

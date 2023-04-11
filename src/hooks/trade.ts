@@ -33,15 +33,16 @@ export const useTrade = () => {
     const buildTradeObj = ({ getsAmount, getsToken, givesAmount, givesToken }: IOffer): IOffer => {
         if (!getsToken || !getsAmount || !givesAmount || !givesToken)
             return EMPTY_TRADE;
-        console.log("Building obj...", { getsAmount, getsToken, givesAmount, givesToken })
         const foundGivesToken = (getTokenAttributes(givesToken) as ITokenProps | undefined);
         const foundGetsToken = (getTokenAttributes(getsToken) as ITokenProps | undefined);
-        return {
+        const builtObj = {
             givesToken: foundGivesToken ? foundGivesToken.address : givesToken,
             getsToken: foundGetsToken ? foundGetsToken.address : getsToken,
             givesAmount: convertAmount('hex', givesAmount, givesToken),
             getsAmount: convertAmount('hex', getsAmount, getsToken)
-        };
+        }
+        console.log("#buildTradeObj:", builtObj)
+        return builtObj;
     };
 
     console.log("buildTrade", buildTradeObj(trade))
@@ -107,9 +108,9 @@ export const useTrade = () => {
                         // Set first found trade as trade state
                         const { givesToken, givesAmount, getsToken, getsAmount } = offers[0];
                         setTrade({
-                            givesToken: (getTokenAttributes(givesToken) as ITokenProps).symbol,
+                            givesToken: (getTokenAttributes(givesToken) as ITokenProps).symbol || givesToken,
                             givesAmount: convertAmount('number', givesAmount, givesToken),
-                            getsToken: (getTokenAttributes(getsToken) as ITokenProps).symbol,
+                            getsToken: (getTokenAttributes(getsToken) as ITokenProps).symbol || getsToken,
                             getsAmount: convertAmount('number', getsAmount, getsToken)
                         });
                     }
