@@ -57,6 +57,7 @@ export const FulfillView = () => {
                     />
                 </div>
                 <Button
+                    checkNetwork
                     className="mt-6 w-full"
                     loadingText="Fulfilling"
                     loading={loading && !error}
@@ -84,7 +85,7 @@ export const FulfillView = () => {
                     className="flex flex-col justify-center items-center text-center"
                 >
                     <p className="text-sm">Trade Link:</p>
-                    <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
+                    <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg truncate={5} />
                 </Transition>
         </div>
         <Transition

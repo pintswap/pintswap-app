@@ -58,6 +58,7 @@ export const CreateView = () => {
                     </div>
                 </div>
                 <Button
+                    checkNetwork
                     className="mt-6 w-full"
                     loadingText="Broadcasting"
                     loading={loading}
@@ -66,7 +67,7 @@ export const CreateView = () => {
                         !trade.givesToken || !trade.givesAmount || !trade.getsToken || !trade.getsAmount || !!order.orderHash
                     }
                 >
-                    Broadcast Trade
+                    Create Trade
                 </Button>
             </Card>
             
@@ -85,7 +86,7 @@ export const CreateView = () => {
                 className="flex flex-col justify-center items-center text-center"
             >
                 <p className="text-sm">Trade Link:</p>
-                <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg isTruncated />
+                <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg truncate={5} />
             </Transition>
         </div>
     );

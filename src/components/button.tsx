@@ -1,5 +1,7 @@
+import { useChainModal } from '@rainbow-me/rainbowkit';
 import { MouseEventHandler, ReactNode } from 'react';
 import { ImSpinner9 } from 'react-icons/im';
+import { useNetwork } from 'wagmi';
 
 type IButtonProps = {
     children: ReactNode | string;
@@ -10,6 +12,7 @@ type IButtonProps = {
     loading?: boolean;
     loadingText?: string;
     form?: boolean;
+    checkNetwork?: boolean;
 };
 
 export const Button = ({
@@ -20,8 +23,12 @@ export const Button = ({
     disabled,
     loading,
     loadingText,
-    form
+    form,
+    checkNetwork
 }: IButtonProps) => {
+    const { chain } = useNetwork();
+    const { openChainModal } = useChainModal();
+    
     const renderType = () => {
         switch (type) {
             case 'outline':
@@ -35,7 +42,7 @@ export const Button = ({
     return (
         <button
             type={form ? 'submit' : 'button'}
-            onClick={onClick}
+            onClick={chain?.unsupported && checkNetwork ? openChainModal : onClick}
             disabled={disabled}
             className={`${className} ${renderType()} px-2.5 py-1.5 lg:px-4 lg:py-2.5 rounded shadow disabled:cursor-not-allowed transition duration-150 border-2 border-indigo-800 hover:border-indigo-900 flex items-center gap-2 text-center justify-center`}
         >

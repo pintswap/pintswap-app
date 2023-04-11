@@ -4,10 +4,10 @@ import { EMPTY_TRADE, getDecimals, TESTING } from '../utils/common';
 import { useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { ethers } from 'ethers';
-import { IOffer } from 'pintswap-sdk';
+import { hashOffer, IOffer } from '@pintswap/sdk';
 import { TOKENS } from '../utils/token-list';
 import PeerId from 'peer-id';
-import { Id, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
 
 type IOrderStateProps = {
@@ -21,11 +21,11 @@ type IOrderbookProps = {
 
 export const useTrade = () => {
     const { pathname } = useLocation();
-    const { addTrade, pintswap, openTrades, peer } = useGlobalContext();
-    const [loading, setLoading] = useState(false);
+    const { addTrade, pintswap, openTrades, peer, peerTrades, setPeerTrades } = useGlobalContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
+    const [loading, setLoading] = useState(false);
     const [loadingTrade, setLoadingTrade] = useState(false);
     const [error, setError] = useState(false);
 
@@ -80,8 +80,8 @@ export const useTrade = () => {
                 if (TESTING) console.log('Chain ID:', await pintswap.module.signer.getChainId());
                 const peeredUp = PeerId.createFromB58String(order.multiAddr);
                 if (TESTING) console.log('Trade Obj:', buildTradeObj(trade));
-                const res = await pintswap.module.createTrade(peeredUp, buildTradeObj(trade));
-                if (TESTING) console.log('Fulfilled trade:', res);
+                pintswap.module.createTrade(peeredUp, buildTradeObj(trade));
+                if (TESTING) console.log('Fulfilled trade!');
                 else setError(true);
             } catch (err) {
                 console.error(err);
@@ -92,24 +92,28 @@ export const useTrade = () => {
         setLoading(false);
     };
 
-    const getTrade = async (multiAddr: string, orderHash: string) => {
+    // Get single trade or all peer trades
+    const getTrades = async (multiAddr: string, orderHash?: string) => {
         setLoadingTrade(true);
-        try {
-            const trade = openTrades.get(orderHash);
+            const trade = orderHash ? openTrades.get(orderHash) : undefined;
             // MAKER
             if (trade) setTrade(trade);
             // TAKER
             else {
                 if (pintswap.module) {
-                    console.log('pintswap.module', pintswap.module);
                     try {
-                        console.log('waiting on discovery ...');
                         console.log('Discovery:', await (window as any).discoveryDeferred.promise);
                         const { offers }: IOrderbookProps = await pintswap.module.getTradesByPeerId(
                             multiAddr,
                         );
                         if (TESTING) console.log('Offers:', offers);
                         if (offers?.length > 0) {
+                            // If only multiAddr
+                            if(!orderHash) {
+                                const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
+                                if(peerTrades.size === 0) setPeerTrades(map);
+                            }
+                            // Set first found trade as trade state
                             const foundGivesToken = TOKENS.find(
                                 (el) =>
                                     el.address.toLowerCase() === offers[0].givesToken.toLowerCase(),
@@ -134,12 +138,10 @@ export const useTrade = () => {
                     } catch (err) {
                         console.error('Error in trade.ts#getTrade:', err);
                         setError(true);
+                        updateToast('findPeer', 'error', 'Error while finding peer')
                     }
                 }
             }
-        } catch (err) {
-            console.error(err);
-        }
         setLoadingTrade(false);
     };
 
@@ -166,22 +168,27 @@ export const useTrade = () => {
 
     // Get trade based on URL
     useEffect(() => {
-        const getTrades = async () => {
+        const getter = async () => {
             if (pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
-                if (splitUrl.length === 3) {
+                if (splitUrl.length === 3) { // If multiAddr and orderHash
                     setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] });
-                    console.log('get trade:', splitUrl[2]);
+                    if(TESTING) console.log('get trade:', splitUrl[2]);
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
-                    await getTrade(splitUrl[1], splitUrl[2]);
+                    await getTrades(splitUrl[1], splitUrl[2]);
+                } else if (splitUrl.length === 2) { // Only multiAddr
+                    setOrder({ multiAddr: splitUrl[1], orderHash: '' });
+                    await getTrades(splitUrl[1]); 
                 }
             }
         };
         if (pintswap.module && (peer.module?.id || (peer.module as any)?._id))
-            getTrades().catch((err) => console.error(err));
+            getter().catch((err) => console.error(err));
     }, [pintswap.module, peer.module]);
 
-    // Event Listgeners
+    /*
+    * TRADE EVENT MANAGER - START
+    */
     const peerListener = (step: 0 | 1 | 2 | 3) => {
         switch (step) {
             case 0:
@@ -275,6 +282,9 @@ export const useTrade = () => {
         }
         return () => {};
     }, [pintswap.module, trade]);
+    /*
+    * TRADE EVENT MANAGER - END
+    */
 
     return {
         loading,
@@ -282,11 +292,11 @@ export const useTrade = () => {
         trade,
         updateTrade,
         fulfillTrade,
-        getTrade,
+        getTrades,
         order,
         steps,
         updateSteps,
         loadingTrade,
-        error,
+        error
     };
 };
