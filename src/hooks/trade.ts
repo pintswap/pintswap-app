@@ -44,7 +44,8 @@ export const useTrade = () => {
         };
     };
 
-    console.log(buildTradeObj(trade))
+    console.log("buildTrade", buildTradeObj(trade))
+    console.log("trade", trade)
 
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent) => {
@@ -104,7 +105,13 @@ export const useTrade = () => {
                             if(peerTrades.size === 0) setPeerTrades(map);
                         }
                         // Set first found trade as trade state
-                        setTrade(offers[0]);
+                        const { givesToken, givesAmount, getsToken, getsAmount } = offers[0];
+                        setTrade({
+                            givesToken: (getTokenAttributes(givesToken) as ITokenProps).symbol,
+                            givesAmount: convertAmount('number', givesAmount, givesToken),
+                            getsToken: (getTokenAttributes(getsToken) as ITokenProps).symbol,
+                            getsAmount: convertAmount('number', getsAmount, getsToken)
+                        });
                     }
                 } catch (err) {
                     console.error('Error in #getTrade:', err);
@@ -164,18 +171,18 @@ export const useTrade = () => {
     const peerListener = (step: 0 | 1 | 2 | 3) => {
         switch (step) {
             case 0:
-                console.log('finding peer orders');
+                console.log('#peerListener: finding peer orders');
                 break;
             case 1:
-                console.log('peer found');
+                console.log('#peerListener: peer found');
                 updateToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 2:
-                console.log('found peer offers');
+                console.log('#peerListener: found peer offers');
                 updateToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 3:
-                console.log('returning offers');
+                console.log('#peerListener: returning offers');
                 break;
         }
     };
@@ -183,15 +190,15 @@ export const useTrade = () => {
     const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
         switch (step) {
             case 0:
-                console.log('MAKER: taker fulfilling trade');
+                console.log('#makerListener: taker fulfilling trade');
                 toast('Taker is fulfilling trade...');
                 break;
             case 1:
-                console.log("MAKER: taker approved trade");
+                console.log("#makerListener: taker approved trade");
                 toast('Taker is approving trade...')
                 break;
             case 2:
-                console.log("MAKER: swap is complete");
+                console.log("#makerListener: swap is complete");
                 updateSteps('Complete'); // only for maker
                 break;
         }
@@ -200,22 +207,22 @@ export const useTrade = () => {
     const takerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
         switch (step) {
             case 0:
-                console.log('TAKER: fulfilling trade');
+                console.log('#takerListener: fulfilling trade');
                 break;
             case 1:
-                console.log('TAKER: taker approving token swap');
+                console.log('#takerListener: taker approving token swap');
                 break;
             case 2:
-                console.log('TAKER: approved token swap');
+                console.log('#takerListener: approved token swap');
                 break;
             case 3:
-                console.log('TAKER: building transaction');
+                console.log('#takerListener: building transaction');
                 break;
             case 4:
-                console.log('TAKER: transaction built');
+                console.log('#takerListener: transaction built');
                 break;
             case 5:
-                console.log('TAKER: swap complete');
+                console.log('#takerLister: swap complete');
                 updateSteps('Complete'); // only for taker
                 break;
         }
@@ -241,7 +248,7 @@ export const useTrade = () => {
         const { module } = pintswap;
         if (module) {
             const broadcastListener = (hash: string) => {
-                if (TESTING) console.log(`Trade Broadcasted: ${hash}`);
+                console.log(`#broadcastListener: trade broadcasted (${hash})`);
                 setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
                 addTrade(hash, buildTradeObj(trade));
                 updateSteps('Fulfill');

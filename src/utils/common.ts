@@ -47,6 +47,7 @@ export const getDecimals = (token: string) => {
 
 export function getTokenAttributes(token: string, attribute?: keyof ITokenProps) {
     let found;
+    if(!token) return token;
     if(token.includes('0x')) {
         found = TOKENS.find(el => el.address.toLowerCase() === token.toLowerCase());
     } else {
@@ -76,6 +77,7 @@ export function convertAmount(to: 'hex' | 'number' | 'readable', amount: string,
             .formatUnits(amount, getDecimals(token))
         else output = amount;
     }
+    if(TESTING) console.log("#convertAmount:", { amount, token, output })
     return to === 'readable' ? `${output} ${getTokenAttributes(token, 'symbol') || 'N/A'}` : output;
 }
 
