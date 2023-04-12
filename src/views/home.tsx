@@ -3,6 +3,7 @@ import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
 import { useGlobalContext } from '../stores/global';
+import { convertAmount } from '../utils/common';
 
 export const HomeView = () => {
     const navigate = useNavigate();
@@ -18,12 +19,12 @@ export const HomeView = () => {
             </div>
             <Card header="Open Trades" scroll>
                 <Table
-                    headers={['Hash', 'Giving', 'Getting']}
+                    headers={['Hash', 'Sending', 'Receiving']}
                     onClick={(order: any) => navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)}
                     items={Array.from(openTrades, (entry) => ({ 
                         hash: entry[0],
-                        gives: `${entry[1].givesAmount} ${entry[1].givesToken}`,
-                        gets: `${entry[1].getsAmount} ${entry[1].getsToken}`,
+                        gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
+                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
                     }))}
                     emptyContent={
                         pintswap.loading ? (

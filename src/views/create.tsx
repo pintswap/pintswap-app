@@ -1,5 +1,5 @@
 import { Transition } from '@headlessui/react';
-import { Button, Card, CopyClipboard, Input, Dropdown, ProgressIndicator } from '../components';
+import { Button, Card, CopyClipboard, Input, Dropdown, ProgressIndicator, FullPageStatus } from '../components';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 
@@ -7,6 +7,7 @@ export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
 
     return (
+        <>
         <div className="flex flex-col gap-6">
             <Card className="self-center" header="Create Trade">
                 <div className="grid grid-cols-1 gap-6 lg:gap-y-2 items-start">
@@ -89,5 +90,18 @@ export const CreateView = () => {
                 <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg truncate={5} />
             </Transition>
         </div>
+                <Transition
+                show={steps[2].status === 'current'}
+                enter="transition-opacity duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacity duration-150"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+                className="flex flex-col justify-center items-center text-center"
+            >
+                <FullPageStatus type="success" />
+            </Transition>
+        </>
     );
 };
