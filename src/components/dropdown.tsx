@@ -53,7 +53,7 @@ export const Dropdown = ({ state, setState, options, placeholder, type, title, s
       <div className="flex justify-between items-center text-sm">
         {title && (<p>{title}</p>)}
         {customInput && (
-          <button className="text-indigo-600 flex gap-1 items-center" onClick={toggleCustomInput}>
+          <button className="text-indigo-600 flex gap-1 items-center transition duration-200 hover:text-indigo-700" onClick={toggleCustomInput}>
             {isCustom ? 'Show Dropdown' : 'Custom Token'}
             {isCustom ? <MdOutlineListAlt /> : <MdOutlineAddCircleOutline />}
           </button>

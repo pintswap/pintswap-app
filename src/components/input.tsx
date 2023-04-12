@@ -2,6 +2,7 @@ import { FormEvent, useEffect, useState } from 'react';
 import { fetchBalance } from '@wagmi/core'
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
+import { getTokenAttributes, round } from '../utils/common';
 
 type IInputProps = {
     placeholder?: string;
@@ -32,27 +33,30 @@ export const Input = ({
     maxClick,
     noSpace
 }: IInputProps) => {
-    // const { address } = useAccount();
-    // const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
-    // const tradeObjKey = placeholder?.includes('Receive') ? 'getsAmount' : 'givesAmount';
+    const { address } = useAccount();
+    const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
+    const tradeObjKey = placeholder?.includes('Receive') ? 'getsAmount' : 'givesAmount';
 
-    // useEffect(() => {
-    //     const getBalance = async () => {
-    //         setBalance({ ...balance, loading: true });
-    //         try {
-    //             if(address) {
-    //                 const params = token === 'eth' ? { address } : { address, token }
-    //                 const { formatted, symbol } = await fetchBalance(params)
-    //                 console.log(symbol, formatted, token)
-    //                 if(formatted) setBalance({ loading: false, formatted, symbol });
-    //             }
-    //         } catch (err) {
-    //             setBalance({ ...balance, loading: false })
-    //             console.error(`Error fetching balance:`, err)
-    //         }
-    //     }
-    //     if(typeof token === 'string') getBalance()
-    // }, [token])
+    useEffect(() => {
+        const getBalance = async () => {
+            setBalance({ ...balance, loading: true });
+            try {
+                if(address) {
+                    console.log("token", token)
+                    const params = token === 'ETH' ? 
+                        { address } : 
+                        { address, token: (getTokenAttributes(token, 'address') as string) || token }
+                    const { formatted, symbol } = await fetchBalance(params)
+                    console.log(symbol, formatted, token)
+                    if(formatted) setBalance({ loading: false, formatted, symbol });
+                }
+            } catch (err) {
+                setBalance({ ...balance, loading: false })
+                console.error(`Error fetching balance:`, err)
+            }
+        }
+        if(token && typeof token === 'string') getBalance()
+    }, [token])
 
     return (
         <div className="flex flex-col gap-1 justify-end">
@@ -66,14 +70,14 @@ export const Input = ({
                 type={type}
                 disabled={disabled}
             />
-            {/* {token && maxClick && (
-                <button className="text-xs text-indigo-600 text-right flex gap-1 justify-end" onClick={() => maxClick(tradeObjKey, balance.formatted)}>
+            {token && maxClick && (
+                <button className="text-xs text-indigo-600 transition duration-200 hover:text-indigo-700 text-right flex gap-1 justify-end" onClick={() => maxClick(tradeObjKey, balance.formatted)}>
                     MAX: 
                     <Skeleton loading={balance.loading}>
-                        {balance.formatted} {balance.symbol}
+                        {round(balance.formatted, 6)} {balance.symbol}
                     </Skeleton>
                 </button>
-            )} */}
+            )}
         </div>
     );
 };
