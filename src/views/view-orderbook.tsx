@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
+import { Card, CopyClipboard, Skeleton, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
@@ -26,9 +26,7 @@ export const ViewOrderbookView = () => {
                     items={Array.from(peerTrades, (entry) => ({ 
                         hash: entry[0],
                         gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
-                            // `${entry[1].givesAmount} ${entry[1].givesToken}`,
                         gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
-                        // `${entry[1].getsAmount} ${entry[1].getsToken}`,
                     }))}
                     emptyContent={
                         pintswap.loading ? (

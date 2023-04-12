@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 import { Pintswap, IOffer } from '@pintswap/sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
@@ -21,7 +21,8 @@ export type IGlobalStoreProps = {
     };
     setPeer?: any;
     setPintswap?: any;
-    setPeerTrades?: any;
+    setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
+    setOpenTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
 };
 
 export type IPintswapProps = {
@@ -51,6 +52,8 @@ const GlobalContext = createContext<IGlobalStoreProps>({
         loading: true,
         error: false,
     },
+    setOpenTrades: () => {},
+    setPeerTrades: () => {}
 });
 
 // Peer
@@ -142,7 +145,8 @@ export function GlobalStore(props: { children: ReactNode }) {
                 setPeer,
                 setPintswap,
                 peerTrades,
-                setPeerTrades
+                setPeerTrades,
+                setOpenTrades
             }}
         >
             {props.children}

@@ -20,7 +20,7 @@ type IOrderbookProps = {
 
 export const useTrade = () => {
     const { pathname } = useLocation();
-    const { addTrade, pintswap, openTrades, peer, peerTrades, setPeerTrades } = useGlobalContext();
+    const { addTrade, pintswap, openTrades, peer, peerTrades, setPeerTrades, setOpenTrades } = useGlobalContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
@@ -41,12 +41,9 @@ export const useTrade = () => {
             givesAmount: convertAmount('hex', givesAmount, givesToken),
             getsAmount: convertAmount('hex', getsAmount, getsToken)
         }
-        console.log("#buildTradeObj:", builtObj)
+        if(TESTING) console.log("#buildTradeObj:", builtObj)
         return builtObj;
     };
-
-    console.log("buildTrade", buildTradeObj(trade))
-    console.log("trade", trade)
 
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent) => {
@@ -189,23 +186,28 @@ export const useTrade = () => {
     };
 
     const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+        let shallow = new Map(openTrades);
         switch (step) {
             case 0:
-                console.log('#makerListener: taker fulfilling trade');
-                toast('Taker is fulfilling trade...');
+                console.log('#makerListener: taker approving trade');
+                toast('Taker is approving transaction...')
                 break;
             case 1:
                 console.log("#makerListener: taker approved trade");
-                toast('Taker is approving trade...')
+                toast('Taker approved transaction!')
                 break;
             case 2:
                 console.log("#makerListener: swap is complete");
                 updateSteps('Complete'); // only for maker
+                shallow.delete(order.orderHash)
+                setOpenTrades(shallow);
+                shallow = openTrades;
                 break;
         }
     };
 
     const takerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+        let shallow = new Map(openTrades);
         switch (step) {
             case 0:
                 console.log('#takerListener: fulfilling trade');
@@ -225,6 +227,9 @@ export const useTrade = () => {
             case 5:
                 console.log('#takerLister: swap complete');
                 updateSteps('Complete'); // only for taker
+                shallow.delete(order.orderHash)
+                setOpenTrades(shallow);
+                shallow = openTrades;
                 break;
         }
     };
@@ -249,7 +254,7 @@ export const useTrade = () => {
         const { module } = pintswap;
         if (module) {
             const broadcastListener = (hash: string) => {
-                console.log(`#broadcastListener: trade broadcasted (${hash})`);
+                if(TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
                 setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
                 addTrade(hash, buildTradeObj(trade));
                 updateSteps('Fulfill');
