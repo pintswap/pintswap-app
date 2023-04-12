@@ -86,6 +86,13 @@ export function truncate(s: string, amount?: number) {
     return `${s.slice(0, amount ? amount : 4)}...${s.slice(amount ? (amount * -1) : -4)}`;
 }
 
+export function round(value: string | number, decimals: number) {
+    if(value === '0.00') return '0.00'
+    const _value = typeof value === 'string' ? parseFloat(value) : value;
+    const factorOfTen = Math.pow(10, decimals);
+    return Math.round(_value * factorOfTen) / factorOfTen;
+}
+
 export function defer() {
     let resolve,
         reject,
