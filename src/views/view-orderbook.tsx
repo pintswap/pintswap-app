@@ -21,7 +21,7 @@ export const ViewOrderbookView = () => {
             </div>
             <Card header="Open Trades" scroll>
                 <Table
-                    headers={['Hash', 'Giving', 'Getting']}
+                    headers={['Hash', 'Sending', 'Receiving']}
                     onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade.hash}`)}
                     items={Array.from(peerTrades, (entry) => ({ 
                         hash: entry[0],

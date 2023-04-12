@@ -18,7 +18,7 @@ export const HomeView = () => {
             </div>
             <Card header="Open Trades" scroll>
                 <Table
-                    headers={['Hash', 'Giving', 'Getting']}
+                    headers={['Hash', 'Sending', 'Receiving']}
                     onClick={(order: any) => navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)}
                     items={Array.from(openTrades, (entry) => ({ 
                         hash: entry[0],
