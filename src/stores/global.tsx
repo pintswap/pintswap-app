@@ -90,9 +90,7 @@ export function GlobalStore(props: { children: ReactNode }) {
                             if (TESTING) console.log('Node emitting', s);
                         });
                         await ps.startNode();
-                        console.log('peer:discovery subscribed');
                         ps.on('peer:discovery', async (peer: any) => {
-                            console.log('got peer:discovery');
                             if (TESTING) console.log('Discovered peer:', peer);
                             (window as any).discoveryDeferred.resolve(peer);
                         });

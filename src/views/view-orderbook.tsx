@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
+import { convertAmount } from '../utils/common';
 
 export const ViewOrderbookView = () => {
     const navigate = useNavigate();
@@ -24,8 +25,10 @@ export const ViewOrderbookView = () => {
                     onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade.hash}`)}
                     items={Array.from(peerTrades, (entry) => ({ 
                         hash: entry[0],
-                        gives: `${entry[1].givesAmount} ${entry[1].givesToken}`,
-                        gets: `${entry[1].getsAmount} ${entry[1].getsToken}`,
+                        gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
+                            // `${entry[1].givesAmount} ${entry[1].givesToken}`,
+                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
+                        // `${entry[1].getsAmount} ${entry[1].getsToken}`,
                     }))}
                     emptyContent={
                         pintswap.loading ? (

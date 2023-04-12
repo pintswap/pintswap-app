@@ -11,10 +11,6 @@ export const FulfillView = () => {
     const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
     const { peer, setPeer } = useGlobalContext();
 
-    const onComplete = () => {
-        console.log("Swap Successful")
-    }
-
     useEffect(() => {
         if((peer.module?.id || (peer.module as any)?._id)) setPeer({ ...peer, loading: false });
     }, [peer.module])
@@ -98,7 +94,7 @@ export const FulfillView = () => {
             leaveTo="opacity-0"
             className="flex flex-col justify-center items-center text-center"
         >
-            <FullPageStatus type="success" fx={onComplete} />
+            <FullPageStatus type="success" />
         </Transition>
         </>
     );
