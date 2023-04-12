@@ -41,6 +41,7 @@ export const FullPageStatus = ({ type ='loading', message, fx }: IFullPageStatus
               <>
               <DripAnimation />
               <span>Swap Complete</span>
+              <Button onClick={() => navigate('/')}>Return Home</Button>
               </>
             )}
         </div>
