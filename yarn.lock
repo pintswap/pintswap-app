@@ -2334,10 +2334,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@pintswap/sdk@^1.2.8":
-  version "1.2.8"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.2.8.tgz#c31c362b56bcedd8dd69d00437ca0fc65dab53aa"
-  integrity sha512-yqLrvB0o3jXEjY26vHq3A10sr5klSeHFXmar/478iQIX5SaAZkVcaAfETxbvIhVybRZCpRiACHCkJEQgAjJlqw==
+"@pintswap/sdk@^1.2.12":
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.2.12.tgz#a24e9eba6ff5337afe9c36bb5ae56a9a277ceb2d"
+  integrity sha512-+xyCUNc5wrhnN56l1sMTiej7AsB6Y1+5TQLcqkkA4RClJMg1NnxeM2aTLx/4M1FBxRYfimJrkrb/mXsbCt0N8g==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
