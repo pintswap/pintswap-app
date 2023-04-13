@@ -2334,10 +2334,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@pintswap/sdk@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.2.1.tgz#3742936e047fb9f66ce84dc8c4f3e541e841b98c"
-  integrity sha512-QHIH+UlcF2w0mUfB3UeNkTqPVTdjoN9/9Jhc/0CkLH6Eb4omDZnD2F4PtatY6kp77MxjSk1H4dLCWMEXWy91pg==
+"@pintswap/sdk@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.2.2.tgz#ce0c7f3f2eaa203383d98ec0a7cd2271950cd777"
+  integrity sha512-jF0UE7EfAS7NUq6ssXIq9xbBspOAEAcq2wy6FrhdpTOrKgy4vaGRaveh+UQa4lMGMLdDseCeEaWwpAFA5s1TZA==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -2350,6 +2350,7 @@
     buffer "^6.0.3"
     canonical-weth "^1.4.0"
     chai "^4.2.0"
+    cross-fetch "^3.1.5"
     cryptico-js "^1.1.0"
     emasm "https://github.com/kungfuflex/emasm"
     ethers "^6.1.0"
