@@ -1,30 +1,24 @@
-import { ethers } from 'ethers';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
-import { Card, CopyClipboard, Skeleton, Table } from '../components';
+import { Card, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
 
-export const ViewOrderbookView = () => {
+export const PeerOrderbookView = () => {
     const navigate = useNavigate();
-    const { pintswap, peerTrades } = useGlobalContext();
+    const { pintswap, availableTrades } = useGlobalContext();
     const { error, order } = useTrade();
     
     return (
         <div className="flex flex-col gap-6">
-            <div className="text-center self-center">
-                <p className="text-sm">Multi Address</p>
-                <Skeleton loading={pintswap.loading}>
-                    <CopyClipboard value={order.multiAddr || ethers.constants.AddressZero} truncate={5} icon lg />
-                </Skeleton>
-            </div>
             <Card header="Open Trades" scroll>
+                {/* TODO */}
                 <Table
-                    headers={['Hash', 'Sending', 'Receiving']}
-                    onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade.hash}`)}
-                    items={Array.from(peerTrades, (entry) => ({ 
-                        hash: entry[0],
+                    headers={['Peer', 'Sending', 'Receiving']}
+                    onClick={(trade: any) => navigate(`/${trade.multiAddr}/${trade.hash}`)}
+                    items={Array.from(availableTrades, (entry) => ({ 
+                        peer: entry[0],
                         gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
                         gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
                     }))}
@@ -34,10 +28,10 @@ export const ViewOrderbookView = () => {
                         ) : (
                             <span>
                                 {error ? 
-                                    <span>Error loading peer&apos;s trades.{" "}
+                                    <span>Error loading available trades.{" "}
                                         <button onClick={() => navigate(0)} className="text-indigo-600 transition duration-200 hover:text-indigo-700">Try refreshing.</button>
                                     </span> : 
-                                    "Loading peer's trades..."
+                                    "Loading available trades..."
                                 }
                             </span>
                         )
