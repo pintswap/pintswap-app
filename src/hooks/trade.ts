@@ -29,6 +29,7 @@ export const useTrade = () => {
     const [error, setError] = useState(false);
 
     const isMaker = pathname === '/create';
+    const isOnActive = pathname === '/active';
 
     const buildTradeObj = ({ getsAmount, getsToken, givesAmount, givesToken }: IOffer): IOffer => {
         if (!getsToken || !getsAmount || !givesAmount || !givesToken)
@@ -152,7 +153,7 @@ export const useTrade = () => {
                     setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     await getTrades(splitUrl[1], splitUrl[2]);
-                } else if (splitUrl.length === 2 && splitUrl[1] !== 'create') { 
+                } else if (splitUrl.length === 2 && splitUrl[1] !== 'create' && splitUrl[1] !== 'active') { 
                     // Only multiAddr
                     setOrder({ multiAddr: splitUrl[1], orderHash: '' });
                     await getTrades(splitUrl[1]); 
@@ -237,7 +238,7 @@ export const useTrade = () => {
     useEffect(() => {
         const { module } = pintswap;
         if (module) {
-            if (!isMaker) toast.loading('Connecting to peer...', { toastId: 'findPeer' });
+            if (!isMaker && !isOnActive) toast.loading('Connecting to peer...', { toastId: 'findPeer' });
             module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);

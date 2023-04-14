@@ -5,10 +5,10 @@ import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
 
-export const PeerOrderbookView = () => {
+export const ActiveOrderbookView = () => {
     const navigate = useNavigate();
     const { pintswap, availableTrades } = useGlobalContext();
-    const { error, order } = useTrade();
+    const { error } = useTrade();
     
     return (
         <div className="flex flex-col gap-6">
@@ -16,7 +16,7 @@ export const PeerOrderbookView = () => {
                 {/* TODO */}
                 <Table
                     headers={['Peer', 'Sending', 'Receiving']}
-                    onClick={(trade: any) => navigate(`/${trade.multiAddr}/${trade.hash}`)}
+                    onClick={(trade: any) => navigate(`/${trade.peer}`)}
                     items={Array.from(availableTrades, (entry) => ({ 
                         peer: entry[0],
                         gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
@@ -28,10 +28,10 @@ export const PeerOrderbookView = () => {
                         ) : (
                             <span>
                                 {error ? 
-                                    <span>Error loading available trades.{" "}
+                                    <span>Error loading available offers.{" "}
                                         <button onClick={() => navigate(0)} className="text-indigo-600 transition duration-200 hover:text-indigo-700">Try refreshing.</button>
                                     </span> : 
-                                    "Loading available trades..."
+                                    availableTrades.size === 0 ? 'No active offers' : "Loading available offers..."
                                 }
                             </span>
                         )

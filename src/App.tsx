@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { Base } from './base';
 import { useGlobalContext } from './stores';
-import { CreateView, FulfillView, HomeView, PeerOrderbookView } from './views';
+import { ActiveOrderbookView, CreateView, FulfillView, HomeView, PeerOrderbookView } from './views';
 import { setFallbackWETH } from "@pintswap/sdk";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -19,6 +19,7 @@ function App() {
                     <Route path="/fulfill" element={<FulfillView />} />
                     <Route path="/:address/:multiaddr" element={<FulfillView />} />
                     <Route path="/:address" element={<PeerOrderbookView />} />
+                    <Route path="/active" element={<ActiveOrderbookView />} />
                 </Routes>
             </Base>
 
