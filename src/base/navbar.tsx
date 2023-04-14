@@ -14,7 +14,7 @@ export const Navbar = () => {
                     <img src="/logo/ps-logo.png" alt="PintSwap Logo" height={width < 768 ? '50' : '60'} width={width < 768 ? '50' : '60'} />
                 </button>
                 <Button type="transparent" onClick={() => navigate('/active')}>
-                    Active Offers
+                    {width < 768 ? 'All Offers' : 'Active Offers'}
                 </Button>
             </div>
             <div className="justify-self-end">{address && <Wallet />}</div>
