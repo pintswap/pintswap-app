@@ -17,20 +17,24 @@ export const ActiveOrderbookView = () => {
                 <Table
                     headers={['Peer', 'Sending', 'Receiving']}
                     onClick={(trade: any) => navigate(`/${trade.peer}`)}
-                    items={Array.from(availableTrades, (entry) => ({ 
-                        peer: entry[0],
-                        gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
-                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
-                    }))}
+                    items={Array.from(availableTrades, (entry: any) => { 
+                        let peer = entry[0];
+                        let offer = entry[1][1][0];
+                        return {
+                            peer: entry[0],
+                            gives: convertAmount('readable', offer.givesAmount, offer.givesToken),
+                            gets: convertAmount('readable', offer.getsAmount, offer.getsToken)
+                        }
+                    })}
                     emptyContent={
                         pintswap.loading ? (
                             <ImSpinner9 className="animate-spin" size="20px" />
                         ) : (
                             <span>
                                 {error ? 
-                                    <span>Error loading available offers.{" "}
+                                    (<span>Error loading available offers.{" "}
                                         <button onClick={() => navigate(0)} className="text-indigo-600 transition duration-200 hover:text-indigo-700">Try refreshing.</button>
-                                    </span> : 
+                                    </span>) : 
                                     availableTrades.size === 0 ? 'No active offers' : "Loading available offers..."
                                 }
                             </span>

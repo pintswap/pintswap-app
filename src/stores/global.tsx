@@ -105,7 +105,7 @@ export function GlobalStore(props: { children: ReactNode }) {
                             (window as any).discoveryDeferred.resolve(peer);
                         });
                         // Subscribe to pubsub
-                        await pintswap.module?.subscribeOffers();
+                        await ps.subscribeOffers();
                         resolve(ps);
                     } catch (err) {
                         console.error('Initializing error:', err);
@@ -142,7 +142,9 @@ export function GlobalStore(props: { children: ReactNode }) {
     // Get Active Trades
     useEffect(() => {
         if(pintswap.module) {
-            if(pintswap.module.offers.size > 0) setAvailableTrades(pintswap.module.offers);
+            pintswap.module.on('/pubsub/orderbook-update', () => {
+                if(pintswap.module?.peers.size as any > 0) setAvailableTrades(pintswap.module?.peers as any);
+            });
         }
     }, [pintswap.module]);
 
