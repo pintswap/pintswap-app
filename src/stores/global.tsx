@@ -9,6 +9,7 @@ export type IGlobalStoreProps = {
     openTrades: Map<string, IOffer>;
     addTrade: (hash: string, { givesToken, givesAmount, getsToken, getsAmount }: IOffer) => void;
     peerTrades: Map<string, IOffer>;
+    availableTrades: Map<string, IOffer>;
     pintswap: {
         module: Pintswap | undefined;
         loading: boolean;
@@ -23,6 +24,7 @@ export type IGlobalStoreProps = {
     setPintswap?: any;
     setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     setOpenTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
+    setAvailableTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
 };
 
 export type IPintswapProps = {
@@ -41,6 +43,7 @@ export type IPeerProps = {
 const GlobalContext = createContext<IGlobalStoreProps>({
     openTrades: new Map(),
     peerTrades: new Map(),
+    availableTrades: new Map(),
     addTrade(hash, { givesToken, givesAmount, getsToken, getsAmount }) {},
     pintswap: {
         module: undefined,
@@ -53,7 +56,8 @@ const GlobalContext = createContext<IGlobalStoreProps>({
         error: false,
     },
     setOpenTrades: () => {},
-    setPeerTrades: () => {}
+    setPeerTrades: () => {},
+    setAvailableTrades: () => {}
 });
 
 // Peer
@@ -65,6 +69,7 @@ export function GlobalStore(props: { children: ReactNode }) {
 
     const [openTrades, setOpenTrades] = useState<Map<string, IOffer>>(new Map());
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
+    const [availableTrades, setAvailableTrades] = useState<Map<string, IOffer>>(new Map());
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
@@ -92,11 +97,15 @@ export function GlobalStore(props: { children: ReactNode }) {
                         ps.on('pintswap/node/status', (s: any) => {
                             if (TESTING) console.log('Node emitting', s);
                         });
+                        // Start node
                         await ps.startNode();
+                        // Subscribe to peer
                         ps.on('peer:discovery', async (peer: any) => {
                             if (TESTING) console.log('Discovered peer:', peer);
                             (window as any).discoveryDeferred.resolve(peer);
                         });
+                        // Subscribe to pubsub
+                        await pintswap.module?.subscribeOffers();
                         resolve(ps);
                     } catch (err) {
                         console.error('Initializing error:', err);
@@ -132,8 +141,10 @@ export function GlobalStore(props: { children: ReactNode }) {
 
     // Get Active Trades
     useEffect(() => {
-        if (pintswap.module) setOpenTrades(pintswap.module.offers);
-    }, [pintswap]);
+        if(pintswap.module) {
+            if(pintswap.module.offers.size > 0) setAvailableTrades(pintswap.module.offers);
+        }
+    }, [pintswap.module]);
 
     return (
         <GlobalContext.Provider
@@ -146,7 +157,9 @@ export function GlobalStore(props: { children: ReactNode }) {
                 setPintswap,
                 peerTrades,
                 setPeerTrades,
-                setOpenTrades
+                setOpenTrades,
+                setAvailableTrades,
+                availableTrades
             }}
         >
             {props.children}
