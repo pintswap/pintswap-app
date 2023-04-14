@@ -5,6 +5,7 @@ import { ethers } from 'ethers6';
 import { Card, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
+<<<<<<< HEAD
 import { convertAmount } from '../utils/common';
 import { shorten } from '../utils/shorten';
 import { groupBy, memoize } from 'lodash';
@@ -23,11 +24,15 @@ const toFlattened = memoize((v) =>
         [],
     ),
 );
+=======
+import { convertAmount, truncate } from '../utils/common';
+>>>>>>> 9117424 (fixed merge conflicts)
 
 export const ActiveOrderbookView = () => {
     const navigate = useNavigate();
     const { pintswap, availableTrades } = useGlobalContext();
     const { error } = useTrade();
+<<<<<<< HEAD
     const [limitOrders, setLimitOrders] = useState([]);
 
     useEffect(() => {
@@ -50,10 +55,16 @@ export const ActiveOrderbookView = () => {
         })().catch((err) => console.error(err));
     }, [pintswap.module, availableTrades]);
 
+=======
+
+    console.log(availableTrades)
+    
+>>>>>>> 9117424 (fixed merge conflicts)
     return (
         <div className="flex flex-col gap-6 font-titillium">
             <Card header="Open Trades" scroll>
                 {/* TODO */}
+<<<<<<< HEAD
                 {limitOrders.map(([pair, orders]: any[]) => (
                     <>
                         <h2>{pair}</h2>
@@ -100,6 +111,31 @@ export const ActiveOrderbookView = () => {
                         <br />
                     </>
                 ))}
+=======
+                <Table
+                    headers={['Peer', 'Sending', 'Receiving']}
+                    onClick={(trade: any) => navigate(`/${trade.peer}`)}
+                    items={Array.from(availableTrades, (entry) => ({ 
+                        peer: truncate(entry[0]),
+                        gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
+                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
+                    }))}
+                    emptyContent={
+                        pintswap.loading ? (
+                            <ImSpinner9 className="animate-spin" size="20px" />
+                        ) : (
+                            <span>
+                                {error ? 
+                                    (<span>Error loading available offers.{" "}
+                                        <button onClick={() => navigate(0)} className="text-indigo-600 transition duration-200 hover:text-indigo-700">Try refreshing.</button>
+                                    </span> ) : 
+                                    "Loading available offers..."
+                                }
+                            </span>
+                        )
+                    }
+                />
+>>>>>>> 9117424 (fixed merge conflicts)
             </Card>
         </div>
     );

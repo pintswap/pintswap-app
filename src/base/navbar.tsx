@@ -8,25 +8,20 @@ export const Navbar = () => {
     const { address } = useAccount();
     const navigate = useNavigate();
     return (
-        <nav className="py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center font-titillium font-bold">
-            <div className="flex items-center gap-4 md:gap-6">
-                <button onClick={() => navigate('/')}>
-                    <img
-                        src="/logo/ps-logo.png"
-                        alt="PintSwap Logo"
-                        height={width < 768 ? '50' : '60'}
-                        width={width < 768 ? '50' : '60'}
-                    />
+        <nav className="py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center">
+                <button onClick={() => navigate('/')} className="flex items-center gap-2 md:gap-4">
+                    <img src="/logo/ps-logo.png" alt="PintSwap Logo" height={width < 768 ? '50' : '60'} width={width < 768 ? '50' : '60'} />
+                    <span className="text-xl md:text-3xl">
+                        <span className="text-pink-500">Pint</span>
+                        <span className="text-sky-400">Swap</span>
+                    </span>
                 </button>
-                <Button
-                    className="tracking-wide"
-                    type="transparent"
-                    onClick={() => navigate('/active')}
-                >
+            <div className="flex items-center gap-2 md:gap-4 justify-self-end">
+                <Button type="transparent" onClick={() => navigate('/active')}>
                     {width < 768 ? 'All Offers' : 'Active Offers'}
                 </Button>
+                {address && <Wallet />}
             </div>
-            <div className="justify-self-end">{address && <Wallet />}</div>
         </nav>
     );
 };
