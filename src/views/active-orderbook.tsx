@@ -115,11 +115,14 @@ export const ActiveOrderbookView = () => {
                 <Table
                     headers={['Peer', 'Sending', 'Receiving']}
                     onClick={(trade: any) => navigate(`/${trade.peer}`)}
-                    items={Array.from(availableTrades, (entry) => ({ 
-                        peer: truncate(entry[0]),
-                        gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
-                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
-                    }))}
+                    items={Array.from(availableTrades, (entry) => { 
+                        console.log("entry", entry)
+                        return {
+                            peer: entry[0],
+                            gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
+                            gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
+                        }
+                    })}
                     emptyContent={
                         pintswap.loading ? (
                             <ImSpinner9 className="animate-spin" size="20px" />
