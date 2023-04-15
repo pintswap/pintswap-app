@@ -45,15 +45,14 @@ export const FulfillView = () => {
         const m = pintswap.module;
         if (m)
             (async () => {
-                
-		const raw = await fromFormatted(trade, m.signer);
+                const raw = await fromFormatted(trade, m.signer);
                 const {
                     pair: [base, tradeToken],
                 } = orderTokens(raw);
                 const [baseDecimals, tradeDecimals] = await Promise.all(
                     [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
                 );
-console.log(fillAmount);
+                console.log(fillAmount);
                 if (tradeToken.address === raw.givesToken) {
                     setOutputAmount(
                         Number(
@@ -100,6 +99,7 @@ console.log(fillAmount);
                             loading={loadingTrade}
                         />
                         <Input
+                            title="Price"
                             placeholder="Price"
                             value={Number(limitOrder.price).toFixed(4)}
                             type="number"
