@@ -1,4 +1,12 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
+import {
+    createContext,
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 import { useSigner } from 'wagmi';
 import { Pintswap, IOffer } from '@pintswap/sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
@@ -57,7 +65,7 @@ const GlobalContext = createContext<IGlobalStoreProps>({
     },
     setOpenTrades: () => {},
     setPeerTrades: () => {},
-    setAvailableTrades: () => {}
+    setAvailableTrades: () => {},
 });
 
 // Peer
@@ -141,10 +149,16 @@ export function GlobalStore(props: { children: ReactNode }) {
 
     // Get Active Trades
     useEffect(() => {
-        if(pintswap.module) {
-            pintswap.module.on('/pubsub/orderbook-update', () => {
-                if(pintswap.module?.peers.size as any > 0) setAvailableTrades(pintswap.module?.peers as any);
-            });
+        if (pintswap.module) {
+            const listener = () => {
+                if ((pintswap.module?.peers.size as any) > 0)
+                    setAvailableTrades(pintswap.module?.peers as any);
+            };
+            pintswap.module.on('/pubsub/orderbook-update', listener);
+            return () => {
+                if (pintswap.module)
+                    pintswap.module.removeListener('/pubsub/orderbook-update', listener);
+            };
         }
     }, [pintswap.module]);
 
@@ -161,7 +175,7 @@ export function GlobalStore(props: { children: ReactNode }) {
                 setPeerTrades,
                 setOpenTrades,
                 setAvailableTrades,
-                availableTrades
+                availableTrades,
             }}
         >
             {props.children}

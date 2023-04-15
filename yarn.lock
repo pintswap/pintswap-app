@@ -6484,9 +6484,9 @@ elliptic@6.5.4, elliptic@^6.5.3, elliptic@^6.5.4:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-"emasm@git+https://github.com/kungfuflex/emasm.git":
+"emasm@https://github.com/kungfuflex/emasm":
   version "0.2.0"
-  resolved "git+https://github.com/kungfuflex/emasm.git#d2f5d922f0dc0440e7b227a441ce516058e2682f"
+  resolved "https://github.com/kungfuflex/emasm#d2f5d922f0dc0440e7b227a441ce516058e2682f"
 
 emittery@^0.10.2:
   version "0.10.2"
