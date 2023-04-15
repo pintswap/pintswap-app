@@ -1,6 +1,7 @@
 import { TOKENS } from './token-list';
 import { ethers } from 'ethers6';
 import { shorten } from './shorten';
+import { keyBy } from "lodash";
 import { sortBy, groupBy } from "lodash";
 
 const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
@@ -11,10 +12,18 @@ const DAI: any = TOKENS.find((v) => v.symbol === 'DAI');
 export const decimalsCache: any = {};
 export const symbolCache: any = {};
 
+export const TOKENS_BY_SYMBOL = keyBy(TOKENS, 'symbol');
+
 const maybeShorten = (s: string): string => {
     if (s.substr(0, 2) === '0x') return shorten(s);
     return s;
 };
+
+export function toAddress(symbolOrAddress: string): string {
+  const token = TOKENS_BY_SYMBOL[symbolOrAddress];
+  if (token) return ethers.getAddress(token.address);
+  return ethers.getAddress(symbolOrAddress);
+}
 
 export async function toTicker(pair: any, provider: any) {
     const flipped = [...pair].reverse();
@@ -106,8 +115,8 @@ export async function getDecimals(address: any, provider: any) {
 export function orderTokens(offer: any) {
     const mapped = {
         ...offer,
-        givesToken: ethers.getAddress(offer.givesToken),
-        getsToken: ethers.getAddress(offer.getsToken),
+        givesToken: toAddress(offer.givesToken),
+        getsToken: toAddress(offer.getsToken),
     };
     if (mapped.givesToken === USDC.address) {
         return givesBase(mapped);
@@ -128,6 +137,16 @@ export function orderTokens(offer: any) {
     } else if (Number(mapped.givesToken.toLowerCase()) < Number(mapped.getsToken.toLowerCase())) {
         return givesBase(mapped);
     } else return givesTrade(mapped);
+}
+
+export async function fromFormatted(trade: any, provider: any) {
+  const [ givesToken, getsToken ] = [trade.givesToken, trade.getsToken].map((v) => toAddress(v));
+  return {
+    givesToken,
+    getsToken,
+    givesAmount: ethers.toBeHex(ethers.parseUnits(trade.givesAmount, await getDecimals(givesToken, provider))),
+    getsAmount: ethers.toBeHex(ethers.parseUnits(trade.getsAmount, await getDecimals(getsToken, provider)))
+  };
 }
 
 export async function toLimitOrder(offer: any, provider: any) {

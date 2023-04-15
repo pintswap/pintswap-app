@@ -33,11 +33,12 @@ export const PeerOrderbookView = () => {
     const { error, order } = useTrade();
     const [limitOrders, setLimitOrders] = useState([]);
     useEffect(() => {
+        console.log(peerTrades);
         (async () => {
             if (pintswap.module) {
-                const signer =
-                    pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+                const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
                 const flattened = toFlattened(peerTrades);
+                console.log(flattened);
                 const limitOrders = (
                     await Promise.all(
                         flattened.map(async (v: any) => await toLimitOrder(v, signer)),

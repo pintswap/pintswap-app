@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { ethers } from "ethers6";
+import { ethers } from 'ethers6';
 import { toast } from 'react-toastify';
 import {
     Button,
@@ -14,62 +14,71 @@ import { Dropdown } from '../components/dropdown';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores';
 import { BASE_URL, truncate } from '../utils/common';
-import { orderTokens, getDecimals, toLimitOrder } from "../utils/orderbook";
+import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
 
 export const FulfillView = () => {
     const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
     const { peer, setPeer, pintswap } = useGlobalContext();
-    const [limitOrder, setLimitOrder] = useState({ price: Number(0), amount: '', ticker: '', type: '' });
+    const [limitOrder, setLimitOrder] = useState({
+        price: Number(0),
+        amount: '',
+        ticker: '',
+        type: '',
+    });
     const [outputAmount, setOutputAmount] = useState('');
     const [fillAmount, setFillAmount] = useState('');
 
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
+                const raw = await fromFormatted(trade, pintswap.module.signer);
                 const {
                     pair: [base, tradeToken],
-                } = orderTokens(trade);
+                } = orderTokens(raw);
                 const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
                 setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
-                (setLimitOrder as any)(await toLimitOrder(trade as any, pintswap.module.signer));
+                (setLimitOrder as any)(await toLimitOrder(raw as any, pintswap.module.signer));
             }
         })().catch((err) => console.error(err));
     }, [trade, pintswap.module]);
     useEffect(() => {
         const m = pintswap.module;
-        if (m) (async () => {
-            const {
-                pair: [base, tradeToken],
-            } = orderTokens(trade);
-            const [baseDecimals, tradeDecimals] = await Promise.all(
-                [base, tradeToken].map(
-                    async (v) => await getDecimals(v.address, m.signer),
-                ),
-            );
-            if (tradeToken.address === trade.givesToken) {
-                setOutputAmount(
-                    Number(
-                        ethers.formatUnits(
-                            (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
-                                ethers.toBigInt(trade.givesAmount)) /
-                                ethers.toBigInt(trade.getsAmount),
-                            baseDecimals,
-                        ),
-                    ).toFixed(6),
+        if (m)
+            (async () => {
+                
+		const raw = await fromFormatted(trade, m.signer);
+                const {
+                    pair: [base, tradeToken],
+                } = orderTokens(raw);
+                const [baseDecimals, tradeDecimals] = await Promise.all(
+                    [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
                 );
-            } else {
-                setOutputAmount(
-                    Number(
-                        ethers.formatUnits(
-                            (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
-                                ethers.toBigInt(trade.getsAmount)) /
-                                ethers.toBigInt(trade.givesAmount),
-                            baseDecimals,
-                        ),
-                    ).toFixed(6),
-                );
-            }
-        })().catch((err) => console.error(err));
+console.log(fillAmount);
+                if (tradeToken.address === raw.givesToken) {
+                    setOutputAmount(
+                        Number(
+                            ethers.formatUnits(
+                                (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
+                                    ethers.toBigInt(raw.getsAmount)) /
+                                    ethers.toBigInt(raw.givesAmount),
+                                baseDecimals,
+                            ),
+                        ).toFixed(6),
+                    );
+                } else {
+                    console.log(raw);
+                    setOutputAmount(
+                        Number(
+                            ethers.formatUnits(
+                                (ethers.toBigInt(ethers.parseUnits(fillAmount, baseDecimals)) *
+                                    ethers.toBigInt(raw.givesAmount)) /
+                                    ethers.toBigInt(raw.getsAmount),
+                                baseDecimals,
+                            ),
+                        ).toFixed(6),
+                    );
+                }
+            })().catch((err) => console.error(err));
     }, [pintswap.module, fillAmount, trade]);
 
     useEffect(() => {
@@ -101,7 +110,7 @@ export const FulfillView = () => {
                             title="Amount"
                             placeholder="Amount to trade"
                             value={fillAmount}
-                            type="text"
+                            type="number"
                             onChange={(evt: any) => {
                                 evt.preventDefault();
                                 setFillAmount(evt.target.value);
