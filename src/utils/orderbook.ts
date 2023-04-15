@@ -1,6 +1,7 @@
 import { TOKENS } from './token-list';
 import { ethers } from 'ethers';
 import { shorten } from './shorten';
+import { sortBy, groupBy } from "lodash";
 
 const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
 const USDC: any = TOKENS.find((v) => v.symbol === 'USDC');
@@ -16,7 +17,7 @@ const maybeShorten = (s: string): string => {
 };
 
 export async function toTicker(pair: any, provider: any) {
-    const flipped = [ ...pair ].reverse();
+    const flipped = [...pair].reverse();
     return (
         await Promise.all(
             flipped.map(async (v: any) => maybeShorten(await getSymbol(v.address, provider))),
@@ -64,6 +65,27 @@ function givesTrade(offer: any) {
     return { pair: givesBase(offer).pair.reverse(), type: 'ask' };
 }
 
+export const sortBids = (orders: any) => {
+    return orders.slice().sort((a: any, b: any) => {
+        return Number(a.price) - Number(b.price);
+    });
+};
+
+export const sortAsks = (orders: any) => {
+    return orders.slice().sort((a: any, b: any) => {
+        return Number(b.price) - Number(a.price);
+    });
+};
+
+export const sortLimitOrders = (limitOrders: any) => {
+    return Object.values(groupBy(limitOrders, 'ticker'))
+        .map((v: any) => {
+            const { bid, ask } = groupBy(v, 'type');
+            return sortAsks(ask).concat(sortBids(bid));
+        })
+        .reduce((r, v) => r.concat(v), []);
+};
+
 export async function getDecimals(address: any, provider: any) {
     address = ethers.utils.getAddress(address);
     const match = TOKENS.find((v) => ethers.utils.getAddress(v.address) === address);
@@ -83,9 +105,9 @@ export async function getDecimals(address: any, provider: any) {
 
 export function orderTokens(offer: any) {
     const mapped = {
-       ...offer,
-       givesToken: ethers.utils.getAddress(offer.givesToken),
-       getsToken: ethers.utils.getAddress(offer.getsToken)
+        ...offer,
+        givesToken: ethers.utils.getAddress(offer.givesToken),
+        getsToken: ethers.utils.getAddress(offer.getsToken),
     };
     if (mapped.givesToken === USDC.address) {
         return givesBase(mapped);
@@ -117,9 +139,10 @@ export async function toLimitOrder(offer: any, provider: any) {
         [base, trade].map(async (v) => await getDecimals(v.address, provider)),
     );
     return {
-        price:
-            (Number(ethers.utils.formatUnits(base.amount, baseDecimals)) /
-            Number(ethers.utils.formatUnits(trade.amount, tradeDecimals))).toFixed(4),
+        price: (
+            Number(ethers.utils.formatUnits(base.amount, baseDecimals)) /
+            Number(ethers.utils.formatUnits(trade.amount, tradeDecimals))
+        ).toFixed(4),
         amount: ethers.utils.formatUnits(trade.amount, tradeDecimals),
         type,
         ticker: await toTicker([base, trade], provider),

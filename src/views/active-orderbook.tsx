@@ -8,7 +8,7 @@ import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
 import { shorten } from '../utils/shorten';
 import { memoize } from 'lodash';
-import { toLimitOrder } from "../utils/orderbook";
+import { sortLimitOrders, toLimitOrder } from "../utils/orderbook";
 import { capitalCase } from "change-case";
 
 const toFlattened = memoize((v) =>
@@ -23,6 +23,8 @@ const toFlattened = memoize((v) =>
         [],
     ),
 );
+
+  
 
 export const ActiveOrderbookView = () => {
     const navigate = useNavigate();
@@ -39,7 +41,7 @@ export const ActiveOrderbookView = () => {
              ...v,
              peer: flattened[i].peer
           }));
-          setLimitOrders(limitOrders as any);
+          setLimitOrders(sortLimitOrders(limitOrders as any));
         }
       })().catch((err) => console.error(err));
     }, [ pintswap.module, availableTrades ]);
