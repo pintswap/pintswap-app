@@ -1,76 +1,145 @@
-import { Transition } from "@headlessui/react";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { Button, Card, CopyClipboard, FullPageStatus, Input, ProgressIndicator } from "../components";
-import { Dropdown } from "../components/dropdown";
-import { useTrade } from "../hooks/trade";
-import { useGlobalContext } from "../stores";
-import { BASE_URL, truncate } from "../utils/common";
+import { Transition } from '@headlessui/react';
+import { useEffect, useState } from 'react';
+import { ethers } from "ethers6";
+import { toast } from 'react-toastify';
+import {
+    Button,
+    Card,
+    CopyClipboard,
+    FullPageStatus,
+    Input,
+    ProgressIndicator,
+} from '../components';
+import { Dropdown } from '../components/dropdown';
+import { useTrade } from '../hooks/trade';
+import { useGlobalContext } from '../stores';
+import { BASE_URL, truncate } from '../utils/common';
+import { orderTokens, getDecimals, toLimitOrder } from "../utils/orderbook";
 
 export const FulfillView = () => {
     const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
-    const { peer, setPeer } = useGlobalContext();
+    const { peer, setPeer, pintswap } = useGlobalContext();
+    const [limitOrder, setLimitOrder] = useState({ price: Number(0), amount: '', ticker: '', type: '' });
+    const [outputAmount, setOutputAmount] = useState('');
+    const [fillAmount, setFillAmount] = useState('');
 
     useEffect(() => {
-        if((peer.module?.id || (peer.module as any)?._id)) setPeer({ ...peer, loading: false });
-    }, [peer.module])
+        (async () => {
+            if (pintswap.module) {
+                const {
+                    pair: [base, tradeToken],
+                } = orderTokens(trade);
+                const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
+                setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
+                (setLimitOrder as any)(await toLimitOrder(trade as any, pintswap.module.signer));
+            }
+        })().catch((err) => console.error(err));
+    }, [trade, pintswap.module]);
+    useEffect(() => {
+        const m = pintswap.module;
+        if (m) (async () => {
+            const {
+                pair: [base, tradeToken],
+            } = orderTokens(trade);
+            const [baseDecimals, tradeDecimals] = await Promise.all(
+                [base, tradeToken].map(
+                    async (v) => await getDecimals(v.address, m.signer),
+                ),
+            );
+            if (tradeToken.address === trade.givesToken) {
+                setOutputAmount(
+                    Number(
+                        ethers.formatUnits(
+                            (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
+                                ethers.toBigInt(trade.givesAmount)) /
+                                ethers.toBigInt(trade.getsAmount),
+                            baseDecimals,
+                        ),
+                    ).toFixed(6),
+                );
+            } else {
+                setOutputAmount(
+                    Number(
+                        ethers.formatUnits(
+                            (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
+                                ethers.toBigInt(trade.getsAmount)) /
+                                ethers.toBigInt(trade.givesAmount),
+                            baseDecimals,
+                        ),
+                    ).toFixed(6),
+                );
+            }
+        })().catch((err) => console.error(err));
+    }, [pintswap.module, fillAmount, trade]);
+
+    useEffect(() => {
+        if (peer.module?.id || (peer.module as any)?._id) setPeer({ ...peer, loading: false });
+    }, [peer.module]);
 
     return (
         <>
-        {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
-        <div className="flex flex-col gap-6">
-            <Card className="self-center" header="Fulfill Trade">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
-                    <Dropdown 
-                        title="Send Details"
-                        placeholder="Please select a token..."
-                        state={trade.givesToken.startsWith('0x') ? truncate(trade.givesToken) : trade.givesToken}
-                        type="givesToken"
-                        disabled
-                        loading={loadingTrade}
-                    />
-                    <Input
-                        placeholder="Amount to Send"
-                        value={trade.givesAmount}
-                        type="number"
-                        disabled
-                        loading={loadingTrade}
-                    />
-                    <Dropdown 
-                        title="Receive Details"
-                        placeholder="Please select a token..."
-                        state={trade.getsToken.startsWith('0x') ? truncate(trade.getsToken) : trade.getsToken}
-                        type="getsToken"
-                        disabled
-                        loading={loadingTrade}
-                    />
-                    <Input
-                        placeholder="Amount to Receive"
-                        value={trade.getsAmount}
-                        type="number"
-                        disabled
-                        loading={loadingTrade}
-                    />
+            {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
+            <div className="flex flex-col gap-6">
+                <Card className="self-center" header="Fulfill Trade">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
+                        <Dropdown
+                            title="Pair"
+                            placeholder="Pair"
+                            state={limitOrder.ticker}
+                            type="givesToken"
+                            disabled
+                            loading={loadingTrade}
+                        />
+                        <Input
+                            placeholder="Price"
+                            value={Number(limitOrder.price).toFixed(4)}
+                            type="number"
+                            disabled
+                            loading={loadingTrade}
+                        />
+                        <Input
+                            title="Amount"
+                            placeholder="Amount to trade"
+                            value={fillAmount}
+                            type="text"
+                            onChange={(evt: any) => {
+                                evt.preventDefault();
+                                setFillAmount(evt.target.value);
+                            }}
+                            loading={loadingTrade}
+                        />
+                        <Input
+                            placeholder="Output amount"
+                            value={outputAmount}
+                            type="number"
+                            disabled
+                            loading={loadingTrade}
+                        />
+                    </div>
+                    <Button
+                        checkNetwork
+                        className="mt-6 w-full"
+                        loadingText="Fulfilling"
+                        loading={loading && !error}
+                        onClick={fulfillTrade}
+                        disabled={
+                            !trade.getsAmount ||
+                            !trade.givesAmount ||
+                            !trade.getsToken ||
+                            !trade.givesToken ||
+                            loadingTrade ||
+                            loading
+                        }
+                    >
+                        Fulfill Trade
+                    </Button>
+                </Card>
+
+                <div className="mx-auto">
+                    <ProgressIndicator steps={steps} />
                 </div>
-                <Button
-                    checkNetwork
-                    className="mt-6 w-full"
-                    loadingText="Fulfilling"
-                    loading={loading && !error}
-                    onClick={fulfillTrade}
-                    disabled={
-                        !trade.getsAmount || !trade.givesAmount || !trade.getsToken || !trade.givesToken || loadingTrade || loading
-                    }
-                >
-                    Fulfill Trade
-                </Button>
-            </Card>
 
-            <div className="mx-auto">
-                <ProgressIndicator steps={steps} />
-            </div>
-
-            <Transition
+                <Transition
                     show={!!order.orderHash && !!order.multiAddr}
                     enter="transition-opacity duration-75"
                     enterFrom="opacity-0"
@@ -81,21 +150,26 @@ export const FulfillView = () => {
                     className="flex flex-col justify-center items-center text-center"
                 >
                     <p className="text-sm">Trade Link:</p>
-                    <CopyClipboard value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`} icon lg truncate={5} />
+                    <CopyClipboard
+                        value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`}
+                        icon
+                        lg
+                        truncate={5}
+                    />
                 </Transition>
-        </div>
-        <Transition
-            show={steps[2].status === 'current'}
-            enter="transition-opacity duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-            className="flex flex-col justify-center items-center text-center"
-        >
-            <FullPageStatus type="success" />
-        </Transition>
+            </div>
+            <Transition
+                show={steps[2].status === 'current'}
+                enter="transition-opacity duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacity duration-150"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+                className="flex flex-col justify-center items-center text-center"
+            >
+                <FullPageStatus type="success" />
+            </Transition>
         </>
     );
 };

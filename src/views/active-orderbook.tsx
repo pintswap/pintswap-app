@@ -1,7 +1,7 @@
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { ethers } from "ethers6";
 import { Card, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
@@ -35,7 +35,7 @@ export const ActiveOrderbookView = () => {
     useEffect(() => {
       (async () => {
 	if (pintswap.module) {
-          const signer = pintswap.module.signer || new ethers.providers.InfuraProvider('mainnet');
+          const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
           const flattened = toFlattened(availableTrades);
           const limitOrders = (await Promise.all(flattened.map(async (v: any) => await toLimitOrder(v, signer)))).map((v, i) => ({
              ...v,

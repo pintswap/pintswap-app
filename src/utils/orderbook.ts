@@ -1,5 +1,5 @@
 import { TOKENS } from './token-list';
-import { ethers } from 'ethers';
+import { ethers } from 'ethers6';
 import { shorten } from './shorten';
 import { sortBy, groupBy } from "lodash";
 
@@ -26,8 +26,8 @@ export async function toTicker(pair: any, provider: any) {
 }
 
 export async function getSymbol(address: any, provider: any) {
-    address = ethers.utils.getAddress(address);
-    const match = TOKENS.find((v) => ethers.utils.getAddress(v.address) === address);
+    address = ethers.getAddress(address);
+    const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
     if (match) return match.symbol;
     else if (symbolCache[address]) {
         return symbolCache[address];
@@ -87,8 +87,8 @@ export const sortLimitOrders = (limitOrders: any) => {
 };
 
 export async function getDecimals(address: any, provider: any) {
-    address = ethers.utils.getAddress(address);
-    const match = TOKENS.find((v) => ethers.utils.getAddress(v.address) === address);
+    address = ethers.getAddress(address);
+    const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
     if (match) return match.decimals;
     else if (decimalsCache[address]) {
         return decimalsCache[address];
@@ -106,8 +106,8 @@ export async function getDecimals(address: any, provider: any) {
 export function orderTokens(offer: any) {
     const mapped = {
         ...offer,
-        givesToken: ethers.utils.getAddress(offer.givesToken),
-        getsToken: ethers.utils.getAddress(offer.getsToken),
+        givesToken: ethers.getAddress(offer.givesToken),
+        getsToken: ethers.getAddress(offer.getsToken),
     };
     if (mapped.givesToken === USDC.address) {
         return givesBase(mapped);
@@ -140,10 +140,10 @@ export async function toLimitOrder(offer: any, provider: any) {
     );
     return {
         price: (
-            Number(ethers.utils.formatUnits(base.amount, baseDecimals)) /
-            Number(ethers.utils.formatUnits(trade.amount, tradeDecimals))
+            Number(ethers.formatUnits(base.amount, baseDecimals)) /
+            Number(ethers.formatUnits(trade.amount, tradeDecimals))
         ).toFixed(4),
-        amount: ethers.utils.formatUnits(trade.amount, tradeDecimals),
+        amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,
         ticker: await toTicker([base, trade], provider),
     };

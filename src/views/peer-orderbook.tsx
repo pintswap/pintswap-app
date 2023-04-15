@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers } from 'ethers6';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Card, CopyClipboard, Skeleton, Table } from '../components';
@@ -36,7 +36,7 @@ export const PeerOrderbookView = () => {
         (async () => {
             if (pintswap.module) {
                 const signer =
-                    pintswap.module.signer || new ethers.providers.InfuraProvider('mainnet');
+                    pintswap.module.signer || new ethers.InfuraProvider('mainnet');
                 const flattened = toFlattened(peerTrades);
                 const limitOrders = (
                     await Promise.all(
@@ -59,7 +59,7 @@ export const PeerOrderbookView = () => {
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
                     <CopyClipboard
-                        value={order.multiAddr || ethers.constants.AddressZero}
+                        value={order.multiAddr || ethers.ZeroAddress}
                         truncate={5}
                         icon
                         lg

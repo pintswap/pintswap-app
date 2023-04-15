@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { ethers } from 'ethers6';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
@@ -14,7 +14,7 @@ export const HomeView = () => {
             <div className="text-center self-center">
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
-                    <CopyClipboard value={pintswap?.module?.peerId.toB58String() || ethers.constants.AddressZero} truncate={5} icon lg />
+                    <CopyClipboard value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress} truncate={5} icon lg />
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
