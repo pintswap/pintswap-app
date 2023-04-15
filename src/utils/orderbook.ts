@@ -57,11 +57,11 @@ function givesBase(offer: any) {
                 address: offer.getsToken,
             },
         ],
-        type: 'ask',
+        type: 'bid',
     };
 }
 function givesTrade(offer: any) {
-    return { pair: givesBase(offer).pair.reverse(), type: 'bid' };
+    return { pair: givesBase(offer).pair.reverse(), type: 'ask' };
 }
 
 export async function getDecimals(address: any, provider: any) {
