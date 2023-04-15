@@ -53,6 +53,7 @@
         "babel-jest": "^29.5.0",
         "browserify-zlib": "^0.2.0",
         "buffer": "^6.0.3",
+        "change-case": "^4.1.2",
         "console-browserify": "^1.2.0",
         "constants-browserify": "^1.0.0",
         "crypto-browserify": "^3.12.0",

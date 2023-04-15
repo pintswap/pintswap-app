@@ -9,6 +9,8 @@ type ITableProps = {
     headers: string[];
 };
 
+const ln = (v: any) => ((console.log(v)), v);
+
 export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) => {
     const { width, breakpoint } = useWindowSize();
     if (items.length > 0) {
@@ -32,9 +34,9 @@ export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) =>
                             }`}
                             onClick={() => (onClick ? onClick(el) : {})}
                         >
-                            {Object.values(el).map((el: any, i) => (
+                            {ln(Object.values(el)).map((el: any, i: any) => (
                                 <td key={`table-cell-${i}`} className={`p-2 ${i === 0 ? 'text-left' : 'text-right'} text-sm`}>
-                                    {el.includes('0x') ? truncate(el, width > breakpoint ? 5 : 3) : el}
+                                    {String(el).includes('0x') ? truncate(el, width > breakpoint ? 5 : 3) : el}
                                 </td>
                             ))}
                         </tr>
