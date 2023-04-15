@@ -16,9 +16,10 @@ const maybeShorten = (s: string): string => {
 };
 
 export async function toTicker(pair: any, provider: any) {
+    const flipped = [ ...pair ].reverse();
     return (
         await Promise.all(
-            pair.map(async (v: any) => maybeShorten(await getSymbol(v.address, provider))),
+            flipped.map(async (v: any) => maybeShorten(await getSymbol(v.address, provider))),
         )
     ).join('/');
 }
