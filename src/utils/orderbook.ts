@@ -82,25 +82,30 @@ export async function getDecimals(address: any, provider: any) {
 }
 
 export function orderTokens(offer: any) {
-    if (offer.givesToken === USDC.address) {
-        return givesBase(offer);
-    } else if (offer.getsToken === USDC.address) {
-        return givesTrade(offer);
-    } else if (offer.givesToken === USDT.address) {
-        return givesBase(offer);
-    } else if (offer.getsToken === USDT.address) {
-        return givesTrade(offer);
-    } else if (offer.givesToken === DAI.address) {
-        return givesBase(offer);
-    } else if (offer.getsToken === DAI.address) {
-        return givesTrade(offer);
-    } else if (offer.givesToken === ETH.address) {
-        return givesBase(offer);
-    } else if (offer.getsToken === ETH.address) {
-        return givesTrade(offer);
-    } else if (Number(offer.givesToken.toLowerCase()) < Number(offer.getsToken.toLowerCase())) {
-        return givesBase(offer);
-    } else return givesTrade(offer);
+    const mapped = {
+       ...offer,
+       givesToken: ethers.utils.getAddress(offer.givesToken),
+       getsToken: ethers.utils.getAddress(offer.getsToken)
+    };
+    if (mapped.givesToken === USDC.address) {
+        return givesBase(mapped);
+    } else if (mapped.getsToken === USDC.address) {
+        return givesTrade(mapped);
+    } else if (mapped.givesToken === USDT.address) {
+        return givesBase(mapped);
+    } else if (mapped.getsToken === USDT.address) {
+        return givesTrade(mapped);
+    } else if (mapped.givesToken === DAI.address) {
+        return givesBase(mapped);
+    } else if (mapped.getsToken === DAI.address) {
+        return givesTrade(mapped);
+    } else if (mapped.givesToken === ETH.address) {
+        return givesBase(mapped);
+    } else if (mapped.getsToken === ETH.address) {
+        return givesTrade(mapped);
+    } else if (Number(mapped.givesToken.toLowerCase()) < Number(mapped.getsToken.toLowerCase())) {
+        return givesBase(mapped);
+    } else return givesTrade(mapped);
 }
 
 export async function toLimitOrder(offer: any, provider: any) {
@@ -113,8 +118,8 @@ export async function toLimitOrder(offer: any, provider: any) {
     );
     return {
         price:
-            (Number(ethers.utils.formatUnits(trade.amount, tradeDecimals)) /
-            Number(ethers.utils.formatUnits(base.amount, baseDecimals))).toFixed(4),
+            (Number(ethers.utils.formatUnits(base.amount, baseDecimals)) /
+            Number(ethers.utils.formatUnits(trade.amount, tradeDecimals))).toFixed(4),
         amount: ethers.utils.formatUnits(trade.amount, tradeDecimals),
         type,
         ticker: await toTicker([base, trade], provider),
