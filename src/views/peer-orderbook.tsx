@@ -69,7 +69,7 @@ export const PeerOrderbookView = () => {
             <Card header="Open Trades" scroll>
                 <Table
                     headers={['Hash', 'Pair', 'Type', 'Price', 'Amount']}
-                    onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade.hash}`)}
+                    onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade[0]}`)}
                     items={Array.from(limitOrders, (entry: any) => [
                         entry.hash,
                         entry.ticker,
