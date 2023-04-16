@@ -3,13 +3,15 @@ import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
 import { useWindowSize } from '../hooks/window-size';
+import { useOffersContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
 
 export const HomeView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
-    const { openTrades, pintswap } = useGlobalContext();
+    const { pintswap } = useGlobalContext();
+    const { openTrades } = useOffersContext();
 
     return (
         <div className="flex flex-col gap-6">

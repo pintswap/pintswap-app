@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CopyClipboard, Skeleton, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
-import { sortLimitOrders, toLimitOrder } from '../utils/orderbook';
-import { convertAmount } from '../utils/common';
+import { toLimitOrder } from '../utils/orderbook';
 import { capitalCase } from 'change-case';
 import { groupBy, memoize } from 'lodash';
 import { useEffect, useState } from 'react';
+import { useOffersContext } from '../stores';
 
 const groupTickers = (limitOrders: any) => Object.entries(groupBy(limitOrders as any, 'ticker') as any);
 
@@ -31,7 +31,8 @@ const toFlattened = memoize((v: any) =>
 
 export const PeerOrderbookView = () => {
     const navigate = useNavigate();
-    const { pintswap, peerTrades } = useGlobalContext();
+    const { pintswap } = useGlobalContext();
+    const { peerTrades } = useOffersContext();
     const { error, order } = useTrade();
     const [limitOrders, setLimitOrders] = useState([]);
     useEffect(() => {
@@ -49,7 +50,7 @@ export const PeerOrderbookView = () => {
                     peer: flattened[i].peer,
                     multiAddr: flattened[i].multiAddr,
                 }));
-                setLimitOrders(groupTickers(sortLimitOrders(limitOrders)) as any);
+                setLimitOrders(groupTickers(limitOrders) as any);
             }
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades]);

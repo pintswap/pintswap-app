@@ -5,11 +5,11 @@ import { ethers } from 'ethers6';
 import { Card, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
-import { convertAmount } from '../utils/common';
 import { shorten } from '../utils/shorten';
 import { groupBy, memoize } from 'lodash';
 import { sortLimitOrders, toLimitOrder } from '../utils/orderbook';
 import { capitalCase } from 'change-case';
+import { useOffersContext } from '../stores';
 
 const toFlattened = memoize((v) =>
     [...v.entries()].reduce(
@@ -26,7 +26,8 @@ const toFlattened = memoize((v) =>
 
 export const ActiveOrderbookView = () => {
     const navigate = useNavigate();
-    const { pintswap, availableTrades } = useGlobalContext();
+    const { pintswap } = useGlobalContext();
+    const { availableTrades } = useOffersContext();
     const { error } = useTrade();
     const [limitOrders, setLimitOrders] = useState([]);
 

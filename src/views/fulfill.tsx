@@ -41,6 +41,7 @@ export const FulfillView = () => {
             }
         })().catch((err) => console.error(err));
     }, [trade, pintswap.module]);
+    
     useEffect(() => {
         const m = pintswap.module;
         if (m)

@@ -8,6 +8,7 @@ import { ITokenProps } from '../utils/token-list';
 import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
+import { useOffersContext } from '../stores';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -42,7 +43,8 @@ const maybeReverseMultiaddr = async (pintswap: any, v: any) => {
 
 export const useTrade = () => {
     const { pathname } = useLocation();
-    const { addTrade, pintswap, openTrades, peer, peerTrades, setPeerTrades, setOpenTrades } = useGlobalContext();
+    const { pintswap, peer } = useGlobalContext();
+    const { addTrade, openTrades, peerTrades, setPeerTrades, setOpenTrades } = useOffersContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
