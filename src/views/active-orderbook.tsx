@@ -7,7 +7,7 @@ import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
 import { shorten } from '../utils/shorten';
-import { memoize } from 'lodash';
+import { groupBy, memoize } from 'lodash';
 import { sortLimitOrders, toLimitOrder } from "../utils/orderbook";
 import { capitalCase } from "change-case";
 
@@ -41,7 +41,7 @@ export const ActiveOrderbookView = () => {
              ...v,
              peer: flattened[i].peer
           }));
-          setLimitOrders(sortLimitOrders(limitOrders as any));
+          setLimitOrders(Object.entries(groupBy(sortLimitOrders(limitOrders as any), 'ticker')) as any);
         }
       })().catch((err) => console.error(err));
     }, [ pintswap.module, availableTrades ]);
@@ -50,16 +50,16 @@ export const ActiveOrderbookView = () => {
         <div className="flex flex-col gap-6">
             <Card header="Open Trades" scroll>
                 {/* TODO */}
+                { limitOrders.map(([ pair, orders ]: any[]) => <><h2>{ pair }</h2>
                 <Table
-                    headers={['Peer', 'Pair', 'Type', 'Price', 'Amount']}
+                    headers={['Peer', 'Type', 'Price', 'Amount']}
                     onClick={(trade: any) => navigate(`/${trade.peerFull}`)}
-                    items={limitOrders.map((v: any) => {
+                    items={orders.map((v: any) => {
                         const offer = { ...v };
                         const peerFull = v.peer;
                         const peer = shorten(peerFull);
                         const ary = [
                             peer,
-                            v.ticker,
                             capitalCase(v.type),
                             v.price,
                             v.amount
@@ -96,6 +96,8 @@ export const ActiveOrderbookView = () => {
                         )
                     }
                 />
+                <br />
+                </>) }
             </Card>
         </div>
     );

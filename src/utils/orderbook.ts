@@ -1,8 +1,8 @@
 import { TOKENS } from './token-list';
 import { ethers } from 'ethers6';
 import { shorten } from './shorten';
-import { keyBy } from "lodash";
-import { sortBy, groupBy } from "lodash";
+import { keyBy } from 'lodash';
+import { sortBy, groupBy } from 'lodash';
 
 const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
 const USDC: any = TOKENS.find((v) => v.symbol === 'USDC');
@@ -20,9 +20,9 @@ const maybeShorten = (s: string): string => {
 };
 
 export function toAddress(symbolOrAddress: string): string {
-  const token = TOKENS_BY_SYMBOL[symbolOrAddress];
-  if (token) return ethers.getAddress(token.address);
-  return ethers.getAddress(symbolOrAddress);
+    const token = TOKENS_BY_SYMBOL[symbolOrAddress];
+    if (token) return ethers.getAddress(token.address);
+    return ethers.getAddress(symbolOrAddress);
 }
 
 export async function toTicker(pair: any, provider: any) {
@@ -75,13 +75,13 @@ function givesTrade(offer: any) {
 }
 
 export const sortBids = (orders: any) => {
-    return orders.slice().sort((a: any, b: any) => {
-        return Number(a.price) - Number(b.price);
+    return (orders || []).slice().sort((a: any, b: any) => {
+        return Number(b.price) - Number(a.price);
     });
 };
 
 export const sortAsks = (orders: any) => {
-    return orders.slice().sort((a: any, b: any) => {
+    return (orders || []).slice().sort((a: any, b: any) => {
         return Number(b.price) - Number(a.price);
     });
 };
@@ -140,13 +140,17 @@ export function orderTokens(offer: any) {
 }
 
 export async function fromFormatted(trade: any, provider: any) {
-  const [ givesToken, getsToken ] = [trade.givesToken, trade.getsToken].map((v) => toAddress(v));
-  return {
-    givesToken,
-    getsToken,
-    givesAmount: ethers.toBeHex(ethers.parseUnits(trade.givesAmount, await getDecimals(givesToken, provider))),
-    getsAmount: ethers.toBeHex(ethers.parseUnits(trade.getsAmount, await getDecimals(getsToken, provider)))
-  };
+    const [givesToken, getsToken] = [trade.givesToken, trade.getsToken].map((v) => toAddress(v));
+    return {
+        givesToken,
+        getsToken,
+        givesAmount: ethers.toBeHex(
+            ethers.parseUnits(trade.givesAmount, await getDecimals(givesToken, provider)),
+        ),
+        getsAmount: ethers.toBeHex(
+            ethers.parseUnits(trade.getsAmount, await getDecimals(getsToken, provider)),
+        ),
+    };
 }
 
 export async function toLimitOrder(offer: any, provider: any) {
