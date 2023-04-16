@@ -8,23 +8,30 @@ import { convertAmount } from '../utils/common';
 export const HomeView = () => {
     const navigate = useNavigate();
     const { openTrades, pintswap } = useGlobalContext();
-    
+
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 font-titillium">
             <div className="text-center self-center">
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
-                    <CopyClipboard value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress} truncate={5} icon lg />
+                    <CopyClipboard
+                        value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress}
+                        truncate={5}
+                        icon
+                        lg
+                    />
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
                 <Table
                     headers={['Hash', 'Sending', 'Receiving']}
-                    onClick={(order: any) => navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)}
-                    items={Array.from(openTrades, (entry) => ({ 
+                    onClick={(order: any) =>
+                        navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)
+                    }
+                    items={Array.from(openTrades, (entry) => ({
                         hash: entry[0],
                         gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
-                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken)
+                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken),
                     }))}
                     emptyContent={
                         pintswap.loading ? (
@@ -32,7 +39,9 @@ export const HomeView = () => {
                         ) : (
                             <span>
                                 You currently have no open trades.{' '}
-                                <button onClick={() => navigate('/create')}>Create a trade now!</button>
+                                <button onClick={() => navigate('/create')}>
+                                    Create a trade now!
+                                </button>
                             </span>
                         )
                     }

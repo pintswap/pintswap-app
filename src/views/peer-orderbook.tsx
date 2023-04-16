@@ -55,7 +55,7 @@ export const PeerOrderbookView = () => {
     }, [pintswap.module, peerTrades]);
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 font-titillium">
             <div className="text-center self-center">
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
