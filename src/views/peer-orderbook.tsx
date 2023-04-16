@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CopyClipboard, Skeleton, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
-import { toLimitOrder } from '../utils/orderbook';
+import { sortLimitOrders, toLimitOrder } from '../utils/orderbook';
 import { convertAmount } from '../utils/common';
 import { capitalCase } from 'change-case';
 import { groupBy, memoize } from 'lodash';
@@ -49,7 +49,7 @@ export const PeerOrderbookView = () => {
                     peer: flattened[i].peer,
                     multiAddr: flattened[i].multiAddr,
                 }));
-                setLimitOrders(groupTickers(limitOrders) as any);
+                setLimitOrders(groupTickers(sortLimitOrders(limitOrders)) as any);
             }
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades]);

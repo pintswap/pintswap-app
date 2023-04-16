@@ -1048,6 +1048,9 @@ html,
 .text-right{
   text-align: right;
 }
+.font-titillium{
+  font-family: Titillium Web, sans-serif;
+}
 .text-3xl{
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -1060,11 +1063,6 @@ html,
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
-@media only screen and (max-width: 600px) {
-  .text-sm {
-    font-size: 0.5rem;
-  }
- }
 .text-xl{
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -1073,8 +1071,14 @@ html,
   font-size: 0.75rem;
   line-height: 1rem;
 }
+.font-bold{
+  font-weight: 700;
+}
 .font-semibold{
   font-weight: 600;
+}
+.tracking-wide{
+  letter-spacing: 0.025em;
 }
 .text-gray-400{
   --tw-text-opacity: 1;
