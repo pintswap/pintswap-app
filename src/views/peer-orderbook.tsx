@@ -7,8 +7,12 @@ import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
 import { convertAmount } from '../utils/common';
 import { capitalCase } from 'change-case';
-import { memoize } from 'lodash';
+import { groupBy, memoize } from 'lodash';
 import { useEffect, useState } from 'react';
+
+const ln = (v: any) => ((console.log(v)), v);
+
+const groupTickers = (limitOrders: any) => Object.entries(groupBy(limitOrders as any, 'ticker') as any);
 
 const mapToArray = (v: any) => {
     const it = v.entries();
@@ -47,7 +51,7 @@ export const PeerOrderbookView = () => {
                     peer: flattened[i].peer,
                     multiAddr: flattened[i].multiAddr,
                 }));
-                setLimitOrders(limitOrders as any);
+                setLimitOrders(ln(groupTickers(limitOrders) as any));
             }
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades]);
@@ -66,12 +70,12 @@ export const PeerOrderbookView = () => {
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
+		{ limitOrders.map(([ pair, orders ]) => <><h2>{ pair }</h2>
                 <Table
-                    headers={['Hash', 'Pair', 'Type', 'Price', 'Amount']}
+                    headers={['Hash', 'Type', 'Price', 'Amount']}
                     onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade[0]}`)}
-                    items={Array.from(limitOrders, (entry: any) => [
+                    items={Array.from(orders, (entry: any) => [
                         entry.hash,
-                        entry.ticker,
                         capitalCase(entry.type),
                         entry.price,
                         entry.amount,
@@ -97,7 +101,7 @@ export const PeerOrderbookView = () => {
                             </span>
                         )
                     }
-                />
+                /></>)}
             </Card>
         </div>
     );
