@@ -52,7 +52,6 @@ export const FulfillView = () => {
                 const [baseDecimals, tradeDecimals] = await Promise.all(
                     [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
                 );
-                console.log(fillAmount);
                 if (tradeToken.address === raw.givesToken) {
                     setOutputAmount(
                         Number(
@@ -65,7 +64,6 @@ export const FulfillView = () => {
                         ).toFixed(6),
                     );
                 } else {
-                    console.log(raw);
                     setOutputAmount(
                         Number(
                             ethers.formatUnits(
