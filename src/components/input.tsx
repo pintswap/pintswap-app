@@ -42,12 +42,10 @@ export const Input = ({
             setBalance({ ...balance, loading: true });
             try {
                 if(address) {
-                    console.log("token", token)
                     const params = token === 'ETH' ? 
                         { address } : 
                         { address, token: (getTokenAttributes(token, 'address') as string) || token }
                     const { formatted, symbol } = await fetchBalance(params)
-                    console.log(symbol, formatted, token)
                     if(formatted) setBalance({ loading: false, formatted, symbol });
                 }
             } catch (err) {

@@ -71,6 +71,21 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 // Peer
 (window as any).discoveryDeferred = defer();
 
+const maybeResolveName = async (name: string, pintswap: any) => {
+  try {
+    return await pintswap.resolveName(name);
+  } catch (e) {
+    return name;
+  }
+};
+
+const resolveNames = async (m: any, pintswap: any) => {
+  const flattened = [ ...m.entries() ] as any;
+  return new Map(await Promise.all(flattened.map(async ([key, orders]: any[]) => {
+    return [ await maybeResolveName(key, pintswap), orders ];
+  })));
+};
+
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
@@ -151,8 +166,10 @@ export function GlobalStore(props: { children: ReactNode }) {
     useEffect(() => {
         if (pintswap.module) {
             const listener = () => {
-                if ((pintswap.module?.peers.size as any) > 0)
-                    setAvailableTrades(pintswap.module?.peers as any);
+                (async () => {
+                  if ((pintswap.module?.peers.size as any) > 0)
+                      setAvailableTrades(await resolveNames(pintswap.module?.peers as any, pintswap.module as any) as any);
+                })().catch((err) => console.error(err));
             };
             pintswap.module.on('/pubsub/orderbook-update', listener);
             return () => {

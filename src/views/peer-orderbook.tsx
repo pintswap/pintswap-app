@@ -10,8 +10,6 @@ import { capitalCase } from 'change-case';
 import { groupBy, memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 
-const ln = (v: any) => ((console.log(v)), v);
-
 const groupTickers = (limitOrders: any) => Object.entries(groupBy(limitOrders as any, 'ticker') as any);
 
 const mapToArray = (v: any) => {
@@ -51,7 +49,7 @@ export const PeerOrderbookView = () => {
                     peer: flattened[i].peer,
                     multiAddr: flattened[i].multiAddr,
                 }));
-                setLimitOrders(ln(groupTickers(limitOrders) as any));
+                setLimitOrders(groupTickers(limitOrders) as any);
             }
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades]);

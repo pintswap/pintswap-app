@@ -81,6 +81,7 @@ export function convertAmount(to: 'hex' | 'number' | 'readable', amount: string,
 }
 
 export function truncate(s: string, amount?: number) {
+    if (s.match(/\.drip$/)) return s;
     if (!s) return s;
     return `${s.slice(0, amount ? amount : 4)}...${s.slice(amount ? amount * -1 : -4)}`;
 }

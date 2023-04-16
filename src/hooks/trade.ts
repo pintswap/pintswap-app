@@ -18,6 +18,28 @@ type IOrderbookProps = {
     offers: IOffer[];
 };
 
+const resolveName = async (pintswap: any, name: any) => {
+  while (true as any) {
+    try {
+      return await pintswap.resolveName(name);
+    } catch (e) {
+      if (!(e as any).message.match('no valid addresses')) throw e;
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+    }
+  }
+};
+
+const maybeReverseMultiaddr = async (pintswap: any, v: any) => {
+  if (!v.match(/\.drip$/)) {
+    try {
+      return await resolveName(pintswap, v);
+    } catch (e) {
+      return v;
+    }
+  }
+  return v;
+};
+
 export const useTrade = () => {
     const { pathname } = useLocation();
     const { addTrade, pintswap, openTrades, peer, peerTrades, setPeerTrades, setOpenTrades } = useGlobalContext();
@@ -69,7 +91,9 @@ export const useTrade = () => {
         if (TESTING) console.log('#fulfillTrade - Trade Obj:', buildTradeObj(trade));
         if (pintswap.module) {
             try {
-                const peeredUp = PeerId.createFromB58String(order.multiAddr);
+                let multiaddr = order.multiAddr;
+                if (multiaddr.match(/\.drip$/)) multiaddr = await resolveName(pintswap.module, order.multiAddr);
+                const peeredUp = PeerId.createFromB58String(multiaddr);
                 pintswap.module.createTrade(peeredUp, buildTradeObj(trade));
                 if (TESTING) console.log('Fulfilled trade!');
             } catch (err) {
@@ -83,7 +107,10 @@ export const useTrade = () => {
 
     // Get single trade or all peer trades
     const getTrades = async (multiAddr: string, orderHash?: string) => {
-        if(TESTING) console.log("#getTrades - Args:", {multiAddr, orderHash})
+        let resolved = multiAddr;
+	const p = pintswap.module;
+        if (multiAddr.match(/\.drip$/) && p) resolved = await resolveName(p, multiAddr);
+        if(TESTING) console.log("#getTrades - Args:", {resolved, orderHash})
         setLoadingTrade(true);
         const trade = orderHash ? openTrades.get(orderHash) : undefined;
         // MAKER
@@ -93,8 +120,8 @@ export const useTrade = () => {
             if (pintswap.module) {
                 try {
                     console.log('Discovery:', await (window as any).discoveryDeferred.promise);
-                    const { offers }: IOrderbookProps = await pintswap.module.getTradesByPeerId(
-                        multiAddr,
+                    const { offers }: IOrderbookProps = await (p as any).getTradesByPeerId(
+                        resolved,
                     );
                     if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
