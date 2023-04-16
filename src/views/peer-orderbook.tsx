@@ -55,7 +55,7 @@ export const PeerOrderbookView = () => {
     }, [pintswap.module, peerTrades]);
 
     return (
-        <div className="flex flex-col gap-6 font-titillium">
+        <div className="flex flex-col gap-6">
             <div className="text-center self-center">
                 <p className="text-sm">Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
@@ -68,7 +68,9 @@ export const PeerOrderbookView = () => {
                 </Skeleton>
             </div>
             <Card header="Open Trades" scroll>
-		{ limitOrders.map(([ pair, orders ]) => <><h2>{ pair }</h2>
+            {limitOrders.map(([ pair, orders ], i) => (
+                <div key={`open-trades-row-${i}`}>
+                <h2>{ pair }</h2>
                 <Table
                     headers={['Hash', 'Type', 'Price', 'Amount']}
                     onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade[0]}`)}
@@ -99,7 +101,9 @@ export const PeerOrderbookView = () => {
                             </span>
                         )
                     }
-                /></>)}
+                />
+                </div>
+                ))}
             </Card>
         </div>
     );

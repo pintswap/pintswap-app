@@ -85,7 +85,7 @@ export const FulfillView = () => {
     return (
         <>
             {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
-            <div className="flex flex-col gap-6 font-titillium">
+            <div className="flex flex-col gap-6">
                 <Card className="self-center" header="Fulfill Trade">
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                         <Dropdown

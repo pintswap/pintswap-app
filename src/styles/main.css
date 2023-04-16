@@ -593,6 +593,9 @@ html,
   white-space: nowrap;
   border-width: 0;
 }
+.fixed{
+  position: fixed;
+}
 .absolute{
   position: absolute;
 }
