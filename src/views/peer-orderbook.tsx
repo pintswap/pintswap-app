@@ -74,7 +74,7 @@ export const PeerOrderbookView = () => {
             >
             {limitOrders.map(([ pair, orders ], i) => (
                 <div key={`open-trades-row-${i}`} className="mt-2 first:mt-0">
-                <h2 className="text-indigo-600">{ pair }</h2>
+                <h2 className="text-indigo-600 mb-2">{ pair }</h2>
                 <Table
                     headers={['Hash', 'Type', 'Price', 'Amount']}
                     onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade[0]}`)}
