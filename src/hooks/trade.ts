@@ -30,17 +30,6 @@ const resolveName = async (pintswap: any, name: any) => {
   }
 };
 
-const maybeReverseMultiaddr = async (pintswap: any, v: any) => {
-  if (!v.match(/\.drip$/)) {
-    try {
-      return await resolveName(pintswap, v);
-    } catch (e) {
-      return v;
-    }
-  }
-  return v;
-};
-
 export const useTrade = () => {
     const { pathname } = useLocation();
     const { pintswap, peer } = useGlobalContext();

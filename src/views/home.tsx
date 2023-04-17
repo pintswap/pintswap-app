@@ -26,7 +26,7 @@ export const HomeView = () => {
                     />
                 </Skeleton>
             </div>
-            <Card header="Open Trades" scroll>
+            <Card header="Your Trades" scroll>
                 <Table
                     headers={['Hash', 'Sending', 'Receiving']}
                     onClick={(order: any) =>

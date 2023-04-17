@@ -5,11 +5,11 @@ import { ethers } from 'ethers6';
 import { Card, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
-import { shorten } from '../utils/shorten';
 import { groupBy, memoize } from 'lodash';
 import { sortLimitOrders, toLimitOrder } from '../utils/orderbook';
 import { capitalCase } from 'change-case';
 import { useOffersContext } from '../stores';
+import { shorten } from '../utils/common';
 
 const toFlattened = memoize((v) =>
     [...v.entries()].reduce(
