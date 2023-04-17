@@ -10,7 +10,7 @@ import {
     Input,
     ProgressIndicator,
 } from '../components';
-import { Dropdown } from '../components/dropdown';
+import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores';
 import { BASE_URL, truncate } from '../utils/common';
@@ -41,6 +41,7 @@ export const FulfillView = () => {
             }
         })().catch((err) => console.error(err));
     }, [trade, pintswap.module]);
+
     useEffect(() => {
         const m = pintswap.module;
         if (m)
@@ -85,10 +86,10 @@ export const FulfillView = () => {
     return (
         <>
             {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
-            <div className="flex flex-col gap-6 font-titillium">
+            <div className="flex flex-col gap-6">
                 <Card className="self-center" header="Fulfill Trade">
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
-                        <Dropdown
+                        <DropdownInput
                             title="Pair"
                             placeholder="Pair"
                             state={limitOrder.ticker}

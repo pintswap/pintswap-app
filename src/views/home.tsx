@@ -2,28 +2,31 @@ import { ethers } from 'ethers6';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, CopyClipboard, Skeleton, Table } from '../components';
+import { useWindowSize } from '../hooks/window-size';
+import { useOffersContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
-import { ActiveOrderbookView } from './active-orderbook';
 
 export const HomeView = () => {
+    const { width } = useWindowSize();
     const navigate = useNavigate();
-    const { openTrades, pintswap } = useGlobalContext();
+    const { pintswap } = useGlobalContext();
+    const { openTrades } = useOffersContext();
 
     return (
-        <div className="flex flex-col gap-6 font-titillium">
+        <div className="flex flex-col gap-6">
             <div className="text-center self-center">
-                <p className="text-sm">Multi Address</p>
+                <p className="text-sm">Your Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
                     <CopyClipboard
                         value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress}
                         truncate={5}
                         icon
-                        lg
+                        lg={width > 768}
                     />
                 </Skeleton>
             </div>
-            <Card header="Open Trades" scroll>
+            <Card header="Your Trades" scroll>
                 <Table
                     headers={['Hash', 'Sending', 'Receiving']}
                     onClick={(order: any) =>

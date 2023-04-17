@@ -25,6 +25,8 @@ module.exports = {
             },
             fontFamily: {
                 titillium: ['Titillium Web', 'sans-serif'],
+                'gothic-bold': ['Dela Gothic One', 'cursive'],
+                'gothic': ['Pathway Gothic One', 'sans-serif']
             },
         },
     },

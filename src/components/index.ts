@@ -6,5 +6,6 @@ export * from './copy-clipboard';
 export * from './input';
 export * from './progress-indicator';
 export * from './skeleton';
-export * from './dropdown';
+export * from './dropdown-input';
 export * from './full-page-status';
+export * from './dropdown-menu';

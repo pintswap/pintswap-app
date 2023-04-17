@@ -593,6 +593,9 @@ html,
   white-space: nowrap;
   border-width: 0;
 }
+.fixed{
+  position: fixed;
+}
 .absolute{
   position: absolute;
 }
@@ -1305,8 +1308,13 @@ html,
     gap: 0.75rem;
   }
 
-  .md\:gap-6{
-    gap: 1.5rem;
+  .md\:gap-4{
+    gap: 1rem;
+  }
+
+  .md\:text-3xl{
+    font-size: 1.875rem;
+    line-height: 2.25rem;
   }
 }
 @media (min-width: 1024px){
