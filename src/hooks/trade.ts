@@ -8,6 +8,7 @@ import { ITokenProps } from '../utils/token-list';
 import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
+import { useOffersContext } from '../stores';
 
 type IOrderStateProps = {
     orderHash: string;
@@ -29,20 +30,10 @@ const resolveName = async (pintswap: any, name: any) => {
   }
 };
 
-const maybeReverseMultiaddr = async (pintswap: any, v: any) => {
-  if (!v.match(/\.drip$/)) {
-    try {
-      return await resolveName(pintswap, v);
-    } catch (e) {
-      return v;
-    }
-  }
-  return v;
-};
-
 export const useTrade = () => {
     const { pathname } = useLocation();
-    const { addTrade, pintswap, openTrades, peer, peerTrades, setPeerTrades, setOpenTrades } = useGlobalContext();
+    const { pintswap, peer } = useGlobalContext();
+    const { addTrade, openTrades, peerTrades, setPeerTrades, setOpenTrades } = useOffersContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
@@ -51,7 +42,7 @@ export const useTrade = () => {
     const [error, setError] = useState(false);
 
     const isMaker = pathname === '/create';
-    const isOnActive = pathname === '/active';
+    const isOnActive = pathname === '/open';
 
     const buildTradeObj = ({ getsAmount, getsToken, givesAmount, givesToken }: IOffer): IOffer => {
         if (!getsToken || !getsAmount || !givesAmount || !givesToken)
@@ -180,7 +171,7 @@ export const useTrade = () => {
                     setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     await getTrades(splitUrl[1], splitUrl[2]);
-                } else if (splitUrl.length === 2 && splitUrl[1] !== 'create' && splitUrl[1] !== 'active') { 
+                } else if (splitUrl.length === 2 && splitUrl[1] !== 'create' && splitUrl[1] !== 'open') { 
                     // Only multiAddr
                     setOrder({ multiAddr: splitUrl[1], orderHash: '' });
                     await getTrades(splitUrl[1]); 

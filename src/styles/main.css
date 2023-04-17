@@ -593,6 +593,9 @@ html,
   white-space: nowrap;
   border-width: 0;
 }
+.fixed{
+  position: fixed;
+}
 .absolute{
   position: absolute;
 }
@@ -1048,6 +1051,9 @@ html,
 .text-right{
   text-align: right;
 }
+.font-titillium{
+  font-family: Titillium Web, sans-serif;
+}
 .text-3xl{
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -1060,11 +1066,6 @@ html,
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
-@media only screen and (max-width: 600px) {
-  .text-sm {
-    font-size: 0.5rem;
-  }
- }
 .text-xl{
   font-size: 1.25rem;
   line-height: 1.75rem;
@@ -1073,8 +1074,14 @@ html,
   font-size: 0.75rem;
   line-height: 1rem;
 }
+.font-bold{
+  font-weight: 700;
+}
 .font-semibold{
   font-weight: 600;
+}
+.tracking-wide{
+  letter-spacing: 0.025em;
 }
 .text-gray-400{
   --tw-text-opacity: 1;
@@ -1301,8 +1308,13 @@ html,
     gap: 0.75rem;
   }
 
-  .md\:gap-6{
-    gap: 1.5rem;
+  .md\:gap-4{
+    gap: 1rem;
+  }
+
+  .md\:text-3xl{
+    font-size: 1.875rem;
+    line-height: 2.25rem;
   }
 }
 @media (min-width: 1024px){

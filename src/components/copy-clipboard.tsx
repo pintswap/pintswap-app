@@ -16,7 +16,10 @@ export const CopyClipboard = ({ icon, value, lg, truncate, children }: ICopyClip
     if(children) {
         return (
             <CopyToClipboard text={value}>
-                {children}
+                <div className="hover:cursor-pointer hover:text-neutral-300 transition duration-200 flex items-center gap-2">
+                    {children}
+                    {icon && <MdContentCopy />}
+                </div>
             </CopyToClipboard>
         );
     } else {

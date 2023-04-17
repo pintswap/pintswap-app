@@ -1,23 +1,17 @@
 import {
     createContext,
-    Dispatch,
     ReactNode,
-    SetStateAction,
     useContext,
     useEffect,
     useState,
 } from 'react';
 import { useSigner } from 'wagmi';
-import { Pintswap, IOffer } from '@pintswap/sdk';
+import { Pintswap } from '@pintswap/sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
 import { defer, EMPTY_PEER, TESTING } from '../utils/common';
 
 // Types
 export type IGlobalStoreProps = {
-    openTrades: Map<string, IOffer>;
-    addTrade: (hash: string, { givesToken, givesAmount, getsToken, getsAmount }: IOffer) => void;
-    peerTrades: Map<string, IOffer>;
-    availableTrades: Map<string, IOffer>;
     pintswap: {
         module: Pintswap | undefined;
         loading: boolean;
@@ -30,9 +24,6 @@ export type IGlobalStoreProps = {
     };
     setPeer?: any;
     setPintswap?: any;
-    setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
-    setOpenTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
-    setAvailableTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
 };
 
 export type IPintswapProps = {
@@ -49,10 +40,6 @@ export type IPeerProps = {
 
 // Context
 const GlobalContext = createContext<IGlobalStoreProps>({
-    openTrades: new Map(),
-    peerTrades: new Map(),
-    availableTrades: new Map(),
-    addTrade(hash, { givesToken, givesAmount, getsToken, getsAmount }) {},
     pintswap: {
         module: undefined,
         loading: true,
@@ -63,36 +50,14 @@ const GlobalContext = createContext<IGlobalStoreProps>({
         loading: true,
         error: false,
     },
-    setOpenTrades: () => {},
-    setPeerTrades: () => {},
-    setAvailableTrades: () => {},
 });
 
 // Peer
 (window as any).discoveryDeferred = defer();
 
-const maybeResolveName = async (name: string, pintswap: any) => {
-  try {
-    return await pintswap.resolveName(name);
-  } catch (e) {
-    return name;
-  }
-};
-
-const resolveNames = async (m: any, pintswap: any) => {
-  const flattened = [ ...m.entries() ] as any;
-  return new Map(await Promise.all(flattened.map(async ([key, orders]: any[]) => {
-    return [ await maybeResolveName(key, pintswap), orders ];
-  })));
-};
-
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
-
-    const [openTrades, setOpenTrades] = useState<Map<string, IOffer>>(new Map());
-    const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
-    const [availableTrades, setAvailableTrades] = useState<Map<string, IOffer>>(new Map());
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
@@ -104,10 +69,6 @@ export function GlobalStore(props: { children: ReactNode }) {
         loading: true,
         error: false,
     });
-
-    const addTrade = (hash: string, tradeProps: IOffer) => {
-        setOpenTrades(openTrades.set(hash, tradeProps));
-    };
 
     // Initialize Pintswap
     useEffect(() => {
@@ -162,37 +123,13 @@ export function GlobalStore(props: { children: ReactNode }) {
         getPeer();
     }, []);
 
-    // Get Active Trades
-    useEffect(() => {
-        if (pintswap.module) {
-            const listener = () => {
-                (async () => {
-                  if ((pintswap.module?.peers.size as any) > 0)
-                      setAvailableTrades(await resolveNames(pintswap.module?.peers as any, pintswap.module as any) as any);
-                })().catch((err) => console.error(err));
-            };
-            pintswap.module.on('/pubsub/orderbook-update', listener);
-            return () => {
-                if (pintswap.module)
-                    pintswap.module.removeListener('/pubsub/orderbook-update', listener);
-            };
-        }
-    }, [pintswap.module]);
-
     return (
         <GlobalContext.Provider
             value={{
-                openTrades,
-                addTrade,
                 pintswap,
                 peer,
                 setPeer,
                 setPintswap,
-                peerTrades,
-                setPeerTrades,
-                setOpenTrades,
-                setAvailableTrades,
-                availableTrades,
             }}
         >
             {props.children}

@@ -44,7 +44,7 @@ export const Button = ({
             type={form ? 'submit' : 'button'}
             onClick={chain?.unsupported && checkNetwork ? openChainModal : onClick}
             disabled={disabled}
-            className={`${className} ${renderType()} px-2.5 py-1.5 lg:px-4 lg:py-2.5 rounded shadow disabled:cursor-not-allowed transition duration-150 border-2 border-indigo-800 hover:border-indigo-900 flex items-center gap-2 text-center justify-center`}
+            className={`${className} ${renderType()} px-2.5 py-1.5 lg:px-4 lg:py-2.5 rounded shadow disabled:cursor-not-allowed transition duration-150 border-2 border-indigo-800 hover:border-indigo-900 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {loadingText && loading ? loadingText : children}
             {loading && <ImSpinner9 className="animate-spin" />}

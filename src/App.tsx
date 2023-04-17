@@ -26,8 +26,8 @@ function App() {
                     <Route path="/fulfill" element={<FulfillView />} />
                     <Route path="/:address/:multiaddr" element={<FulfillView />} />
                     <Route path="/:address" element={<PeerOrderbookView />} />
-                    <Route path="/active" element={<ActiveOrderbookView />} />
                     <Route path="/profile" element={<ProfileView />} />
+                    <Route path="/open" element={<ActiveOrderbookView />} />
                 </Routes>
             </Base>
 
