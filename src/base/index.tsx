@@ -29,7 +29,7 @@ export const Base = ({ children, loading }: IBaseProps) => {
                             <Button
                                 className="gap-1 mb-6"
                                 type="transparent"
-                                onClick={() => navigate('/')}
+                                onClick={() => navigate(-1)}
                             >
                                 <MdChevronLeft />
                                 Back

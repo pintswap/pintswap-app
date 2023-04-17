@@ -56,8 +56,8 @@ export const ActiveOrderbookView = () => {
             <Card header="Open Trades" scroll>
                 {/* TODO */}
                 {limitOrders.map(([pair, orders]: any[], i) => (
-                    <div key={`active-trades-row-${i}`}>
-                        <h2>{pair}</h2>
+                    <div key={`active-trades-row-${i}`} className="mt-2 first:mt-0">
+                        <h2 className="text-indigo-600">{pair}</h2>
                         <Table
                             headers={['Peer', 'Type', 'Price', 'Amount']}
                             onClick={(trade: any) => navigate(`/${trade.peerFull}`)}

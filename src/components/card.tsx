@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 type ICardProps = {
     children: ReactNode | string;
     className?: string;
-    header?: string;
+    header?: string | ReactNode;
     scroll?: boolean;
 };
 

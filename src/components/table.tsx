@@ -17,7 +17,7 @@ export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) =>
                 <thead>
                     <tr className="border-b-2 border-neutral-800">
                         {headers.map((el: any, i) => (
-                            <th key={`table-header-${el}-${i}`} className={`px-2 pb-1 ${i === 0 ? 'text-left' : 'text-right'}`}>
+                            <th key={`table-header-${el}-${i}`} className={`px-2 pb-1 ${i === 0 ? 'text-left' : 'text-right'} text-gray-400`}>
                                 {el}
                             </th>
                         ))}

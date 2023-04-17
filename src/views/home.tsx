@@ -16,7 +16,7 @@ export const HomeView = () => {
     return (
         <div className="flex flex-col gap-6">
             <div className="text-center self-center">
-                <p className="text-sm">Multi Address</p>
+                <p className="text-sm">Your Multi Address</p>
                 <Skeleton loading={pintswap.loading}>
                     <CopyClipboard
                         value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress}
