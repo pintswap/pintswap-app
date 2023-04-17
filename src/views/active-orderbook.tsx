@@ -53,9 +53,8 @@ export const ActiveOrderbookView = () => {
 
     return (
         <div className="flex flex-col gap-6">
-            <Card header="Open Trades" scroll>
-                {/* TODO */}
-                {limitOrders.map(([pair, orders]: any[], i) => (
+            <Card header="Open Trades" scroll={limitOrders.length > 0}>
+                {limitOrders.length > 0 ? limitOrders.map(([pair, orders]: any[], i) => (
                     <div key={`active-trades-row-${i}`} className="mt-2 first:mt-0">
                         <h2 className="text-indigo-600 mb-2">{pair}</h2>
                         <Table
@@ -74,33 +73,15 @@ export const ActiveOrderbookView = () => {
                                 });
                                 return ary;
                             })}
-                            emptyContent={
-                                pintswap.loading ? (
-                                    <ImSpinner9 className="animate-spin" size="20px" />
-                                ) : (
-                                    <span>
-                                        {error ? (
-                                            <span>
-                                                Error loading available offers.{' '}
-                                                <button
-                                                    onClick={() => navigate(0)}
-                                                    className="text-indigo-600 transition duration-200 hover:text-indigo-700"
-                                                >
-                                                    Try refreshing.
-                                                </button>
-                                            </span>
-                                        ) : availableTrades.size === 0 ? (
-                                            'No active offers'
-                                        ) : (
-                                            'Loading available offers...'
-                                        )}
-                                    </span>
-                                )
-                            }
                         />
                         <br />
                     </div>
-                ))}
+                )) : (
+                    <span className="text-center w-full flex flex-col justify-center items-center gap-4">
+                        <span className="text-gray-400">Loading available offers...</span>
+                        <ImSpinner9 className="animate-spin text-gray-400" size="20px" />
+                    </span>
+                )}
             </Card>
         </div>
     );
