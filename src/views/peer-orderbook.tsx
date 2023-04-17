@@ -1,7 +1,7 @@
 import { ethers } from 'ethers6';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
-import { Card, CopyClipboard, Skeleton, Table } from '../components';
+import { Card, CopyClipboard, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
@@ -36,7 +36,7 @@ export const PeerOrderbookView = () => {
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
     const { width } = useWindowSize();
-    const { error, order } = useTrade();
+    const { order } = useTrade();
     const [limitOrders, setLimitOrders] = useState([]);
 
     useEffect(() => {

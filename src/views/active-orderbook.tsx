@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers6';
 import { Card, Table } from '../components';
-import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { groupBy, memoize } from 'lodash';
 import { sortLimitOrders, toLimitOrder } from '../utils/orderbook';
@@ -28,7 +27,6 @@ export const ActiveOrderbookView = () => {
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
     const { availableTrades } = useOffersContext();
-    const { error } = useTrade();
     const [limitOrders, setLimitOrders] = useState([]);
 
     useEffect(() => {
