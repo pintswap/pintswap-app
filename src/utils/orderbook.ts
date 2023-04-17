@@ -1,8 +1,8 @@
 import { TOKENS } from './token-list';
 import { ethers } from 'ethers6';
-import { shorten } from './shorten';
 import { keyBy } from 'lodash';
 import { sortBy, groupBy } from 'lodash';
+import { shorten } from './common';
 
 const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
 const USDC: any = TOKENS.find((v) => v.symbol === 'USDC');

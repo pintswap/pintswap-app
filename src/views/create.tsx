@@ -4,7 +4,7 @@ import {
     Card,
     CopyClipboard,
     Input,
-    Dropdown,
+    DropdownInput,
     ProgressIndicator,
     FullPageStatus,
 } from '../components';
@@ -20,7 +20,7 @@ export const CreateView = () => {
                 <Card className="self-center" header="Create Trade">
                     <div className="grid grid-cols-1 gap-6 lg:gap-y-2 items-start">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
-                            <Dropdown
+                            <DropdownInput
                                 title="Send Details"
                                 placeholder="Please select a token..."
                                 state={trade.givesToken}
@@ -43,7 +43,7 @@ export const CreateView = () => {
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
-                            <Dropdown
+                            <DropdownInput
                                 title="Receive Details"
                                 placeholder="Please select a token..."
                                 state={trade.getsToken}
