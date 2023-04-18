@@ -3,6 +3,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { TiThMenu } from 'react-icons/ti'
 import { classNames } from '../utils/common'
 import { useNavigate } from 'react-router-dom'
+import { ActiveText } from './active-text'
 
 type IDropdownMenuProps = {
   customIcon?: ReactNode;
@@ -40,13 +41,29 @@ export const DropdownMenu = ({ items, customIcon }: IDropdownMenuProps) => {
         <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           {items.map((item, i) => (
             <Menu.Item key={`dropdown-menu-item-${i}`}>
-              {({ active }) => (
+              {({ active }) => item.route ? (
                 <button
                   className={classNames(
                     active ? 'bg-gray-800 text-neutral-100' : '',
                     'px-4 py-3 text-sm w-full text-right flex gap-2 items-center justify-end rounded-md disabled:text-neutral-400'
                   )}
-                  onClick={item.route ? () => navigate(item.route || '') : item.onClick}
+                  onClick={() => navigate(item.route || '/')}
+                  disabled={item.disabled}
+                >
+                  <ActiveText route={item.route} className="text-indigo-500">
+                    {item.icon}
+                  </ActiveText>
+                  <ActiveText route={item.route}>
+                    {item.text}
+                  </ActiveText>
+                </button>
+              ) : (
+                <button
+                  className={classNames(
+                    active ? 'bg-gray-800 text-neutral-100' : '',
+                    'px-4 py-3 text-sm w-full text-right flex gap-2 items-center justify-end rounded-md disabled:text-neutral-400'
+                  )}
+                  onClick={item.onClick}
                   disabled={item.disabled}
                 >
                   {item.text}
