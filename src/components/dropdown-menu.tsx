@@ -2,19 +2,22 @@ import { Fragment, ReactNode } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { TiThMenu } from 'react-icons/ti'
 import { classNames } from '../utils/common'
+import { useNavigate } from 'react-router-dom'
 
 type IDropdownMenuProps = {
   customIcon?: ReactNode;
   items: {
     text: string;
-    onClick: () => void;
+    onClick?: () => void;
     disabled?: boolean;
     icon?: ReactNode;
+    route?: string;
   }[];
 
 }
 
 export const DropdownMenu = ({ items, customIcon }: IDropdownMenuProps) => {
+  const navigate = useNavigate();
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -43,7 +46,7 @@ export const DropdownMenu = ({ items, customIcon }: IDropdownMenuProps) => {
                     active ? 'bg-gray-800 text-neutral-100' : '',
                     'px-4 py-3 text-sm w-full text-right flex gap-2 items-center justify-end rounded-md disabled:text-neutral-400'
                   )}
-                  onClick={item.onClick}
+                  onClick={item.route ? () => navigate(item.route || '') : item.onClick}
                   disabled={item.disabled}
                 >
                   {item.text}

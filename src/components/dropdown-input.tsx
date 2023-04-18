@@ -5,6 +5,7 @@ import { alphaTokenSort, classNames } from '../utils/common'
 import { ITokenProps, TOKENS } from '../utils/token-list'
 import { MdOutlineAddCircleOutline, MdOutlineListAlt } from 'react-icons/md'
 import { Input } from './input'
+import { useWindowSize } from '../hooks/window-size'
 
 type IDropdownProps = {
   state: any;
@@ -21,6 +22,7 @@ type IDropdownProps = {
 
 export const DropdownInput = ({ state, setState, options, placeholder, type, title, search, disabled, loading, customInput }: IDropdownProps) => {
   const isToken = type === 'givesToken' || type === 'getsToken';
+  const { width } = useWindowSize();
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] });
   const [isCustom, setIsCustom] = useState(false);
   
@@ -54,7 +56,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
         {title && (<p>{title}</p>)}
         {customInput && (
           <button className="text-indigo-600 flex gap-1 items-center transition duration-200 hover:text-indigo-700" onClick={toggleCustomInput}>
-            {isCustom ? 'Show Dropdown' : 'Custom Token'}
+            {isCustom ? width >= 768 && width < 900 ? 'Dropdown' : 'Show Dropdown' : width >= 768 && width < 900 ? 'Custom' : 'Custom Token'}
             {isCustom ? <MdOutlineListAlt /> : <MdOutlineAddCircleOutline />}
           </button>
         )}

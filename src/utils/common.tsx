@@ -2,12 +2,22 @@ import { JSONPeerId } from 'peer-id';
 import { IOffer } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { ITokenProps, TOKENS } from './token-list';
+import { BiDrink, BiHappyAlt, BiDonateBlood, BiRun, BiShapeCircle, BiWind, BiUserPlus } from "react-icons/bi";
+
+export const ICON_SIZE = '20px';
 
 // CONSTANTS
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
 export const BASE_URL: string = window.location.origin;
 export const WS_URL: string = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
+export const NAV_ITEMS = [
+  { text: 'Pairs', route: '/pairs', disabled: false, icon: <BiDonateBlood size={ICON_SIZE} /> },
+  { text: 'Peers', route: '/peers', disabled: false, icon: <BiShapeCircle size={ICON_SIZE} /> },
+  { text: 'Explore', route: '/explore', disabled: false, icon: <BiDrink size={ICON_SIZE} /> },
+  { text: 'Your Orders', route: '/', disabled: false, icon: <BiHappyAlt size={ICON_SIZE} /> },
+  { text: 'Create', route: '/create', disabled: false, icon: <BiRun size={ICON_SIZE} /> },
+]
 
 // DEFAULT VALS
 export const EMPTY_TRADE: IOffer = {

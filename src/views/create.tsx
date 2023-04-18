@@ -22,7 +22,7 @@ export const CreateView = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
                             <DropdownInput
                                 title="Send Details"
-                                placeholder="Please select a token..."
+                                placeholder="Select a token..."
                                 state={trade.givesToken}
                                 setState={updateTrade}
                                 type="givesToken"
@@ -45,7 +45,7 @@ export const CreateView = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
                             <DropdownInput
                                 title="Receive Details"
-                                placeholder="Please select a token..."
+                                placeholder="Select a token..."
                                 state={trade.getsToken}
                                 setState={updateTrade}
                                 type="getsToken"

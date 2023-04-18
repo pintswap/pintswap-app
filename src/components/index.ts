@@ -9,3 +9,4 @@ export * from './skeleton';
 export * from './dropdown-input';
 export * from './full-page-status';
 export * from './dropdown-menu';
+export * from './active-text';
