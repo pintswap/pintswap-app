@@ -3,6 +3,7 @@ import { MdChevronLeft } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { Button, FullPageStatus, Wallet } from '../components';
+import { DashboardLayout } from './dashboard';
 import { Footer } from './footer';
 import { Navbar } from './navbar';
 
@@ -23,7 +24,7 @@ export const Base = ({ children, loading }: IBaseProps) => {
                     <FullPageStatus type="loading" />
                 )}
                 <Navbar />
-                <main className="flex justify-center">
+                {/* <main className="flex justify-center">
                     <div className="max-w-4xl w-full p-4">
                         {pathname !== '/' && (
                             <Button
@@ -37,7 +38,10 @@ export const Base = ({ children, loading }: IBaseProps) => {
                         )}
                         {children}
                     </div>
-                </main>
+                </main> */}
+                <DashboardLayout>
+                    {children}
+                </DashboardLayout>
                 <Footer />
             </>
         );
