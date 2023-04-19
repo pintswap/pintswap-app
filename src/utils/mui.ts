@@ -30,6 +30,7 @@ export function muiTheme() {
                     root: {
                         borderRadius: '0.5rem',
                         backgroundImage: 'none',
+                        boxShadow: 'none'
                     },
                 },
             },

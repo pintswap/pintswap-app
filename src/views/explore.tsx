@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers6';
-import { DataTable } from '../components';
+import { Card, DataTable } from '../components';
 import { useGlobalContext } from '../stores/global';
 import { memoize } from 'lodash';
 import { toLimitOrder } from '../utils/orderbook';
@@ -99,13 +99,15 @@ export const ExploreView = () => {
 
     return (
         <div className="flex flex-col gap-6">
-            <DataTable 
-                title="Open Orders"
-                columns={columns}
-                data={limitOrders}
-                loading={limitOrders.length === 0}
-                type="explore"
-            />
+            <Card header={"Explore"}>
+                <DataTable 
+                    title="Open Orders"
+                    columns={columns}
+                    data={limitOrders}
+                    loading={limitOrders.length === 0}
+                    type="explore"
+                />
+            </Card>
         </div>
     );
 };
