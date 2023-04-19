@@ -1,18 +1,14 @@
 import { ethers } from 'ethers6';
-import { ImSpinner9 } from 'react-icons/im';
-import { useNavigate } from 'react-router-dom';
 import { Card, CopyClipboard, DataTable, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
-import { capitalCase } from 'change-case';
-import { groupBy, memoize } from 'lodash';
+import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useOffersContext } from '../stores';
 import { truncate } from '../utils/common';
 import { useWindowSize } from '../hooks/window-size';
 
-// const groupTickers = (limitOrders: any) => Object.entries(groupBy(limitOrders as any, 'ticker') as any);
 const columns = [
     {
         name: 'hash',
@@ -79,7 +75,6 @@ const toFlattened = memoize((v: any) =>
 );
 
 export const PeerOrderbookView = () => {
-    const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
     const { width } = useWindowSize();
