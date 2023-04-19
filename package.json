@@ -4,7 +4,7 @@
     "private": true,
     "scripts": {
         "start": "yarn build:css && react-app-rewired start",
-        "start:dev": "REACT_APP_DEV=1 REACT_APP_NETWORK=LOCALHOST GENERATE_SOURCEMAP=false BROWSER=none yarn start",
+        "start:dev": "REACT_APP_TESTING=1 REACT_APP_DEV=1 REACT_APP_NETWORK=LOCALHOST GENERATE_SOURCEMAP=false BROWSER=none yarn start",
         "start:dev:eth": "REACT_APP_DEV=1 REACT_APP_NETWORK=ETHEREUM GENERATE_SOURCEMAP=false BROWSER=none yarn start",
         "build": "yarn build:css && react-app-rewired build",
         "test": "jest",
@@ -17,7 +17,7 @@
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
         "@headlessui/react": "^1.7.13",
-        "@pintswap/sdk": "^1.2.19",
+        "@pintswap/sdk": "^1.2.22",
         "@rainbow-me/rainbowkit": "^0.12.2",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
@@ -49,6 +49,7 @@
     "devDependencies": {
         "@babel/preset-env": "^7.20.2",
         "@babel/preset-react": "^7.18.6",
+        "@mui/icons-material": "^5.11.16",
         "@types/jimp": "^0.2.28",
         "@types/lodash.merge": "^4.6.7",
         "@types/mui-datatables": "^4.3.4",

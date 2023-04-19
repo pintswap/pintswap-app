@@ -22,10 +22,8 @@ export const NAV_ITEMS = [
 
 // DEFAULT VALS
 export const EMPTY_TRADE: IOffer = {
-    getsToken: '',
-    getsAmount: '',
-    givesToken: '',
-    givesAmount: '',
+    gets: { token: '', amount: '' },
+    gives: { amount: '', token: '' }
 };
 
 export const EMPTY_PEER: JSONPeerId = {

@@ -12,7 +12,7 @@ type IDropdownProps = {
   setState?: any;
   options?: string[];
   placeholder?: string;
-  type: 'givesToken' | 'getsToken' | 'string';
+  type: 'gives.token' | 'gets.token' | 'string';
   title?: string;
   search?: boolean;
   disabled?: boolean;
@@ -21,7 +21,7 @@ type IDropdownProps = {
 }
 
 export const DropdownInput = ({ state, setState, options, placeholder, type, title, search, disabled, loading, customInput }: IDropdownProps) => {
-  const isToken = type === 'givesToken' || type === 'getsToken';
+  const isToken = type === 'gives.token' || type === 'gets.token';
   const { width } = useWindowSize();
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] });
   const [isCustom, setIsCustom] = useState(false);

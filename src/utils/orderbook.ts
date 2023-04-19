@@ -60,12 +60,12 @@ function givesBase(offer: any) {
     return {
         pair: [
             {
-                amount: offer.givesAmount,
-                address: offer.givesToken,
+                amount: offer.gives.amount,
+                address: offer.gives.token,
             },
             {
-                amount: offer.getsAmount,
-                address: offer.getsToken,
+                amount: offer.gets.amount,
+                address: offer.gets.token,
             },
         ],
         type: 'bid',
@@ -115,42 +115,52 @@ export async function getDecimals(address: any, provider: any) {
 
 export function orderTokens(offer: any) {
     const mapped = {
-        ...offer,
-        givesToken: toAddress(offer.givesToken),
-        getsToken: toAddress(offer.getsToken),
+        gives: {
+            amount: offer.gives.amount,
+            token: toAddress(offer.gives.token),
+        },
+        gets: {
+            token: toAddress(offer.gets.token),
+            amount: offer.gets.amount,
+        },
     };
-    if (mapped.givesToken === USDC.address) {
+    console.log(mapped);
+    if (mapped.gives.token === USDC.address) {
         return givesBase(mapped);
-    } else if (mapped.getsToken === USDC.address) {
+    } else if (mapped.gets.token === USDC.address) {
         return givesTrade(mapped);
-    } else if (mapped.givesToken === USDT.address) {
+    } else if (mapped.gives.token === USDT.address) {
         return givesBase(mapped);
-    } else if (mapped.getsToken === USDT.address) {
+    } else if (mapped.gets.token === USDT.address) {
         return givesTrade(mapped);
-    } else if (mapped.givesToken === DAI.address) {
+    } else if (mapped.gives.token === DAI.address) {
         return givesBase(mapped);
-    } else if (mapped.getsToken === DAI.address) {
+    } else if (mapped.gets.token === DAI.address) {
         return givesTrade(mapped);
-    } else if (mapped.givesToken === ETH.address) {
+    } else if (mapped.gives.token === ETH.address) {
         return givesBase(mapped);
-    } else if (mapped.getsToken === ETH.address) {
+    } else if (mapped.gets.token === ETH.address) {
         return givesTrade(mapped);
-    } else if (Number(mapped.givesToken.toLowerCase()) < Number(mapped.getsToken.toLowerCase())) {
+    } else if (Number(mapped.gives.token.toLowerCase()) < Number(mapped.gets.token.toLowerCase())) {
         return givesBase(mapped);
     } else return givesTrade(mapped);
 }
 
 export async function fromFormatted(trade: any, provider: any) {
-    const [givesToken, getsToken] = [trade.givesToken, trade.getsToken].map((v) => toAddress(v));
+    const [givesToken, getsToken] = [trade.gives, trade.gets].map((v) => toAddress(v.token));
     return {
-        givesToken,
-        getsToken,
-        givesAmount: ethers.toBeHex(
-            ethers.parseUnits(trade.givesAmount, await getDecimals(givesToken, provider)),
-        ),
-        getsAmount: ethers.toBeHex(
-            ethers.parseUnits(trade.getsAmount, await getDecimals(getsToken, provider)),
-        ),
+        gives: {
+            token: givesToken,
+            amount: ethers.toBeHex(
+                ethers.parseUnits(trade.gives.amount, await getDecimals(givesToken, provider)),
+            ),
+        },
+        gets: {
+            amount: ethers.toBeHex(
+                ethers.parseUnits(trade.gets.amount, await getDecimals(getsToken, provider)),
+            ),
+            token: getsToken,
+        },
     };
 }
 
@@ -162,15 +172,14 @@ export async function toLimitOrder(offer: any, provider: any) {
     const [baseDecimals, tradeDecimals] = await Promise.all(
         [base, trade].map(async (v) => await getDecimals(v.address, provider)),
     );
-    const price = (
+    const price =
         Number(ethers.formatUnits(base.amount, baseDecimals)) /
-        Number(ethers.formatUnits(trade.amount, tradeDecimals))
-    )
+        Number(ethers.formatUnits(trade.amount, tradeDecimals));
     return {
         price: round(price, 4, 'string'),
         amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,
         ticker: await toTicker([base, trade], provider),
-        hash: hashOffer(offer)
+        hash: hashOffer(offer),
     };
 }

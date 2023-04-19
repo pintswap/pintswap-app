@@ -34,8 +34,8 @@ export const AccountView = () => {
                     }
                     items={Array.from(openTrades, (entry) => ({
                         hash: entry[0],
-                        gives: convertAmount('readable', entry[1].givesAmount, entry[1].givesToken),
-                        gets: convertAmount('readable', entry[1].getsAmount, entry[1].getsToken),
+                        gives: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
+                        gets: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
                     }))}
                     emptyContent={
                         pintswap.loading ? (

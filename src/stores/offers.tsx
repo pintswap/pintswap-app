@@ -17,7 +17,7 @@ import { ethers } from 'ethers6';
 // Types
 export type IOffersStoreProps = {
   openTrades: Map<string, IOffer>;
-  addTrade: (hash: string, { givesToken, givesAmount, getsToken, getsAmount }: IOffer) => void;
+  addTrade: (hash: string, { gives, gets }: IOffer) => void;
   peerTrades: Map<string, IOffer>;
   availableTrades: Map<string, IOffer>;
   setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
@@ -31,7 +31,7 @@ const OffersContext = createContext<IOffersStoreProps>({
   openTrades: new Map(),
   peerTrades: new Map(),
   availableTrades: new Map(),
-  addTrade(hash, { givesToken, givesAmount, getsToken, getsAmount }) {},
+  addTrade(hash, { gives, gets }) {},
   setOpenTrades: () => {},
   setPeerTrades: () => {},
   setAvailableTrades: () => {},

@@ -57,13 +57,13 @@ export const FulfillView = () => {
                 const [baseDecimals, tradeDecimals] = await Promise.all(
                     [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
                 );
-                if (tradeToken.address === raw.givesToken) {
+                if (tradeToken.address === raw.gives.token) {
                     setOutputAmount(
                         Number(
                             ethers.formatUnits(
                                 (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
-                                    ethers.toBigInt(raw.getsAmount)) /
-                                    ethers.toBigInt(raw.givesAmount),
+                                    ethers.toBigInt(raw.gets.amount)) /
+                                    ethers.toBigInt(raw.gives.amount),
                                 baseDecimals,
                             ),
                         ).toFixed(6),
@@ -73,8 +73,8 @@ export const FulfillView = () => {
                         Number(
                             ethers.formatUnits(
                                 (ethers.toBigInt(ethers.parseUnits(fillAmount, baseDecimals)) *
-                                    ethers.toBigInt(raw.givesAmount)) /
-                                    ethers.toBigInt(raw.getsAmount),
+                                    ethers.toBigInt(raw.gives.amount)) /
+                                    ethers.toBigInt(raw.gets.amount),
                                 baseDecimals,
                             ),
                         ).toFixed(6),
@@ -106,7 +106,7 @@ export const FulfillView = () => {
                             title="Pair"
                             placeholder="Pair"
                             state={limitOrder.ticker}
-                            type="givesToken"
+                            type="gives.token"
                             disabled
                             loading={loadingTrade}
                         />
@@ -144,10 +144,10 @@ export const FulfillView = () => {
                         loading={loading && !error}
                         onClick={fulfillTrade}
                         disabled={
-                            !trade.getsAmount ||
-                            !trade.givesAmount ||
-                            !trade.getsToken ||
-                            !trade.givesToken ||
+                            !trade.gets.amount ||
+                            !trade.gives.amount ||
+                            !trade.gets.token ||
+                            !trade.gives.token ||
                             loadingTrade ||
                             loading
                         }

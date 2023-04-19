@@ -23,21 +23,21 @@ export const CreateView = () => {
                             <DropdownInput
                                 title="Send Details"
                                 placeholder="Select a token..."
-                                state={trade.givesToken}
+                                state={trade.gives.token}
                                 setState={updateTrade}
-                                type="givesToken"
+                                type="gives.token"
                                 search
                                 disabled={!!order.orderHash}
                                 customInput
                             />
                             <Input
                                 placeholder="Amount to Send"
-                                value={trade.givesAmount}
+                                value={trade.gives.amount || ''}
                                 onChange={({ currentTarget }) =>
-                                    updateTrade('givesAmount', currentTarget.value)
+                                    updateTrade('gives.amount', currentTarget.value)
                                 }
                                 type="number"
-                                token={trade.givesToken || true}
+                                token={trade.gives.token || true}
                                 maxClick={updateTrade}
                                 disabled={!!order.orderHash}
                             />
@@ -46,21 +46,21 @@ export const CreateView = () => {
                             <DropdownInput
                                 title="Receive Details"
                                 placeholder="Select a token..."
-                                state={trade.getsToken}
+                                state={trade.gets.token}
                                 setState={updateTrade}
-                                type="getsToken"
+                                type="gets.token"
                                 search
                                 disabled={!!order.orderHash}
                                 customInput
                             />
                             <Input
                                 placeholder="Amount to Receive"
-                                value={trade.getsAmount}
+                                value={(trade.gets.amount || '')}
                                 onChange={({ currentTarget }) =>
-                                    updateTrade('getsAmount', currentTarget.value.toUpperCase())
+                                    updateTrade('gets.amount', currentTarget.value.toUpperCase())
                                 }
                                 type="number"
-                                token={trade.getsToken || true}
+                                token={trade.gets.token || true}
                                 maxClick={updateTrade}
                                 disabled={!!order.orderHash}
                             />
@@ -73,10 +73,10 @@ export const CreateView = () => {
                         loading={loading}
                         onClick={broadcastTrade}
                         disabled={
-                            !trade.givesToken ||
-                            !trade.givesAmount ||
-                            !trade.getsToken ||
-                            !trade.getsAmount ||
+                            !trade.gives.token ||
+                            !trade.gives.amount ||
+                            !trade.gets.token ||
+                            !trade.gets.amount ||
                             !!order.orderHash
                         }
                     >
