@@ -1,13 +1,15 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { Base } from './base';
 import { useGlobalContext } from './stores';
 import {
-    ActiveOrderbookView,
+    ExploreView,
     CreateView,
     FulfillView,
-    HomeView,
     PeerOrderbookView,
-    ProfileView,
+    AccountView,
+    PairsView,
+    PeersView,
+    PairListView,
 } from './views';
 import { setFallbackWETH } from '@pintswap/sdk';
 import { ToastContainer } from 'react-toastify';
@@ -21,13 +23,19 @@ function App() {
         <>
             <Base loading={pintswap.loading}>
                 <Routes>
-                    <Route path="/" element={<HomeView />} />
+                    <Route path="/explore" element={<ExploreView />} />
                     <Route path="/create" element={<CreateView />} />
-                    <Route path="/fulfill" element={<FulfillView />} />
-                    <Route path="/:address/:multiaddr" element={<FulfillView />} />
-                    <Route path="/:address" element={<PeerOrderbookView />} />
-                    <Route path="/profile" element={<ProfileView />} />
-                    <Route path="/open" element={<ActiveOrderbookView />} />
+                    <Route path="/account" element={<AccountView />} />
+
+                    <Route path="/pairs" element={<PairsView />} />
+                    <Route path="/pairs/:pair" element={<PairListView />} />
+
+                    <Route path="/peers" element={<PeersView />} />
+                    <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
+
+                    <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
+
+                    <Route path="*" element={<Navigate to='/explore' />} />
                 </Routes>
             </Base>
 

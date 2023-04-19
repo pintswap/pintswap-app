@@ -23,7 +23,7 @@ const toFlattened = memoize((v) =>
     ),
 );
 
-export const ActiveOrderbookView = () => {
+export const ExploreView = () => {
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
     const { availableTrades } = useOffersContext();

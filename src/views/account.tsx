@@ -7,7 +7,7 @@ import { useOffersContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
 
-export const HomeView = () => {
+export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
