@@ -690,6 +690,9 @@ html,
 .max-h-\[55vh\]{
   max-height: 55vh;
 }
+.min-h-\[50px\]{
+  min-height: 50px;
+}
 .w-0{
   width: 0px;
 }
@@ -940,6 +943,9 @@ html,
 }
 .\!border-0{
   border-width: 0px !important;
+}
+.border{
+  border-width: 1px;
 }
 .border-2{
   border-width: 2px;
