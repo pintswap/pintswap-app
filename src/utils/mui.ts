@@ -13,7 +13,6 @@ export function muiTheme() {
         fontFamily: [
           'Dela Gothic One'
         ].join(','),
-        // fontSize: 18
       },
         palette: {
             mode: 'dark',
