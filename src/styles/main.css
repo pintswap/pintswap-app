@@ -621,9 +621,6 @@ html,
   margin-left: auto;
   margin-right: auto;
 }
-.mb-2{
-  margin-bottom: 0.5rem;
-}
 .mb-4{
   margin-bottom: 1rem;
 }
@@ -689,6 +686,9 @@ html,
 }
 .max-h-\[55vh\]{
   max-height: 55vh;
+}
+.min-h-\[200px\]{
+  min-height: 200px;
 }
 .min-h-\[50px\]{
   min-height: 50px;
@@ -1125,6 +1125,9 @@ html,
 .font-gothic{
   font-family: Pathway Gothic One, sans-serif;
 }
+.font-titillium{
+  font-family: Titillium Web, sans-serif;
+}
 .text-3xl{
   font-size: 1.875rem;
   line-height: 2.25rem;
@@ -1150,6 +1153,10 @@ html,
 }
 .font-semibold{
   font-weight: 600;
+}
+.text-black{
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 .text-gray-400{
   --tw-text-opacity: 1;
@@ -1302,9 +1309,6 @@ html,
 .ease-out{
   transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
-.first\:mt-0:first-child{
-  margin-top: 0px;
-}
 .last-of-type\:border-0:last-of-type{
   border-width: 0px;
 }
@@ -1380,6 +1384,10 @@ html,
     max-width: 32rem;
   }
 
+  .sm\:grid-cols-2{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .sm\:self-center{
     align-self: center;
   }
@@ -1415,6 +1423,10 @@ html,
 
   .lg\:mb-6{
     margin-bottom: 1.5rem;
+  }
+
+  .lg\:grid-cols-3{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .lg\:grid-cols-\[1fr_4fr\]{
