@@ -112,6 +112,7 @@ export function OffersStore(props: { children: ReactNode }) {
             ).map((v, i) => ({
                 ...v,
                 peer: flattened[i].peer,
+                multiAddr: flattened[i].multiAddr
             }));
             setLimitOrdersArr(mapped)
         }

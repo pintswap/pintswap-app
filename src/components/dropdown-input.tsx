@@ -110,7 +110,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
                     )}
                     onClick={() => setState(type, el.symbol)}
                   >
-                    <img src={el.logoURI} alt={el.asset} width="25" height="25" />
+                    <img src={el.logoURI} alt={el.asset} width="25" height="25" className="rounded-full" />
                     {el.symbol}
                   </button>
                 )}
