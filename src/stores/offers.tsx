@@ -8,8 +8,11 @@ import {
   useState,
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
-import { defer, EMPTY_PEER } from '../utils/common';
+import { defer } from '../utils/common';
 import { useGlobalContext } from './global';
+import { memoize } from 'lodash';
+import { toLimitOrder } from '../utils/orderbook';
+import { ethers } from 'ethers6';
 
 // Types
 export type IOffersStoreProps = {
@@ -20,6 +23,7 @@ export type IOffersStoreProps = {
   setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
   setOpenTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
   setAvailableTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
+  limitOrdersArr: any[];
 };
 
 // Context
@@ -31,6 +35,7 @@ const OffersContext = createContext<IOffersStoreProps>({
   setOpenTrades: () => {},
   setPeerTrades: () => {},
   setAvailableTrades: () => {},
+  limitOrdersArr: []
 });
 
 // Peer
@@ -51,6 +56,20 @@ const resolveNames = async (m: any, pintswap: any) => {
   })));
 };
 
+// Utils
+const toFlattened = memoize((v) =>
+    [...v.entries()].reduce(
+        (r, [multiaddr, [_, offerList]]) =>
+            r.concat(
+                offerList.map((v: any) => ({
+                    ...v,
+                    peer: multiaddr,
+                })),
+            ),
+        [],
+    ),
+);
+
 // Wrapper
 export function OffersStore(props: { children: ReactNode }) {
   const { pintswap } = useGlobalContext();
@@ -58,6 +77,7 @@ export function OffersStore(props: { children: ReactNode }) {
   const [openTrades, setOpenTrades] = useState<Map<string, IOffer>>(new Map());
   const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
   const [availableTrades, setAvailableTrades] = useState<Map<string, IOffer>>(new Map());
+  const [limitOrdersArr, setLimitOrdersArr] = useState<any[]>([]);
 
   const addTrade = (hash: string, tradeProps: IOffer) => {
       setOpenTrades(openTrades.set(hash, tradeProps));
@@ -79,6 +99,25 @@ export function OffersStore(props: { children: ReactNode }) {
       return () => {};
   }, [pintswap.module]);
 
+  // All trades converted to Array for DataTables
+  useEffect(() => {
+    (async () => {
+        if (pintswap.module) {
+            const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+            const flattened = toFlattened(availableTrades);
+            const mapped = (
+                await Promise.all(
+                    flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                )
+            ).map((v, i) => ({
+                ...v,
+                peer: flattened[i].peer,
+            }));
+            setLimitOrdersArr(mapped)
+        }
+    })().catch((err) => console.error(err));
+}, [pintswap.module, availableTrades]);
+
   return (
       <OffersContext.Provider
           value={{
@@ -89,6 +128,7 @@ export function OffersStore(props: { children: ReactNode }) {
               setOpenTrades,
               setAvailableTrades,
               availableTrades,
+              limitOrdersArr
           }}
       >
           {props.children}

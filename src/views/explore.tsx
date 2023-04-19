@@ -1,9 +1,4 @@
-import { useState, useEffect } from 'react';
-import { ethers } from 'ethers6';
 import { Card, DataTable } from '../components';
-import { useGlobalContext } from '../stores/global';
-import { memoize } from 'lodash';
-import { toLimitOrder } from '../utils/orderbook';
 import { useOffersContext } from '../stores';
 
 const columns = [
@@ -61,41 +56,8 @@ const columns = [
     },
 ];
 
-const toFlattened = memoize((v) =>
-    [...v.entries()].reduce(
-        (r, [multiaddr, [_, offerList]]) =>
-            r.concat(
-                offerList.map((v: any) => ({
-                    ...v,
-                    peer: multiaddr,
-                })),
-            ),
-        [],
-    ),
-);
-
 export const ExploreView = () => {
-    const { pintswap } = useGlobalContext();
-    const { availableTrades } = useOffersContext();
-    const [limitOrders, setLimitOrders] = useState<any[]>([]);
-
-    useEffect(() => {
-        (async () => {
-            if (pintswap.module) {
-                const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
-                const flattened = toFlattened(availableTrades);
-                const mapped = (
-                    await Promise.all(
-                        flattened.map(async (v: any) => await toLimitOrder(v, signer)),
-                    )
-                ).map((v, i) => ({
-                    ...v,
-                    peer: flattened[i].peer,
-                }));
-                setLimitOrders(mapped)
-            }
-        })().catch((err) => console.error(err));
-    }, [pintswap.module, availableTrades]);
+    const { limitOrdersArr } = useOffersContext();
 
     return (
         <div className="flex flex-col gap-6">
@@ -103,8 +65,8 @@ export const ExploreView = () => {
                 <DataTable 
                     title="Open Orders"
                     columns={columns}
-                    data={limitOrders}
-                    loading={limitOrders.length === 0}
+                    data={limitOrdersArr}
+                    loading={limitOrdersArr.length === 0}
                     type="explore"
                 />
             </Card>
