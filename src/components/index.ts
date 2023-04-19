@@ -10,3 +10,5 @@ export * from './dropdown-input';
 export * from './full-page-status';
 export * from './dropdown-menu';
 export * from './active-text';
+export * from './data-table';
+export * from './spinner-loader';

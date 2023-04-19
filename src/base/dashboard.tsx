@@ -16,7 +16,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     // Desktop
     return (
       <div className="grid grid-cols-[1fr_3fr] lg:grid-cols-[1fr_4fr]">
-        <ul className="bg-neutral-900 p-4 pl-0 mt-4 h-[85vh] rounded-r-xl max-w-[300px] flex flex-col gap-2">
+        <ul className="bg-neutral-900 p-4 pl-0 mt-4 h-[85vh] rounded-r-xl max-w-[300px] flex flex-col gap-2 shadow-lg">
           {NAV_ITEMS.map((el, i) => (
             <li key={`sidebar-nav-${i}`}>
               <button 
