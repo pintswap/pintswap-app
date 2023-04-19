@@ -97,6 +97,7 @@ export const ExploreView = () => {
                 columns={columns}
                 data={limitOrders}
                 loading={limitOrders.length === 0}
+                type="explore"
             />
         </div>
     );

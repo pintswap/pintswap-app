@@ -11,7 +11,7 @@ type IDataTableProps = {
   data: (object | number[] | string[])[];
   columns: MUIDataTableColumnDef[];
   loading?: boolean;
-  type?: 'explore' | 'pairs' | 'peers' | 'orderbook'
+  type: 'explore' | 'pairs' | 'peers' | 'orderbook'
 }
 
 export const DataTable = ({ title, data, columns, loading, type }: IDataTableProps) => {
@@ -39,6 +39,7 @@ export const DataTable = ({ title, data, columns, loading, type }: IDataTablePro
                 props={data} 
                 columns={columns.map((col: any) => col.label)} 
                 loading={loading}
+                type={type}
               />
             )
           }}
@@ -52,25 +53,41 @@ type IDataTableRowProps = {
   columns: string[]
   props: object;
   loading?: boolean;
+  type: 'explore' | 'pairs' | 'peers' | 'orderbook'
 }
 
-const CustomRow = ({ columns, props, loading }: IDataTableRowProps) => {
+const CustomRow = ({ columns, props, loading, type }: IDataTableRowProps) => {
   const cells = Object.values(props);
   const { width, breakpoint } = useWindowSize();
   const navigate = useNavigate();
   const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${loading ? '' : 'hover:bg-gray-900 hover:cursor-pointer'}`
 
-  const route = (e: any, props: any) => {
-    console.log("columns", columns)
-    console.log("E", e);
-    console.log("PROPS", props)
+  const route = (firstCol: string) => {
+    let url = '/';
+    switch(type) {
+      case 'explore': // TODO: fix
+        url = `${url}peers`;
+        break;
+      case 'pairs':
+        url = `${url}pairs`;
+        break;
+      case 'peers':
+        url = `${url}peers`;
+        break;
+      case 'orderbook':
+        url = `${url}fulfill`;
+        break;
+      default:
+        break;
+    }
+    navigate(`${url}/${firstCol}`)
   }
     // Desktop
     if (width >= 900) {
       return (
         <tr
           className={baseStyle}
-          onClick={(e) => route(e, cells)}
+          onClick={(e) => route(cells[0])}
         >
           {cells.map((cell, i) => (
             <td 
@@ -87,7 +104,7 @@ const CustomRow = ({ columns, props, loading }: IDataTableRowProps) => {
       return (
         <tr
           className={`${baseStyle} flex flex-col px-4 py-1`}
-          onClick={(e) => route(e, props)}
+          onClick={(e) => route(cells[0])}
         >
           {cells.map((cell, i) => (
             <td 
@@ -102,6 +119,3 @@ const CustomRow = ({ columns, props, loading }: IDataTableRowProps) => {
       );
     }
 }
-
-// TODO: create custom rows
-// TODO: create custom search css
