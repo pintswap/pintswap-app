@@ -1,7 +1,7 @@
 import { ethers } from 'ethers6';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
-import { Card, CopyClipboard, Table } from '../components';
+import { Card, CopyClipboard, DataTable, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
@@ -12,7 +12,54 @@ import { useOffersContext } from '../stores';
 import { truncate } from '../utils/common';
 import { useWindowSize } from '../hooks/window-size';
 
-const groupTickers = (limitOrders: any) => Object.entries(groupBy(limitOrders as any, 'ticker') as any);
+// const groupTickers = (limitOrders: any) => Object.entries(groupBy(limitOrders as any, 'ticker') as any);
+const columns = [
+    {
+        name: 'hash',
+        label: 'Hash',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'ticker',
+        label: 'Pair',
+        options: {
+            filter: true,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'type',
+        label: 'Type',
+        options: {
+            filter: true,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'amount',
+        label: 'Amount',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'price',
+        label: 'Price',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+];
 
 const mapToArray = (v: any) => {
     const it = v.entries();
@@ -37,14 +84,14 @@ export const PeerOrderbookView = () => {
     const { peerTrades } = useOffersContext();
     const { width } = useWindowSize();
     const { order } = useTrade();
-    const [limitOrders, setLimitOrders] = useState([]);
+    const [limitOrders, setLimitOrders] = useState<any[]>([]);
 
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
                 const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
                 const flattened = toFlattened(peerTrades);
-                const limitOrders = (
+                const mapped = (
                     await Promise.all(
                         flattened.map(async (v: any) => await toLimitOrder(v, signer)),
                     )
@@ -54,7 +101,7 @@ export const PeerOrderbookView = () => {
                     peer: flattened[i].peer,
                     multiAddr: flattened[i].multiAddr,
                 }));
-                setLimitOrders(groupTickers(limitOrders) as any);
+                setLimitOrders(mapped);
             }
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades]);
@@ -65,33 +112,21 @@ export const PeerOrderbookView = () => {
                 header={
                     <div className="w-full flex justify-between">
                         <span>Peer Trades</span>
-                        <CopyClipboard value={order.multiAddr || ethers.ZeroAddress} icon={width > 768}>
+                        <CopyClipboard value={order.multiAddr} icon={width > 768}>
                             <span className="font-medium">{truncate(order.multiAddr || ethers.ZeroAddress, width > 768 ? 4 : 3)}</span>
                         </CopyClipboard>
                     </div>
                 }
                 scroll={limitOrders.length > 0}
             >
-            {limitOrders.length > 0 ? limitOrders.map(([ pair, orders ], i) => (
-                <div key={`open-trades-row-${i}`} className="mt-2 first:mt-0">
-                <h2 className="text-indigo-600 mb-2">{ pair }</h2>
-                <Table
-                    headers={['Hash', 'Type', 'Price', 'Amount']}
-                    onClick={(trade: any) => navigate(`/${order.multiAddr}/${trade[0]}`)}
-                    items={Array.from(orders, (entry: any) => [
-                        entry.hash,
-                        capitalCase(entry.type),
-                        entry.price,
-                        entry.amount,
-                    ])}
+                <DataTable 
+                    title="Peer Trades"
+                    columns={columns}
+                    data={limitOrders}
+                    loading={limitOrders.length === 0}
+                    type="orderbook"
+                    peer={order.multiAddr}
                 />
-                </div>
-                )) : (
-                    <span className="text-center w-full flex flex-col justify-center items-center gap-4">
-                        <span className="text-gray-400">Loading peer&apos;s offers...</span>
-                        <ImSpinner9 className="animate-spin text-gray-400" size="20px" />
-                    </span>
-                )}
             </Card>
         </div>
     );

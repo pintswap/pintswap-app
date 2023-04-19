@@ -12,10 +12,11 @@ type IDataTableProps = {
   data: (object | number[] | string[])[];
   columns: MUIDataTableColumnDef[];
   loading?: boolean;
-  type: 'explore' | 'pairs' | 'peers' | 'orderbook'
+  type: 'explore' | 'pairs' | 'peers' | 'orderbook';
+  peer?: string;
 }
 
-export const DataTable = ({ title, data, columns, loading, type }: IDataTableProps) => {
+export const DataTable = ({ title, data, columns, loading, type, peer }: IDataTableProps) => {
   return (
     <CacheProvider value={muiCache}>
       <ThemeProvider theme={muiTheme()}>
@@ -41,6 +42,7 @@ export const DataTable = ({ title, data, columns, loading, type }: IDataTablePro
                 columns={columns.map((col: any) => col.label)} 
                 loading={loading}
                 type={type}
+                peer={peer}
               />
             )
           }}
@@ -54,10 +56,11 @@ type IDataTableRowProps = {
   columns: string[]
   props: object;
   loading?: boolean;
-  type: 'explore' | 'pairs' | 'peers' | 'orderbook'
+  type: 'explore' | 'pairs' | 'peers' | 'orderbook';
+  peer?: string;
 }
 
-const CustomRow = ({ columns, props, loading, type }: IDataTableRowProps) => {
+const CustomRow = ({ columns, props, loading, type, peer }: IDataTableRowProps) => {
   const cells = Object.values(props);
   const { width, breakpoint } = useWindowSize();
   const navigate = useNavigate();
@@ -80,7 +83,8 @@ const CustomRow = ({ columns, props, loading, type }: IDataTableRowProps) => {
       default:
         break;
     }
-    navigate(`${url}/${firstCol}`)
+    if(peer) navigate(`${url}/${peer}/${firstCol}`)
+    else navigate(`${url}/${firstCol}`)
   }
     // Desktop
     if (width >= 900) {
