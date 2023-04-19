@@ -10,7 +10,7 @@ type IActiveTextProps = {
 export const ActiveText = ({ children, className, route }: IActiveTextProps) => {
   const { pathname } = useLocation();
   return (
-    <span className={`${pathname === route ? className ? className : 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-sky-400' : ''}`}>
+    <span className={`${pathname.includes(route) ? className ? className : 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-sky-400' : ''}`}>
       {children}
     </span>
   )
