@@ -166,15 +166,16 @@ export const useTrade = () => {
         const getter = async () => {
             if (pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
-                if (splitUrl.length === 3) { 
+                console.log("SPLIT URL:", splitUrl)
+                if (splitUrl[1] === 'fulfill') { 
                     // If multiAddr and orderHash
-                    setOrder({ multiAddr: splitUrl[1], orderHash: splitUrl[2] });
+                    setOrder({ multiAddr: splitUrl[2], orderHash: splitUrl[3] });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
-                    await getTrades(splitUrl[1], splitUrl[2]);
-                } else if (splitUrl.length === 2 && splitUrl[1] !== 'create' && splitUrl[1] !== 'open') { 
+                    await getTrades(splitUrl[2], splitUrl[3]);
+                } else if (splitUrl[1] === 'peers') { 
                     // Only multiAddr
-                    setOrder({ multiAddr: splitUrl[1], orderHash: '' });
-                    await getTrades(splitUrl[1]); 
+                    setOrder({ multiAddr: splitUrl[2], orderHash: '' });
+                    await getTrades(splitUrl[2]); 
                 }
             }
         };

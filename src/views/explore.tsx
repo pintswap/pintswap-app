@@ -17,6 +17,13 @@ const columns = [
         },
     },
     {
+        name: 'hash',
+        label: 'Hash',
+        options: {
+            filter: false,
+        },
+    },
+    {
         name: 'ticker',
         label: 'Pair',
         options: {

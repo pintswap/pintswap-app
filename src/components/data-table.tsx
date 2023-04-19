@@ -5,6 +5,7 @@ import MUIDataTable, { MUIDataTableColumnDef } from 'mui-datatables';
 import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
+import { truncate } from '../utils/common';
 
 type IDataTableProps = {
   title: string;
@@ -66,8 +67,7 @@ const CustomRow = ({ columns, props, loading, type }: IDataTableRowProps) => {
     let url = '/';
     switch(type) {
       case 'explore': // TODO: fix
-        url = `${url}peers`;
-        break;
+        return navigate(`${url}fulfill/${cells[0]}/${cells[1]}`);
       case 'pairs':
         url = `${url}pairs`;
         break;
@@ -94,7 +94,7 @@ const CustomRow = ({ columns, props, loading, type }: IDataTableRowProps) => {
               key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
               className="py-2 pl-4"
             >
-              {cell}
+              {cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 2) : cell}
             </td>
           ))}
         </tr>
@@ -112,7 +112,7 @@ const CustomRow = ({ columns, props, loading, type }: IDataTableRowProps) => {
               className="py-0.5 pl-4 flex justify-between items-center"
             >
               <span>{columns[i]}</span>
-              <span>{cell}</span>
+              <span>{cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 5) : cell}</span>
             </td>
           ))}
         </tr>

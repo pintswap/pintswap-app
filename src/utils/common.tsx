@@ -104,10 +104,11 @@ export const shorten = (s: string) => {
 };
 
 // NUMBER HELPERS
-export function round(value: string | number, decimals: number) {
+export function round(value: string | number, decimals: number, returnType?: 'number' | 'string') {
   if (value === '0.00') return '0.00';
   const _value = typeof value === 'string' ? parseFloat(value) : value;
   const factorOfTen = Math.pow(10, decimals);
+  if(returnType === 'string') return (Math.round(_value * factorOfTen) / factorOfTen).toString()
   return Math.round(_value * factorOfTen) / factorOfTen;
 }
 

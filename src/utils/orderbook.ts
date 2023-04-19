@@ -2,7 +2,8 @@ import { TOKENS } from './token-list';
 import { ethers } from 'ethers6';
 import { keyBy } from 'lodash';
 import { sortBy, groupBy } from 'lodash';
-import { shorten } from './common';
+import { round, shorten } from './common';
+import { hashOffer } from '@pintswap/sdk';
 
 const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
 const USDC: any = TOKENS.find((v) => v.symbol === 'USDC');
@@ -161,13 +162,15 @@ export async function toLimitOrder(offer: any, provider: any) {
     const [baseDecimals, tradeDecimals] = await Promise.all(
         [base, trade].map(async (v) => await getDecimals(v.address, provider)),
     );
+    const price = (
+        Number(ethers.formatUnits(base.amount, baseDecimals)) /
+        Number(ethers.formatUnits(trade.amount, tradeDecimals))
+    )
     return {
-        price: (
-            Number(ethers.formatUnits(base.amount, baseDecimals)) /
-            Number(ethers.formatUnits(trade.amount, tradeDecimals))
-        ).toFixed(4),
+        price: round(price, 4, 'string'),
         amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,
         ticker: await toTicker([base, trade], provider),
+        hash: hashOffer(offer)
     };
 }

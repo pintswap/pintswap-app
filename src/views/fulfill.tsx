@@ -15,8 +15,12 @@ import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores';
 import { BASE_URL, truncate } from '../utils/common';
 import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
+import { useWindowSize } from '../hooks/window-size';
+import { useNavigate } from 'react-router-dom';
 
 export const FulfillView = () => {
+    const navigate = useNavigate();
+    const { width } = useWindowSize();
     const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
     const { peer, setPeer, pintswap } = useGlobalContext();
     const [limitOrder, setLimitOrder] = useState({
@@ -87,7 +91,16 @@ export const FulfillView = () => {
         <>
             {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-6">
-                <Card className="self-center" header="Fulfill Trade">
+                <Card 
+                header={
+                    <div className="w-full flex justify-between">
+                        <span>Fulfill Trade</span>
+                        <Button type="transparent" onClick={() => navigate(`/peers/${order.multiAddr}`)}>
+                            <span className="font-medium">{truncate(order.multiAddr || ethers.ZeroAddress, width > 768 ? 4 : 3)}</span>
+                        </Button>
+                    </div>
+                }
+                >
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
                             title="Pair"
