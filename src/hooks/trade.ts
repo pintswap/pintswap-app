@@ -47,7 +47,7 @@ export const useTrade = () => {
     const buildTradeObj = ({ gets, gives }: IOffer): IOffer => {
         if (!gets || !gives || !gets.token || !gets.amount || !gives.amount || !gives.token)
             return EMPTY_TRADE;
-        const foundGivesToken = getTokenAttributes(gets.token) as ITokenProps | undefined;
+        const foundGivesToken = getTokenAttributes(gives.token) as ITokenProps | undefined;
         const foundGetsToken = getTokenAttributes(gets.token) as ITokenProps | undefined;
         const builtObj = {
             gives: {
