@@ -10,6 +10,7 @@ import {
     PairsView,
     PeersView,
     PairListView,
+    TradeSearchView,
 } from './views';
 import { setFallbackWETH } from '@pintswap/sdk';
 import { ToastContainer } from 'react-toastify';
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/peers" element={<PeersView />} />
                     <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
 
+                    <Route path="/fulfill" element={<TradeSearchView />} />
                     <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
 
                     <Route path="*" element={<Navigate to='/explore' />} />

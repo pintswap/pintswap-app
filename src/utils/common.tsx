@@ -16,6 +16,7 @@ export const NAV_ITEMS = [
   { text: 'Pairs', route: '/pairs', disabled: false, icon: <BiDonateBlood size={ICON_SIZE} /> },
   { text: 'Peers', route: '/peers', disabled: false, icon: <BiShapeCircle size={ICON_SIZE} /> },
   { text: 'Create', route: '/create', disabled: false, icon: <BiRun size={ICON_SIZE} /> },
+  { text: 'Fulfill', route: '/fulfill', disabled: false, icon: <BiWind size={ICON_SIZE} /> },
   { text: 'Account', route: '/account', disabled: false, icon: <BiHappyAlt size={ICON_SIZE} /> },
 ]
 
