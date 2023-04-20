@@ -2,8 +2,8 @@ import { ReactNode } from "react"
 import { useNavigate } from "react-router-dom";
 import { ActiveText } from "../components";
 import { useWindowSize } from "../hooks/window-size";
-import { NAV_ITEMS } from "../utils/common";
 import { Avatar } from '../components';
+import { useGlobalContext } from "../stores";
 
 type IDashboardProps = {
   children: ReactNode;
@@ -11,6 +11,7 @@ type IDashboardProps = {
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { width, breakpoint } = useWindowSize();
+  const { NAV_ITEMS } = useGlobalContext();
   const navigate = useNavigate();
 
   if(width >= breakpoint) {

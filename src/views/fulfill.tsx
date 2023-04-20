@@ -14,14 +14,12 @@ import {
 import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores';
-import { BASE_URL, truncate } from '../utils/common';
+import { BASE_URL } from '../utils/common';
 import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
-import { useWindowSize } from '../hooks/window-size';
-import { useNavigate } from 'react-router-dom';
+import { useAccount } from 'wagmi';
 
 export const FulfillView = () => {
-    const navigate = useNavigate();
-    const { width } = useWindowSize();
+    const { address } = useAccount()
     const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
     const { peer, setPeer, pintswap } = useGlobalContext();
     const [limitOrder, setLimitOrder] = useState({
@@ -150,7 +148,8 @@ export const FulfillView = () => {
                             !trade.gets.token ||
                             !trade.gives.token ||
                             loadingTrade ||
-                            loading
+                            loading ||
+                            !address
                         }
                     >
                         Fulfill Trade

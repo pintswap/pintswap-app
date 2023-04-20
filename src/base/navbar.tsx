@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { Avatar, DropdownMenu, Wallet } from '../components';
 import { useWindowSize } from '../hooks/window-size';
-import { NAV_ITEMS } from '../utils/common';
+import { useGlobalContext } from '../stores';
 
 export const Navbar = () => {
+    const { NAV_ITEMS } = useGlobalContext();
     const { width, breakpoint } = useWindowSize();
     const { address } = useAccount();
     const navigate = useNavigate();
@@ -22,8 +23,8 @@ export const Navbar = () => {
                 )}
             </button>
             <div className="flex items-center gap-2 justify-self-end">
-                {address && <Wallet />}
-                {width < breakpoint ? <DropdownMenu items={NAV_ITEMS} /> : <Avatar clickable size={width >= 1024 ? 42 : 32} /> }
+                <Wallet />
+                {width < breakpoint ? <DropdownMenu items={NAV_ITEMS} /> : address ? <Avatar clickable size={width >= 1024 ? 42 : 32} /> : <></> }
             </div>
         </nav>
     );

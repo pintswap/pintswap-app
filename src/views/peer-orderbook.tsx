@@ -1,13 +1,11 @@
 import { ethers } from 'ethers6';
-import { Avatar, Card, CopyClipboard, DataTable, Table } from '../components';
+import { Avatar, Card, DataTable } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
 import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useOffersContext } from '../stores';
-import { truncate } from '../utils/common';
-import { useWindowSize } from '../hooks/window-size';
 
 const columns = [
     {
@@ -77,7 +75,6 @@ const toFlattened = memoize((v: any) =>
 export const PeerOrderbookView = () => {
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
-    const { width } = useWindowSize();
     const { order } = useTrade();
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
 
@@ -110,10 +107,6 @@ export const PeerOrderbookView = () => {
                 bioClass=""
                 nameClass="text-xl"
             />
-            {/* <div></div>
-            <CopyClipboard value={order.multiAddr} icon={width > 768}>
-                <span className="font-medium">{truncate(order.multiAddr || ethers.ZeroAddress, width > 768 ? 4 : 3)}</span>
-            </CopyClipboard> */}
             <Card 
                 header={"Peer Trades"}
                 scroll={limitOrders.length > 0}
