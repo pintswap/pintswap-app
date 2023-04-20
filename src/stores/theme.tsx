@@ -28,7 +28,7 @@ export const ThemeContext = React.createContext<IThemeProps>({
     isDark: false,
 });
 
-export const ThemeProvider = ({ initialTheme, children }: any) => {
+export const ThemeStore = ({ initialTheme, children }: any) => {
     const [theme, setTheme] = React.useState(getInitialTheme);
     const isDark = theme === 'dark' ? true : false;
 
