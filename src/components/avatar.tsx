@@ -14,9 +14,10 @@ type IAvatarProps = {
   bioClass?: string;
   align?: 'left' | 'center' | 'right';
   loading?: boolean;
+  type?: 'clickable' | 'default' | 'profile'
 }
 
-export const Avatar = ({ size = 50, clickable, peer, withBio, withName, nameClass, bioClass, loading, align }: IAvatarProps) => {
+export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bioClass, loading, align }: IAvatarProps) => {
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
   const { profilePic, bio, shortAddress } = useUserContext();
@@ -67,7 +68,14 @@ export const Avatar = ({ size = 50, clickable, peer, withBio, withName, nameClas
     if(peer && module) getter();
   }, [peer, module]);
 
-  if(clickable) {
+  const alginClass = () => {
+    switch(align) {
+      case 'left': return 'items-start justify-start text-left';
+      case 'right': return 'items-end justify-end text-right';
+      default: return 'items-center justify-center text-center';
+    }
+  }
+  if(type === 'clickable') {
     return (
       <div className={`${loading ? 'animate-pulse' : ''}`}>
         <button onClick={() => navigate(`/account`)} className={`bg-gradient-to-r from-indigo-600 to-sky-400 p-[2.5px] hover:to-sky-500 rounded-full`}>
@@ -81,62 +89,95 @@ export const Avatar = ({ size = 50, clickable, peer, withBio, withName, nameClas
         </button>
       </div>
     )
-  }
-  const alginClass = () => {
-    switch(align) {
-      case 'left': return 'items-start justify-start text-left';
-      case 'right': return 'items-end justify-end text-right';
-      default: return 'items-center justify-center text-center';
-    }
-  }
-  return (
-    <div className={loading ? 'animate-pulse' : ''}>
-      <div className={`flex flex-col gap-3 ${alginClass()}`}>
-        <div className={`flex flex-row gap-3 ${alginClass()}`}>
-          {loading ? (
-          <div
-          className={`rounded-full self-center bg-neutral-800`}
-          style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
-      />
-          ) : (
-            <img
-            src={peerData.imgSrc}
-            height={size}
-            width={size}
-            className="rounded-full self-center"
-            alt="Avatar"
-        />
-          )}
-          {withName && (
-            <>
+  } else if(type === 'profile') {
+    return (
+      <div className={loading ? 'animate-pulse' : ''}>
+        <div className="float-left">
             {loading ? (
-          <div
-          className={`rounded-md self-center bg-neutral-800`}
-          style={{ width: 150, height: 20 }}
-      />
+            <div
+            className={`rounded-full self-center bg-neutral-800`}
+            style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
+        />
             ) : (
-              <span className={`${nameClass ? nameClass : "text-lg"}`}>
-                {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
-            </span>
+              <img
+              src={peerData.imgSrc}
+              height={size}
+              width={size}
+              className="rounded-full"
+              alt="Avatar"
+          />
             )}
-            </>
-          )}
-        </div>
-        {withBio && (
-          <>
-                      {loading ? (
-          <div
-          className={`rounded-md bg-neutral-800`}
-          style={{ width: 200, height: 15 }}
-      />
-            ) : (
-            <span className={`${bioClass ? bioClass : "text-sm text-gray-400"}`}>
-              {peerData.bio}
-            </span>
-            )}
-          </>
-        )}
+            </div>
+            <div className="flex flex-col pl-3 sm:pl-4">
+              <div>
+            {withName && loading ? (
+            <div
+            className={`rounded-md self-center bg-neutral-800`}
+            style={{ width: 150, height: 20 }}
+        />
+              ) : (
+                <span className={`${nameClass ? nameClass : "text-lg lg:text-2xl"}`}>
+                  {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
+              </span>
+              )}
+              </div>
+              <div>
+          {withBio && loading ? (
+            <div
+            className={`rounded-md bg-neutral-800`}
+            style={{ width: 200, height: 15 }}
+        />
+              ) : (
+              <span className={`${bioClass ? bioClass : "text-sm lg:text-md text-gray-400"}`}>
+                {peerData.bio}
+              </span>
+              )}
+              </div>
+              </div>
       </div>
-    </div>
-  )
+    )
+  } else {
+    return (
+      <div className={loading ? 'animate-pulse' : ''}>
+        <div className={`flex flex-col gap-3 ${alginClass()}`}>
+          <div className={`flex flex-row gap-3 ${alginClass()} !items-center`}>
+            {loading ? (
+            <div
+            className={`rounded-full self-center bg-neutral-800`}
+            style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
+        />
+            ) : (
+              <img
+              src={peerData.imgSrc}
+              height={size}
+              width={size}
+              className="rounded-full self-center"
+              alt="Avatar"
+          />
+            )}
+            {withName && loading ? (
+            <div
+            className={`rounded-md self-center bg-neutral-800`}
+            style={{ width: 150, height: 20 }}
+        />
+              ) : (
+                <span className={`${nameClass ? nameClass : "text-lg"}`}>
+                  {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
+              </span>
+              )}
+          </div>
+          {withBio && loading ? (
+            <div
+            className={`rounded-md bg-neutral-800`}
+            style={{ width: 200, height: 15 }}
+        />
+              ) : (
+              <span className={`${bioClass ? bioClass : "text-sm text-gray-400"}`}>
+                {peerData.bio}
+              </span>
+              )}
+        </div>
+      </div>
+    )
+  }
 }
