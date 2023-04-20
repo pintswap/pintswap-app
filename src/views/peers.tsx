@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, SpinnerLoader } from "../components";
+import { Avatar, Card, SpinnerLoader } from "../components";
 import { useOffersContext } from "../stores";
 
 export const PeersView = () => {
   const navigate = useNavigate();
   const { limitOrdersArr } = useOffersContext();
-  const [uniquePeers, setUniquePeers] = useState<string[]>([]);
+  const [uniquePeers, setUniquePeers] = useState<any[]>([]);
 
   useEffect(() => {
     if(limitOrdersArr) {
-      setUniquePeers(Array.from(new Set(limitOrdersArr.map(o => o.peer))))
+      const peerAddresses = Array.from(new Set(limitOrdersArr.map(o => o.peer)))
+      setUniquePeers(peerAddresses)
     }
   }, [limitOrdersArr])
 
@@ -25,9 +26,9 @@ export const PeersView = () => {
                 <button key={`unique-peer-${peer}`} onClick={() => navigate(`/peers/${peer}`)}>
                   <Card className="hover:bg-gray-900">
                     <div className={`text-center flex items-center justify-center gap-3`}>
-                      <div className="flex items-center gap-2">
-                        {/* <img src={icon1} alt={token1} width="25" height="25" className="rounded-full" /> */}
-                        <span>{peer}</span>
+                      <div className="flex items-center gap-3">
+                        <Avatar peer={peer} size={25} />
+                        <span className="text-lg">{peer}</span>
                       </div>
                     </div>
                   </Card>

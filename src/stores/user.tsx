@@ -43,7 +43,7 @@ export function UserStore(props: { children: ReactNode }) {
   let [bio, setBio] = useState<string>('');
   let [initialized, setInitialized] = useState<boolean>(false);
   let [shortAddress, setShortAddress] = useState<string>('');
-  let [profilePic, setProfilePic] = useState<Buffer | Uint8Array | null>(new Uint8Array(0));
+  let [profilePic, setProfilePic] = useState<Buffer | Uint8Array | null>(null);
 
   function handleSave() {
     if (!pintswap.module) throw new Error('no pintswap module');
