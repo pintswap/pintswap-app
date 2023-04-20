@@ -91,7 +91,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95"
           >
-            <Menu.Items className="absolute right-0 z-10 mt-2 origin-top rounded-md bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full max-h-60 overflow-y-auto overflow-x-hidden">
+            <Menu.Items className="absolute right-0 z-10 mt-2 origin-top rounded-md bg-gray-950 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full max-h-60 overflow-y-auto overflow-x-hidden">
               {search && (
                   <input 
                     value={searchState.query}
@@ -105,7 +105,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
                 {({ active }) => (
                   <button
                     className={classNames(
-                      active ? 'bg-gray-800 text-neutral-200' : 'text-neutral-300',
+                      active ? 'bg-gray-900 text-neutral-200' : 'text-neutral-300',
                       'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full'
                     )}
                     onClick={() => setState(type, el.symbol)}

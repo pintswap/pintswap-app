@@ -10,13 +10,13 @@ import { Tab, Transition } from '@headlessui/react';
 import { useState } from 'react';
 
 export const AccountView = () => {
-    const [isEditing, setIsEditing] = useState(false);
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
     const { openTrades } = useOffersContext();
-    const { bio, shortAddress, updateBio, updatePic, updateShortAddress, handleSave } = useUserContext();
+    const { bio, shortAddress, updateBio, updatePic, updateShortAddress, handleSave, profilePic } = useUserContext();
     const [shallowForm, setShallowForm] = useState({ bio, shortAddress })
+    const [isEditing, setIsEditing] = useState(bio || shortAddress || profilePic ? false : true);
 
     const handleUpdate = () => {
         handleSave();
@@ -30,7 +30,7 @@ export const AccountView = () => {
         setIsEditing(false);
     }
 
-    const TABS = ['Your Orders', 'Settings']
+    const TABS = [width > 600 ? 'Your Orders' : 'Orders', 'Settings']
     return (
         <div className="flex flex-col gap-6">
             <div className="text-center self-center">
@@ -121,9 +121,11 @@ export const AccountView = () => {
                                             value={shortAddress}
                                             onChange={updateShortAddress}
                                             type="text"
-                                            title='Address'
-                                            enableStateCss={!!shortAddress}
+                                            title='Username'
+                                            enableStateCss
                                             disabled={!isEditing}
+                                            placeholder={isEditing ? 'Start typing here...' : 'No username'}
+                                            max={50}
                                         />
                                     </div>
                                     <div>
@@ -132,7 +134,10 @@ export const AccountView = () => {
                                             onChange={updateBio}
                                             type="text"
                                             title='Bio'
+                                            enableStateCss
                                             disabled={!isEditing}
+                                            placeholder={isEditing ? 'Start typing here...' : 'No bio'}
+                                            max={100}
                                         />
                                     </div>
                                 </div>

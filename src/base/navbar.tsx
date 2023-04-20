@@ -21,9 +21,9 @@ export const Navbar = () => {
                     </span>
                 )}
             </button>
-            <div className="flex items-center gap-2 md:gap-4 justify-self-end">
+            <div className="flex items-center gap-2 justify-self-end">
                 {address && <Wallet />}
-                {width < breakpoint && <DropdownMenu items={NAV_ITEMS} /> }
+                {width < breakpoint ? <DropdownMenu items={NAV_ITEMS} /> : <Avatar clickable size={width >= 1024 ? 42 : 32} /> }
             </div>
         </nav>
     );

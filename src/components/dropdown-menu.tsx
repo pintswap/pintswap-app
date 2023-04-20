@@ -14,20 +14,44 @@ type IDropdownMenuProps = {
     icon?: ReactNode;
     route?: string;
   }[];
+  buttonClass?: string;
 
 }
 
-export const DropdownMenu = ({ items, customIcon }: IDropdownMenuProps) => {
+export const DropdownMenu = ({ items, customIcon, buttonClass }: IDropdownMenuProps) => {
   const navigate = useNavigate();
+
+  const genericHamburgerLine = `h-[5px] w-6 my-[2.5px] rounded-full bg-white transition ease transform duration-200 rounded`;
   return (
-    <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="py-1">
-          {customIcon ? customIcon : (
-            <TiThMenu size="26px" />
-          )}
-        </Menu.Button>
-      </div>
+    <Menu as="div" className="relative inline-block text-left focus-visible:outline-none">
+      {({ open }) => (
+        <>
+              <Menu.Button className={`py-1 group flex flex-col justify-center items-center ${buttonClass ? buttonClass : ''}`}>
+        {customIcon ? customIcon : (
+          // <TiThMenu size="30px" />
+          <>
+            <div
+              className={`${genericHamburgerLine} ${
+                open
+                  ? "rotate-45 translate-y-[10.3px]"
+                  : ""
+              }`}
+            />
+            <div
+              className={`${genericHamburgerLine} ${
+                open ? "opacity-0" : ""
+              }`}
+            />
+            <div
+              className={`${genericHamburgerLine} ${
+                open
+                  ? "-rotate-45 -translate-y-[10.3px]"
+                  : ""
+              }`}
+            />
+          </>
+        )}
+      </Menu.Button>
 
       <Transition
         as={Fragment}
@@ -38,14 +62,14 @@ export const DropdownMenu = ({ items, customIcon }: IDropdownMenuProps) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-900 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-950 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           {items.map((item, i) => (
             <Menu.Item key={`dropdown-menu-item-${i}`}>
               {({ active }) => item.route ? (
                 <button
                   className={classNames(
-                    active ? 'bg-gray-800 text-neutral-100' : '',
-                    'px-4 py-3 text-sm w-full text-right flex gap-2 items-center justify-end rounded-md disabled:text-neutral-400'
+                    active ? 'bg-gray-900 text-neutral-100' : '',
+                    'px-4 py-3 text-sm w-full text-left flex gap-2 items-center justify-start rounded-md disabled:text-neutral-400'
                   )}
                   onClick={() => navigate(item.route || '/')}
                   disabled={item.disabled}
@@ -60,8 +84,8 @@ export const DropdownMenu = ({ items, customIcon }: IDropdownMenuProps) => {
               ) : (
                 <button
                   className={classNames(
-                    active ? 'bg-gray-800 text-neutral-100' : '',
-                    'px-4 py-3 text-sm w-full text-right flex gap-2 items-center justify-end rounded-md disabled:text-neutral-400'
+                    active ? 'bg-gray-900 text-neutral-100' : '',
+                    'px-4 py-3 text-sm w-full text-left flex gap-2 items-center justify-start rounded-md disabled:text-neutral-400'
                   )}
                   onClick={item.onClick}
                   disabled={item.disabled}
@@ -74,6 +98,8 @@ export const DropdownMenu = ({ items, customIcon }: IDropdownMenuProps) => {
           ))}
         </Menu.Items>
       </Transition>
+        </>
+      )}
     </Menu>
   )
 }
