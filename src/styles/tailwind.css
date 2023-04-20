@@ -12,6 +12,7 @@
     font-family: 'Dela Gothic One', cursive;
     background-color: #212121;
     color: #fff;
+    @apply md:overflow-hidden
   }
   ::file-selector-button {
   display: none;

@@ -11,6 +11,8 @@ type IAvatarProps = {
   peer?: string;
   withBio?: boolean;
   withName?: boolean;
+  nameClass?: string;
+  bioClass?: string;
 }
 
 type IUserDataProps = {
@@ -19,7 +21,7 @@ type IUserDataProps = {
   name: string;
 }
 
-export const Avatar = ({ size = 50, clickable, peer, withBio, withName }: IAvatarProps) => {
+export const Avatar = ({ size = 50, clickable, peer, withBio, withName, nameClass, bioClass }: IAvatarProps) => {
   const { pintswap: { module } } = useGlobalContext();
   const { profilePic, bio, shortAddress } = useUserContext();
   const navigate = useNavigate();
@@ -88,8 +90,8 @@ export const Avatar = ({ size = 50, clickable, peer, withBio, withName }: IAvata
     )
   }
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="flex flex-col md:flex-row gap-2">
+    <div className="flex flex-col items-center gap-3">
+      <div className="flex flex-row gap-3 items-center">
         <img
             src={peerData.imgSrc}
             height={size}
@@ -97,9 +99,9 @@ export const Avatar = ({ size = 50, clickable, peer, withBio, withName }: IAvata
             className="rounded-full self-center"
             alt="Avatar"
         />
-        {withName && <span className="text-lg">{peerData.name.includes('.drip') ? peerData.name : truncate(peerData.name)}</span>}
+        {withName && <span className={nameClass ? nameClass : "text-lg"}>{peerData.name.includes('.drip') ? peerData.name : truncate(peerData.name)}</span>}
       </div>
-      {withBio && peerData.bio && <span className="text-sm text-gray-400">{peerData.bio}</span>}
+      {withBio && peerData.bio && <span className={bioClass ? bioClass : "text-sm text-gray-400"}>{peerData.bio}</span>}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { ethers } from 'ethers6';
-import { Card, CopyClipboard, DataTable, Table } from '../components';
+import { Avatar, Card, CopyClipboard, DataTable, Table } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
@@ -103,15 +103,19 @@ export const PeerOrderbookView = () => {
 
     return (
         <div className="flex flex-col gap-6">
+            <Avatar 
+                peer={order.multiAddr}
+                withBio
+                withName
+                bioClass=""
+                nameClass="text-xl"
+            />
+            {/* <div></div>
+            <CopyClipboard value={order.multiAddr} icon={width > 768}>
+                <span className="font-medium">{truncate(order.multiAddr || ethers.ZeroAddress, width > 768 ? 4 : 3)}</span>
+            </CopyClipboard> */}
             <Card 
-                header={
-                    <div className="w-full flex justify-between">
-                        <span>Peer Trades</span>
-                        <CopyClipboard value={order.multiAddr} icon={width > 768}>
-                            <span className="font-medium">{truncate(order.multiAddr || ethers.ZeroAddress, width > 768 ? 4 : 3)}</span>
-                        </CopyClipboard>
-                    </div>
-                }
+                header={"Peer Trades"}
                 scroll={limitOrders.length > 0}
             >
                 <DataTable 

@@ -1,10 +1,7 @@
 import { ReactNode } from 'react';
-import { MdChevronLeft } from 'react-icons/md';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { Button, FullPageStatus, Wallet } from '../components';
+import { FullPageStatus, Wallet } from '../components';
 import { DashboardLayout } from './dashboard';
-import { Footer } from './footer';
 import { Navbar } from './navbar';
 
 type IBaseProps = {
@@ -14,35 +11,15 @@ type IBaseProps = {
 
 export const Base = ({ children, loading }: IBaseProps) => {
     const { address } = useAccount();
-    const { pathname } = useLocation();
-    const navigate = useNavigate();
 
     if (address) {
         return (
             <>
-                {loading && (
-                    <FullPageStatus type="loading" />
-                )}
+                {loading && <FullPageStatus type="loading" />}
                 <Navbar />
-                {/* <main className="flex justify-center">
-                    <div className="max-w-4xl w-full p-4">
-                        {pathname !== '/' && (
-                            <Button
-                                className="gap-1 mb-6"
-                                type="transparent"
-                                onClick={() => navigate(-1)}
-                            >
-                                <MdChevronLeft />
-                                Back
-                            </Button>
-                        )}
-                        {children}
-                    </div>
-                </main> */}
                 <DashboardLayout>
                     {children}
                 </DashboardLayout>
-                <Footer />
             </>
         );
     } else {
