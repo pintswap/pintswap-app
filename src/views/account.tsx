@@ -122,7 +122,7 @@ export const AccountView = () => {
                                             onChange={updateShortAddress}
                                             type="text"
                                             title='Username'
-                                            enableStateCss={!!shortAddress}
+                                            enableStateCss
                                             disabled={!isEditing}
                                             placeholder={isEditing ? 'Start typing here...' : 'No username'}
                                             max={50}
@@ -134,7 +134,7 @@ export const AccountView = () => {
                                             onChange={updateBio}
                                             type="text"
                                             title='Bio'
-                                            enableStateCss={!!bio}
+                                            enableStateCss
                                             disabled={!isEditing}
                                             placeholder={isEditing ? 'Start typing here...' : 'No bio'}
                                             max={100}

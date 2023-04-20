@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ethers } from 'ethers6';
 import { toast } from 'react-toastify';
 import {
+    Avatar,
     Button,
     Card,
     CopyClipboard,
@@ -91,15 +92,15 @@ export const FulfillView = () => {
         <>
             {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-6">
+            <Avatar 
+                peer={order.multiAddr}
+                withBio
+                withName
+                bioClass=""
+                nameClass="text-xl"
+            />
                 <Card 
-                header={
-                    <div className="w-full flex justify-between">
-                        <span>Fulfill Trade</span>
-                        <Button type="transparent" onClick={() => navigate(`/peers/${order.multiAddr}`)}>
-                            <span className="font-medium">{truncate(order.multiAddr || ethers.ZeroAddress, width > 768 ? 4 : 3)}</span>
-                        </Button>
-                    </div>
-                }
+                header={"Fullfill Trade"}
                 >
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput

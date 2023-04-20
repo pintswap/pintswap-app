@@ -62,7 +62,7 @@ export const Input = ({
         <div className="flex flex-col gap-1 justify-end">
             {title ? <p className="text-sm">{title}</p> : !noSpace && <div className="w-full md:h-5" />}
             <input
-                className={`p-2 bg-neutral-600 disabled:bg-neutral-900 rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}
+                className={`p-2 bg-neutral-600 ${enableStateCss ? 'disabled:bg-neutral-900' : ''} rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
