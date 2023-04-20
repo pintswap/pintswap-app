@@ -103,9 +103,10 @@ export const useTrade = () => {
 
     // Get single trade or all peer trades
     const getTrades = async (multiAddr: string, orderHash?: string) => {
+        console.log(multiAddr, orderHash)
         let resolved = multiAddr;
-        const p = pintswap.module;
-        if (multiAddr.match(/\.drip$/) && p) resolved = await resolveName(p, multiAddr);
+        const ps = pintswap.module;
+        if (multiAddr.match(/\.drip$/) && ps) resolved = await resolveName(ps, multiAddr);
         if (TESTING) console.log('#getTrades - Args:', { resolved, orderHash });
         setLoadingTrade(true);
         const trade = orderHash ? openTrades.get(orderHash) : undefined;
@@ -116,7 +117,7 @@ export const useTrade = () => {
             if (pintswap.module) {
                 try {
                     console.log('Discovery:', await (window as any).discoveryDeferred.promise);
-                    const { offers }: IOrderbookProps = await (p as any).getUserDataByPeerId(
+                    const { offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
                         resolved,
                     );
                     if (TESTING) console.log('#getTrades - Offers:', offers);
@@ -179,11 +180,10 @@ export const useTrade = () => {
         const getter = async () => {
             if (pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
-                console.log('SPLIT URL:', splitUrl);
                 if (splitUrl[1] === 'fulfill') {
                     // If multiAddr and orderHash
-                    setOrder({ multiAddr: splitUrl[2], orderHash: splitUrl[3] });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
+                    setOrder({ multiAddr: splitUrl[2], orderHash: splitUrl[3] });
                     await getTrades(splitUrl[2], splitUrl[3]);
                 } else if (splitUrl[1] === 'peers') {
                     // Only multiAddr

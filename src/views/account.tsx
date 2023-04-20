@@ -125,6 +125,7 @@ export const AccountView = () => {
                                             enableStateCss={!!shortAddress}
                                             disabled={!isEditing}
                                             placeholder={isEditing ? 'Start typing here...' : 'No username'}
+                                            max={50}
                                         />
                                     </div>
                                     <div>
@@ -136,6 +137,7 @@ export const AccountView = () => {
                                             enableStateCss={!!bio}
                                             disabled={!isEditing}
                                             placeholder={isEditing ? 'Start typing here...' : 'No bio'}
+                                            max={100}
                                         />
                                     </div>
                                 </div>
