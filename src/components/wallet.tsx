@@ -60,7 +60,7 @@ export const Wallet = (props: IWalletProps) => {
                                 <Button
                                     onClick={determineConnection().onClick}
                                     className={`${props.fullWidth ? 'w-full' : ''} whitespace-nowrap`}
-                                    type={account ? 'outline' : 'primary'}
+                                    type={account ? 'wallet' : 'primary'}
                                 >
                                     {determineConnection().render}
                                 </Button>
