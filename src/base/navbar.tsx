@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { DropdownMenu, Wallet } from '../components';
+import { Avatar, DropdownMenu, Wallet } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { NAV_ITEMS } from '../utils/common';
 
@@ -13,6 +13,7 @@ export const Navbar = () => {
         <nav className="py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center">
             <button onClick={() => navigate('/')} className="flex items-center gap-2 md:gap-4 lg:gap-6">
                 <img src="/logo/ps-logo.png" alt="PintSwap Logo" height={width < 768 ? '50' : '60'} width={width < 768 ? '50' : '60'} />
+                {}
                 {width >= breakpoint && (
                     <span className="text-xl md:text-2xl">
                         <span className="text-pink-500">Pint</span>

@@ -4,23 +4,25 @@ import App from './App';
 import { WagmiConfig } from 'wagmi';
 import { chains, RainbowKitProvider, wagmiClient, walletTheme } from './utils/wallet';
 import { HashRouter } from 'react-router-dom';
-import { GlobalStore, OffersStore, ThemeProvider } from './stores';
+import { GlobalStore, OffersStore, ThemeStore, UserStore } from './stores';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
     <>
-        <ThemeProvider>
+        <ThemeStore>
             <WagmiConfig client={wagmiClient}>
                 <RainbowKitProvider chains={chains} theme={walletTheme}>
                     <GlobalStore>
                         <OffersStore>
-                            <HashRouter>
-                                <App />
-                            </HashRouter>
+                            <UserStore>
+                                <HashRouter>
+                                    <App />
+                                </HashRouter>
+                            </UserStore>
                         </OffersStore>
                     </GlobalStore>
                 </RainbowKitProvider>
             </WagmiConfig>
-        </ThemeProvider>
+        </ThemeStore>
     </>,
 );

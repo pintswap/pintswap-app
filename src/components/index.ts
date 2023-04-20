@@ -12,3 +12,4 @@ export * from './dropdown-menu';
 export * from './active-text';
 export * from './data-table';
 export * from './spinner-loader';
+export * from './avatar';

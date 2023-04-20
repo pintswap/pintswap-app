@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ActiveText } from "../components";
 import { useWindowSize } from "../hooks/window-size";
 import { NAV_ITEMS } from "../utils/common";
+import { Avatar } from '../components';
 
 type IDashboardProps = {
   children: ReactNode;
@@ -41,11 +42,17 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
   } else {
     // Mobile
     return (
-      <div className="flex justify-center">
-        <main className="max-w-4xl w-full p-4">
-          {children}
-        </main>
-      </div>
+      <>
+        <div className="flex justify-center">
+          <main className="max-w-4xl w-full p-4">
+            {children}
+          </main>
+        </div>
+
+        <div className="absolute left-2 bottom-2">
+          <Avatar clickable />
+        </div>
+      </>
     )
   }
 }
