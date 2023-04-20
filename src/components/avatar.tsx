@@ -155,7 +155,9 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
               alt="Avatar"
           />
             )}
-            {withName && loading ? (
+            {withName && (
+              <>
+                {loading ? (
             <div
             className={`rounded-md self-center bg-neutral-800`}
             style={{ width: 150, height: 20 }}
@@ -164,9 +166,13 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
                 <span className={`${nameClass ? nameClass : "text-lg"}`}>
                   {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
               </span>
+                )}
+              </>
               )}
           </div>
-          {withBio && loading ? (
+          {withBio && (
+            <>
+            {loading ? (
             <div
             className={`rounded-md bg-neutral-800`}
             style={{ width: 200, height: 15 }}
@@ -176,6 +182,8 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
                 {peerData.bio}
               </span>
               )}
+              </>
+          )}
         </div>
       </div>
     )
