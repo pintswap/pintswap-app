@@ -30,7 +30,7 @@ export const AccountView = () => {
         setIsEditing(false);
     }
 
-    const TABS = ['Your Orders', 'Settings']
+    const TABS = [width > 600 ? 'Your Orders' : 'Orders', 'Settings']
     return (
         <div className="flex flex-col gap-6">
             <div className="text-center self-center">
