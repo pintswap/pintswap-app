@@ -383,8 +383,15 @@ html,
     margin: 0;
     font-family: 'Dela Gothic One', cursive;
     background-color: #212121;
-    color: #fff;
+    color: #fff}
+
+@media (min-width: 768px){
+
+  html,
+  body{
+    overflow: hidden;
   }
+}
 
 ::file-selector-button {
   display: none;
@@ -651,9 +658,6 @@ html,
 .mb-4{
   margin-bottom: 1rem;
 }
-.mb-6{
-  margin-bottom: 1.5rem;
-}
 .mt-2{
   margin-top: 0.5rem;
 }
@@ -723,8 +727,8 @@ html,
 .max-h-60{
   max-height: 15rem;
 }
-.max-h-\[55vh\]{
-  max-height: 55vh;
+.max-h-\[60vh\]{
+  max-height: 60vh;
 }
 .min-h-\[200px\]{
   min-height: 200px;
@@ -927,6 +931,9 @@ html,
 .grid-cols-\[1fr_4fr\]{
   grid-template-columns: 1fr 4fr;
 }
+.flex-row{
+  flex-direction: row;
+}
 .flex-col{
   flex-direction: column;
 }
@@ -957,14 +964,8 @@ html,
 .gap-3{
   gap: 0.75rem;
 }
-.gap-4{
-  gap: 1rem;
-}
 .gap-6{
   gap: 1.5rem;
-}
-.gap-8{
-  gap: 2rem;
 }
 .gap-x-1{
   column-gap: 0.25rem;
@@ -1263,10 +1264,6 @@ html,
 .font-titillium{
   font-family: Titillium Web, sans-serif;
 }
-.text-3xl{
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
 .text-\[25px\]{
   font-size: 25px;
 }
@@ -1285,9 +1282,6 @@ html,
 .text-xs{
   font-size: 0.75rem;
   line-height: 1rem;
-}
-.font-medium{
-  font-weight: 500;
 }
 .font-semibold{
   font-weight: 600;
@@ -1478,6 +1472,10 @@ html,
 .hover\:bg-gray-900:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+}
+.hover\:bg-gray-950:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(3 7 18 / var(--tw-bg-opacity));
 }
 .hover\:bg-indigo-900:hover{
   --tw-bg-opacity: 1;

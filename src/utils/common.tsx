@@ -1,8 +1,17 @@
-import { JSONPeerId } from 'peer-id';
+import { createFromB58String, JSONPeerId } from 'peer-id';
 import { IOffer } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { ITokenProps, TOKENS } from './token-list';
+import { IPintswapProps } from '../stores';
+import { constants } from 'ethers';
 
+// TYPES
+export type IUserDataProps = {
+  imgSrc: string;
+  bio: string;
+  name: string;
+  offers?: any[]
+}
 
 // CONSTANTS
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
@@ -115,3 +124,27 @@ export function defer() {
       promise,
   };
 }
+
+export async function getPeerData(ps: IPintswapProps, peer: string) {
+  const { module } = ps;
+  let formattedPeerAddress;
+  if(peer.includes('.drip')) {
+    formattedPeerAddress = await module?.resolveName(peer) || constants.AddressZero;
+  } else {
+    formattedPeerAddress = peer;
+  }
+  const b58peer = createFromB58String(formattedPeerAddress).toB58String();
+  const res = await module?.getUserDataByPeerId(b58peer);
+  if(res) return res;
+  else return { offers: [], bio: '', image: '' };
+}
+
+export const formattedPeerName = async (ps: IPintswapProps, peer: string) => {
+  const { module } = ps;
+  if(peer.includes('.drip')) return peer;
+  else {
+    const shortAddress = await module?.resolveName(peer);
+    if(shortAddress) return shortAddress;
+  }
+  return peer;
+};
