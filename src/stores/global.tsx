@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useSigner } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
 import { defer, EMPTY_PEER, TESTING } from '../utils/common';
@@ -56,6 +56,7 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
+    const { address } = useAccount();
     const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e')
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
@@ -70,7 +71,7 @@ export function GlobalStore(props: { children: ReactNode }) {
     });
 
     const ICON_SIZE = '20px';
-    const NAV_ITEMS = signer ? [
+    const NAV_ITEMS = address ? [
         { text: 'Explore', route: '/explore', disabled: false, icon: <BiDrink size={ICON_SIZE} /> },
         { text: 'Pairs', route: '/pairs', disabled: false, icon: <BiDonateBlood size={ICON_SIZE} /> },
         { text: 'Peers', route: '/peers', disabled: false, icon: <BiShapeCircle size={ICON_SIZE} /> },
