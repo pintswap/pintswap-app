@@ -111,7 +111,7 @@ export const AccountView = () => {
                                         </div>
                                     ) : (
                                         <div>
-                                            <Avatar size={125} clickable />
+                                            <Avatar size={125} type="clickable" />
                                         </div>
                                     )}
                                 </div>

@@ -7,22 +7,6 @@ import { ethers } from 'ethers6';
 import { BiDrink, BiHappyAlt, BiDonateBlood, BiRun, BiShapeCircle, BiWind, BiUserPlus } from "react-icons/bi";
 
 // Types
-export type IGlobalStoreProps = {
-    pintswap: {
-        module: Pintswap | undefined;
-        loading: boolean;
-        error: boolean;
-    };
-    peer: {
-        module: JSONPeerId;
-        loading: boolean;
-        error: boolean;
-    };
-    setPeer?: any;
-    setPintswap?: any;
-    NAV_ITEMS: any[]
-};
-
 export type IPintswapProps = {
     module: Pintswap | undefined;
     loading: boolean;
@@ -33,6 +17,14 @@ export type IPeerProps = {
     module: JSONPeerId;
     loading: boolean;
     error: boolean;
+};
+
+export type IGlobalStoreProps = {
+    pintswap: IPintswapProps;
+    peer: IPeerProps;
+    setPeer?: any;
+    setPintswap?: any;
+    NAV_ITEMS: any[]
 };
 
 // Context

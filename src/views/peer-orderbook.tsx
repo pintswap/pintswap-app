@@ -104,8 +104,9 @@ export const PeerOrderbookView = () => {
                 peer={order.multiAddr}
                 withBio
                 withName
-                bioClass=""
-                nameClass="text-xl"
+                align='left'
+                size={60}
+                type='profile'
             />
             <Card 
                 header={"Peer Trades"}

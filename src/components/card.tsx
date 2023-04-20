@@ -1,3 +1,4 @@
+import { Skeleton } from '@mui/material';
 import { ReactNode } from 'react';
 
 type ICardProps = {
@@ -5,9 +6,17 @@ type ICardProps = {
     className?: string;
     header?: string | ReactNode;
     scroll?: boolean;
+    type?: 'default' | 'skeleton';
 };
 
-export const Card = ({ children, className, header, scroll }: ICardProps) => {
+export const Card = ({ children, className, header, scroll, type }: ICardProps) => {
+    if(type === 'skeleton') {
+        return (
+            <div role="status" className="w-full animate-pulse">
+                <div className={`${className ? className : ''} bg-neutral-800 h-[5rem] rounded-lg shadow w-full`}></div>
+            </div>
+        )
+    }
     return (
         <div
             className={`flex flex-col bg-neutral-900 pt-3 p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}

@@ -51,7 +51,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         </div>
 
         <div className="fixed left-2 bottom-2">
-          <Avatar clickable />
+          <Avatar type="clickable" />
         </div>
       </>
     )

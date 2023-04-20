@@ -14,7 +14,6 @@ export const Navbar = () => {
         <nav className="py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center">
             <button onClick={() => navigate('/')} className="flex items-center gap-2 md:gap-4 lg:gap-6">
                 <img src="/logo/ps-logo.png" alt="PintSwap Logo" height={width < 768 ? '50' : '60'} width={width < 768 ? '50' : '60'} />
-                {}
                 {width >= breakpoint && (
                     <span className="text-xl md:text-2xl">
                         <span className="text-pink-500">Pint</span>
@@ -24,7 +23,7 @@ export const Navbar = () => {
             </button>
             <div className="flex items-center gap-2 justify-self-end">
                 <Wallet />
-                {width < breakpoint ? <DropdownMenu items={NAV_ITEMS} /> : address ? <Avatar clickable size={width >= 1024 ? 42 : 32} /> : <></> }
+                {width < breakpoint ? <DropdownMenu items={NAV_ITEMS} /> : address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} /> : <></> }
             </div>
         </nav>
     );
