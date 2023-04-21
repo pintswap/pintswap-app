@@ -40,6 +40,20 @@ export function muiTheme() {
                     },
                 },
             },
+            MUIDataTableToolbar: {
+                styleOverrides: {
+                    root: {
+                        display: 'flex'
+                    }
+                }
+            },
+            MUIDataTableSearch: {
+                styleOverrides: {
+                    clearIcon: {
+                        display: 'none'
+                    },
+                }
+            }
         },
     });
 }
