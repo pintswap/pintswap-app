@@ -61,30 +61,39 @@ const resolveNames = async (m: any, pintswap: any) => {
     );
 };
 
-const groupByType = (m) => {
+const groupByType = (m: any) => {
     const flattened: any = [...m.entries()];
     return {
         erc20: new Map(
             flattened
-                .map(([key, orders]: any[]) => {
+                .map(([key, [hash, offers]]: any[]) => {
+                    console.log(key, hash, offers);
                     return [
                         key,
-                        orders.filter((v) => isERC20Transfer(v.gets) && isERC20Transfer(v.gives)),
+                        [
+                            hash,
+                            offers.filter(
+                                (v: any) => isERC20Transfer(v.gets) && isERC20Transfer(v.gives),
+                            ),
+                        ],
                     ];
                 })
-                .filter(([key, orders]) => orders.length),
+                .filter(([key, orders]: any) => orders.length),
         ),
         nft: new Map(
             flattened
-                .map(([key, orders]: any[]) => {
+                .map(([key, [hash, offers]]: any[]) => {
                     return [
                         key,
-                        orders.filter(
-                            (v) => !(isERC20Transfer(v.gets) && isERC20Transfer(v.gives)),
-                        ),
+                        [
+                            hash,
+                            offers.filter(
+                                (v: any) => !(isERC20Transfer(v.gets) && isERC20Transfer(v.gives)),
+                            ),
+                        ],
                     ];
                 })
-                .filter(([key, orders]) => orders.length),
+                .filter(([key, orders]: any) => orders.length),
         ),
     };
 };

@@ -7,6 +7,7 @@ import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useOffersContext, usePeersContext } from '../stores';
 import { useLocation } from 'react-router-dom';
+import { isERC20Transfer } from '@pintswap/sdk';
 
 const columns = [
     {
@@ -73,6 +74,12 @@ const toFlattened = memoize((v: any) =>
     })),
 );
 
+function filterOutNonERC20(offers: any) {
+    return offers.filter(({ gets, gives }: any) => {
+        return isERC20Transfer(gets) && isERC20Transfer(gives);
+    });
+}
+
 export const PeerOrderbookView = () => {
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
@@ -80,13 +87,14 @@ export const PeerOrderbookView = () => {
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const { state } = useLocation();
 
-    const peer = state?.peer ? state.peer : order.multiAddr
+    const peer = state?.peer ? state.peer : order.multiAddr;
 
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
                 const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
-                const flattened = toFlattened(peerTrades);
+                const flattened = filterOutNonERC20(toFlattened(peerTrades));
+                console.log(flattened);
                 const mapped = (
                     await Promise.all(
                         flattened.map(async (v: any) => await toLimitOrder(v, signer)),
@@ -104,19 +112,9 @@ export const PeerOrderbookView = () => {
 
     return (
         <div className="flex flex-col gap-6">
-            <Avatar 
-                peer={peer}
-                withBio
-                withName
-                align='left'
-                size={60}
-                type='profile'
-            />
-            <Card 
-                header={"Peer Trades"}
-                scroll={limitOrders.length > 0}
-            >
-                <DataTable 
+            <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
+            <Card header={'Peer Trades'} scroll={limitOrders.length > 0}>
+                <DataTable
                     title="Peer Trades"
                     columns={columns}
                     data={limitOrders}
