@@ -23,12 +23,11 @@ export const DropdownMenu = ({ items, customIcon, buttonClass }: IDropdownMenuPr
 
   const genericHamburgerLine = `h-[5px] w-6 my-[2.5px] rounded-full bg-white transition ease transform duration-200 rounded`;
   return (
-    <Menu as="div" className="relative inline-block text-left focus-visible:outline-none">
+    <Menu as="div" className="relative inline-block text-left focus-visible:outline-none focus-visible:border-none ring-0">
       {({ open }) => (
         <>
-              <Menu.Button className={`py-1 group flex flex-col justify-center items-center ${buttonClass ? buttonClass : ''}`}>
+              <Menu.Button className={`p-1 group flex flex-col justify-center items-center ${buttonClass ? buttonClass : ''}`}>
         {customIcon ? customIcon : (
-          // <TiThMenu size="30px" />
           <>
             <div
               className={`${genericHamburgerLine} ${

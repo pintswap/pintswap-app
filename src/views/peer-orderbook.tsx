@@ -6,6 +6,7 @@ import { toLimitOrder } from '../utils/orderbook';
 import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useOffersContext } from '../stores';
+import { useLocation } from 'react-router-dom';
 
 const columns = [
     {
@@ -77,6 +78,9 @@ export const PeerOrderbookView = () => {
     const { peerTrades } = useOffersContext();
     const { order } = useTrade();
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
+    const { state } = useLocation();
+
+    const peer = state && state.peer ? state.peer : order.multiAddr
 
     useEffect(() => {
         (async () => {
@@ -101,7 +105,7 @@ export const PeerOrderbookView = () => {
     return (
         <div className="flex flex-col gap-6">
             <Avatar 
-                peer={order.multiAddr}
+                peer={peer}
                 withBio
                 withName
                 align='left'

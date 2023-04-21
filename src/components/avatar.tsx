@@ -18,7 +18,6 @@ type IAvatarProps = {
 }
 
 export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bioClass, loading, align }: IAvatarProps) => {
-  const { state } = useLocation();
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
   const { profilePic, bio, shortAddress } = useUserContext();
@@ -63,8 +62,6 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
   }
 
   useEffect(() => {
-    console.log("state", state)
-    if(state && state.peer) setPeerData(state.peer);
     const getter = async () => {
       const userData = await getUserData();
       setPeerData(userData)
