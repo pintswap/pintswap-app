@@ -5,7 +5,7 @@ import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
 import { memoize } from 'lodash';
 import { useEffect, useState } from 'react';
-import { useOffersContext } from '../stores';
+import { useOffersContext, usePeersContext } from '../stores';
 import { useLocation } from 'react-router-dom';
 
 const columns = [
@@ -80,7 +80,7 @@ export const PeerOrderbookView = () => {
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const { state } = useLocation();
 
-    const peer = state && state.peer ? state.peer : order.multiAddr
+    const peer = state?.peer ? state.peer : order.multiAddr
 
     useEffect(() => {
         (async () => {
