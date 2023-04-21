@@ -106,9 +106,9 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
           {cells.map((cell, i) => (
             <td 
               key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-              className="py-0.5 pl-4 flex justify-between items-center"
+              className="py-0.5 flex justify-between items-center"
             >
-              <span>{cols[i]}</span>
+              <span className="text-gray-300 font-thin">{cols[i]}</span>
               <span>{cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 5) : cell}</span>
             </td>
           ))}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useGlobalContext, useUserContext } from "../stores"
+import { useLocation, useNavigate } from "react-router-dom";
+import { useGlobalContext, usePeersContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
 import { formattedPeerName, getPeerData, IUserDataProps, truncate } from "../utils/common";
 
@@ -18,6 +18,7 @@ type IAvatarProps = {
 }
 
 export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bioClass, loading, align }: IAvatarProps) => {
+  const { state } = useLocation();
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
   const { profilePic, bio, shortAddress } = useUserContext();
@@ -35,13 +36,14 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
     const baseUrl = `data:image/jpg;base64,`;
     if(peer) {
       if(typeof peer === 'string') {
+        const formName = await formattedPeerName(pintswap, peer);
         try {
           const res = await getPeerData(pintswap, peer);
           if(res) {
             return {
               imgSrc: `${baseUrl}${res.image.toString('base64')}`,
               bio: res.bio,
-              name: await formattedPeerName(pintswap, peer)
+              name: formName
             }
           }
         } catch (err) {
@@ -61,6 +63,8 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
   }
 
   useEffect(() => {
+    console.log("state", state)
+    if(state && state.peer) setPeerData(state.peer);
     const getter = async () => {
       const userData = await getUserData();
       setPeerData(userData)

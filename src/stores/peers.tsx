@@ -5,13 +5,13 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { formattedPeerName, getPeerData } from '../utils/common';
+import { formattedPeerName, getPeerData, IUserDataProps } from '../utils/common';
 import { useGlobalContext } from './global';
 import { useOffersContext } from './offers';
 
 // Types
 export type IPeersStoreProps = {
-  peersData: any[];
+  peersData: IUserDataProps[];
   peersLoading: boolean;
   peersError: boolean;
 };
@@ -19,7 +19,7 @@ export type IPeersStoreProps = {
 // Context
 const PeersContext = createContext<IPeersStoreProps>({
   peersData: [],
-  peersLoading: false,
+  peersLoading: true,
   peersError: false
 });
 
@@ -27,7 +27,7 @@ const PeersContext = createContext<IPeersStoreProps>({
 export function PeersStore(props: { children: ReactNode }) {
   const { pintswap } = useGlobalContext();
   const { limitOrdersArr } = useOffersContext();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [data, setData] = useState<any[]>([]);
 
@@ -55,6 +55,7 @@ export function PeersStore(props: { children: ReactNode }) {
   }
 
   useEffect(() => {
+    if(data && data.length > 0) setLoading(false);
     const getter = async () => await getAllPeersData();
     if(limitOrdersArr && limitOrdersArr.length > 0) getter();
   }, [limitOrdersArr])
