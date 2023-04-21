@@ -67,7 +67,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
       setPeerData(userData)
     };
     if(peer && module) getter();
-  }, [peer, module]);
+  }, [peer, module, peerData]);
 
   const alginClass = () => {
     switch(align) {
