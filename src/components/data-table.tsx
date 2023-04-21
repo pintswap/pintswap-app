@@ -17,19 +17,21 @@ type IDataTableProps = {
 }
 
 export const DataTable = ({ title, data, columns, loading, type, peer }: IDataTableProps) => {
+  const { width } = useWindowSize();
   return (
     <CacheProvider value={muiCache}>
       <ThemeProvider theme={muiTheme()}>
         <MUIDataTable
           title={title}
           data={data}
-          columns={columns}
+          columns={loading ? ['Loading'] : columns}
           options={{
             ...muiOptions,
             textLabels: {
               body: {
-                  noMatch: loading ? (
-                      <SpinnerLoader />
+                  noMatch: 
+                  loading ? (
+                      <SpinnerLoader className={"justify-start lg:justify-center"} />
                   ) : (
                       'Error occured while fetching data. Please refresh the page.'
                   ),
