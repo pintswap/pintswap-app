@@ -94,8 +94,8 @@ export const FulfillView = () => {
                 peer={order.multiAddr}
                 withBio
                 withName
-                bioClass=""
                 nameClass="text-xl"
+                type="profile"
             />
                 <Card 
                 header={"Fullfill Trade"}
