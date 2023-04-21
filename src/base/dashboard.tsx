@@ -4,12 +4,14 @@ import { ActiveText } from "../components";
 import { useWindowSize } from "../hooks/window-size";
 import { Avatar } from '../components';
 import { useGlobalContext } from "../stores";
+import { useAccount } from "wagmi";
 
 type IDashboardProps = {
   children: ReactNode;
 }
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
+  const { address } = useAccount();
   const { width, breakpoint } = useWindowSize();
   const { NAV_ITEMS } = useGlobalContext();
   const navigate = useNavigate();
@@ -50,9 +52,11 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
           </main>
         </div>
 
-        <div className="fixed left-2 bottom-2">
-          <Avatar type="clickable" />
-        </div>
+        {address && (
+          <div className="fixed left-2 bottom-2">
+            <Avatar type="clickable" />
+          </div>
+        )}
       </>
     )
   }

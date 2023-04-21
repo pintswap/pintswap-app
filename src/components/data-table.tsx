@@ -79,6 +79,14 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
     if(peer) navigate(`${url}/${peer}/${firstCol}`)
     else navigate(`${url}/${firstCol}`)
   }
+
+  const formatCell = (s: string) => {
+    switch(s) {
+      case 'ask' : return 'Ask';
+      case 'bid': return 'Bid';
+      default: return s;
+    }
+  }
     // Desktop
     if (width >= 900) {
       return (
@@ -91,7 +99,7 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
               key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
               className="py-2 pl-4"
             >
-              {cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 2) : cell}
+              {cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 2) : formatCell(cell)}
             </td>
           ))}
         </tr>
@@ -106,10 +114,10 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
           {cells.map((cell, i) => (
             <td 
               key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-              className="py-0.5 pl-4 flex justify-between items-center"
+              className="py-[1px] flex justify-between items-center"
             >
-              <span>{cols[i]}</span>
-              <span>{cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 5) : cell}</span>
+              <span className="text-gray-300 font-thin">{cols[i]}</span>
+              <span>{cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 5) : formatCell(cell)}</span>
             </td>
           ))}
         </tr>

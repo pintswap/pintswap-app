@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useGlobalContext, useUserContext } from "../stores"
+import { useLocation, useNavigate } from "react-router-dom";
+import { useGlobalContext, usePeersContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
 import { formattedPeerName, getPeerData, IUserDataProps, truncate } from "../utils/common";
 
@@ -35,13 +35,14 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
     const baseUrl = `data:image/jpg;base64,`;
     if(peer) {
       if(typeof peer === 'string') {
+        const formName = await formattedPeerName(pintswap, peer);
         try {
           const res = await getPeerData(pintswap, peer);
           if(res) {
             return {
               imgSrc: `${baseUrl}${res.image.toString('base64')}`,
               bio: res.bio,
-              name: await formattedPeerName(pintswap, peer)
+              name: formName
             }
           }
         } catch (err) {
