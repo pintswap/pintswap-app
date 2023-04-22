@@ -23,7 +23,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
   const { profilePic, bio, shortAddress } = useUserContext();
   const navigate = useNavigate();
 
-  const defaultImgSrc = '/smiley.jpg';
+  const defaultImgSrc = '/black.jpg';
   const defaultUserState = { 
     imgSrc: defaultImgSrc, 
     bio: '', 

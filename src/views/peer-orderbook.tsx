@@ -1,13 +1,13 @@
 import { ethers } from 'ethers6';
-import { Avatar, Card, DataTable } from '../components';
+import { Avatar, Card, NFTTable, DataTable } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
 import { memoize } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useOffersContext, usePeersContext } from '../stores';
 import { useLocation } from 'react-router-dom';
-import { isERC20Transfer } from '@pintswap/sdk';
+import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 
 const columns = [
     {
@@ -74,6 +74,18 @@ const toFlattened = memoize((v: any) =>
     })),
 );
 
+
+function groupByType(peerTrades: any) {
+  const flattened = toFlattened(peerTrades);
+  return {
+    erc20: flattened.filter(({ gets, gives }: any) => {
+      return isERC20Transfer(gets) && isERC20Transfer(gives);
+    }),
+    nfts: flattened.filter(({ gets, gives }: any) => {
+      return !(isERC20Transfer(gets) && isERC20Transfer(gives));
+    })
+  };
+}
 function filterOutNonERC20(offers: any) {
     return offers.filter(({ gets, gives }: any) => {
         return isERC20Transfer(gets) && isERC20Transfer(gives);
@@ -88,13 +100,15 @@ export const PeerOrderbookView = () => {
     const { state } = useLocation();
 
     const peer = state?.peer ? state.peer : order.multiAddr;
+    const sorted = useMemo(() => {
+      return groupByType(peerTrades);
+    }, [ peerTrades ]);
 
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
                 const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
-                const flattened = filterOutNonERC20(toFlattened(peerTrades));
-                console.log(flattened);
+                const { erc20: flattened } = sorted;
                 const mapped = (
                     await Promise.all(
                         flattened.map(async (v: any) => await toLimitOrder(v, signer)),
@@ -109,10 +123,16 @@ export const PeerOrderbookView = () => {
             }
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades]);
-
+    const { nfts } = sorted;
+    const filteredNfts = useMemo(() => nfts.filter((v: any) => isERC721Transfer(v.gives)), [ nfts ]);
     return (
         <div className="flex flex-col gap-6">
             <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
+            { filteredNfts.length && <Card header={'NFTs'}>
+                <NFTTable
+                   data={filteredNfts as any}
+                />
+            </Card> }
             <Card header={'Peer Trades'} scroll={limitOrders.length > 0}>
                 <DataTable
                     title="Peer Trades"
