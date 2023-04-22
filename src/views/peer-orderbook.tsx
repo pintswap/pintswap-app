@@ -132,7 +132,7 @@ export const PeerOrderbookView = () => {
                 <NFTTable
                    data={filteredNfts as any}
                 />
-            </Card> }
+            </Card> || <span></span> }
             <Card header={'Peer Trades'} scroll={limitOrders.length > 0}>
                 <DataTable
                     title="Peer Trades"
