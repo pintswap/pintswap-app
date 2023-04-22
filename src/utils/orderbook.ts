@@ -4,6 +4,7 @@ import { keyBy } from 'lodash';
 import { sortBy, groupBy } from 'lodash';
 import { round, shorten } from './common';
 import { hashOffer } from '@pintswap/sdk';
+import { isERC20Transfer } from "@pintswap/sdk/lib/trade";
 
 const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
 const USDC: any = TOKENS.find((v) => v.symbol === 'USDC');
@@ -14,6 +15,7 @@ export const decimalsCache: any = {};
 export const symbolCache: any = {};
 
 export const TOKENS_BY_SYMBOL = keyBy(TOKENS, 'symbol');
+export const TOKENS_BY_ADDRESS = keyBy(TOKENS.map((v) => ({ ...v, address: ethers.getAddress(v.address) })), 'address');
 
 const maybeShorten = (s: string): string => {
     if (s.substr(0, 2) === '0x') return shorten(s);
@@ -24,6 +26,10 @@ export function toAddress(symbolOrAddress: string): string {
     const token = TOKENS_BY_SYMBOL[symbolOrAddress];
     if (token) return ethers.getAddress(token.address);
     return ethers.getAddress(symbolOrAddress);
+}
+
+export function fromAddress(symbolOrAddress: string): string {
+  return (TOKENS_BY_ADDRESS[symbolOrAddress] || { address: symbolOrAddress }).address;
 }
 
 export async function toTicker(pair: any, provider: any) {
@@ -163,6 +169,19 @@ export async function fromFormatted(trade: any, provider: any) {
         },
     };
 }
+
+export async function toFormatted(transfer: any, provider: any) {
+  if (!isERC20Transfer(transfer)) return transfer;
+  const token = fromAddress(transfer.token);
+  const decimals = await getDecimals(transfer.token, provider);
+  const amount = Number(ethers.formatUnits(transfer.amount, decimals)).toFixed(4);
+  return {
+    token,
+    amount
+  };
+}
+    
+  
 
 export async function toLimitOrder(offer: any, provider: any) {
     const {
