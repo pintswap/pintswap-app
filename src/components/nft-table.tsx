@@ -30,20 +30,10 @@ export const NFTTable = ({ data }: INFTTableProps) => {
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
-                <ImageList
-                    sx={{
-                        columnCount: {
-                            xs: '4 !important',
-                            sm: '4 !important',
-                            md: '4 !important',
-                            lg: '4 !important',
-                            xl: '5 !important',
-                        },
-                    }}
-                >
+                <ImageList cols={ 3 } >
                     {nfts.map((v: any) => (
                         <ImageListItem key={hashNftIdentifier(v)}>
-                            <img
+                            <div style={ { backgroundColor: '#050505', border: '3px solid #151515' } } ><img
                                 src={URL.createObjectURL(v.imageBlob)}
                                 alt={v.name}
                                 style={{
@@ -52,7 +42,7 @@ export const NFTTable = ({ data }: INFTTableProps) => {
                                         : undefined,
                                 }}
                                 loading="lazy"
-                            />
+                            /><div><h3>{ v.name }</h3></div><div><small>{ v.description }</small></div></div>
                         </ImageListItem>
                     ))}
                 </ImageList>
