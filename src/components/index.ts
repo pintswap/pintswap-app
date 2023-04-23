@@ -14,3 +14,4 @@ export * from './data-table';
 export * from './spinner-loader';
 export * from './avatar';
 export * from "./nft-table";
+export * from './asset';

@@ -12,11 +12,11 @@ type IDashboardProps = {
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
-  const { width, breakpoint } = useWindowSize();
+  const { width, breakpoints } = useWindowSize();
   const { NAV_ITEMS } = useGlobalContext();
   const navigate = useNavigate();
 
-  if(width >= breakpoint) {
+  if(width >= breakpoints.md) {
     // Desktop
     return (
       <div className="grid grid-cols-[1fr_4fr] lg:grid-cols-[1fr_4fr]">
@@ -37,7 +37,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
             </li>
           ))}
         </ul>
-        <main className="max-w-4xl w-full p-4 mt-2 mx-auto">
+        <main className="max-w-7xl w-full p-4 mt-2 mx-auto">
           {children}
         </main>
       </div>
@@ -47,7 +47,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     return (
       <>
         <div className="flex justify-center">
-          <main className="max-w-4xl w-full p-4">
+          <main className="w-full p-4">
             {children}
           </main>
         </div>

@@ -95,46 +95,46 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
       <div className={loading ? 'animate-pulse' : ''}>
         <div className="float-left">
             {loading ? (
-            <div
-            className={`rounded-full self-center bg-neutral-800`}
-            style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
-        />
+              <div
+                className={`rounded-full self-center bg-neutral-800`}
+                style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
+              />
             ) : (
               <img
-              src={peerData.imgSrc}
-              height={size}
-              width={size}
-              className="rounded-full"
-              alt="Avatar"
-          />
+                src={peerData.imgSrc}
+                height={size}
+                width={size}
+                className="rounded-full"
+                alt="Avatar"
+              />
             )}
-            </div>
-            <div className="flex flex-col pl-3 sm:pl-4">
-              <div>
+          </div>
+          <div className="flex flex-col pl-3 sm:pl-4">
+            <div>
             {withName && loading ? (
-            <div
-            className={`rounded-md self-center bg-neutral-800`}
-            style={{ width: 150, height: 20 }}
-        />
-              ) : (
-                <span className={`${nameClass ? nameClass : "text-lg lg:text-2xl"}`}>
-                  {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
+              <div
+                className={`rounded-md self-center bg-neutral-800`}
+                style={{ width: 150, height: 20 }}
+              />
+            ) : (
+              <span className={`${nameClass ? nameClass : "text-lg lg:text-2xl"}`}>
+                {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
               </span>
-              )}
-              </div>
-              <div>
+            )}
+          </div>
+          <div>
           {withBio && loading ? (
             <div
-            className={`rounded-md bg-neutral-800`}
-            style={{ width: 200, height: 15 }}
-        />
-              ) : (
-              <span className={`${bioClass ? bioClass : "text-sm lg:text-md text-gray-400"}`}>
-                {peerData.bio}
-              </span>
-              )}
-              </div>
-              </div>
+                className={`rounded-md bg-neutral-800`}
+                style={{ width: 200, height: 15 }}
+            />
+          ) : (
+            <span className={`${bioClass ? bioClass : "text-sm lg:text-md text-gray-400"}`}>
+              {peerData.bio}
+            </span>
+          )}
+          </div>
+        </div>
       </div>
     )
   } else {
@@ -143,47 +143,47 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
         <div className={`flex flex-col gap-3 ${alginClass()}`}>
           <div className={`flex flex-row gap-3 ${alginClass()} !items-center`}>
             {loading ? (
-            <div
-            className={`rounded-full self-center bg-neutral-800`}
-            style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
-        />
+              <div
+                className={`rounded-full self-center bg-neutral-800`}
+                style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
+              />
             ) : (
               <img
-              src={peerData.imgSrc}
-              height={size}
-              width={size}
-              className="rounded-full self-center"
-              alt="Avatar"
-          />
+                src={peerData.imgSrc}
+                height={size}
+                width={size}
+                className="rounded-full self-center"
+                alt="Avatar"
+              />
             )}
             {withName && (
               <>
                 {loading ? (
-            <div
-            className={`rounded-md self-center bg-neutral-800`}
-            style={{ width: 150, height: 20 }}
-        />
-              ) : (
-                <span className={`${nameClass ? nameClass : "text-lg"}`}>
-                  {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
-              </span>
+                  <div
+                    className={`rounded-md self-center bg-neutral-800`}
+                    style={{ width: 150, height: 20 }}
+                  />
+                ) : (
+                  <span className={`${nameClass ? nameClass : "text-lg"}`}>
+                    {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
+                  </span>
                 )}
               </>
-              )}
+            )}
           </div>
           {withBio && (
             <>
-            {loading ? (
-            <div
-            className={`rounded-md bg-neutral-800`}
-            style={{ width: 200, height: 15 }}
-        />
+              {loading ? (
+                <div
+                  className={`rounded-md bg-neutral-800`}
+                  style={{ width: 200, height: 15 }}
+                />
               ) : (
-              <span className={`${bioClass ? bioClass : "text-sm text-gray-400"}`}>
-                {peerData.bio}
-              </span>
+                <span className={`${bioClass ? bioClass : "text-sm text-gray-400"}`}>
+                  {peerData.bio}
+                </span>
               )}
-              </>
+            </>
           )}
         </div>
       </div>
