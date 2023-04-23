@@ -6,6 +6,7 @@ import { ITokenProps, TOKENS } from '../utils/token-list'
 import { MdOutlineAddCircleOutline, MdOutlineListAlt } from 'react-icons/md'
 import { Input } from './input'
 import { useWindowSize } from '../hooks/window-size'
+import { Asset } from './asset'
 
 type IDropdownProps = {
   state: any;
@@ -110,8 +111,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
                     )}
                     onClick={() => setState(type, el.symbol)}
                   >
-                    <img src={el.logoURI} alt={el.asset} width="25" height="25" className="rounded-full" />
-                    {el.symbol}
+                    <Asset icon={el.logoURI} symbol={el.symbol} alt={el.asset} />
                   </button>
                 )}
               </Menu.Item>

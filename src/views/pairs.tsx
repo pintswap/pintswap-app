@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, SpinnerLoader } from "../components";
+import { Asset, Card } from "../components";
 import { useOffersContext } from "../stores";
 import { getTokenAttributes } from "../utils/common";
 
@@ -20,7 +20,7 @@ export const PairsView = () => {
     return (
         <div className="flex flex-col">
           <h3 className="text-xl text-center mb-4 lg:mb-6 font-semibold">Available Pairs</h3>
-          <div className={`grid grid-cols-1 gap-3 ${!isLoading ? 'sm:grid-cols-2 lg:grid-cols-3' : ''}`}>
+          <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`}>
             {!isLoading ? uniquePairs.map(pair => {
               const split = pair.split('/');
               const token1 = split[0];
@@ -31,22 +31,22 @@ export const PairsView = () => {
                 <button key={`unique-pair-${pair}`} onClick={() => navigate(`/pairs/${token1.toLowerCase()}-${token2.toLowerCase()}`)}>
                   <Card className="hover:bg-gray-900">
                     <div className={`text-center flex items-center justify-center gap-3`}>
-                      <div className="flex items-center gap-2">
-                        <img src={icon1} alt={token1} width="25" height="25" className="rounded-full" />
-                        <span>{token1}</span>
-                      </div>
+                      <Asset icon={icon1} symbol={token1} />
                       <span>/</span>
-                      <div className="flex items-center gap-2">
-                        <img src={icon2} alt={token2} width="25" height="25" className="rounded-full" />
-                        <span>{token2}</span>
-                      </div>
+                      <Asset icon={icon2} symbol={token2} />
                     </div>
                   </Card>
                 </button>
               )
-            }) : (
-                <SpinnerLoader color="text-indigo-600" size="50px" height="min-h-[200px]" />
-            )}
+            }) : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <Card key={`loading-card-${i}`} className="justify-start">
+                <div className={`text-center flex items-center justify-center gap-3`}>
+                  <Asset loading />
+                  <span>/</span>
+                  <Asset loading />
+                </div>
+              </Card>
+          ))}
           </div>
         </div>
     );
