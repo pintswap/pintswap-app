@@ -123,9 +123,9 @@ export const PeerOrderbookView = () => {
                 setLimitOrders(mapped);
             }
         })().catch((err) => console.error(err));
-    }, [pintswap.module, peerTrades]);
-    const { nfts } = sorted;
-    const filteredNfts = useMemo(() => nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ nfts ]);
+    }, [pintswap.module, peerTrades, order.multiAddr]);
+
+    const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ sorted.nfts ]);
     return (
         <div className="flex flex-col gap-6">
             <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />

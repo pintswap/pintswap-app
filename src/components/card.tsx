@@ -6,7 +6,7 @@ type ICardProps = {
     className?: string;
     header?: string | ReactNode;
     scroll?: boolean;
-    type?: 'default' | 'skeleton' | 'tabs';
+    type?: 'default' | 'skeleton' | 'tabs' | 'inner';
     tabs?: string[];
 };
 
@@ -47,6 +47,18 @@ export const Card = ({ children, className, header, scroll, type, tabs }: ICardP
             </div>
         </Tab.Group>
         )
+    }
+    if(type === 'inner') {
+        return (
+            <div
+                className={`flex flex-col bg-neutral-800 pt-3 p-4 lg:px-6 rounded-lg shadow-inner shadow-neutral-700 w-full transition duration-200 ${className}`}
+            >
+                {header && !tabs && <h3 className="text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">{header}</h3>}
+                <div className={`w-full ${scroll ? 'overflow-y-auto max-h-[60vh]' : ''}`}>
+                    {children}
+                </div>
+            </div>
+        );
     }
     return (
         <div
