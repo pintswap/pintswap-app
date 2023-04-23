@@ -210,14 +210,15 @@ export interface Fill {
 }
 
 export function filterERC20OffersForTicker(offers: any[], pair: string, type: 'ask' | 'bid'): any[] {
+    const filtered = offers.filter((v) => isERC20Transfer(v.gives) && isERC20Transfer(v.gets));   
     const [trade, base] = pair.split('/');
     const [tradeAddress, baseAddress] = [trade, base].map(toAddress).map((v) => v.toLowerCase());
     const [givesAddress, getsAddress] =
         type === 'ask' ? [tradeAddress, baseAddress] : [baseAddress, tradeAddress];
-    return offers.filter(
+    return filtered.filter(
         (v) =>
-            v.givesAddress.toLowerCase() === givesAddress &&
-            v.getsAddress.toLowerCase() === getsAddress,
+            v.gives.token.toLowerCase() === givesAddress &&
+            v.gets.token.toLowerCase() === getsAddress,
     );
 }
 
