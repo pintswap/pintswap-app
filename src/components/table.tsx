@@ -10,7 +10,7 @@ type ITableProps = {
 };
 
 export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) => {
-    const { width, breakpoint } = useWindowSize();
+    const { width, breakpoints } = useWindowSize();
     if (items.length > 0) {
         return (
             <table className="table-fixed w-full font-gothic">
@@ -34,7 +34,7 @@ export const Table = ({ items, onClick, emptyContent, headers }: ITableProps) =>
                         >
                             {Object.values(el).map((el: any, i: any) => (
                                 <td key={`table-cell-${i}`} className={`p-2 ${i === 0 ? 'text-left' : 'text-right'} text-xl`}>
-                                    {String(el).includes('0x') ? truncate(el, width > breakpoint ? 5 : 3) : el}
+                                    {String(el).includes('0x') ? truncate(el, width > breakpoints.md ? 5 : 3) : el}
                                 </td>
                             ))}
                         </tr>

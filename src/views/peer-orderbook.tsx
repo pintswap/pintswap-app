@@ -9,6 +9,7 @@ import { useOffersContext } from '../stores';
 import { useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { Tab } from '@headlessui/react';
+import { useWindowSize } from '../hooks/window-size';
 
 const columns = [
     {
@@ -89,6 +90,7 @@ function groupByType(peerTrades: any) {
 }
 
 export const PeerOrderbookView = () => {
+    const { width, breakpoints } = useWindowSize();
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
     const { order } = useTrade();
@@ -97,7 +99,7 @@ export const PeerOrderbookView = () => {
 
     const peer = state?.peer ? state.peer : order.multiAddr;
 
-    const TABS = ['Token Offers', 'NFT Offers']
+    const TABS = width > breakpoints.md ? ['Token Offers', 'NFT Offers'] : ['Tokens', 'NFTs']
 
     const sorted = useMemo(() => {
       return groupByType(peerTrades);
@@ -139,9 +141,7 @@ export const PeerOrderbookView = () => {
                     />
                 </Tab.Panel>
                 <Tab.Panel>
-                <NFTTable
-                   data={filteredNfts as any}
-                />
+                    <NFTTable data={filteredNfts} />
                 </Tab.Panel>
             </Card>
         </div>

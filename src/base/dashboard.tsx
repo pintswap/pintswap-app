@@ -12,11 +12,11 @@ type IDashboardProps = {
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
-  const { width, breakpoint } = useWindowSize();
+  const { width, breakpoints } = useWindowSize();
   const { NAV_ITEMS } = useGlobalContext();
   const navigate = useNavigate();
 
-  if(width >= breakpoint) {
+  if(width >= breakpoints.md) {
     // Desktop
     return (
       <div className="grid grid-cols-[1fr_4fr] lg:grid-cols-[1fr_4fr]">

@@ -8,11 +8,23 @@ type WindowDimensions = {
 type WindowDimensionsReturn = {
     width: number;
     height: number;
-    breakpoint: number;
+    breakpoints: {
+        sm: number;
+        md: number;
+        lg: number;
+        xl: number;
+    };
 };
 
+
+const breakpoints = {
+    sm: 600,
+    md: 768,
+    lg: 1024,
+    xl: 1280
+}
+
 const useWindowSize = (): WindowDimensionsReturn => {
-    const breakpoint = 768;
     const [windowDimensions, setWindowDimensions] = useState<WindowDimensions>({
         width: 0,
         height: 0,
@@ -31,7 +43,7 @@ const useWindowSize = (): WindowDimensionsReturn => {
 
     return {
         ...windowDimensions,
-        breakpoint,
+        breakpoints
     };
 };
 

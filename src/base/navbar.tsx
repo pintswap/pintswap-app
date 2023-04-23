@@ -6,7 +6,7 @@ import { useGlobalContext } from '../stores';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useGlobalContext();
-    const { width, breakpoint } = useWindowSize();
+    const { width, breakpoints } = useWindowSize();
     const { address } = useAccount();
     const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ export const Navbar = () => {
             </button>
             <div className="flex items-center gap-2 justify-self-end">
                 <Wallet />
-                {width < breakpoint ? <DropdownMenu items={NAV_ITEMS} /> : address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} /> : <></> }
+                {width < breakpoints.md ? <DropdownMenu items={NAV_ITEMS} /> : address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} /> : <></> }
             </div>
         </nav>
     );
