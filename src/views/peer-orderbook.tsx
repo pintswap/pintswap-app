@@ -5,9 +5,10 @@ import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
 import { memoize } from 'lodash';
 import { useMemo, useEffect, useState } from 'react';
-import { useOffersContext, usePeersContext } from '../stores';
+import { useOffersContext } from '../stores';
 import { useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
+import { Tab } from '@headlessui/react';
 
 const columns = [
     {
@@ -86,11 +87,6 @@ function groupByType(peerTrades: any) {
     })
   };
 }
-function filterOutNonERC20(offers: any) {
-    return offers.filter(({ gets, gives }: any) => {
-        return isERC20Transfer(gets) && isERC20Transfer(gives);
-    });
-}
 
 export const PeerOrderbookView = () => {
     const { pintswap } = useGlobalContext();
@@ -100,6 +96,9 @@ export const PeerOrderbookView = () => {
     const { state } = useLocation();
 
     const peer = state?.peer ? state.peer : order.multiAddr;
+
+    const TABS = ['Token Offers', 'NFT Offers']
+
     const sorted = useMemo(() => {
       return groupByType(peerTrades);
     }, [ peerTrades ]);
@@ -128,20 +127,22 @@ export const PeerOrderbookView = () => {
     return (
         <div className="flex flex-col gap-6">
             <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
-            { filteredNfts.length && <Card header={'NFTs'}>
+            <Card tabs={TABS} type="tabs" scroll={limitOrders.length > 0}>
+                <Tab.Panel>
+                    <DataTable
+                        title="Peer Trades"
+                        columns={columns}
+                        data={limitOrders}
+                        loading={limitOrders.length === 0}
+                        type="orderbook"
+                        peer={order.multiAddr}
+                    />
+                </Tab.Panel>
+                <Tab.Panel>
                 <NFTTable
                    data={filteredNfts as any}
                 />
-            </Card> || <span></span> }
-            <Card header={'Peer Trades'} scroll={limitOrders.length > 0}>
-                <DataTable
-                    title="Peer Trades"
-                    columns={columns}
-                    data={limitOrders}
-                    loading={limitOrders.length === 0}
-                    type="orderbook"
-                    peer={order.multiAddr}
-                />
+                </Tab.Panel>
             </Card>
         </div>
     );

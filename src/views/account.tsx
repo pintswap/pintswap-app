@@ -6,7 +6,7 @@ import { useWindowSize } from '../hooks/window-size';
 import { useOffersContext, useUserContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount } from '../utils/common';
-import { Tab, Transition } from '@headlessui/react';
+import { Tab } from '@headlessui/react';
 import { useState } from 'react';
 
 export const AccountView = () => {
@@ -44,24 +44,7 @@ export const AccountView = () => {
                     />
                 </Skeleton>
             </div>
-            <Tab.Group>
-                <Card 
-                    header={
-                        <Tab.List className="grid grid-cols-2 gap-2 lg:gap-4">
-                            {TABS.map((tab, i) => (
-                                <Tab key={`tabs-${i}`} className="focus-visible:outline-none">
-                                    {({ selected }) => (
-                                        <button className={`${selected ? 'border-indigo-600' : 'border-transparent hover:border-neutral-800 hover:text-indigo-100'} border-b-2 lg:border-b-4 rounded w-full pb-2 transition duration-200`}>
-                                            {tab}
-                                        </button>
-                                    )}
-                                </Tab>
-                            ))}
-                        </Tab.List>
-                    }
-                    scroll
-                >
-                    <Tab.Panels>
+            <Card tabs={TABS} type="tabs" scroll>
                         <Tab.Panel>
                             <Table
                                 headers={['Hash', 'Sending', 'Receiving']}
@@ -87,7 +70,7 @@ export const AccountView = () => {
                                 }
                             />
                         </Tab.Panel>
-                        <Tab.Panel>
+                                                <Tab.Panel>
                             <form>
                             <div className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}>
                                 <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2`}>
@@ -152,9 +135,7 @@ export const AccountView = () => {
                                 </div>
                                 </form>
                         </Tab.Panel>
-                    </Tab.Panels>
-                </Card>
-            </Tab.Group>
+            </Card>
             <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
                 Create Order
             </Button>
