@@ -1,10 +1,10 @@
 import { TOKENS } from './token-list';
-import { ethers } from 'ethers6';
+import { BigNumberish, ethers } from 'ethers6';
 import { keyBy } from 'lodash';
 import { sortBy, groupBy } from 'lodash';
 import { round, shorten } from './common';
 import { hashOffer } from '@pintswap/sdk';
-import { isERC20Transfer } from "@pintswap/sdk/lib/trade";
+import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 
 const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
 const USDC: any = TOKENS.find((v) => v.symbol === 'USDC');
@@ -15,7 +15,10 @@ export const decimalsCache: any = {};
 export const symbolCache: any = {};
 
 export const TOKENS_BY_SYMBOL = keyBy(TOKENS, 'symbol');
-export const TOKENS_BY_ADDRESS = keyBy(TOKENS.map((v) => ({ ...v, address: ethers.getAddress(v.address) })), 'address');
+export const TOKENS_BY_ADDRESS = keyBy(
+    TOKENS.map((v) => ({ ...v, address: ethers.getAddress(v.address) })),
+    'address',
+);
 
 const maybeShorten = (s: string): string => {
     if (s.substr(0, 2) === '0x') return shorten(s);
@@ -29,7 +32,7 @@ export function toAddress(symbolOrAddress: string): string {
 }
 
 export function fromAddress(symbolOrAddress: string): string {
-  return (TOKENS_BY_ADDRESS[symbolOrAddress] || { address: symbolOrAddress }).address;
+    return (TOKENS_BY_ADDRESS[symbolOrAddress] || { address: symbolOrAddress }).address;
 }
 
 export async function toTicker(pair: any, provider: any) {
@@ -171,17 +174,15 @@ export async function fromFormatted(trade: any, provider: any) {
 }
 
 export async function toFormatted(transfer: any, provider: any) {
-  if (!isERC20Transfer(transfer)) return transfer;
-  const token = fromAddress(transfer.token);
-  const decimals = await getDecimals(transfer.token, provider);
-  const amount = Number(ethers.formatUnits(transfer.amount, decimals)).toFixed(4);
-  return {
-    token,
-    amount
-  };
+    if (!isERC20Transfer(transfer)) return transfer;
+    const token = fromAddress(transfer.token);
+    const decimals = await getDecimals(transfer.token, provider);
+    const amount = Number(ethers.formatUnits(transfer.amount, decimals)).toFixed(4);
+    return {
+        token,
+        amount,
+    };
 }
-    
-  
 
 export async function toLimitOrder(offer: any, provider: any) {
     const {
@@ -200,5 +201,75 @@ export async function toLimitOrder(offer: any, provider: any) {
         type,
         ticker: await toTicker([base, trade], provider),
         hash: hashOffer(offer),
+    };
+}
+
+export interface Fill {
+    offerHash: string;
+    amount: string;
+}
+
+export function filterOffers(offers: any[], pair: string, type: 'ask' | 'bid'): any[] {
+    const [trade, base] = pair.split('/');
+    const [tradeAddress, baseAddress] = [trade, base].map(toAddress).map((v) => v.toLowerCase());
+    const [givesAddress, getsAddress] =
+        type === 'ask' ? [tradeAddress, baseAddress] : [baseAddress, tradeAddress];
+    return offers.filter(
+        (v) =>
+            v.givesAddress.toLowerCase() === givesAddress &&
+            v.getsAddress.toLowerCase() === getsAddress,
+    );
+}
+
+export function matchOrders(offers: any[], amount:  BigNumberish) {
+    const sorted = offers
+        .slice()
+        .sort(
+            (a, b) =>
+                (Number(b.getsAmount) * 1e9) / Number(b.givesAmount) -
+                (Number(a.getsAmount) - Number(a.givesAmount)),
+        );
+    const toFill = ethers.toBigInt(amount as any);
+    const fill = sorted.reduce(
+        (() => {
+            let filled = ethers.toBigInt(0);
+            return (r, v) => {
+                const getsAmount = ethers.toBigInt(v.gets.amount);
+                const remaining = toFill - filled;
+                if (remaining <= 0) return r;
+                filled += getsAmount;
+                if (remaining >= getsAmount) {
+                    r.push({
+                        amount: getsAmount,
+                        offer: v,
+                        effective: {
+                            gets: getsAmount,
+                            gives: ethers.toBigInt(v.gives.amount),
+                        },
+                    });
+                } else {
+                    r.push({
+                        amount: remaining,
+                        offer: v,
+                        effective: {
+                            gets: remaining,
+                            gives: (remaining * v.gives.amount) / getsAmount,
+                        },
+                    });
+                }
+            };
+        })(),
+        [],
+    );
+    const effective = fill.reduce(
+        (r: any, v: any) => ({
+            gets: v.effective.gets + r.gets,
+            gives: v.effective.gives + r.gives,
+        }),
+        { gets: ethers.toBigInt(0), gives: ethers.toBigInt(0) },
+    );
+    return {
+        fill,
+        effective,
     };
 }
