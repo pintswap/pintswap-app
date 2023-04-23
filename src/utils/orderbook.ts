@@ -209,7 +209,7 @@ export interface Fill {
     amount: string;
 }
 
-export function filterOffers(offers: any[], pair: string, type: 'ask' | 'bid'): any[] {
+export function filterERC20OffersForTicker(offers: any[], pair: string, type: 'ask' | 'bid'): any[] {
     const [trade, base] = pair.split('/');
     const [tradeAddress, baseAddress] = [trade, base].map(toAddress).map((v) => v.toLowerCase());
     const [givesAddress, getsAddress] =
@@ -221,14 +221,13 @@ export function filterOffers(offers: any[], pair: string, type: 'ask' | 'bid'): 
     );
 }
 
-export function matchOrders(offers: any[], amount:  BigNumberish) {
+export function matchOffers(offers: any[], amount:  BigNumberish) {
     const sorted = offers
         .slice()
         .sort(
             (a, b) =>
-                (Number(b.getsAmount) * 1e9) / Number(b.givesAmount) -
-                (Number(a.getsAmount) - Number(a.givesAmount)),
-        );
+                (Number(b.gets.amount) * 1e9) / Number(b.gives.amount) -
+                ((Number(a.gets.amount) * 1e9) - Number(a.gives.amount)));
     const toFill = ethers.toBigInt(amount as any);
     const fill = sorted.reduce(
         (() => {
