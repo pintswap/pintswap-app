@@ -10,6 +10,7 @@ import {
     PairsView,
     PeersView,
     PairListView,
+    PeerTickerOrderbookView,
     TradeSearchView,
 } from './views';
 import { setFallbackWETH } from '@pintswap/sdk';
@@ -21,11 +22,11 @@ setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
 function App() {
     const { pintswap } = useGlobalContext();
+    if (!(window as any).pintswap && pintswap.module) (window as any).pintswap = pintswap.module;
     const { address } = useAccount();
     return (
         <>
             <Base loading={pintswap.loading}>
-                {address ? (
                     <Routes>
                         <Route path="/explore" element={<ExploreView />} />
                         <Route path="/create" element={<CreateView />} />
@@ -35,26 +36,14 @@ function App() {
                         <Route path="/pairs/:pair" element={<PairListView />} />
 
                         <Route path="/peers" element={<PeersView />} />
-                        <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
+                        <Route path="/:multiaddr" element={<PeerOrderbookView />} />
+                        <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
                         <Route path="/fulfill" element={<TradeSearchView />} />
                         <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
 
                         <Route path="*" element={<Navigate to='/explore' />} />
                     </Routes>
-                ) : (
-                    <Routes>
-                        <Route path="/explore" element={<ExploreView />} />
-
-                        <Route path="/pairs" element={<PairsView />} />
-                        <Route path="/pairs/:pair" element={<PairListView />} />
-
-                        <Route path="/peers" element={<PeersView />} />
-                        <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
-
-                        <Route path="*" element={<Navigate to='/explore' />} />
-                    </Routes>
-                )}
             </Base>
 
             <ToastContainer

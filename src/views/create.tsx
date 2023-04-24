@@ -70,7 +70,7 @@ export const CreateView = () => {
                         checkNetwork
                         className="mt-6 w-full"
                         loadingText="Broadcasting"
-                        loading={loading}
+                        loading={loading.broadcast}
                         onClick={broadcastTrade}
                         disabled={
                             !trade.gives.token ||

@@ -24,7 +24,7 @@ export const DataTable = ({ title, data, columns, loading, type, peer }: IDataTa
         <MUIDataTable
           title={title}
           data={data}
-          columns={loading ? ['Loading'] : columns}
+          columns={columns}
           options={{
             ...muiOptions,
             textLabels: {
@@ -54,6 +54,8 @@ export const DataTable = ({ title, data, columns, loading, type, peer }: IDataTa
   )
 }
 
+const ln = (v: any, label: string) => ((console.log(label, v)), v);
+
 const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
   const cells = Object.values((data as object));
   const cols = columns as string[];
@@ -65,7 +67,7 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
     let url = '/';
     switch(type) {
       case 'explore': // TODO: fix
-        return navigate(`${url}fulfill/${cells[0]}/${cells[1]}`);
+        return navigate(ln(`${url}${cells[0]}`, 'URL'));
       case 'pairs':
         url = `${url}pairs`;
         break;
@@ -101,7 +103,7 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
               key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
               className="py-2 pl-4"
             >
-              {cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 2) : formatCell(cell)}
+              {cell?.startsWith('Q') || cell?.startsWith('0x') ? truncate(cell, 2) : formatCell(cell)}
             </td>
           ))}
         </tr>
@@ -119,7 +121,7 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
               className="py-[1px] flex justify-between items-center"
             >
               <span className="text-gray-300 font-thin">{cols[i]}</span>
-              <span>{cell.startsWith('Q') || cell.startsWith('0x') ? truncate(cell, 5) : formatCell(cell)}</span>
+              <span>{cell?.startsWith('Q') || cell?.startsWith('0x') ? truncate(cell, 5) : formatCell(cell)}</span>
             </td>
           ))}
         </tr>

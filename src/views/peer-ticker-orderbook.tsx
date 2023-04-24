@@ -1,15 +1,16 @@
 import { ethers } from 'ethers6';
-import { Avatar, Card, NFTTable, DataTable, TransitionModal } from '../components';
+import { Avatar, Card, DataTable } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
-import { toLimitOrder } from '../utils/orderbook';
+import { filterERC20OffersForTicker, toLimitOrder } from '../utils/orderbook';
 import { memoize } from 'lodash';
 import { useMemo, useEffect, useState } from 'react';
 import { useOffersContext } from '../stores';
-import { useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
+import { Fulfill } from "../components/fulfill";
 
 const columns = [
     {
@@ -88,13 +89,15 @@ function groupByType(peerTrades: any) {
     };
 }
 
-export const PeerOrderbookView = () => {
+export const PeerTickerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
-    const { order, loading } = useTrade();
+    const { order } = useTrade();
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const { state } = useLocation();
+    const { trade, base, multiaddr } = useParams();
+    const ticker = `${trade}/${base}`;
 
     const peer = state?.peer ? state.peer : order.multiAddr;
 
@@ -103,12 +106,15 @@ export const PeerOrderbookView = () => {
     const sorted = useMemo(() => {
         return groupByType(peerTrades);
     }, [peerTrades]);
+    const forTicker = useMemo(() => {
+      return Object.fromEntries(['ask', 'bid'].map((type) => [ type, filterERC20OffersForTicker(sorted.erc20 || [], ticker, type as any) ]));
+    }, [ sorted ] );
 
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
                 const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
-                const { erc20: flattened } = sorted;
+                const flattened = forTicker.bid.concat(forTicker.ask);
                 const mapped = (
                     await Promise.all(
                         flattened.map(async (v: any) => await toLimitOrder(v, signer)),
@@ -124,32 +130,22 @@ export const PeerOrderbookView = () => {
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
-    const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ sorted.nfts ]);
+    const filteredNfts = useMemo(
+        () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6),
+        [sorted.nfts],
+    );
     return (
         <div className="flex flex-col gap-6">
-            <TransitionModal button={<Avatar peer={peer} withBio withName align="left" size={60} type="profile" />}>
-                <Avatar peer={peer} size={300} />
-            </TransitionModal>
-            
-            <Card tabs={TABS} type="tabs" scroll={limitOrders.length > 0}>
-                <Tab.Panel>
-                    <DataTable
-                        title="Peer Trades"
-                        columns={columns}
-                        data={limitOrders}
-                        loading={loading.allTrades}
-                        type="orderbook"
-                        peer={order.multiAddr}
-                    />
-                </Tab.Panel>
-                <Tab.Panel>
-                    <NFTTable 
-                        data={filteredNfts} 
-                        peer={order.multiAddr}
-                        loading={loading.allTrades}
-                    />
-                </Tab.Panel>
-            </Card>
+            <Avatar peer={multiaddr} withBio withName align="left" size={150} type="profile" />
+            <DataTable
+                    title="Peer Trades"
+                    columns={columns}
+                    data={limitOrders}
+                    loading={limitOrders.length === 0}
+                    type="orderbook"
+                    peer={order.multiAddr}
+                />
+            <Fulfill forTicker={ forTicker } />
         </div>
     );
 };

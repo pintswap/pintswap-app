@@ -17,7 +17,7 @@ export const TradeSearchView = () => {
   return (
       <div className="flex flex-col gap-6">
         <Card header={"Search"}>
-          <form className="grid grid-cols-1 gap-3 lg:gap-6">
+          <form className="grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-6">
           <Input 
             title="Peer Address"
             placeholder="Qw...123A"
@@ -34,6 +34,7 @@ export const TradeSearchView = () => {
             form="submit" 
             disabled={!form.multiAddr || !form.orderHash}
             onClick={() => navigate(`/fulfill/${form.multiAddr}/${form.orderHash}`)}
+            className="xl:col-span-2"
           >
             Search
           </Button>

@@ -1,5 +1,6 @@
 import { Transition } from '@headlessui/react';
 import { useEffect, useState } from 'react';
+import { useParams } from "react-router-dom";
 import { ethers } from 'ethers6';
 import { toast } from 'react-toastify';
 import {
@@ -18,73 +19,24 @@ import { BASE_URL } from '../utils/common';
 import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
 import { useAccount } from 'wagmi';
 
-export const FulfillView = () => {
+export const Fulfill = ({
+  forTicker
+}: any) => {
     const { address } = useAccount()
     const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
     const { peer, setPeer, pintswap } = useGlobalContext();
-    const [limitOrder, setLimitOrder] = useState({
-        price: Number(0),
-        amount: '',
-        ticker: '',
-        type: '',
-    });
+    const [price, setPrice] = useState('0');
+    const [type, setType] = useState('buy');
     const [outputAmount, setOutputAmount] = useState('');
     const [fillAmount, setFillAmount] = useState('');
+    const { baseSymbol, tradeSymbol } = useParams();
+    const [ limitOrder, setLimitOrder ] = useState({
+      price: Number(0),
+      amount: '',
+      type: 'sell',
+      ticker: `${tradeSymbol}/${baseSymbol}`
+    });
 
-    useEffect(() => {
-        (async () => {
-            if (pintswap.module) {
-                const raw = await fromFormatted(trade, pintswap.module.signer);
-                const {
-                    pair: [base, tradeToken],
-                } = orderTokens(raw);
-                const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
-                setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
-                (setLimitOrder as any)(await toLimitOrder(raw as any, pintswap.module.signer));
-            }
-        })().catch((err) => console.error(err));
-    }, [trade, pintswap.module]);
-
-    useEffect(() => {
-        const m = pintswap.module;
-        if (m)
-            (async () => {
-                const raw = await fromFormatted(trade, m.signer);
-                const {
-                    pair: [base, tradeToken],
-                } = orderTokens(raw);
-                const [baseDecimals, tradeDecimals] = await Promise.all(
-                    [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
-                );
-                if (tradeToken.address === raw.gives.token) {
-                    setOutputAmount(
-                        Number(
-                            ethers.formatUnits(
-                                (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
-                                    ethers.toBigInt(raw.gets.amount)) /
-                                    ethers.toBigInt(raw.gives.amount),
-                                baseDecimals,
-                            ),
-                        ).toFixed(6),
-                    );
-                } else {
-                    setOutputAmount(
-                        Number(
-                            ethers.formatUnits(
-                                (ethers.toBigInt(ethers.parseUnits(fillAmount, baseDecimals)) *
-                                    ethers.toBigInt(raw.gives.amount)) /
-                                    ethers.toBigInt(raw.gets.amount),
-                                baseDecimals,
-                            ),
-                        ).toFixed(6),
-                    );
-                }
-            })().catch((err) => console.error(err));
-    }, [pintswap.module, fillAmount, trade]);
-
-    useEffect(() => {
-        if (peer.module?.id || (peer.module as any)?._id) setPeer({ ...peer, loading: false });
-    }, [peer.module]);
 
     return (
         <>
@@ -140,7 +92,7 @@ export const FulfillView = () => {
                         checkNetwork
                         className="mt-6 w-full"
                         loadingText="Fulfilling"
-                        loading={(loading.fulfill || loading.trade) && !error}
+                        loading={loading && !error}
                         onClick={fulfillTrade}
                         disabled={
                             !trade.gets.amount ||

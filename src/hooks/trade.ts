@@ -33,12 +33,11 @@ export const resolveName = async (pintswap: any, name: any) => {
 export const useTrade = () => {
     const { pathname } = useLocation();
     const { pintswap, peer } = useGlobalContext();
-    const { addTrade, openTrades, peerTrades, setPeerTrades, setOpenTrades } = useOffersContext();
+    const { addTrade, openTrades, setPeerTrades, setOpenTrades } = useOffersContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
-    const [loading, setLoading] = useState(false);
-    const [loadingTrade, setLoadingTrade] = useState(false);
+    const [loading, setLoading] = useState({ trade: false, allTrades: false, fulfill: false, broadcast: false })
     const [error, setError] = useState(false);
     const { multiaddr } = useParams();
 
@@ -67,7 +66,6 @@ export const useTrade = () => {
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        setLoading(true);
         if (TESTING) console.log('#broadcastTrade: TradeObj', buildTradeObj(trade));
         if (pintswap.module) {
             try {
@@ -77,13 +75,11 @@ export const useTrade = () => {
             }
         }
         toast.loading('Connecting to peer...', { toastId: 'findPeer' });
-        setLoading(false);
     };
 
     // Fulfill trade
     const fulfillTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        setLoading(true);
         if (TESTING) console.log('#fulfillTrade - Trade Obj:', buildTradeObj(trade));
         if (pintswap.module) {
             try {
@@ -95,39 +91,29 @@ export const useTrade = () => {
                 if (TESTING) console.log('Fulfilled trade!');
             } catch (err) {
                 console.error(err);
-                setLoading(false);
                 setError(true);
             }
         }
-        setLoading(false);
     };
 
     // Get single trade or all peer trades
     const getTrades = async (multiAddr: string, orderHash?: string) => {
-        console.log(multiAddr, orderHash);
-        console.log('GET TRADES', multiAddr);
         let resolved = multiAddr;
         const ps = pintswap.module;
         if (multiAddr.match(/\.drip$/) && ps) resolved = await resolveName(ps, multiAddr);
-        if (TESTING) console.log('#getTrades - Args:', { resolved, orderHash });
-        setLoadingTrade(true);
-        console.log('ORDERHASH', orderHash);
+        if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash });
         const trade = orderHash ? openTrades.get(orderHash) : undefined;
-        console.log('TRADE', trade);
         // MAKER
         if (trade) setTrade(trade);
         // TAKER
         else {
-            console.log('pintswap.module', pintswap.module);
             if (pintswap.module) {
                 try {
                     console.log('Discovery:', await (window as any).discoveryDeferred.promise);
-                    console.log('RESOLVED', resolved);
                     const { offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
                         resolved,
                     );
                     if (TESTING) console.log('#getTrades - Offers:', offers);
-                    console.log('OFFERS', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
                         if (!orderHash) {
@@ -158,7 +144,6 @@ export const useTrade = () => {
                 }
             }
         }
-        setLoadingTrade(false);
     };
 
     // Update order form
@@ -186,18 +171,21 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            console.log('GETTER CALLED');
+            console.log('GETTER CALLED', pathname.split('/'));
             if (pathname.includes('/') && multiaddr) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill') {
                     // If multiAddr and orderHash
+                    setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
                     await getTrades(multiaddr, splitUrl[3]);
-                } else if (splitUrl[1] === 'peers') {
+                } else if (splitUrl.filter(Boolean).length === 1) {
                     // Only multiAddr
+                    setLoading({ ...loading, allTrades: true });
                     setOrder({ multiAddr: multiaddr, orderHash: '' });
                     await getTrades(multiaddr);
+                    setLoading({ ...loading, allTrades: false });
                 }
             }
         };
@@ -323,7 +311,6 @@ export const useTrade = () => {
         order,
         steps,
         updateSteps,
-        loadingTrade,
         error,
     };
 };
