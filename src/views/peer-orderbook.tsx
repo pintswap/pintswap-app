@@ -1,5 +1,5 @@
 import { ethers } from 'ethers6';
-import { Avatar, Card, NFTTable, DataTable, TransitionModal } from '../components';
+import { Avatar, Card, NFTTable, DataTable, TransitionModal, DropdownMenu, Button } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
@@ -10,6 +10,8 @@ import { useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
+import { FaChevronDown } from 'react-icons/fa';
+import { useDropdown } from '../hooks/dropdown';
 
 const columns = [
     {
@@ -90,6 +92,7 @@ function groupByType(peerTrades: any) {
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
+    const { current, handleCurrentClick, items } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }]);
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
     const { order, loading } = useTrade();
@@ -127,12 +130,41 @@ export const PeerOrderbookView = () => {
     const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ sorted.nfts ]);
     return (
         <div className="flex flex-col gap-6">
-            <TransitionModal button={<Avatar peer={peer} withBio withName align="left" size={60} type="profile" />}>
-                <Avatar peer={peer} size={300} />
-            </TransitionModal>
+            <div className="flex justify-between items-center">
+                <TransitionModal button={<Avatar peer={peer} withBio withName align="left" size={60} type="profile" />}>
+                    <Avatar peer={peer} size={300} />
+                </TransitionModal>
+                <DropdownMenu 
+                    customIcon={<span className="flex items-center gap-1">View <FaChevronDown /></span>}
+                    items={items}
+                    onClick={handleCurrentClick}
+                />
+            </div>
             
-            <Card tabs={TABS} type="tabs" scroll={limitOrders.length > 0}>
-                <Tab.Panel>
+            <Card header={current} scroll={limitOrders.length > 0}>
+                <div className={`${current === items[0].text ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                    <div className="flex flex-col gap-3">
+                        <span>NFTs</span>
+                        <NFTTable 
+                            data={filteredNfts.slice(0, width > breakpoints.lg ? 3 : 2)} 
+                            peer={order.multiAddr}
+                            loading={loading.allTrades}
+                        />
+                        {filteredNfts.length > 2 && <Button onClick={() => handleCurrentClick('NFTs')} className="w-fit self-center" type="outline">See All</Button>}
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <span>Tokens</span>
+                        <DataTable
+                            title="Peer Trades"
+                            columns={columns}
+                            data={limitOrders}
+                            loading={loading.allTrades}
+                            type="orderbook"
+                            peer={order.multiAddr}
+                        />
+                    </div>
+                </div>
+                <div className={`${current === items[1].text ? 'block' : 'hidden'}`}>
                     <DataTable
                         title="Peer Trades"
                         columns={columns}
@@ -141,14 +173,14 @@ export const PeerOrderbookView = () => {
                         type="orderbook"
                         peer={order.multiAddr}
                     />
-                </Tab.Panel>
-                <Tab.Panel>
+                </div>
+                <div className={`${current === items[2].text ? 'block' : 'hidden'}`}>
                     <NFTTable 
                         data={filteredNfts} 
                         peer={order.multiAddr}
                         loading={loading.allTrades}
                     />
-                </Tab.Panel>
+                </div>
             </Card>
         </div>
     );

@@ -45,96 +45,96 @@ export const AccountView = () => {
                 </Skeleton>
             </div>
             <Card tabs={TABS} type="tabs" scroll>
-                        <Tab.Panel>
-                            <Table
-                                headers={['Hash', 'Sending', 'Receiving']}
-                                onClick={(order: any) =>
-                                    navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)
-                                }
-                                items={Array.from(openTrades, (entry) => ({
-                                    hash: entry[0],
-                                    gives: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
-                                    gets: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
-                                }))}
-                                emptyContent={
-                                    pintswap.loading ? (
-                                        <ImSpinner9 className="animate-spin" size="20px" />
-                                    ) : (
-                                        <span>
-                                            You currently have no open trades.{' '}
-                                            <button onClick={() => navigate('/create')}>
-                                                Create a trade now!
-                                            </button>
+                <Tab.Panel>
+                    <Table
+                        headers={['Hash', 'Sending', 'Receiving']}
+                        onClick={(order: any) =>
+                            navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)
+                        }
+                        items={Array.from(openTrades, (entry) => ({
+                            hash: entry[0],
+                            gives: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
+                            gets: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
+                        }))}
+                        emptyContent={
+                            pintswap.loading ? (
+                                <ImSpinner9 className="animate-spin" size="20px" />
+                            ) : (
+                                <span>
+                                    You currently have no open trades.{' '}
+                                    <button onClick={() => navigate('/create')}>
+                                        Create a trade now!
+                                    </button>
+                                </span>
+                            )
+                        }
+                    />
+                </Tab.Panel>
+                <Tab.Panel>
+                    <form>
+                    <div className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}>
+                        <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2`}>
+                            {isEditing ? (
+                                <div className="p-0.5">
+                                <input
+                                type="file"
+                                name="profile-image"
+                                accept=".jpg, .jpeg, .png"
+                                onChange={updatePic}
+                                // className="block w-full py-1 text-xs border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-neutral-700 border-neutral-700 dark:placeholder-gray-400"
+                                className="absolute bg-transparent rounded-full h-[125px] w-[125px] text-transparent z-50 hover:cursor-pointer"
+                                title=" "
+                                />
+                                    <span className="absolute h-[130px] w-[130px]">
+                                        <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
+                                            Click to Upload
                                         </span>
-                                    )
-                                }
-                            />
-                        </Tab.Panel>
-                                                <Tab.Panel>
-                            <form>
-                            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}>
-                                <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2`}>
-                                    {isEditing ? (
-                                        <div className="p-0.5">
-                                        <input
-                                        type="file"
-                                        name="profile-image"
-                                        accept=".jpg, .jpeg, .png"
-                                        onChange={updatePic}
-                                        // className="block w-full py-1 text-xs border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-neutral-700 border-neutral-700 dark:placeholder-gray-400"
-                                        className="absolute bg-transparent rounded-full h-[125px] w-[125px] text-transparent z-50 hover:cursor-pointer"
-                                        title=" "
-                                        />
-                                            <span className="absolute h-[130px] w-[130px]">
-                                                <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
-                                                    Click to Upload
-                                                </span>
-                                            </span>
-                                            <Avatar size={125} />
-                                        </div>
-                                    ) : (
-                                        <div>
-                                            <Avatar size={125} type="clickable" />
-                                        </div>
-                                    )}
+                                    </span>
+                                    <Avatar size={125} />
                                 </div>
-                                <div className="grid grid-cols-1 gap-3 lg:gap-0">
-                                    <div>
-                                        <Input 
-                                            value={shortAddress}
-                                            onChange={updateShortAddress}
-                                            type="text"
-                                            title='Username'
-                                            enableStateCss
-                                            disabled={!isEditing}
-                                            placeholder={isEditing ? 'Start typing here...' : 'No username'}
-                                            max={50}
-                                        />
-                                    </div>
-                                    <div>
-                                        <Input 
-                                            value={bio}
-                                            onChange={updateBio}
-                                            type="text"
-                                            title='Bio'
-                                            enableStateCss
-                                            disabled={!isEditing}
-                                            placeholder={isEditing ? 'Start typing here...' : 'No bio'}
-                                            max={100}
-                                        />
-                                    </div>
+                            ) : (
+                                <div>
+                                    <Avatar size={125} type="clickable" />
                                 </div>
+                            )}
+                        </div>
+                        <div className="grid grid-cols-1 gap-3 lg:gap-0">
+                            <div>
+                                <Input 
+                                    value={shortAddress}
+                                    onChange={updateShortAddress}
+                                    type="text"
+                                    title='Username'
+                                    enableStateCss
+                                    disabled={!isEditing}
+                                    placeholder={isEditing ? 'Start typing here...' : 'No username'}
+                                    max={50}
+                                />
                             </div>
-                            <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
-                                {!isEditing ? <Button onClick={() => setIsEditing(true)} form="reset" type='outline'>Edit</Button> : (
-                                    <>
-                                    <Button form="reset" onClick={handleCancel} type='transparent'>Cancel</Button>
-                                    <Button form="submit" onClick={handleUpdate}>Save</Button>
-                                    </>
-                                )}
-                                </div>
-                                </form>
-                        </Tab.Panel>
+                            <div>
+                                <Input 
+                                    value={bio}
+                                    onChange={updateBio}
+                                    type="text"
+                                    title='Bio'
+                                    enableStateCss
+                                    disabled={!isEditing}
+                                    placeholder={isEditing ? 'Start typing here...' : 'No bio'}
+                                    max={100}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
+                        {!isEditing ? <Button onClick={() => setIsEditing(true)} form="reset" type='outline'>Edit</Button> : (
+                            <>
+                            <Button form="reset" onClick={handleCancel} type='transparent'>Cancel</Button>
+                            <Button form="submit" onClick={handleUpdate}>Save</Button>
+                            </>
+                        )}
+                        </div>
+                        </form>
+                </Tab.Panel>
             </Card>
             <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
                 Create Order
