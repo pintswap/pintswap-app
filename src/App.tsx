@@ -27,7 +27,6 @@ function App() {
     return (
         <>
             <Base loading={pintswap.loading}>
-                {address ? (
                     <Routes>
                         <Route path="/explore" element={<ExploreView />} />
                         <Route path="/create" element={<CreateView />} />
@@ -45,19 +44,6 @@ function App() {
 
                         <Route path="*" element={<Navigate to='/explore' />} />
                     </Routes>
-                ) : (
-                    <Routes>
-                        <Route path="/explore" element={<ExploreView />} />
-
-                        <Route path="/pairs" element={<PairsView />} />
-                        <Route path="/pairs/:pair" element={<PairListView />} />
-
-                        <Route path="/peers" element={<PeersView />} />
-                        <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
-
-                        <Route path="*" element={<Navigate to='/explore' />} />
-                    </Routes>
-                )}
             </Base>
 
             <ToastContainer

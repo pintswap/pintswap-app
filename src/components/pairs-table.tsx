@@ -15,8 +15,8 @@ const formatOrNothing = (type: any, best: any) => {
 
 const bestPrices = (orders: any) => {
     const { ask, bid } = groupBy(orders, 'type');
-    const bestAsk = ask.slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
-    const bestBid = bid.slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
+    const bestAsk = (ask || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
+    const bestBid = (bid || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
     return formatOrNothing('bid', bestBid) + formatOrNothing('ask', bestAsk);
 };
 
