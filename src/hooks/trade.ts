@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useGlobalContext } from '../stores/global';
 import { convertAmount, EMPTY_TRADE, getTokenAttributes, TESTING } from '../utils/common';
-import { useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { ITokenProps } from '../utils/token-list';
@@ -40,6 +40,7 @@ export const useTrade = () => {
     const [loading, setLoading] = useState(false);
     const [loadingTrade, setLoadingTrade] = useState(false);
     const [error, setError] = useState(false);
+    const { multiaddr } = useParams();
 
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/open';
@@ -86,10 +87,10 @@ export const useTrade = () => {
         if (TESTING) console.log('#fulfillTrade - Trade Obj:', buildTradeObj(trade));
         if (pintswap.module) {
             try {
-                let multiaddr = order.multiAddr;
-                if (multiaddr.match(/\.drip$/))
-                    multiaddr = await resolveName(pintswap.module, order.multiAddr);
-                const peeredUp = PeerId.createFromB58String(multiaddr);
+                let multiAddr = order.multiAddr;
+                if (multiAddr.match(/\.drip$/))
+                    multiAddr = await resolveName(pintswap.module, order.multiAddr);
+                const peeredUp = PeerId.createFromB58String(multiAddr);
                 pintswap.module.createTrade(peeredUp, buildTradeObj(trade));
                 if (TESTING) console.log('Fulfilled trade!');
             } catch (err) {
@@ -103,29 +104,35 @@ export const useTrade = () => {
 
     // Get single trade or all peer trades
     const getTrades = async (multiAddr: string, orderHash?: string) => {
-        console.log(multiAddr, orderHash)
+        console.log(multiAddr, orderHash);
+        console.log('GET TRADES', multiAddr);
         let resolved = multiAddr;
         const ps = pintswap.module;
         if (multiAddr.match(/\.drip$/) && ps) resolved = await resolveName(ps, multiAddr);
         if (TESTING) console.log('#getTrades - Args:', { resolved, orderHash });
         setLoadingTrade(true);
+        console.log('ORDERHASH', orderHash);
         const trade = orderHash ? openTrades.get(orderHash) : undefined;
+        console.log('TRADE', trade);
         // MAKER
         if (trade) setTrade(trade);
         // TAKER
         else {
+            console.log('pintswap.module', pintswap.module);
             if (pintswap.module) {
                 try {
                     console.log('Discovery:', await (window as any).discoveryDeferred.promise);
+                    console.log('RESOLVED', resolved);
                     const { offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
                         resolved,
                     );
                     if (TESTING) console.log('#getTrades - Offers:', offers);
+                    console.log('OFFERS', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
                         if (!orderHash) {
                             const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                            if (peerTrades.size === 0) setPeerTrades(map);
+                            setPeerTrades(map);
                         }
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
@@ -134,13 +141,13 @@ export const useTrade = () => {
                                 token:
                                     (getTokenAttributes(gives.token) as ITokenProps).symbol ||
                                     gives.token,
-                                amount: convertAmount('number', (gives.amount || ''), gives.token),
+                                amount: convertAmount('number', gives.amount || '', gives.token),
                             },
                             gets: {
                                 token:
                                     (getTokenAttributes(gets.token) as ITokenProps).symbol ||
                                     gets.token,
-                                amount: convertAmount('number', (gets.amount || ''), gets.token),
+                                amount: convertAmount('number', gets.amount || '', gets.token),
                             },
                         });
                     }
@@ -161,7 +168,8 @@ export const useTrade = () => {
     ) => {
         const parts: any = key.split('.');
         const newTrade = { ...trade };
-        parts.slice(0, -1).reduce((r: any, v: any) => r[v], newTrade)[parts[parts.length - 1]] = val;
+        parts.slice(0, -1).reduce((r: any, v: any) => r[v], newTrade)[parts[parts.length - 1]] =
+            val;
         setTrade(newTrade);
     };
 
@@ -178,23 +186,24 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            if (pathname.includes('/')) {
+            console.log('GETTER CALLED');
+            if (pathname.includes('/') && multiaddr) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill') {
                     // If multiAddr and orderHash
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
-                    setOrder({ multiAddr: splitUrl[2], orderHash: splitUrl[3] });
-                    await getTrades(splitUrl[2], splitUrl[3]);
+                    setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
+                    await getTrades(multiaddr, splitUrl[3]);
                 } else if (splitUrl[1] === 'peers') {
                     // Only multiAddr
-                    setOrder({ multiAddr: splitUrl[2], orderHash: '' });
-                    await getTrades(splitUrl[2]);
+                    setOrder({ multiAddr: multiaddr, orderHash: '' });
+                    await getTrades(multiaddr);
                 }
             }
         };
         if (pintswap.module && (peer.module?.id || (peer.module as any)?._id))
             getter().catch((err) => console.error(err));
-    }, [pintswap.module, peer.module, order.multiAddr]);
+    }, [pintswap.module, peer.module, multiaddr]);
 
     /*
      * TRADE EVENT MANAGER - START
