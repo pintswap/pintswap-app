@@ -23,7 +23,7 @@ export const Fulfill = ({
   forTicker
 }: any) => {
     const { address } = useAccount()
-    const { fulfillTrade, loading, trade, loadingTrade, steps, order, error } = useTrade();
+    const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
     const { peer, setPeer, pintswap } = useGlobalContext();
     const [price, setPrice] = useState('0');
     const [type, setType] = useState('buy');
@@ -59,7 +59,7 @@ export const Fulfill = ({
                             state={limitOrder.ticker}
                             type="gives.token"
                             disabled
-                            loading={loadingTrade}
+                            loading={loading.trade}
                         />
                         <Input
                             title="Price"
@@ -67,7 +67,7 @@ export const Fulfill = ({
                             value={Number(limitOrder.price).toFixed(4)}
                             type="number"
                             disabled
-                            loading={loadingTrade}
+                            loading={loading.trade}
                         />
                         <Input
                             title="Amount"
@@ -78,14 +78,14 @@ export const Fulfill = ({
                                 evt.preventDefault();
                                 setFillAmount(evt.target.value);
                             }}
-                            loading={loadingTrade}
+                            loading={loading.trade}
                         />
                         <Input
                             placeholder="Output amount"
                             value={outputAmount}
                             type="number"
                             disabled
-                            loading={loadingTrade}
+                            loading={loading.trade}
                         />
                     </div>
                     <Button
@@ -99,8 +99,8 @@ export const Fulfill = ({
                             !trade.gives.amount ||
                             !trade.gets.token ||
                             !trade.gives.token ||
-                            loadingTrade ||
-                            loading ||
+                            loading.trade ||
+                            loading.fulfill ||
                             !address
                         }
                     >

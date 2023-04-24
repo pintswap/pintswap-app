@@ -6,7 +6,7 @@ import { Button } from './button';
 
 type IModalProps = {
   children: React.ReactElement;
-  button: string | React.ReactNode;
+  button: React.ReactNode;
   title?: string;
 }
 
@@ -20,7 +20,7 @@ export function TransitionModal({ children, button, title }: IModalProps) {
       {typeof button === 'string' ? (
         <Button onClick={handleOpen}>{button}</Button>
       ) : (
-        <div onClick={handleOpen} className="cursor-pointer">{button}</div>
+        <div onClick={handleOpen} className="cursor-pointer w-fit">{button}</div>
       )}
       <Modal
         aria-labelledby={title || 'Modal'}

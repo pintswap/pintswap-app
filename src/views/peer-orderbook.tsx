@@ -92,7 +92,7 @@ export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
-    const { order } = useTrade();
+    const { order, loading } = useTrade();
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const { state } = useLocation();
 
@@ -124,10 +124,7 @@ export const PeerOrderbookView = () => {
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
-    const filteredNfts = useMemo(
-        () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6),
-        [sorted.nfts],
-    );
+    const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ sorted.nfts ]);
     return (
         <div className="flex flex-col gap-6">
             <TransitionModal button={<Avatar peer={peer} withBio withName align="left" size={60} type="profile" />}>
@@ -140,13 +137,17 @@ export const PeerOrderbookView = () => {
                         title="Peer Trades"
                         columns={columns}
                         data={limitOrders}
-                        loading={limitOrders.length === 0}
+                        loading={loading.allTrades}
                         type="orderbook"
                         peer={order.multiAddr}
                     />
                 </Tab.Panel>
                 <Tab.Panel>
-                    <NFTTable data={filteredNfts} />
+                    <NFTTable 
+                        data={filteredNfts} 
+                        peer={order.multiAddr}
+                        loading={loading.allTrades}
+                    />
                 </Tab.Panel>
             </Card>
         </div>

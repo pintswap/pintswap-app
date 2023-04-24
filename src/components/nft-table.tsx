@@ -7,6 +7,7 @@ import ImageListItem from '@mui/material/ImageListItem';
 import { fetchNFT, hashNftIdentifier } from '../utils/fetch-nft';
 import { useWindowSize } from '../hooks/window-size';
 import { Card } from './card';
+import { SpinnerLoader } from './spinner-loader';
 
 type INFTTableProps = {
     title?: string;
@@ -15,45 +16,50 @@ type INFTTableProps = {
     peer?: string;
 };
 
-export const NFTTable = ({ data }: INFTTableProps) => {
+export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
     const { width, breakpoints } = useWindowSize();
-    const [nfts, setNFTs] = useState([]);
+    const [nfts, setNFTs] = useState<any[]>([]);
 
     useEffect(() => {
         (async () => {
             setNFTs(
-                (await Promise.all(data.map(async (v) => await fetchNFT((v as any).gives)))) as any,
+                (await Promise.all(data.map(async (v) => await fetchNFT((v as any).gives))))
             );
         })().catch((err) => console.error(err));
     }, [data]);
 
+    console.log("DATA FROM NFT:", data);
     console.log("NFT DATA:", nfts)
 
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
-                <ImageList cols={width > breakpoints.lg ? 3 : 2} gap={width > breakpoints.md ? 8 : 6 }>
-                    {nfts.length > 0 ? nfts.map((v: any) => (
-                        <ImageListItem key={hashNftIdentifier(v)}>
-                            <Card type="inner">
-                                <img
-                                    src={URL.createObjectURL(v.imageBlob)}
-                                    alt={v.name}
-                                    style={{
-                                        backgroundColor: v.background_color
-                                            ? `#${v.background_color}`
-                                            : undefined,
-                                    }}
-                                    loading="lazy"
-                                    className="rounded-sm"
-                                />
-                                <h3 className="pt-2 pb-1">{ v.name }</h3>
-                                <small>{ v.description }</small>
-                            </Card>
-                        </ImageListItem>
-                    )) : (
-                        <div className="flex justify-center text-center">
-                            <span>No NFT offers available</span>
+                <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : 2)} gap={width > breakpoints.md ? 8 : 6 }>
+                    {nfts.length > 0 ? nfts.map((v: any, i) => (
+                        <a href={`/fulfill/${peer}/${(data[i] as any).hash}`} key={hashNftIdentifier(v)}>
+                            <ImageListItem>
+                                <Card type="inner">
+                                    <img
+                                        src={URL.createObjectURL(v.imageBlob)}
+                                        alt={v.name}
+                                        style={{
+                                            backgroundColor: v.background_color
+                                                ? `#${v.background_color}`
+                                                : undefined,
+                                        }}
+                                        loading="lazy"
+                                        className="rounded-sm"
+                                    />
+                                    <h3 className="pt-2 pb-1">{ v.name }</h3>
+                                    <small>{ v.description }</small>
+                                </Card>
+                            </ImageListItem>
+                        </a>
+                    )) : loading ? (
+                        <SpinnerLoader height="min-h-[100px]" />
+                    ) : (
+                        <div className="flex justify-center text-center w-full py-6">
+                            <span className="">No NFT offers available</span>
                         </div>
                     )}
                 </ImageList>
