@@ -37,7 +37,7 @@ function App() {
 
                         <Route path="/peers" element={<PeersView />} />
                         <Route path="/:multiaddr" element={<PeerOrderbookView />} />
-			<Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
+                        <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
                         <Route path="/fulfill" element={<TradeSearchView />} />
                         <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
