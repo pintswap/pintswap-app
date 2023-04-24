@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
+import { PairsTable } from '../components/pairs-table';
 
 const columns = [
     {
@@ -76,17 +77,16 @@ const toFlattened = memoize((v: any) =>
     })),
 );
 
-
 function groupByType(peerTrades: any) {
-  const flattened = toFlattened(peerTrades);
-  return {
-    erc20: flattened.filter(({ gets, gives }: any) => {
-      return isERC20Transfer(gets) && isERC20Transfer(gives);
-    }),
-    nfts: flattened.filter(({ gets, gives }: any) => {
-      return !(isERC20Transfer(gets) && isERC20Transfer(gives));
-    })
-  };
+    const flattened = toFlattened(peerTrades);
+    return {
+        erc20: flattened.filter(({ gets, gives }: any) => {
+            return isERC20Transfer(gets) && isERC20Transfer(gives);
+        }),
+        nfts: flattened.filter(({ gets, gives }: any) => {
+            return !(isERC20Transfer(gets) && isERC20Transfer(gives));
+        }),
+    };
 }
 
 export const PeerOrderbookView = () => {
@@ -99,11 +99,11 @@ export const PeerOrderbookView = () => {
 
     const peer = state?.peer ? state.peer : order.multiAddr;
 
-    const TABS = width > breakpoints.md ? ['Token Offers', 'NFT Offers'] : ['Tokens', 'NFTs']
+    const TABS = width > breakpoints.md ? ['Token Offers', 'NFT Offers'] : ['Tokens', 'NFTs'];
 
     const sorted = useMemo(() => {
-      return groupByType(peerTrades);
-    }, [ peerTrades ]);
+        return groupByType(peerTrades);
+    }, [peerTrades]);
 
     useEffect(() => {
         (async () => {
@@ -125,25 +125,31 @@ export const PeerOrderbookView = () => {
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
-    const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ sorted.nfts ]);
+    const filteredNfts = useMemo(
+        () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6),
+        [sorted.nfts],
+    );
     return (
         <div className="flex flex-col gap-6">
-            <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
-            <Card tabs={TABS} type="tabs" scroll={limitOrders.length > 0}>
-                <Tab.Panel>
-                    <DataTable
-                        title="Peer Trades"
-                        columns={columns}
-                        data={limitOrders}
-                        loading={limitOrders.length === 0}
-                        type="orderbook"
-                        peer={order.multiAddr}
-                    />
-                </Tab.Panel>
-                <Tab.Panel>
+            <Avatar peer={peer} withBio withName align="left" size={150} type="profile" />
+            {(filteredNfts.length && (
+                <Card header={'NFTs'}>
                     <NFTTable data={filteredNfts} />
-                </Tab.Panel>
+                </Card>
+            )) || <span></span>}
+            <Card header={'Trading'}>
+                <PairsTable />
             </Card>
+            {/*
+            <DataTable
+                    title="Peer Trades"
+                    columns={columns}
+                    data={limitOrders}
+                    loading={limitOrders.length === 0}
+                    type="orderbook"
+                    peer={order.multiAddr}
+                />
+                </Tab.Panel> */}
         </div>
     );
 };

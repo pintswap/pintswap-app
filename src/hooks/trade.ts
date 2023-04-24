@@ -19,7 +19,7 @@ type IOrderbookProps = {
     offers: IOffer[];
 };
 
-const resolveName = async (pintswap: any, name: any) => {
+export const resolveName = async (pintswap: any, name: any) => {
     while (true as any) {
         try {
             return await pintswap.resolveName(name);
