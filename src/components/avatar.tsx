@@ -5,7 +5,7 @@ import { ethers } from "ethers";
 import { formattedPeerName, getPeerData, IUserDataProps, truncate } from "../utils/common";
 
 type IAvatarProps = {
-  size?: number | `${string}px`;
+  size?: number | `${string}px` | 'full';
   clickable?: boolean;
   peer?: string | IUserDataProps;
   withBio?: boolean;
