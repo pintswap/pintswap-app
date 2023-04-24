@@ -8,6 +8,7 @@ import { fetchNFT, hashNftIdentifier } from '../utils/fetch-nft';
 import { useWindowSize } from '../hooks/window-size';
 import { Card } from './card';
 import { SpinnerLoader } from './spinner-loader';
+import { useNavigate } from 'react-router-dom';
 
 type INFTTableProps = {
     title?: string;
@@ -17,6 +18,7 @@ type INFTTableProps = {
 };
 
 export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
+    const navigate = useNavigate();
     const { width, breakpoints } = useWindowSize();
     const [nfts, setNFTs] = useState<any[]>([]);
 
@@ -33,25 +35,23 @@ export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
             <ThemeProvider theme={muiTheme()}>
                 <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : 2)} gap={width > breakpoints.md ? 8 : 6 }>
                     {nfts.length > 0 ? nfts.map((v: any, i) => (
-                        <a href={`#/fulfill/${peer}/${(data[i] as any).hash}`} key={hashNftIdentifier(v)}>
-                            <ImageListItem>
-                                <Card type="inner" className="hover:bg-gray-900">
-                                    <img
-                                        src={URL.createObjectURL(v.imageBlob)}
-                                        alt={v.name}
-                                        style={{
-                                            backgroundColor: v.background_color
-                                                ? `#${v.background_color}`
-                                                : undefined,
-                                        }}
-                                        loading="lazy"
-                                        className="rounded-sm"
-                                    />
-                                    <h3 className="pt-2 pb-1">{ v.name }</h3>
-                                    <small>{ v.description }</small>
-                                </Card>
-                            </ImageListItem>
-                        </a>
+                        <ImageListItem key={hashNftIdentifier(v)} className="hover:cursor-pointer" onClick={() => navigate(`#/fulfill/${peer}/${(data[i] as any).hash}`)}>
+                            <Card type="inner" className="hover:bg-gray-900">
+                                <img
+                                    src={URL.createObjectURL(v.imageBlob)}
+                                    alt={v.name}
+                                    style={{
+                                        backgroundColor: v.background_color
+                                            ? `#${v.background_color}`
+                                            : undefined,
+                                    }}
+                                    loading="lazy"
+                                    className="rounded-sm h-60 object-cover w-full"
+                                />
+                                <h3 className="pt-2 pb-1">{ v.name }</h3>
+                                <small>{ v.description }</small>
+                            </Card>
+                        </ImageListItem>
                     )) : loading ? (
                         <SpinnerLoader height="min-h-[100px]" />
                     ) : (

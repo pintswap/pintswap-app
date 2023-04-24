@@ -101,8 +101,6 @@ export const PeerOrderbookView = () => {
 
     const peer = state?.peer ? state.peer : order.multiAddr;
 
-    const TABS = width > breakpoints.md ? ['Token Offers', 'NFT Offers'] : ['Tokens', 'NFTs'];
-
     const sorted = useMemo(() => {
         return groupByType(peerTrades);
     }, [peerTrades]);
@@ -135,7 +133,7 @@ export const PeerOrderbookView = () => {
                     <Avatar peer={peer} size={300} />
                 </TransitionModal>
                 <DropdownMenu 
-                    customIcon={<span className="flex items-center gap-1">View <FaChevronDown /></span>}
+                    customIcon={<span className="flex items-center gap-1 md:gap-2">View <FaChevronDown /></span>}
                     items={items}
                     onClick={handleCurrentClick}
                 />
