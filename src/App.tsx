@@ -36,8 +36,9 @@ function App() {
                         <Route path="/pairs/:pair" element={<PairListView />} />
 
                         <Route path="/peers" element={<PeersView />} />
-                        
+
                         <Route path="/:multiaddr" element={<PeerOrderbookView />} />
+                        <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} />
                         <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
                         <Route path="/fulfill" element={<TradeSearchView />} />

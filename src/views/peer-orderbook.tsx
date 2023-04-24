@@ -92,7 +92,7 @@ function groupByType(peerTrades: any) {
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
-    const { current, handleCurrentClick, items } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }]);
+    const { current, handleCurrentClick, items } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }], 0, true);
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
     const { order, loading } = useTrade();
@@ -100,8 +100,6 @@ export const PeerOrderbookView = () => {
     const { state } = useLocation();
 
     const peer = state?.peer ? state.peer : order.multiAddr;
-
-    const TABS = width > breakpoints.md ? ['Token Offers', 'NFT Offers'] : ['Tokens', 'NFTs'];
 
     const sorted = useMemo(() => {
         return groupByType(peerTrades);
@@ -135,14 +133,14 @@ export const PeerOrderbookView = () => {
                     <Avatar peer={peer} size={300} />
                 </TransitionModal>
                 <DropdownMenu 
-                    customIcon={<span className="flex items-center gap-1">View <FaChevronDown /></span>}
+                    customIcon={<span className="flex items-center gap-1 md:gap-2">View <FaChevronDown /></span>}
                     items={items}
                     onClick={handleCurrentClick}
                 />
             </div>
             
-            <Card header={current} scroll={limitOrders.length > 0}>
-                <div className={`${current === items[0].text ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+            <Card scroll={limitOrders.length > 0}>
+                <div className={`${current === items[0].text.toLowerCase() ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <div className="flex flex-col gap-3">
                         <span>NFTs</span>
                         <NFTTable 
@@ -150,7 +148,7 @@ export const PeerOrderbookView = () => {
                             peer={order.multiAddr}
                             loading={loading.allTrades}
                         />
-                        {filteredNfts.length > 2 && <Button onClick={() => handleCurrentClick('NFTs')} className="w-fit self-center" type="outline">See All NFTs</Button>}
+                        {filteredNfts.length > 2 && <Button onClick={() => handleCurrentClick('nfts')} className="w-fit self-center" type="outline">See All NFTs</Button>}
                     </div>
                     <div className="flex flex-col gap-3">
                         <span>Tokens</span>
@@ -164,7 +162,7 @@ export const PeerOrderbookView = () => {
                         />
                     </div>
                 </div>
-                <div className={`${current === items[1].text ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                <div className={`${current === items[1].text.toLowerCase() ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <DataTable
                         title="Peer Trades"
                         columns={columns}
@@ -173,15 +171,15 @@ export const PeerOrderbookView = () => {
                         type="orderbook"
                         peer={order.multiAddr}
                     />
-                    <Button onClick={() => handleCurrentClick('Overview')} className="w-fit self-center" type="outline">Back to All</Button>
+                    <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
-                <div className={`${current === items[2].text ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                <div className={`${current === items[2].text.toLowerCase() ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <NFTTable 
                         data={filteredNfts} 
                         peer={order.multiAddr}
                         loading={loading.allTrades}
                     />
-                    <Button onClick={() => handleCurrentClick('Overview')} className="w-fit self-center" type="outline">Back to All</Button>
+                    <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
             </Card>
         </div>

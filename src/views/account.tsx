@@ -1,7 +1,7 @@
 import { ethers } from 'ethers6';
 import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Button, Card, CopyClipboard, Input, Skeleton, Table } from '../components';
+import { Avatar, Button, Card, CopyClipboard, DataTable, Input, NFTTable, Skeleton, Table, TransitionModal } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { useOffersContext, useUserContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
@@ -12,7 +12,7 @@ import { useState } from 'react';
 export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
-    const { pintswap } = useGlobalContext();
+    const { pintswap, peer } = useGlobalContext();
     const { openTrades } = useOffersContext();
     const { bio, shortAddress, updateBio, updatePic, updateShortAddress, handleSave, profilePic } = useUserContext();
     const [shallowForm, setShallowForm] = useState({ bio, shortAddress })
@@ -33,16 +33,21 @@ export const AccountView = () => {
     const TABS = [width > 600 ? 'Your Orders' : 'Orders', 'Settings']
     return (
         <div className="flex flex-col gap-6">
-            <div className="text-center self-center">
-                <p className="text-sm">Your Multi Address</p>
-                <Skeleton loading={pintswap.loading}>
-                    <CopyClipboard
-                        value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress}
-                        truncate={5}
-                        icon
-                        lg={width > 768}
-                    />
-                </Skeleton>
+            <div className="flex items-center justify-between">
+                <TransitionModal button={<Avatar peer={pintswap?.module?.peerId.toB58String()} withBio withName align="left" size={60} type="profile" />}>
+                    <Avatar peer={pintswap?.module?.peerId.toB58String()} size={300} />
+                </TransitionModal>
+                <div className="text-right">
+                    <p className="text-sm">Your Multi Address</p>
+                    <Skeleton loading={pintswap.loading}>
+                        <CopyClipboard
+                            value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress}
+                            truncate={5}
+                            icon
+                            lg={width > 768}
+                        />
+                    </Skeleton>
+                </div>
             </div>
             <Card tabs={TABS} type="tabs" scroll>
                 <Tab.Panel>
@@ -69,6 +74,28 @@ export const AccountView = () => {
                             )
                         }
                     />
+                    {/* TODO: replace above table with this content to match peer */}
+                    {/* <div className={`flex flex-col gap-3 lg:gap-6`}>
+                        <div className="flex flex-col gap-3">
+                            <span>NFTs</span>
+                            <NFTTable 
+                                data={filteredNfts} 
+                                peer={peer.module.id}
+                                loading={pintswap.loading}
+                            />
+                        </div>
+                        <div className="flex flex-col gap-3">
+                            <span>Tokens</span>
+                            <DataTable
+                                title="Peer Trades"
+                                columns={columns}
+                                data={limitOrders}
+                                loading={pintswap.loading}
+                                type="orderbook"
+                                peer={peer.module.id}
+                            />
+                        </div>
+                    </div> */}
                 </Tab.Panel>
                 <Tab.Panel>
                     <form>
