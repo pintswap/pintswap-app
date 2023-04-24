@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useGlobalContext, usePeersContext, useUserContext } from "../stores"
+import { useNavigate } from "react-router-dom";
+import { useGlobalContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
 import { formattedPeerName, getPeerData, IUserDataProps, truncate } from "../utils/common";
 
@@ -14,10 +14,12 @@ type IAvatarProps = {
   bioClass?: string;
   align?: 'left' | 'center' | 'right';
   loading?: boolean;
-  type?: 'clickable' | 'default' | 'profile'
+  type?: 'clickable' | 'default' | 'profile';
+  customBio?: string;
+  customName?: string;
 }
 
-export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bioClass, loading, align }: IAvatarProps) => {
+export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bioClass, loading, align, customBio, customName }: IAvatarProps) => {
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
   const { profilePic, bio, shortAddress } = useUserContext();
@@ -26,7 +28,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
   const defaultImgSrc = '/black.jpg';
   const defaultUserState = { 
     imgSrc: defaultImgSrc, 
-    bio: '', 
+    bio: bio ? bio : '', 
     name: peer && typeof peer === 'string' ? peer : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero) 
   }
   const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState)
