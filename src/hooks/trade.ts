@@ -180,7 +180,7 @@ export const useTrade = () => {
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
                     await getTrades(multiaddr, splitUrl[3]);
-                } else if (splitUrl.filter(Boolean).length === 1) {
+                } else if (multiaddr) {
                     // Only multiAddr
                     setLoading({ ...loading, allTrades: true });
                     setOrder({ multiAddr: multiaddr, orderHash: '' });

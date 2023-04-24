@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useGlobalContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
 import { formattedPeerName, getPeerData, IUserDataProps, truncate } from "../utils/common";
@@ -15,11 +15,10 @@ type IAvatarProps = {
   align?: 'left' | 'center' | 'right';
   loading?: boolean;
   type?: 'clickable' | 'default' | 'profile';
-  customBio?: string;
-  customName?: string;
 }
 
-export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bioClass, loading, align, customBio, customName }: IAvatarProps) => {
+export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bioClass, loading, align}: IAvatarProps) => {
+  const { pathname } = useLocation();
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
   const { profilePic, bio, shortAddress } = useUserContext();
@@ -28,7 +27,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
   const defaultImgSrc = '/black.jpg';
   const defaultUserState = { 
     imgSrc: defaultImgSrc, 
-    bio: bio ? bio : '', 
+    bio: pathname.includes('account') ? (bio ? bio : '') : '', 
     name: peer && typeof peer === 'string' ? peer : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero) 
   }
   const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState)
