@@ -28,17 +28,14 @@ export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
         })().catch((err) => console.error(err));
     }, [data]);
 
-    console.log("DATA FROM NFT:", data);
-    console.log("NFT DATA:", nfts)
-
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
                 <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : 2)} gap={width > breakpoints.md ? 8 : 6 }>
                     {nfts.length > 0 ? nfts.map((v: any, i) => (
-                        <a href={`/fulfill/${peer}/${(data[i] as any).hash}`} key={hashNftIdentifier(v)}>
+                        <a href={`#/fulfill/${peer}/${(data[i] as any).hash}`} key={hashNftIdentifier(v)}>
                             <ImageListItem>
-                                <Card type="inner">
+                                <Card type="inner" className="hover:bg-gray-900">
                                     <img
                                         src={URL.createObjectURL(v.imageBlob)}
                                         alt={v.name}
