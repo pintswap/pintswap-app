@@ -1,5 +1,5 @@
 import { ethers } from 'ethers6';
-import { Avatar, Card, NFTTable, DataTable } from '../components';
+import { Avatar, Card, NFTTable, DataTable, TransitionModal } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { toLimitOrder } from '../utils/orderbook';
@@ -10,7 +10,6 @@ import { useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
-import { PairsTable } from '../components/pairs-table';
 
 const columns = [
     {
@@ -131,25 +130,25 @@ export const PeerOrderbookView = () => {
     );
     return (
         <div className="flex flex-col gap-6">
-            <Avatar peer={peer} withBio withName align="left" size={150} type="profile" />
-            {(filteredNfts.length && (
-                <Card header={'NFTs'}>
+            <TransitionModal button={<Avatar peer={peer} withBio withName align="left" size={60} type="profile" />}>
+                <Avatar peer={peer} size={300} />
+            </TransitionModal>
+            
+            <Card tabs={TABS} type="tabs" scroll={limitOrders.length > 0}>
+                <Tab.Panel>
+                    <DataTable
+                        title="Peer Trades"
+                        columns={columns}
+                        data={limitOrders}
+                        loading={limitOrders.length === 0}
+                        type="orderbook"
+                        peer={order.multiAddr}
+                    />
+                </Tab.Panel>
+                <Tab.Panel>
                     <NFTTable data={filteredNfts} />
-                </Card>
-            )) || <span></span>}
-            <Card header={'Trading'}>
-                <PairsTable />
+                </Tab.Panel>
             </Card>
-            {/*
-            <DataTable
-                    title="Peer Trades"
-                    columns={columns}
-                    data={limitOrders}
-                    loading={limitOrders.length === 0}
-                    type="orderbook"
-                    peer={order.multiAddr}
-                />
-                </Tab.Panel> */}
         </div>
     );
 };
