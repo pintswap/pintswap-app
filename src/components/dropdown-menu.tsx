@@ -1,24 +1,25 @@
-import { Fragment, ReactNode } from 'react'
+import { Fragment, ReactNode, MouseEventHandler } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import { TiThMenu } from 'react-icons/ti'
 import { classNames } from '../utils/common'
 import { useNavigate } from 'react-router-dom'
 import { ActiveText } from './active-text'
 
-type IDropdownMenuProps = {
-  customIcon?: ReactNode;
-  items: {
-    text: string;
-    onClick?: () => void;
-    disabled?: boolean;
-    icon?: ReactNode;
-    route?: string;
-  }[];
-  buttonClass?: string;
-
+export type IDropdownMenuItemsProps = {
+  text: string;
+  onClick?: () => void;
+  disabled?: boolean;
+  icon?: ReactNode;
+  route?: string;
 }
 
-export const DropdownMenu = ({ items, customIcon, buttonClass }: IDropdownMenuProps) => {
+type IDropdownMenuProps = {
+  customIcon?: ReactNode;
+  items: IDropdownMenuItemsProps[];
+  buttonClass?: string;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}
+
+export const DropdownMenu = ({ items, customIcon, buttonClass, onClick }: IDropdownMenuProps) => {
   const navigate = useNavigate();
 
   const genericHamburgerLine = `h-[5px] w-6 my-[2.5px] rounded-full bg-white transition ease transform duration-200 rounded`;
@@ -86,7 +87,7 @@ export const DropdownMenu = ({ items, customIcon, buttonClass }: IDropdownMenuPr
                     active ? 'bg-gray-900 text-neutral-100' : '',
                     'px-4 py-3 text-sm w-full text-left flex gap-2 items-center justify-start rounded-md disabled:text-neutral-400'
                   )}
-                  onClick={item.onClick}
+                  onClick={onClick ? onClick : item.onClick}
                   disabled={item.disabled}
                 >
                   {item.text}
