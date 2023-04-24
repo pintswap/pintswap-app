@@ -150,7 +150,7 @@ export const PeerOrderbookView = () => {
                             peer={order.multiAddr}
                             loading={loading.allTrades}
                         />
-                        {filteredNfts.length > 2 && <Button onClick={() => handleCurrentClick('NFTs')} className="w-fit self-center" type="outline">See All</Button>}
+                        {filteredNfts.length > 2 && <Button onClick={() => handleCurrentClick('NFTs')} className="w-fit self-center" type="outline">See All NFTs</Button>}
                     </div>
                     <div className="flex flex-col gap-3">
                         <span>Tokens</span>
@@ -164,7 +164,7 @@ export const PeerOrderbookView = () => {
                         />
                     </div>
                 </div>
-                <div className={`${current === items[1].text ? 'block' : 'hidden'}`}>
+                <div className={`${current === items[1].text ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <DataTable
                         title="Peer Trades"
                         columns={columns}
@@ -173,13 +173,15 @@ export const PeerOrderbookView = () => {
                         type="orderbook"
                         peer={order.multiAddr}
                     />
+                    <Button onClick={() => handleCurrentClick('Overview')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
-                <div className={`${current === items[2].text ? 'block' : 'hidden'}`}>
+                <div className={`${current === items[2].text ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <NFTTable 
                         data={filteredNfts} 
                         peer={order.multiAddr}
                         loading={loading.allTrades}
                     />
+                    <Button onClick={() => handleCurrentClick('Overview')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
             </Card>
         </div>
