@@ -186,7 +186,7 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            console.log('GETTER CALLED');
+            console.log('GETTER CALLED', pathname.split('/'));
             if (pathname.includes('/') && multiaddr) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill') {
@@ -194,7 +194,7 @@ export const useTrade = () => {
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
                     await getTrades(multiaddr, splitUrl[3]);
-                } else if (splitUrl[1] === 'peers') {
+                } else if (splitUrl.filter(Boolean).length === 1) {
                     // Only multiAddr
                     setOrder({ multiAddr: multiaddr, orderHash: '' });
                     await getTrades(multiaddr);

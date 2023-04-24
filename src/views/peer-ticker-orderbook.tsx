@@ -10,6 +10,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
+import { Fulfill } from "../components/fulfill";
 
 const columns = [
     {
@@ -95,7 +96,8 @@ export const PeerTickerOrderbookView = () => {
     const { order } = useTrade();
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const { state } = useLocation();
-    const { ticker } = useParams();
+    const { trade, base, multiaddr } = useParams();
+    const ticker = `${trade}/${base}`;
 
     const peer = state?.peer ? state.peer : order.multiAddr;
 
@@ -105,7 +107,7 @@ export const PeerTickerOrderbookView = () => {
         return groupByType(peerTrades);
     }, [peerTrades]);
     const forTicker = useMemo(() => {
-      return Object.fromEntries(['ask', 'bid'].map((type) => [ type, filterERC20OffersForTicker(sorted.erc20 || [], (ticker || '').replace('/', ''), type as any) ]));
+      return Object.fromEntries(['ask', 'bid'].map((type) => [ type, filterERC20OffersForTicker(sorted.erc20 || [], ticker, type as any) ]));
     }, [ sorted ] );
 
     useEffect(() => {
@@ -134,7 +136,7 @@ export const PeerTickerOrderbookView = () => {
     );
     return (
         <div className="flex flex-col gap-6">
-            <Avatar peer={peer} withBio withName align="left" size={150} type="profile" />
+            <Avatar peer={multiaddr} withBio withName align="left" size={150} type="profile" />
             <DataTable
                     title="Peer Trades"
                     columns={columns}
@@ -143,7 +145,7 @@ export const PeerTickerOrderbookView = () => {
                     type="orderbook"
                     peer={order.multiAddr}
                 />
-             
+            <Fulfill forTicker={ forTicker } />
         </div>
     );
 };

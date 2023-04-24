@@ -22,6 +22,7 @@ setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
 function App() {
     const { pintswap } = useGlobalContext();
+    if (!(window as any).pintswap && pintswap.module) (window as any).pintswap = pintswap.module;
     const { address } = useAccount();
     return (
         <>
@@ -36,8 +37,8 @@ function App() {
                         <Route path="/pairs/:pair" element={<PairListView />} />
 
                         <Route path="/peers" element={<PeersView />} />
-                        <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
-			<Route path="/peers/:multiaddr/:ticker" element={<PeerTickerOrderbookView />} />
+                        <Route path="/:multiaddr" element={<PeerOrderbookView />} />
+			<Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
                         <Route path="/fulfill" element={<TradeSearchView />} />
                         <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />

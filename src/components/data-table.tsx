@@ -54,6 +54,8 @@ export const DataTable = ({ title, data, columns, loading, type, peer }: IDataTa
   )
 }
 
+const ln = (v: any, label: string) => ((console.log(label, v)), v);
+
 const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
   const cells = Object.values((data as object));
   const cols = columns as string[];
@@ -65,7 +67,7 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
     let url = '/';
     switch(type) {
       case 'explore': // TODO: fix
-        return navigate(`${url}fulfill/${cells[0]}/${cells[1]}`);
+        return navigate(ln(`${url}${cells[0]}`, 'URL'));
       case 'pairs':
         url = `${url}pairs`;
         break;
