@@ -6,7 +6,7 @@ import { filterERC20OffersForTicker, toLimitOrder } from '../utils/orderbook';
 import { memoize } from 'lodash';
 import { useMemo, useEffect, useState } from 'react';
 import { useOffersContext } from '../stores';
-import { useLocation } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
@@ -105,13 +105,14 @@ export const PeerTickerOrderbookView = () => {
         return groupByType(peerTrades);
     }, [peerTrades]);
     const forTicker = useMemo(() => {
-      return Object.fromEntries(['ask', 'bid'].map((type) => [ type, filterERC20OffersForTicker(sorted.erc20 || [], ticker.replace('/', ''), type) ]));
-    });
+      return Object.fromEntries(['ask', 'bid'].map((type) => [ type, filterERC20OffersForTicker(sorted.erc20 || [], (ticker || '').replace('/', ''), type as any) ]));
+    }, [ sorted ] );
 
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
                 const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+                const flattened = forTicker.bid.concat(forTicker.ask);
                 const mapped = (
                     await Promise.all(
                         flattened.map(async (v: any) => await toLimitOrder(v, signer)),
@@ -134,15 +135,6 @@ export const PeerTickerOrderbookView = () => {
     return (
         <div className="flex flex-col gap-6">
             <Avatar peer={peer} withBio withName align="left" size={150} type="profile" />
-            {(filteredNfts.length && (
-                <Card header={'NFTs'}>
-                    <NFTTable data={filteredNfts} />
-                </Card>
-            )) || <span></span>}
-            <Card header={'Trading'}>
-                <PairsTable />
-            </Card>
-            {/*
             <DataTable
                     title="Peer Trades"
                     columns={columns}
@@ -151,7 +143,7 @@ export const PeerTickerOrderbookView = () => {
                     type="orderbook"
                     peer={order.multiAddr}
                 />
-                </Tab.Panel> */}
+             
         </div>
     );
 };

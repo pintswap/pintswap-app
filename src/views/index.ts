@@ -7,3 +7,4 @@ export * from './peers';
 export * from './pairs';
 export * from './pair-list';
 export * from './trade-search';
+export * from "./peer-ticker-orderbook";

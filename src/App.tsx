@@ -10,6 +10,7 @@ import {
     PairsView,
     PeersView,
     PairListView,
+    PeerTickerOrderbookView,
     TradeSearchView,
 } from './views';
 import { setFallbackWETH } from '@pintswap/sdk';
@@ -36,7 +37,7 @@ function App() {
 
                         <Route path="/peers" element={<PeersView />} />
                         <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
-			<Route path="/peers/:multiaddr/:ticker" element={<PeerTickerOrderbook />} />
+			<Route path="/peers/:multiaddr/:ticker" element={<PeerTickerOrderbookView />} />
 
                         <Route path="/fulfill" element={<TradeSearchView />} />
                         <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
