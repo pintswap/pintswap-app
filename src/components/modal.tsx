@@ -35,15 +35,7 @@ export function TransitionModal({ children, button, title }: IModalProps) {
         }}
       >
         <Fade in={open}>
-          <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 400,
-              boxShadow: '24',
-              padding: 4,
-          }}>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[400px] p-4 focus-visible:outline-none">
             {children}
           </div>
         </Fade>
