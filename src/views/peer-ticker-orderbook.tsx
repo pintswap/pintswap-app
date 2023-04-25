@@ -97,12 +97,30 @@ export const PeerTickerOrderbookView = () => {
                     ...v,
                     hash: flattened[i].hash,
                 }));
-                const bidFilter = mapped.filter(order => order.type === 'bid').sort((a, b) => a.price > b.price ? 1 : -1);
-                const askFilter = mapped.filter(order => order.type === 'ask');
-                
-                console.log("MAPPED", bidFilter)
-                setBidLimitOrders(mapped.filter(order => order.type === 'bid'))
-                setAskLimitOrders(mapped.filter(order => order.type === 'ask'))
+
+                let bidSum = 0;
+                const bidFilterAndSum = mapped.filter(order => order.type === 'bid')
+                    .sort((a, b) => a.price < b.price ? 1 : -1)
+                    .map(order => {
+                        bidSum = bidSum + parseFloat(order.amount);
+                        return {
+                            ...order,
+                            sum: parseFloat(bidSum + order.amount).toFixed(4)
+                        }
+                    });
+                let askSum = 0;
+                const askFilterAndSum = mapped.filter(order => order.type === 'ask')
+                    .sort((a, b) => a.price > b.price ? 1 : -1)
+                    .map(order => {
+                        askSum = askSum + parseFloat(order.amount);
+                        return {
+                            ...order,
+                            sum: parseFloat(askSum + order.amount).toFixed(4)
+                        }
+                    });
+
+                setBidLimitOrders(bidFilterAndSum)
+                setAskLimitOrders(askFilterAndSum)
             }
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades, order.multiAddr]);
@@ -127,7 +145,7 @@ export const PeerTickerOrderbookView = () => {
                     options={{
                         sortOrder: {
                             name: 'price',
-                            direction: 'desc'
+                            direction: 'asc'
                         }
                     }}
                 />
