@@ -10,7 +10,6 @@ import {
 import { useSigner } from 'wagmi';
 import { useGlobalContext } from './global';
 import { Pintswap } from "@pintswap/sdk";
-import { ethers } from "ethers6";
 import { resolveName } from "../hooks/trade";
 
 // Types

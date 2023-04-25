@@ -91,15 +91,16 @@ export const PeerTickerOrderbookView = () => {
             if (pintswap.module) {
                 const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
                 const flattened = forTicker.bid.concat(forTicker.ask);
-                const mapped = (
-                    await Promise.all(
-                        flattened.map(async (v: any) => await toLimitOrder(v, signer)),
-                    )
-                ).map((v, i) => ({
+                const mapped = (await Promise.all(
+                    flattened.map(async (v: any) => await toLimitOrder(v, signer))
+                )).map((v, i) => ({
                     ...v,
                     hash: flattened[i].hash,
                 }));
-                console.log("MAPPED", mapped)
+                const bidFilter = mapped.filter(order => order.type === 'bid').sort((a, b) => a.price > b.price ? 1 : -1);
+                const askFilter = mapped.filter(order => order.type === 'ask');
+                
+                console.log("MAPPED", bidFilter)
                 setBidLimitOrders(mapped.filter(order => order.type === 'bid'))
                 setAskLimitOrders(mapped.filter(order => order.type === 'ask'))
             }
