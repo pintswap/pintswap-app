@@ -65,5 +65,4 @@ export const muiOptions: MUIDataTableOptions = {
     selectableRowsHeader: false,
     selectableRowsHideCheckboxes: true,
     searchPlaceholder: 'Search...',
-    searchAlwaysOpen: true,
 };
