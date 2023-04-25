@@ -7,54 +7,6 @@ import { useDropdown } from '../hooks/dropdown';
 import { useLimitOrders } from '../hooks';
 import { PairsTable } from '../components/pairs-table';
 
-const columns = [
-    {
-        name: 'hash',
-        label: 'Hash',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'ticker',
-        label: 'Pair',
-        options: {
-            filter: true,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'type',
-        label: 'Type',
-        options: {
-            filter: true,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'amount',
-        label: 'Amount',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'price',
-        label: 'Price',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-];
-
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
     const { handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'NFTs' }, { text: 'Pairs' }], 0, true);
