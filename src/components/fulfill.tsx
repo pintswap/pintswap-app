@@ -42,13 +42,6 @@ export const Fulfill = ({
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-6">
-            <Avatar 
-                peer={order.multiAddr}
-                withBio
-                withName
-                nameClass="text-xl"
-                type="profile"
-            />
                 <Card 
                 header={"Fullfill Trade"}
                 >

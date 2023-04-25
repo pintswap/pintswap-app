@@ -114,7 +114,6 @@ export const useTrade = () => {
     const getTrades = async (multiAddr: string, orderHash?: string) => {
         let resolved = multiAddr;
         const ps = pintswap.module;
-        console.log('GETTRADES');
         if (multiAddr.match(/\.drip$/) && ps) resolved = await resolveName(ps, multiAddr);
         if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
         const trade = ln(hash ? openTrades.get(hash) : undefined);
@@ -186,7 +185,6 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            console.log('GETTER CALLED', pathname.split('/'));
             if (pathname.includes('/') && multiaddr) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill') {

@@ -10,7 +10,6 @@ import {
 import { useSigner } from 'wagmi';
 import { useGlobalContext } from './global';
 import { Pintswap } from "@pintswap/sdk";
-import { ethers } from "ethers6";
 import { resolveName } from "../hooks/trade";
 
 // Types
@@ -87,6 +86,30 @@ export function UserStore(props: { children: ReactNode }) {
         (pintswap as any).setBio(e.target.value);
         setBio(e.target.value);
     }
+  /*
+  * check if pintswap module is initialized and/or has starting vals for bio, shortaddress, setProfilePic
+  * only should run if pintswap is initialized and only run once
+  */
+  useEffect(() => {
+    const { module } = pintswap;
+    (async () => {
+      if (module && !initialized) {
+        const localUser = localStorage.getItem('_pintUser')
+          let { bio: _bio, image: _image } = (module as any).userData ?? {
+              bio: '',
+              image: new Uint8Array(0),
+          };
+          if (_bio !== '') setBio(_bio);
+          if (_image) setProfilePic(_image);
+          if (localUser) {
+            const psUser = await Pintswap.fromObject(JSON.parse(localUser), signer);
+            console.log()
+            setPintswap({ ...pintswap, module: psUser });
+          }
+          setInitialized(true);
+      }
+    })().catch((err) => console.error(err));
+  }, [pintswap.module, initialized])
 
     function updateShortAddress(e: any) {
         setShortAddress(e.target.value);
