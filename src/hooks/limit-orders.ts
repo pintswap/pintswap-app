@@ -3,17 +3,23 @@ import { memoize } from 'lodash';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { useGlobalContext, useOffersContext } from "../stores";
 import { ethers } from 'ethers6';
-import { toLimitOrder } from '../utils/orderbook';
+import { toLimitOrder, filterERC20OffersForTicker } from '../utils/orderbook';
 import { useTrade } from "./trade";
+import { useParams } from "react-router-dom";
 
 type IUseLimitOrdersProps = 'peer-orderbook' | 'peer-ticker-orderbook';
 
 export const useLimitOrders = (type: IUseLimitOrdersProps) => {
+  const { trade, base } = useParams();
   const { pintswap } = useGlobalContext();
   const { peerTrades } = useOffersContext();
-  const { order, loading } = useTrade();
+  const { order } = useTrade();
 
   const [limitOrders, setLimitOrders] = useState<any[]>([]);
+  const [bidLimitOrders, setBidLimitOrders] = useState<any[]>([]);
+  const [askLimitOrders, setAskLimitOrders] = useState<any[]>([]);
+
+  const ticker = `${trade}/${base}`;
 
   const mapToArray = (v: any) => {
     const it = v.entries();
@@ -48,24 +54,70 @@ const sorted = useMemo(() => {
   return groupByType(peerTrades);
 }, [peerTrades]);
 
+const forTicker = type === 'peer-ticker-orderbook' ? 
+  useMemo(() => {
+    return Object.fromEntries(['ask', 'bid'].map((type) => [ type, filterERC20OffersForTicker(sorted.erc20 || [], ticker, type as any) ]));
+  }, [ sorted ] )
+  :
+  null;
+
 useEffect(() => {
-  (async () => {
-      if (pintswap.module) {
-          const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
-          const { erc20: flattened } = sorted;
-          const mapped = (
-              await Promise.all(
-                  flattened.map(async (v: any) => await toLimitOrder(v, signer)),
-              )
-          ).map((v, i) => ({
-              ...v,
-              hash: flattened[i].hash,
-              peer: flattened[i].peer,
-              multiAddr: flattened[i].multiAddr,
-          }));
-          setLimitOrders(mapped);
-      }
-  })().catch((err) => console.error(err));
+  if(type === 'peer-orderbook') {
+      (async () => {
+        if (pintswap.module) {
+            const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+            const { erc20: flattened } = sorted;
+            const mapped = (
+                await Promise.all(
+                    flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                )
+            ).map((v, i) => ({
+                ...v,
+                hash: flattened[i].hash,
+                peer: flattened[i].peer,
+                multiAddr: flattened[i].multiAddr,
+            }));
+            setLimitOrders(mapped);
+        }
+    })().catch((err) => console.error(err));
+  } else if (type === 'peer-ticker-orderbook') {
+      (async () => {
+        if (pintswap.module && forTicker) {
+            const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+            const flattened = forTicker.bid.concat(forTicker.ask);
+            const mapped = (await Promise.all(
+                flattened.map(async (v: any) => await toLimitOrder(v, signer))
+            )).map((v, i) => ({
+                ...v,
+                hash: flattened[i].hash,
+            }));
+
+            let bidSum = 0;
+            const bidFilterAndSum = mapped.filter(order => order.type === 'bid')
+                .sort((a, b) => a.price < b.price ? 1 : -1)
+                .map(order => {
+                    bidSum = bidSum + parseFloat(order.amount);
+                    return {
+                        ...order,
+                        sum: parseFloat(bidSum + order.amount).toFixed(4)
+                    }
+                });
+            let askSum = 0;
+            const askFilterAndSum = mapped.filter(order => order.type === 'ask')
+                .sort((a, b) => a.price > b.price ? 1 : -1)
+                .map(order => {
+                    askSum = askSum + parseFloat(order.amount);
+                    return {
+                        ...order,
+                        sum: parseFloat(askSum + order.amount).toFixed(4)
+                    }
+                });
+
+            setBidLimitOrders(bidFilterAndSum)
+            setAskLimitOrders(askFilterAndSum)
+        }
+    })().catch((err) => console.error(err));
+  }
 }, [pintswap.module, peerTrades, order.multiAddr]);
 
 const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ sorted.nfts ]);
@@ -73,6 +125,10 @@ const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transf
   return {
     limitOrders,
     filteredNfts,
-    sorted
+    sorted,
+    ticker,
+    bidLimitOrders,
+    askLimitOrders,
+    forTicker
   }
 }
