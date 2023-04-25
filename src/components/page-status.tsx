@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from './button';
 import { DripAnimation } from './drip-animation';
 
-type IFullPageStatusProps = {
+type IPageStatusProps = {
   type: 'loading' | 'error' | 'success';
   message?: string;
   fx?: () => void;
 }
 
-export const FullPageStatus = ({ type ='loading', message, fx }: IFullPageStatusProps) => {
+export const PageStatus = ({ type ='loading', message, fx }: IPageStatusProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {

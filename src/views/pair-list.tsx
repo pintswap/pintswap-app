@@ -63,8 +63,9 @@ export const PairListView = () => {
   }, [limitOrdersArr])
 
   return (
-      <div className="flex flex-col gap-6">
-          <Card header={pair}>
+      <div className="flex flex-col">
+        <h2 className="view-header">{pair}</h2>
+          <Card>
               <DataTable 
                   title={pair}
                   columns={columns}

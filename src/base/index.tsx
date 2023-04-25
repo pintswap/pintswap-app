@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { FullPageStatus } from '../components';
+import { PageStatus } from '../components';
 import { DashboardLayout } from './dashboard';
 import { Navbar } from './navbar';
 
@@ -11,11 +11,13 @@ type IBaseProps = {
 export const Base = ({ children, loading }: IBaseProps) => {
     return (
         <>
-            {loading && <FullPageStatus type="loading" />}
-            <Navbar />
-            <DashboardLayout>
-                {children}
-            </DashboardLayout>
+            {loading && <PageStatus type="loading" />}
+            <div className="flex flex-col h-screen">
+                <Navbar />
+                <DashboardLayout>
+                    {children}
+                </DashboardLayout>
+            </div>
         </>
     );
 };

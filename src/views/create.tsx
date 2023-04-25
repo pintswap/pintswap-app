@@ -6,7 +6,7 @@ import {
     Input,
     DropdownInput,
     ProgressIndicator,
-    FullPageStatus,
+    PageStatus,
 } from '../components';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
@@ -17,72 +17,75 @@ export const CreateView = () => {
     return (
         <>
             <div className="flex flex-col gap-6">
-                <Card className="self-center" header="Create Trade">
-                    <div className="grid grid-cols-1 gap-6 lg:gap-y-2 items-start">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
-                            <DropdownInput
-                                title="Send Details"
-                                placeholder="Select a token..."
-                                state={trade.gives.token}
-                                setState={updateTrade}
-                                type="gives.token"
-                                search
-                                disabled={!!order.orderHash}
-                                customInput
-                            />
-                            <Input
-                                placeholder="Amount to Send"
-                                value={trade.gives.amount || ''}
-                                onChange={({ currentTarget }) =>
-                                    updateTrade('gives.amount', currentTarget.value)
-                                }
-                                type="number"
-                                token={trade.gives.token || true}
-                                maxClick={updateTrade}
-                                disabled={!!order.orderHash}
-                            />
+                <div className="flex flex-col">
+                    <h2 className="view-header">Create Trade</h2>
+                    <Card className="self-center">
+                        <div className="grid grid-cols-1 gap-6 lg:gap-y-2 items-start">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
+                                <DropdownInput
+                                    title="Send Details"
+                                    placeholder="Select a token..."
+                                    state={trade.gives.token}
+                                    setState={updateTrade}
+                                    type="gives.token"
+                                    search
+                                    disabled={!!order.orderHash}
+                                    customInput
+                                />
+                                <Input
+                                    placeholder="Amount to Send"
+                                    value={trade.gives.amount || ''}
+                                    onChange={({ currentTarget }) =>
+                                        updateTrade('gives.amount', currentTarget.value)
+                                    }
+                                    type="number"
+                                    token={trade.gives.token || true}
+                                    maxClick={updateTrade}
+                                    disabled={!!order.orderHash}
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
+                                <DropdownInput
+                                    title="Receive Details"
+                                    placeholder="Select a token..."
+                                    state={trade.gets.token}
+                                    setState={updateTrade}
+                                    type="gets.token"
+                                    search
+                                    disabled={!!order.orderHash}
+                                    customInput
+                                />
+                                <Input
+                                    placeholder="Amount to Receive"
+                                    value={(trade.gets.amount || '')}
+                                    onChange={({ currentTarget }) =>
+                                        updateTrade('gets.amount', currentTarget.value.toUpperCase())
+                                    }
+                                    type="number"
+                                    token={trade.gets.token || true}
+                                    maxClick={updateTrade}
+                                    disabled={!!order.orderHash}
+                                />
+                            </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
-                            <DropdownInput
-                                title="Receive Details"
-                                placeholder="Select a token..."
-                                state={trade.gets.token}
-                                setState={updateTrade}
-                                type="gets.token"
-                                search
-                                disabled={!!order.orderHash}
-                                customInput
-                            />
-                            <Input
-                                placeholder="Amount to Receive"
-                                value={(trade.gets.amount || '')}
-                                onChange={({ currentTarget }) =>
-                                    updateTrade('gets.amount', currentTarget.value.toUpperCase())
-                                }
-                                type="number"
-                                token={trade.gets.token || true}
-                                maxClick={updateTrade}
-                                disabled={!!order.orderHash}
-                            />
-                        </div>
-                    </div>
-                    <Button
-                        checkNetwork
-                        className="mt-6 w-full"
-                        loadingText="Broadcasting"
-                        loading={loading.broadcast}
-                        onClick={broadcastTrade}
-                        disabled={
-                            !trade.gives.token ||
-                            !trade.gives.amount ||
-                            !trade.gets.token ||
-                            !trade.gets.amount ||
-                            !!order.orderHash
-                        }
-                    >
-                        Create Trade
-                    </Button>
-                </Card>
+                        <Button
+                            checkNetwork
+                            className="mt-6 w-full"
+                            loadingText="Broadcasting"
+                            loading={loading.broadcast}
+                            onClick={broadcastTrade}
+                            disabled={
+                                !trade.gives.token ||
+                                !trade.gives.amount ||
+                                !trade.gets.token ||
+                                !trade.gets.amount ||
+                                !!order.orderHash
+                            }
+                        >
+                            Create Trade
+                        </Button>
+                    </Card>
+                </div>
 
                 <div className="mx-auto">
                     <ProgressIndicator steps={steps} />
@@ -117,7 +120,7 @@ export const CreateView = () => {
                 leaveTo="opacity-0"
                 className="flex flex-col justify-center items-center text-center"
             >
-                <FullPageStatus type="success" />
+                <PageStatus type="success" />
             </Transition>
         </>
     );
