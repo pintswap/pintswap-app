@@ -1,17 +1,10 @@
-import { ethers } from 'ethers6';
 import { Avatar, Card, NFTTable, DataTable, TransitionModal, DropdownMenu, Button } from '../components';
 import { useTrade } from '../hooks/trade';
-import { useGlobalContext } from '../stores/global';
-import { toLimitOrder } from '../utils/orderbook';
-import { memoize } from 'lodash';
-import { useMemo, useEffect, useState } from 'react';
-import { useOffersContext } from '../stores';
 import { useLocation } from 'react-router-dom';
-import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
-import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
 import { FaChevronDown } from 'react-icons/fa';
 import { useDropdown } from '../hooks/dropdown';
+import { useLimitOrders } from '../hooks';
 
 const columns = [
     {
@@ -61,71 +54,17 @@ const columns = [
     },
 ];
 
-const mapToArray = (v: any) => {
-    const it = v.entries();
-    const result = [];
-    let val;
-    while ((val = it.next()) && !val.done) {
-        result.push(val.value);
-    }
-    return result;
-};
 
-const toFlattened = memoize((v: any) =>
-    mapToArray(v).map(([key, value]: any) => ({
-        ...value,
-        hash: key,
-    })),
-);
-
-function groupByType(peerTrades: any) {
-    const flattened = toFlattened(peerTrades);
-    return {
-        erc20: flattened.filter(({ gets, gives }: any) => {
-            return isERC20Transfer(gets) && isERC20Transfer(gives);
-        }),
-        nfts: flattened.filter(({ gets, gives }: any) => {
-            return !(isERC20Transfer(gets) && isERC20Transfer(gives));
-        }),
-    };
-}
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
     const { handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }], 0, true);
-    const { pintswap } = useGlobalContext();
-    const { peerTrades } = useOffersContext();
     const { order, loading } = useTrade();
-    const [limitOrders, setLimitOrders] = useState<any[]>([]);
+    const { filteredNfts, limitOrders } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
 
     const peer = state?.peer ? state.peer : order.multiAddr;
 
-    const sorted = useMemo(() => {
-        return groupByType(peerTrades);
-    }, [peerTrades]);
-
-    useEffect(() => {
-        (async () => {
-            if (pintswap.module) {
-                const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
-                const { erc20: flattened } = sorted;
-                const mapped = (
-                    await Promise.all(
-                        flattened.map(async (v: any) => await toLimitOrder(v, signer)),
-                    )
-                ).map((v, i) => ({
-                    ...v,
-                    hash: flattened[i].hash,
-                    peer: flattened[i].peer,
-                    multiAddr: flattened[i].multiAddr,
-                }));
-                setLimitOrders(mapped);
-            }
-        })().catch((err) => console.error(err));
-    }, [pintswap.module, peerTrades, order.multiAddr]);
-
-    const filteredNfts = useMemo(() => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6), [ sorted.nfts ]);
     return (
         <div className="flex flex-col gap-6">
             <div className="flex justify-between items-center">
