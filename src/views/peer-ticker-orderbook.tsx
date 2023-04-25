@@ -1,5 +1,5 @@
 import { ethers } from 'ethers6';
-import { Avatar, Card, DataTable } from '../components';
+import { Avatar, DataTable } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores/global';
 import { filterERC20OffersForTicker, toLimitOrder } from '../utils/orderbook';
@@ -8,7 +8,6 @@ import { useMemo, useEffect, useState } from 'react';
 import { useOffersContext } from '../stores';
 import { useParams, useLocation } from 'react-router-dom';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
-import { Tab } from '@headlessui/react';
 import { useWindowSize } from '../hooks/window-size';
 import { Fulfill } from "../components/fulfill";
 
@@ -136,7 +135,7 @@ export const PeerTickerOrderbookView = () => {
     );
     return (
         <div className="flex flex-col gap-6">
-            <Avatar peer={multiaddr} withBio withName align="left" size={150} type="profile" />
+            <Avatar peer={multiaddr} withBio withName align="left" type="profile" />
             <DataTable
                     title="Peer Trades"
                     columns={columns}
