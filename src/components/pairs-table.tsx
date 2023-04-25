@@ -23,7 +23,6 @@ const bestPrices = (orders: any) => {
 export const PairsTable = () => {
     const navigate = useNavigate();
     const { limitOrdersArr } = useOffersContext();
-    console.log('LIMITORDERSARR', limitOrdersArr);
     const [uniquePairs, setUniquePairs] = useState<any[]>([]);
     const { pintswap } = useGlobalContext();
     const { multiaddr } = useParams();

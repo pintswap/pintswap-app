@@ -5,6 +5,7 @@ import { useWindowSize } from '../hooks/window-size';
 import { FaChevronDown } from 'react-icons/fa';
 import { useDropdown } from '../hooks/dropdown';
 import { useLimitOrders } from '../hooks';
+import { PairsTable } from '../components/pairs-table';
 
 const columns = [
     {
@@ -54,13 +55,11 @@ const columns = [
     },
 ];
 
-
-
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
-    const { handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }], 0, true);
+    const { handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'NFTs' }, { text: 'Pairs' }], 0, true);
     const { order, loading } = useTrade();
-    const { filteredNfts, limitOrders } = useLimitOrders('peer-orderbook');
+    const { filteredNfts } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
 
     const peer = state?.peer ? state.peer : order.multiAddr;
@@ -90,36 +89,22 @@ export const PeerOrderbookView = () => {
                         {filteredNfts.length > 2 && <Button onClick={() => handleCurrentClick('nfts')} className="w-fit self-center" type="outline">See All NFTs</Button>}
                     </div>
                     <div className="flex flex-col gap-3">
-                        <span className="text-lg">Tokens</span>
-                        <DataTable
-                            title="Peer Trades"
-                            columns={columns}
-                            data={limitOrders}
-                            loading={loading.allTrades}
-                            type="orderbook"
-                            peer={order.multiAddr}
-                        />
+                        <span className="text-lg">Pairs</span>
+                        <PairsTable />
                     </div>
                 </div>
                 <div className={`${currentIndex === 1 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
-                    <span className="text-lg">Tokens</span>
-                    <DataTable
-                        title="Peer Trades"
-                        columns={columns}
-                        data={limitOrders}
-                        loading={loading.allTrades}
-                        type="orderbook"
-                        peer={order.multiAddr}
-                    />
-                    <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
-                </div>
-                <div className={`${currentIndex === 2 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <span className="text-lg">NFTs</span>
                     <NFTTable 
                         data={filteredNfts} 
                         peer={order.multiAddr}
                         loading={loading.allTrades}
                     />
+                    <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
+                </div>
+                <div className={`${currentIndex === 2 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                    <span className="text-lg">Pairs</span>
+                    <PairsTable />
                     <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
             </Card>
