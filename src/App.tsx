@@ -13,6 +13,7 @@ import {
     PeerTickerOrderbookView,
     TradeSearchView,
 } from './views';
+import { FulfillNFTView } from "./views/fulfill-nft";
 import { setFallbackWETH } from '@pintswap/sdk';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -43,6 +44,7 @@ function App() {
 
                         <Route path="/fulfill" element={<TradeSearchView />} />
                         <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
+                        <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
 
                         <Route path="*" element={<Navigate to='/explore' />} />
                     </Routes>

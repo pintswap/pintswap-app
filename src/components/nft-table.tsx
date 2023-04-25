@@ -35,7 +35,7 @@ export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
             <ThemeProvider theme={muiTheme()}>
                 <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : 2)} gap={width > breakpoints.md ? 8 : 6 }>
                     {nfts.length > 0 ? nfts.map((v: any, i) => (
-                        <ImageListItem key={hashNftIdentifier(v)} className="hover:cursor-pointer" onClick={() => navigate(`#/fulfill/${peer}/${(data[i] as any).hash}`)}>
+                        <ImageListItem key={hashNftIdentifier(v)} className="hover:cursor-pointer" onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i] as any).hash}`)}>
                             <Card type="inner" className="hover:bg-gray-900">
                                 <img
                                     src={URL.createObjectURL(v.imageBlob)}
