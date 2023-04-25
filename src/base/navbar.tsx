@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 import { ActiveText, AnimatedHamburger, Avatar, DropdownMenu, Wallet } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { useGlobalContext } from '../stores';
+import { dashboardHeightClass } from './dashboard';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useGlobalContext();
@@ -16,7 +17,8 @@ export const Navbar = () => {
     const logoSize = width < 768 ? '36' : '52';
 
     return (
-        <nav className="bg-neutral-900 shadow-md lg:shadow-lg py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center z-50">
+        <>
+        <nav className="bg-neutral-900 py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center z-50 relative">
             <button onClick={() => navigate('/')} className="flex items-center gap-2 lg:gap-3">
                 <img src="/logo/ps-logo.png" alt="PintSwap Logo" height={logoSize} width={logoSize} />
                 <span className="text-xl">
@@ -24,7 +26,7 @@ export const Navbar = () => {
                     <span className="text-sky-400">{width >= breakpoints.sm ? 'Swap' : 'S'}</span>
                 </span>
             </button>
-            <div className="flex items-center gap-2 justify-self-end">
+            <div className="flex items-center gap-2 justify-self-end bg-neutral-900">
                 <Wallet />
                 {width < breakpoints.md ? 
                     
@@ -32,8 +34,15 @@ export const Navbar = () => {
                     <button onClick={() => setIsMobileOpen(!isMobileOpen)}>
                         <AnimatedHamburger state={isMobileOpen} />
                     </button>
-        
-                    <Transition
+
+                </>
+                 : 
+                    address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} /> : <></> 
+                }
+            </div>
+        </nav>
+
+        <Transition
                         show={isMobileOpen}
                         enter="transform transition ease-in-out duration-500"
                         enterFrom="-translate-y-[100vw]"
@@ -41,9 +50,9 @@ export const Navbar = () => {
                         leave="transform transition ease-in-out duration-500"
                         leaveFrom="translate-y-0"
                         leaveTo="-translate-y-[100vw]"
-                        className="fixed -z-10 right-0 top-[54px]"
+                        className="absolute -z-10 right-0 top-[54px]"
                     >
-                        <ul className="flex flex-col w-screen bg-neutral-900 shadow-md z-1 p-2 items-start">
+                        <ul className="flex flex-col w-screen bg-neutral-900 shadow-md p-2 items-start">
                             {NAV_ITEMS.map((item, i) => (
                                 <li key={`nav-item-${i}`} className="w-full">
                                     <button 
@@ -56,8 +65,8 @@ export const Navbar = () => {
                                         {item.text.toUpperCase()}
                                         </ActiveText>
                                         <ActiveText route={item.route || ''} className="text-indigo-500">
-                  {item.icon}
-                </ActiveText>
+                                        {item.icon}
+                                        </ActiveText>
                                     </button>
                                 </li>
                             ))}
@@ -66,24 +75,19 @@ export const Navbar = () => {
 
                     <Transition
                         show={isMobileOpen}
-                        enter="transition-opacity ease-in-out duration-400"
+                        enter="transition-opacity ease-in-out duration-500 delay-100"
                         enterFrom="opacity-0"
                         enterTo="opacity-100"
                         leave="transition-opacity ease-in-out duration-400"
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
-                        className="fixed top-0 left-0 w-screen h-screen -z-20"
+                        className={`fixed bottom-0 left-0 w-screen ${dashboardHeightClass} -z-50`}
                     >
                     <div
-                        className="w-screen h-full bg-[rgba(0,0,0,0.25)] -z-10"
+                        className="w-screen h-full bg-[rgba(0,0,0,0.25)]"
                         onClick={() => setIsMobileOpen(false)}
                     />
                     </Transition>
-                </>
-                 : 
-                    address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} /> : <></> 
-                }
-            </div>
-        </nav>
+        </>
     );
 };

@@ -10,6 +10,8 @@ type IDashboardProps = {
   children: ReactNode;
 }
 
+export const dashboardHeightClass = `h-[calc(100vh-68px)] lg:h-[calc(100vh-84px)]`
+
 export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
   const { width, breakpoints } = useWindowSize();
@@ -19,8 +21,8 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
   if(width >= breakpoints.md) {
     // Desktop
     return (
-      <div className="flex h-[calc(100vh-68px)] lg:h-[calc(100vh-84px)]">
-        <ul className="bg-neutral-900 p-4 py-6 pl-0 flex flex-col gap-2 shadow-md lg:shadow-lg">
+      <div className={`flex ${dashboardHeightClass}`}>
+        <ul className="bg-neutral-900 p-4 py-6 pl-0 flex flex-col gap-2">
           {NAV_ITEMS.map((el, i) => (
             <li key={`sidebar-nav-${i}`}>
               <button 

@@ -92,7 +92,7 @@ function groupByType(peerTrades: any) {
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
-    const { current, handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }], 0, true);
+    const { handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }], 0, true);
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
     const { order, loading } = useTrade();
@@ -139,7 +139,7 @@ export const PeerOrderbookView = () => {
                 />
             </div>
             
-            <Card scroll={limitOrders.length > 0}>
+            <Card>
                 <div className={`${currentIndex === 0 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <div className="flex flex-col gap-3">
                         <span className="text-lg">NFTs</span>
