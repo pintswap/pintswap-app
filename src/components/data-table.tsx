@@ -12,12 +12,14 @@ type IDataTableProps = {
   data: (object | number[] | string[])[];
   columns: MUIDataTableColumnDef[];
   loading?: boolean;
-  type: 'explore' | 'pairs' | 'peers' | 'orderbook';
+  type: 'explore' | 'pairs' | 'peers' | 'orderbook' | 'asks' | 'bids';
   peer?: string;
+  toolbar?: boolean;
+  pagination?: boolean;
+  options?: any;
 }
 
-export const DataTable = ({ title, data, columns, loading, type, peer }: IDataTableProps) => {
-  const { width } = useWindowSize();
+export const DataTable = ({ title, data, columns, loading, type, peer, toolbar = true, pagination = true, options }: IDataTableProps) => {
   return (
     <CacheProvider value={muiCache}>
       <ThemeProvider theme={muiTheme()}>
@@ -27,6 +29,11 @@ export const DataTable = ({ title, data, columns, loading, type, peer }: IDataTa
           columns={columns}
           options={{
             ...muiOptions,
+            ...options,
+            search: toolbar,
+            filter: toolbar,
+            searchAlwaysOpen: toolbar,
+            pagination: pagination,
             textLabels: {
               body: {
                   noMatch: 
@@ -91,17 +98,25 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
       default: return s;
     }
   }
+
+  const determineColor = () => {
+    switch(type) {
+      case 'asks': return `text-red-400`;
+      case 'bids': return `text-green-400`;
+      default: return `text-neutral-100`;
+    }
+  }
     // Desktop
     if (width >= 900) {
       return (
         <tr
-          className={baseStyle}
+          className={`${baseStyle} ${determineColor()}`}
           onClick={(e) => route(cells[0])}
         >
           {cells.map((cell, i) => (
             <td 
               key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-              className="py-2 pl-4"
+              className={`py-2 pl-4`}
             >
               {cell?.startsWith('Q') || cell?.startsWith('0x') ? truncate(cell, 2) : formatCell(cell)}
             </td>
@@ -112,13 +127,13 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
     } else {
       return (
         <tr
-          className={`${baseStyle} flex flex-col px-4 py-1`}
+          className={`${baseStyle} flex flex-col px-4 py-1 ${determineColor()}`}
           onClick={(e) => route(cells[0])}
         >
           {cells.map((cell, i) => (
             <td 
               key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-              className="py-[1px] flex justify-between items-center"
+              className={`py-[1px] flex justify-between items-center`}
             >
               <span className="text-gray-300 font-thin">{cols[i]}</span>
               <span>{cell?.startsWith('Q') || cell?.startsWith('0x') ? truncate(cell, 5) : formatCell(cell)}</span>

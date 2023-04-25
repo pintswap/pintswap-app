@@ -26,6 +26,7 @@ const maybeShorten = (s: string): string => {
 };
 
 export function toAddress(symbolOrAddress: string): string {
+    if(!symbolOrAddress) return '';
     const token = TOKENS_BY_SYMBOL[symbolOrAddress];
     if (token) return ethers.getAddress(token.address);
     return ethers.getAddress(symbolOrAddress);
@@ -133,7 +134,6 @@ export function orderTokens(offer: any) {
             amount: offer.gets.amount,
         },
     };
-    console.log(mapped);
     if (mapped.gives.token === USDC.address) {
         return givesBase(mapped);
     } else if (mapped.gets.token === USDC.address) {
@@ -210,9 +210,9 @@ export interface Fill {
 }
 
 export function filterERC20OffersForTicker(offers: any[], pair: string, type: 'ask' | 'bid'): any[] {
+    if(!offers || offers.length === 0) return [];
     const filtered = offers.filter((v) => isERC20Transfer(v.gives) && isERC20Transfer(v.gets));   
     const [trade, base] = pair.split('/');
-    console.log('tradebase2', [ trade, base ]);
     const [tradeAddress, baseAddress] = [trade, base].map(toAddress).map((v) => v.toLowerCase());
     const [givesAddress, getsAddress] =
         type === 'ask' ? [tradeAddress, baseAddress] : [baseAddress, tradeAddress];

@@ -23,11 +23,11 @@ const bestPrices = (orders: any) => {
 export const PairsTable = () => {
     const navigate = useNavigate();
     const { limitOrdersArr } = useOffersContext();
-    console.log('LIMITORDERSARR', limitOrdersArr);
     const [uniquePairs, setUniquePairs] = useState<any[]>([]);
     const { pintswap } = useGlobalContext();
     const { multiaddr } = useParams();
     const [resolved, setResolved] = useState<any>(null);
+
     useEffect(() => {
         (async () => {
             if (multiaddr && pintswap && pintswap.module) {
@@ -68,7 +68,7 @@ export const PairsTable = () => {
                                   key={`unique-pair-${pair.ticker}`}
                                   onClick={() => navigate(`/${multiaddr}/${pair.ticker}`)}
                               >
-                                  <Card className="hover:bg-gray-900">
+                                  <Card className="hover:bg-gray-900" type="inner">
                                       <div
                                           className={`text-center flex items-center justify-center gap-3`}
                                       >
@@ -82,7 +82,7 @@ export const PairsTable = () => {
                           );
                       })
                     : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                          <Card key={`loading-card-${i}`} className="justify-start">
+                          <Card key={`loading-card-${i}`} className="justify-start" type="inner">
                               <div className={`text-center flex items-center justify-center gap-3`}>
                                   <Asset loading />
                                   <span>/</span>
