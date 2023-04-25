@@ -1,3 +1,4 @@
+import { Pintswap } from '@pintswap/sdk';
 import {
   createContext,
   Dispatch,
@@ -7,6 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useSigner } from 'wagmi';
 import { useGlobalContext } from './global';
 
 // Types
@@ -39,20 +41,22 @@ const UserContext = createContext<IUserStoreProps>({
 
 // Wrapper
 export function UserStore(props: { children: ReactNode }) {
-  const { pintswap } = useGlobalContext();
+  const { pintswap, setPintswap } = useGlobalContext();
   let [bio, setBio] = useState<string>('');
   let [initialized, setInitialized] = useState<boolean>(false);
   let [shortAddress, setShortAddress] = useState<string>('');
   let [profilePic, setProfilePic] = useState<Buffer | Uint8Array | null>(null);
+  const { data: signer } = useSigner();
 
-  function handleSave() {
-    if (!pintswap.module) throw new Error('no pintswap module');
+  async function handleSave() {
+    const { module } = pintswap;
+    if (!module) throw new Error('no pintswap module');
     try {
-      pintswap.module.userData = { bio, image: profilePic as any };
-      pintswap.module.setBio(bio);
-      pintswap.module.setImage(profilePic as Buffer);
-      pintswap.module.registerName(shortAddress);
-      localStorage.setItem('_pintUser', JSON.stringify(pintswap.module.toObject()));
+      module.userData = { bio, image: profilePic as any };
+      module.setBio(bio);
+      module.setImage(profilePic as Buffer);
+      await module.registerName(shortAddress);
+      localStorage.setItem('_pintUser', JSON.stringify(module.toObject()));
     } catch (error) {
       console.log(error);
     }
@@ -63,16 +67,24 @@ export function UserStore(props: { children: ReactNode }) {
   * only should run if pintswap is initialized and only run once
   */
   useEffect(() => {
-    if (pintswap.module && !initialized) {
-        let { bio: _bio, image: _image } = (pintswap.module as any).userData ?? {
-            bio: '',
-            image: new Uint8Array(0),
-        };
-        if (_bio !== '') setBio(_bio);
-        if (_image) setProfilePic(_image);
-        setInitialized(true);
-    }
-  }, [pintswap.module, initialized]);
+    const { module } = pintswap;
+    (async () => {
+      if (module && !initialized) {
+        const localUser = localStorage.getItem('_pintUser')
+          let { bio: _bio, image: _image } = (module as any).userData ?? {
+              bio: '',
+              image: new Uint8Array(0),
+          };
+          if (_bio !== '') setBio(_bio);
+          if (_image) setProfilePic(_image);
+          if (localUser) {
+            const psUser = await Pintswap.fromObject(JSON.parse(localUser), signer);
+            setPintswap({ ...pintswap, module: psUser });
+          }
+          setInitialized(true);
+      }
+    })().catch((err) => console.error(err));
+  }, [pintswap.module, initialized])
 
   async function updatePic(e: any) {
       let image = (e.target.files as any)[0] ?? null;
