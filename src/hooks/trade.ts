@@ -10,6 +10,8 @@ import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
 import { useOffersContext } from '../stores';
 
+const ln = (v: any) => (console.log(v), v);
+
 type IOrderStateProps = {
     orderHash: string;
     multiAddr: string | any;
@@ -33,7 +35,7 @@ export const resolveName = async (pintswap: any, name: any) => {
 export const useTrade = () => {
     const { pathname } = useLocation();
     const { pintswap, peer } = useGlobalContext();
-    const { addTrade, openTrades, setPeerTrades, setOpenTrades } = useOffersContext();
+    const { addTrade, openTrades, setPeerTrades, peerTrades, setOpenTrades } = useOffersContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
@@ -44,12 +46,13 @@ export const useTrade = () => {
         broadcast: false,
     });
     const [error, setError] = useState(false);
-    const { multiaddr } = useParams();
+    const { multiaddr, hash } = useParams();
 
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/open';
 
     const buildTradeObj = ({ gets, gives }: IOffer): IOffer => {
+        if (gives && gets && gives.tokenId) return { gets, gives };
         if (!gets || !gives || !gets.token || !gets.amount || !gives.amount || !gives.token)
             return EMPTY_TRADE;
         const foundGivesToken = getTokenAttributes(gives.token) as ITokenProps | undefined;
@@ -85,6 +88,7 @@ export const useTrade = () => {
     // Fulfill trade
     const fulfillTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
+
         if (TESTING) console.log('#fulfillTrade - Trade Obj:', buildTradeObj(trade));
         if (pintswap.module) {
             try {
@@ -92,7 +96,12 @@ export const useTrade = () => {
                 if (multiAddr.match(/\.drip$/))
                     multiAddr = await resolveName(pintswap.module, order.multiAddr);
                 const peeredUp = PeerId.createFromB58String(multiAddr);
-                pintswap.module.createTrade(peeredUp, buildTradeObj(trade));
+                if (window.location.hash.match('nft') && hash) {
+                    const nftTrade = openTrades.get(hash) || peerTrades.get(hash);
+                    pintswap.module.createTrade(peeredUp, nftTrade);
+                } else {
+                    pintswap.module.createTrade(peeredUp, ln(buildTradeObj(trade)));
+                }
                 if (TESTING) console.log('Fulfilled trade!');
             } catch (err) {
                 console.error(err);
@@ -107,10 +116,10 @@ export const useTrade = () => {
         const ps = pintswap.module;
         console.log('GETTRADES');
         if (multiAddr.match(/\.drip$/) && ps) resolved = await resolveName(ps, multiAddr);
-        if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash });
-        const trade = orderHash ? openTrades.get(orderHash) : undefined;
+        if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
+        const trade = ln(hash ? openTrades.get(hash) : undefined);
         // MAKER
-        if (trade) setTrade(trade);
+        if (trade) setTrade(ln(trade));
         // TAKER
         else {
             if (pintswap.module) {
@@ -120,12 +129,12 @@ export const useTrade = () => {
                         resolved,
                     );
                     if (TESTING) console.log('#getTrades - Offers:', offers);
+                    console.log('offers', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
-                        if (!orderHash) {
-                            const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                            setPeerTrades(map);
-                        }
+                        console.log(hash, 'orderHash');
+                        const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
+                        setPeerTrades(map);
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
                         setTrade({

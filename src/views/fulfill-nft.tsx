@@ -60,7 +60,7 @@ export const FulfillNFTView = () => {
                             <img src={imageBlob} />
                             <div>{nftCast.name}</div>
                             <div>{nftCast.description}</div>
-                            <div>{`${Number(nftCast.amount).toFixed(4)}} ${nftCast.token}`}</div>
+                            <div>{`${Number(nftCast.amount).toFixed(4)} ${nftCast.token}`}</div>
                         </div>
                     )}
                     <Button
