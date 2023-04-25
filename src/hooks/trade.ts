@@ -37,7 +37,12 @@ export const useTrade = () => {
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
-    const [loading, setLoading] = useState({ trade: false, allTrades: false, fulfill: false, broadcast: false })
+    const [loading, setLoading] = useState({
+        trade: false,
+        allTrades: false,
+        fulfill: false,
+        broadcast: false,
+    });
     const [error, setError] = useState(false);
     const { multiaddr } = useParams();
 
@@ -100,6 +105,7 @@ export const useTrade = () => {
     const getTrades = async (multiAddr: string, orderHash?: string) => {
         let resolved = multiAddr;
         const ps = pintswap.module;
+        console.log('GETTRADES');
         if (multiAddr.match(/\.drip$/) && ps) resolved = await resolveName(ps, multiAddr);
         if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash });
         const trade = orderHash ? openTrades.get(orderHash) : undefined;
@@ -179,6 +185,7 @@ export const useTrade = () => {
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
+                    console.log('getTrades', [multiaddr, splitUrl[3]]);
                     await getTrades(multiaddr, splitUrl[3]);
                 } else if (multiaddr) {
                     // Only multiAddr

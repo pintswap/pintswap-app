@@ -32,7 +32,7 @@ export function toAddress(symbolOrAddress: string): string {
 }
 
 export function fromAddress(symbolOrAddress: string): string {
-    return (TOKENS_BY_ADDRESS[symbolOrAddress] || { address: symbolOrAddress }).address;
+    return (TOKENS_BY_ADDRESS[symbolOrAddress] || { address: symbolOrAddress }).symbol;
 }
 
 export async function toTicker(pair: any, provider: any) {

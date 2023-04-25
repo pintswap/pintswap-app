@@ -23,7 +23,10 @@ setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
 function App() {
     const { pintswap } = useGlobalContext();
-    if (!(window as any).pintswap && pintswap.module) (window as any).pintswap = pintswap.module;
+    if (!(window as any).pintswap && pintswap.module) {
+      (window as any).pintswap = pintswap.module;
+      (window as any).pintswap.logger.info = () => {};
+    }
     const { address } = useAccount();
     return (
         <>
