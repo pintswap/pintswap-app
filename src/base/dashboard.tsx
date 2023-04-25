@@ -39,7 +39,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
             </li>
           ))}
         </ul>
-        <div className="overflow-y-scroll w-full px-4 lg:px-6 pt-6">
+        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-6">
           <main className="max-w-7xl mx-auto">
             {children}
           </main>
