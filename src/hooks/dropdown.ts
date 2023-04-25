@@ -6,6 +6,7 @@ export const useDropdown = (items: IDropdownMenuItemsProps[], defaultState?: num
   const navigate = useNavigate();
   const { multiaddr, view } = useParams();
   const [current, setCurrent] = useState(items[defaultState ? defaultState : 0].text.toLowerCase());
+  const [currentIndex, setCurrentIndex] = useState(defaultState ? defaultState : 0);
 
   const handleCurrentClick = (e: MouseEvent<HTMLButtonElement> | string) => {
     if(typeof e === 'string') {
@@ -13,7 +14,8 @@ export const useDropdown = (items: IDropdownMenuItemsProps[], defaultState?: num
     } else {
       const formatted = e.currentTarget.innerText.toLowerCase();
       setCurrent(formatted);
-      if(changeUrl && multiaddr) navigate(`/${multiaddr}/${formatted.toLowerCase()}`)
+      setCurrentIndex(items.findIndex((item) => item.text === e.currentTarget.innerText))
+      if(changeUrl && multiaddr) navigate(`/${multiaddr}/${formatted}`)
     }
   }
 
@@ -24,6 +26,7 @@ export const useDropdown = (items: IDropdownMenuItemsProps[], defaultState?: num
 
   return {
     current,
+    currentIndex,
     handleCurrentClick,
     items
   }

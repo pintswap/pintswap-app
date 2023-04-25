@@ -92,7 +92,7 @@ function groupByType(peerTrades: any) {
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
-    const { current, handleCurrentClick, items } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }], 0, true);
+    const { current, handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'Tokens' }, { text: 'NFTs' }], 0, true);
     const { pintswap } = useGlobalContext();
     const { peerTrades } = useOffersContext();
     const { order, loading } = useTrade();
@@ -133,16 +133,16 @@ export const PeerOrderbookView = () => {
                     <Avatar peer={peer} size={300} />
                 </TransitionModal>
                 <DropdownMenu 
-                    customIcon={<span className="flex items-center gap-1 md:gap-2">View <FaChevronDown /></span>}
+                    customIcon={<span className="flex items-center gap-1 md:gap-2">{items[currentIndex].text} <FaChevronDown /></span>}
                     items={items}
                     onClick={handleCurrentClick}
                 />
             </div>
             
             <Card scroll={limitOrders.length > 0}>
-                <div className={`${current === items[0].text.toLowerCase() ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                <div className={`${currentIndex === 0 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <div className="flex flex-col gap-3">
-                        <span>NFTs</span>
+                        <span className="text-lg">NFTs</span>
                         <NFTTable 
                             data={filteredNfts.slice(0, width > breakpoints.lg ? 3 : 2)} 
                             peer={order.multiAddr}
@@ -151,7 +151,7 @@ export const PeerOrderbookView = () => {
                         {filteredNfts.length > 2 && <Button onClick={() => handleCurrentClick('nfts')} className="w-fit self-center" type="outline">See All NFTs</Button>}
                     </div>
                     <div className="flex flex-col gap-3">
-                        <span>Tokens</span>
+                        <span className="text-lg">Tokens</span>
                         <DataTable
                             title="Peer Trades"
                             columns={columns}
@@ -162,7 +162,8 @@ export const PeerOrderbookView = () => {
                         />
                     </div>
                 </div>
-                <div className={`${current === items[1].text.toLowerCase() ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                <div className={`${currentIndex === 1 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                    <span className="text-lg">Tokens</span>
                     <DataTable
                         title="Peer Trades"
                         columns={columns}
@@ -173,7 +174,8 @@ export const PeerOrderbookView = () => {
                     />
                     <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
-                <div className={`${current === items[2].text.toLowerCase() ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                <div className={`${currentIndex === 2 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
+                    <span className="text-lg">NFTs</span>
                     <NFTTable 
                         data={filteredNfts} 
                         peer={order.multiAddr}
