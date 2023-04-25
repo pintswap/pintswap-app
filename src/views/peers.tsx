@@ -8,7 +8,7 @@ export const PeersView = () => {
 
   return (
       <div className="flex flex-col">
-        <h3 className="text-xl text-center mb-4 lg:mb-6 font-semibold">Available Peers</h3>
+        <h3 className="view-header">Available Peers</h3>
         <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3`}>
           {!peersLoading ? peersData.map((peer, i) => {
             return (

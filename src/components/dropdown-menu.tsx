@@ -3,6 +3,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { classNames } from '../utils/common'
 import { useNavigate } from 'react-router-dom'
 import { ActiveText } from './active-text'
+import { AnimatedHamburger } from './hamburger'
 
 export type IDropdownMenuItemsProps = {
   text: string;
@@ -22,35 +23,13 @@ type IDropdownMenuProps = {
 export const DropdownMenu = ({ items, customIcon, buttonClass, onClick }: IDropdownMenuProps) => {
   const navigate = useNavigate();
 
-  const genericHamburgerLine = `h-[5px] w-6 my-[2.5px] rounded-full bg-white transition ease transform duration-200 rounded`;
+  const genericHamburgerLine = `h-1 w-6 my-[3px] rounded-full bg-white transition ease transform duration-200 rounded`;
   return (
     <Menu as="div" className="relative inline-block text-left focus-visible:outline-none focus-visible:border-none ring-0">
       {({ open }) => (
         <>
-              <Menu.Button className={`p-1 group flex flex-col justify-center items-center ${buttonClass ? buttonClass : ''}`}>
-        {customIcon ? customIcon : (
-          <>
-            <div
-              className={`${genericHamburgerLine} ${
-                open
-                  ? "rotate-45 translate-y-[10.3px]"
-                  : ""
-              }`}
-            />
-            <div
-              className={`${genericHamburgerLine} ${
-                open ? "opacity-0" : ""
-              }`}
-            />
-            <div
-              className={`${genericHamburgerLine} ${
-                open
-                  ? "-rotate-45 -translate-y-[10.3px]"
-                  : ""
-              }`}
-            />
-          </>
-        )}
+              <Menu.Button className={`${buttonClass ? buttonClass : ''}`}>
+        {customIcon ? customIcon : <AnimatedHamburger state={open} />}
       </Menu.Button>
 
       <Transition

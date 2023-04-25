@@ -10,6 +10,8 @@ type IDashboardProps = {
   children: ReactNode;
 }
 
+export const dashboardHeightClass = `h-[calc(100vh-68px)] lg:h-[calc(100vh-84px)]`
+
 export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
   const { width, breakpoints } = useWindowSize();
@@ -19,27 +21,29 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
   if(width >= breakpoints.md) {
     // Desktop
     return (
-      <div className="grid grid-cols-[1fr_4fr] lg:grid-cols-[1fr_4fr]">
-        <ul className="bg-neutral-900 p-4 pl-0 mt-4 h-[85vh] rounded-r-xl max-w-[300px] flex flex-col gap-2 shadow-lg">
+      <div className={`flex ${dashboardHeightClass}`}>
+        <ul className="bg-neutral-900 p-4 py-6 pl-0 flex flex-col gap-2">
           {NAV_ITEMS.map((el, i) => (
             <li key={`sidebar-nav-${i}`}>
               <button 
-                onClick={() => navigate(el.route)}
-                className={`w-full text-left pl-3 lg:pl-6 xl:pl-8 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-indigo-300`}
+                onClick={() => navigate(el.route || '/')}
+                className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-20 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-indigo-300`}
               >
-                <ActiveText route={el.route} className="text-indigo-500">
+                <ActiveText route={el.route || ''} className="text-indigo-500">
                   {el.icon}
                 </ActiveText>
-                <ActiveText route={el.route}>
+                <ActiveText route={el.route || ''}>
                   {el.text}
                 </ActiveText>
               </button>
             </li>
           ))}
         </ul>
-        <main className="max-w-7xl w-full p-4 mt-2 mx-auto">
-          {children}
-        </main>
+        <div className="overflow-y-scroll w-full px-4 lg:px-6 pt-6">
+          <main className="max-w-7xl mx-auto">
+            {children}
+          </main>
+        </div>
       </div>
     )
   } else {

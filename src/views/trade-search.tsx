@@ -15,8 +15,9 @@ export const TradeSearchView = () => {
   const updateForm = (key: keyof IFormProps, val: string) => setForm({ ...form, [key]: val })
 
   return (
-      <div className="flex flex-col gap-6">
-        <Card header={"Search"}>
+      <div className="flex flex-col">
+        <h2 className="view-header">Search</h2>
+        <Card>
           <form className="grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-6">
           <Input 
             title="Peer Address"

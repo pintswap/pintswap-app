@@ -8,7 +8,7 @@ import {
     Button,
     Card,
     CopyClipboard,
-    FullPageStatus,
+    PageStatus,
     Input,
     ProgressIndicator,
 } from '../components';
@@ -40,7 +40,7 @@ export const Fulfill = ({
 
     return (
         <>
-            {error && <FullPageStatus type="error" fx={() => toast.dismiss()} />}
+            {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-6">
             <Avatar 
                 peer={order.multiAddr}
@@ -141,7 +141,7 @@ export const Fulfill = ({
                 leaveTo="opacity-0"
                 className="flex flex-col justify-center items-center text-center"
             >
-                <FullPageStatus type="success" />
+                <PageStatus type="success" />
             </Transition>
         </>
     );

@@ -5,6 +5,8 @@ import PeerId, { JSONPeerId } from 'peer-id';
 import { defer, EMPTY_PEER, TESTING } from '../utils/common';
 import { ethers } from 'ethers6';
 import { BiDrink, BiHappyAlt, BiDonateBlood, BiRun, BiShapeCircle, BiWind, BiUserPlus } from "react-icons/bi";
+import { IconType } from 'react-icons';
+import { IDropdownMenuItemsProps } from '../components';
 
 // Types
 export type IPintswapProps = {
@@ -24,7 +26,7 @@ export type IGlobalStoreProps = {
     peer: IPeerProps;
     setPeer?: any;
     setPintswap?: any;
-    NAV_ITEMS: any[]
+    NAV_ITEMS: IDropdownMenuItemsProps[]
 };
 
 // Context

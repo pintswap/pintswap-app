@@ -12,14 +12,22 @@
     font-family: 'Dela Gothic One', cursive;
     background-color: #212121;
     color: #fff;
-    @apply md:overflow-hidden
+    @apply md:overflow-y-hidden;
   }
+
+  .view-header {
+    @apply text-xl text-center mb-4 lg:mb-6 font-semibold;
+  }
+
+  /* For upload profile picture */
   ::file-selector-button {
   display: none;
 }
 ::-webkit-file-upload-button {
    display: none;
 }
+
+/* For full screen success animation */
   .drip-wrapper {
   border: 0px solid #ffc217;
   filter: url("#goo");

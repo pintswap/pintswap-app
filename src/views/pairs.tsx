@@ -20,7 +20,7 @@ export const PairsView = () => {
 
     return (
         <div className="flex flex-col">
-          <h3 className="text-xl text-center mb-4 lg:mb-6 font-semibold">Available Pairs</h3>
+          <h3 className="view-header">Available Pairs</h3>
           <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`}>
             {!isLoading ? uniquePairs.map(pair => {
               const split = pair.split('/');

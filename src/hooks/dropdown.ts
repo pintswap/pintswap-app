@@ -10,7 +10,8 @@ export const useDropdown = (items: IDropdownMenuItemsProps[], defaultState?: num
 
   const handleCurrentClick = (e: MouseEvent<HTMLButtonElement> | string) => {
     if(typeof e === 'string') {
-      setCurrent(e);
+      setCurrentIndex(items.findIndex((item) => item.text.toLowerCase() === e.toLowerCase()))
+      setCurrent(e.toLowerCase());
     } else {
       const formatted = e.currentTarget.innerText.toLowerCase();
       setCurrent(formatted);
