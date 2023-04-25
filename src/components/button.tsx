@@ -44,7 +44,7 @@ export const Button = ({
     };
 
     const borderStyle = type === 'wallet' ? `border-0` : `border-indigo-800 hover:border-indigo-900`;
-    const paddingStyle = type === 'wallet' ? `p-0.5` : `px-2 py-1 lg:px-4 lg:py-2`
+    const paddingStyle = type === 'wallet' ? `p-0.5` : `px-2 py-1 lg:px-3 lg:py-1.5`
     return (
         <button
             type={form ? form : 'button'}
@@ -53,7 +53,7 @@ export const Button = ({
             className={`${className} ${renderType()} ${borderStyle} ${paddingStyle} rounded shadow disabled:cursor-not-allowed transition duration-200 border-2 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (
-                <div className={`px-2 py-1 lg:px-4 lg:py-2 flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 back rounded-sm transition duration-200 group relative`}>
+                <div className={`px-2 py-1 lg:px-3 lg:py-1.5 flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 back rounded-sm transition duration-200 group relative`}>
                     <div className="absolute inset-0 h-0 w-0 transition-all duration-[250ms] ease-out group-hover:h-full group-hover:w-full bg-gradient-to-tr from-gray-800 via-gray-900 to-gray-900"></div>
                     <span className="relative">
                         {loadingText && loading ? loadingText : children}
