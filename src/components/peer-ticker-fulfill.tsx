@@ -46,39 +46,25 @@ export const PeerTickerFulfill = ({
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
+                const limit = (await toLimitOrder(
+                    {
+                        gets: {
+                            token: matchInputs.list[0].gets.token,
+                            amount: match.effective.gets,
+                        },
+                        gives: {
+                            token: matchInputs.list[0].gives.token,
+                            amount: match.effective.gives,
+                        },
+                    },
+                    signer,
+                )) as any;
                 setFill({
                     ...match,
-                    input: (
-                        await toFormatted(
-                            { amount: match.effective.gets, token: matchInputs.list[0].gets.token },
-                            signer,
-                        )
-                    ).amount,
-                    output: (
-                        await toFormatted(
-                            ln({
-                                amount: match.effective.gives,
-                                token: matchInputs.list[0].gives.token,
-                            }),
-                            signer,
-                        )
-                    ).amount,
+                    input: limit.amount,
+                    output: (Number(limit.amount) * Number(limit.price)).toFixed(4),
                 });
-                setLimitOrder(
-                    (await toLimitOrder(
-                        {
-                            gets: {
-                                token: matchInputs.list[0].gets.token,
-                                amount: match.effective.gets,
-                            },
-                            gives: {
-                                token: matchInputs.list[0].gives.token,
-                                amount: match.effective.gives,
-                            },
-                        },
-                        signer,
-                    )) as any,
-                );
+                setLimitOrder(limit);
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);
