@@ -47,16 +47,18 @@ export const FulfillNFTView = () => {
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-6">
                 <button onClick={() => navigate(`/${multiaddr}`)} className="w-fit text-left">
-                    <Avatar peer={multiaddr} withBio withName nameClass="text-xl" type="profile" />
+                    <Avatar peer={multiaddr} withBio withName nameClass="text-xl" type="profile" size={60} />
                 </button>
                 <Card header={'Buy NFT'}>
-                    {nft && !loading ? (
-                        <NFTDisplay 
-                            nft={nft} 
-                            show="full" 
-                            height="max-h-96"
-                        />
-                    ) : <SpinnerLoader />}
+                    {loading ? (
+                        <SpinnerLoader height="min-h-96" />
+                    ) : (
+                    <NFTDisplay 
+                        nft={nft} 
+                        show="full" 
+                        height="h-96"
+                    />
+                    )}
                     <Button
                         checkNetwork
                         className="mt-6 w-full"
