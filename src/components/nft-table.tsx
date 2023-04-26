@@ -34,7 +34,7 @@ export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
-                <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : 2)} className="!gap-3">
+                <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : width > breakpoints.sm ? 2 : 1)} className="!gap-3">
                     {nfts.length > 0 ? nfts.map((nft: any, i) => (
                         <ImageListItem key={hashNftIdentifier(nft)} className="hover:cursor-pointer" onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i] as any).hash}`)}>
                             <Card type="inner" className="hover:bg-gray-900">
