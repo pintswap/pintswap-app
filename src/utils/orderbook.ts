@@ -254,10 +254,11 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
                         offer: v,
                         effective: {
                             gets: remaining,
-                            gives: (remaining * v.gives.amount) / getsAmount,
+                            gives: ethers.toBigInt(remaining) * ethers.toBigInt(v.gives.amount) / ethers.toBigInt(getsAmount),
                         },
                     });
                 }
+		return r;
             };
         })(),
         [],

@@ -2,7 +2,9 @@ import { Avatar, DataTable, TransitionModal, PeerTickerFulfill } from '../compon
 import { useTrade } from '../hooks/trade';
 import { useLocation, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
+import { ethers } from "ethers6";
 import { useState } from 'react';
+import { matchOffers } from "../utils/orderbook";
 
 const columns = [
     {
@@ -40,6 +42,22 @@ export const PeerTickerOrderbookView = () => {
     const { ticker, bidLimitOrders, askLimitOrders, forTicker } = useLimitOrders('peer-ticker-orderbook');
     const { state } = useLocation();
     const [rowData, setRowData] = useState<any[]>([]);
+    const onClickRow = (row: any) => {
+      (async () => {
+      let item = row.index;
+      let orderType = 'bid';
+      let list = bidLimitOrders;
+      if (item === -1) {
+        item = row.index;
+        orderType = 'ask';
+        list = askLimitOrders;
+      }
+      console.log([list[item], item, list, orderType]);
+      console.log(matchOffers(list, list.slice(0, item + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0))));
+      setRowData(row);
+      })().catch((err) => console.error(err));
+    }
+      
 
     const peer = state?.peer ? state.peer : multiaddr;
 
@@ -62,7 +80,7 @@ export const PeerTickerOrderbookView = () => {
                     toolbar={false}
                     peer={order.multiAddr}
                     pagination={false}
-                    getRow={setRowData}
+                    getRow={onClickRow}
                     options={{
                         sortOrder: {
                             name: 'price',
@@ -79,7 +97,7 @@ export const PeerTickerOrderbookView = () => {
                     toolbar={false}
                     peer={order.multiAddr}
                     pagination={false}
-                    getRow={setRowData}
+                    getRow={onClickRow}
                     options={{
                         sortOrder: {
                             name: 'price',
