@@ -49,7 +49,7 @@ export const useTrade = () => {
     const { multiaddr, hash } = useParams();
 
     const isMaker = pathname === '/create';
-    const isOnActive = pathname === '/open';
+    const isOnActive = pathname === '/explore';
 
     const buildTradeObj = ({ gets, gives }: IOffer): IOffer => {
         if (gives && gets && gives.tokenId) return { gets, gives };

@@ -1,10 +1,9 @@
-import { Avatar, DataTable, TransitionModal, PeerTickerFulfill, Card } from '../components';
+import { Avatar, DataTable, PeerTickerFulfill, Card } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
 import { ethers } from "ethers6";
 import { useEffect, useState } from 'react';
-import { matchOffers } from "../utils/orderbook";
 
 const columns = [
     {
@@ -50,7 +49,7 @@ export const PeerTickerOrderbookView = () => {
     const [ tradeType, setTradeType ] = useState('');
 
     useEffect(() => {
-      let list = tradeType === 'bid' ? bidLimitOrders : askLimitOrders;
+      let list = tradeType === 'bids' ? bidLimitOrders : askLimitOrders;
       setMatchInputs({
         amount: matchInputs.amount || '0',
         list
@@ -58,19 +57,14 @@ export const PeerTickerOrderbookView = () => {
     }, [ tradeType ]);
        
     const onClickRow = (row: any) => {
-      let item = row.index;
-      let orderType = 'bid';
-      let list = bidLimitOrders;
-      if (item === -1) {
-        item = row.index;
-        orderType = 'ask';
-        list = askLimitOrders;
-      }
-      setTradeType(orderType === 'ask' ? 'Buy' : 'Sell');
-      setMatchInputs({
-        amount: list.slice(0, item + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
-        list
-      });
+        const [ tradeType, price, size, sum ] = row;
+        const { index } = row;
+        let list = !bidLimitOrders.includes(row) ? askLimitOrders : bidLimitOrders;
+        setTradeType(tradeType === 'bids' ? 'Buy' : 'Sell');
+        setMatchInputs({
+            amount: list.slice(0, index + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
+            list
+        });
     }
       
     const peer = state?.peer ? state.peer : multiaddr;
