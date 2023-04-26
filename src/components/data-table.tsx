@@ -6,6 +6,7 @@ import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
 import { truncate } from '../utils/common';
+import { Dispatch, SetStateAction } from 'react';
 
 type IDataTableProps = {
   title?: string;
@@ -17,9 +18,10 @@ type IDataTableProps = {
   toolbar?: boolean;
   pagination?: boolean;
   options?: any;
+  getRow?: Dispatch<SetStateAction<any[]>>;
 }
 
-export const DataTable = ({ title, data, columns, loading, type, peer, toolbar = true, pagination = true, options }: IDataTableProps) => {
+export const DataTable = ({ title, data, columns, loading, type, peer, toolbar = true, pagination = true, options, getRow }: IDataTableProps) => {
   return (
     <CacheProvider value={muiCache}>
       <ThemeProvider theme={muiTheme()}>
@@ -52,6 +54,7 @@ export const DataTable = ({ title, data, columns, loading, type, peer, toolbar =
                 loading={loading}
                 type={type}
                 peer={peer}
+                getRow={getRow}
               />
             )
           }}
@@ -63,18 +66,20 @@ export const DataTable = ({ title, data, columns, loading, type, peer, toolbar =
 
 const ln = (v: any, label: string) => ((console.log(label, v)), v);
 
-const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
+const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTableProps) => {
   const cells = Object.values((data as object));
   const cols = columns as string[];
   const { width } = useWindowSize();
   const navigate = useNavigate();
   const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${loading ? '' : 'hover:bg-gray-900 hover:cursor-pointer'}`
 
-  const route = (firstCol: string) => {
+  const route = (cells: string[]) => {
+    console.log("CELLS", cells)
+    const firstCell = cells[0];
     let url = '/';
     switch(type) {
       case 'explore': // TODO: fix
-        return navigate(ln(`${url}${cells[0]}`, 'URL'));
+        return navigate(ln(`${url}${firstCell}`, 'URL'));
       case 'pairs':
         url = `${url}pairs`;
         break;
@@ -84,11 +89,15 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
       case 'orderbook':
         url = `${url}fulfill`;
         break;
+      case 'asks':
+      case 'bids':
+        getRow && getRow([type, ...cells]);
+        return;
       default:
         break;
     }
-    if(peer) navigate(`${url}/${peer}/${firstCol}`)
-    else navigate(`${url}/${firstCol}`)
+    if(peer) navigate(`${url}/${peer}/${firstCell}`)
+    else navigate(`${url}/${firstCell}`)
   }
 
   const formatCell = (s: string) => {
@@ -111,7 +120,7 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
       return (
         <tr
           className={`${baseStyle} ${determineColor()}`}
-          onClick={(e) => route(cells[0])}
+          onClick={(e) => route(cells)}
         >
           {cells.map((cell, i) => (
             <td 
@@ -128,7 +137,7 @@ const CustomRow = ({ columns, data, loading, type, peer }: IDataTableProps) => {
       return (
         <tr
           className={`${baseStyle} flex flex-col px-4 py-1 ${determineColor()}`}
-          onClick={(e) => route(cells[0])}
+          onClick={(e) => route(cells)}
         >
           {cells.map((cell, i) => (
             <td 

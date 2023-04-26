@@ -1,8 +1,8 @@
-import { Avatar, DataTable } from '../components';
+import { Avatar, DataTable, TransitionModal, PeerTickerFulfill } from '../components';
 import { useTrade } from '../hooks/trade';
-import { useParams } from 'react-router-dom';
-import { Fulfill } from "../components/fulfill";
+import { useLocation, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
+import { useState } from 'react';
 
 const columns = [
     {
@@ -38,12 +38,18 @@ export const PeerTickerOrderbookView = () => {
     const { order } = useTrade();
     const { multiaddr } = useParams();
     const { ticker, bidLimitOrders, askLimitOrders, forTicker } = useLimitOrders('peer-ticker-orderbook');
+    const { state } = useLocation();
+    const [rowData, setRowData] = useState<any[]>([]);
+
+    const peer = state?.peer ? state.peer : multiaddr;
 
     const ordersShown = 10;
     return (
         <div className="flex flex-col gap-2 md:gap-3 lg:gap-4">
             <div className="flex items-center justify-between">
-                <Avatar peer={multiaddr} withBio withName align="left" type="profile" />
+                <TransitionModal button={<Avatar peer={peer} withBio withName align="left" size={60} type="profile" />}>
+                    <Avatar peer={peer} size={300} />
+                </TransitionModal>
                 <span className="text-lg">{ticker}</span>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
@@ -56,6 +62,7 @@ export const PeerTickerOrderbookView = () => {
                     toolbar={false}
                     peer={order.multiAddr}
                     pagination={false}
+                    getRow={setRowData}
                     options={{
                         sortOrder: {
                             name: 'price',
@@ -72,6 +79,7 @@ export const PeerTickerOrderbookView = () => {
                     toolbar={false}
                     peer={order.multiAddr}
                     pagination={false}
+                    getRow={setRowData}
                     options={{
                         sortOrder: {
                             name: 'price',
@@ -80,7 +88,10 @@ export const PeerTickerOrderbookView = () => {
                     }}
                 />
             </div>
-            <Fulfill forTicker={ forTicker } />
+            <PeerTickerFulfill 
+                forTicker={forTicker} 
+                input={rowData}
+            />
         </div>
     );
 };

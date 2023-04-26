@@ -1,42 +1,46 @@
 import { Transition } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { useParams } from "react-router-dom";
-import { ethers } from 'ethers6';
 import { toast } from 'react-toastify';
 import {
-    Avatar,
     Button,
     Card,
     CopyClipboard,
     PageStatus,
     Input,
     ProgressIndicator,
-} from '../components';
-import { DropdownInput } from '../components/dropdown-input';
+} from '.';
+import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { useGlobalContext } from '../stores';
 import { BASE_URL } from '../utils/common';
-import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
 import { useAccount } from 'wagmi';
 
-export const Fulfill = ({
-  forTicker
+export const PeerTickerFulfill = ({
+  forTicker,
+  input,
 }: any) => {
+    const [ tradeType, price, size, sum ] = input;
     const { address } = useAccount()
     const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
     const { peer, setPeer, pintswap } = useGlobalContext();
-    const [price, setPrice] = useState('0');
-    const [type, setType] = useState('buy');
-    const [outputAmount, setOutputAmount] = useState('');
-    const [fillAmount, setFillAmount] = useState('');
-    const { baseSymbol, tradeSymbol } = useParams();
     const [ limitOrder, setLimitOrder ] = useState({
-      price: Number(0),
-      amount: '',
-      type: 'sell',
-      ticker: `${tradeSymbol}/${baseSymbol}`
+      price,
+      amount: size,
+      type: tradeType,
+      output: ''
     });
 
+    useEffect(() => {
+        if(input) {
+            setLimitOrder({
+                price,
+                amount: size,
+                type: tradeType,
+                output: ''
+            })
+        }
+    }, [input]);
 
     return (
         <>
@@ -47,35 +51,38 @@ export const Fulfill = ({
                 >
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
-                            title="Pair"
-                            placeholder="Pair"
-                            state={limitOrder.ticker}
-                            type="gives.token"
-                            disabled
+                            title="Type"
+                            placeholder="Trade type"
+                            state={limitOrder.type}
+                            type="string"
                             loading={loading.trade}
+                            disabled={loading.allTrades}
+                            options={["bids", "asks"]}
+                            setState={(e: any) => setLimitOrder({ ...limitOrder, type: e.currentTarget.value })}
                         />
                         <Input
                             title="Price"
                             placeholder="Price"
                             value={Number(limitOrder.price).toFixed(4)}
                             type="number"
-                            disabled
                             loading={loading.trade}
+                            disabled={loading.allTrades}
+                            onChange={(e) => setLimitOrder({ ...limitOrder, price: e.currentTarget.value })}
                         />
                         <Input
                             title="Amount"
                             placeholder="Amount to trade"
-                            value={fillAmount}
+                            value={limitOrder.amount}
                             type="number"
-                            onChange={(evt: any) => {
-                                evt.preventDefault();
-                                setFillAmount(evt.target.value);
-                            }}
                             loading={loading.trade}
+                            disabled={loading.allTrades}
+                            onChange={(e) => setLimitOrder({ ...limitOrder, amount: e.currentTarget.value })}
                         />
+                        {/* TODO */}
                         <Input
+                            title="Output"
                             placeholder="Output amount"
-                            value={outputAmount}
+                            value={limitOrder.output}
                             type="number"
                             disabled
                             loading={loading.trade}
@@ -85,7 +92,7 @@ export const Fulfill = ({
                         checkNetwork
                         className="mt-6 w-full"
                         loadingText="Fulfilling"
-                        loading={loading && !error}
+                        loading={loading.fulfill && !error}
                         onClick={fulfillTrade}
                         disabled={
                             !trade.gets.amount ||

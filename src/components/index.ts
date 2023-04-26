@@ -17,3 +17,4 @@ export * from "./nft-table";
 export * from './asset';
 export * from './modal';
 export * from './hamburger';
+export * from './peer-ticker-fulfill';
