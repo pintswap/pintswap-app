@@ -9,6 +9,7 @@ import { useWindowSize } from '../hooks/window-size';
 import { Card } from './card';
 import { SpinnerLoader } from './spinner-loader';
 import { useNavigate } from 'react-router-dom';
+import { NFTDisplay } from './nft-display';
 
 type INFTTableProps = {
     title?: string;
@@ -34,22 +35,13 @@ export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
                 <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : 2)} gap={width > breakpoints.md ? 8 : 6 }>
-                    {nfts.length > 0 ? nfts.map((v: any, i) => (
-                        <ImageListItem key={hashNftIdentifier(v)} className="hover:cursor-pointer" onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i] as any).hash}`)}>
+                    {nfts.length > 0 ? nfts.map((nft: any, i) => (
+                        <ImageListItem key={hashNftIdentifier(nft)} className="hover:cursor-pointer" onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i] as any).hash}`)}>
                             <Card type="inner" className="hover:bg-gray-900">
-                                <img
-                                    src={URL.createObjectURL(v.imageBlob)}
-                                    alt={v.name}
-                                    style={{
-                                        backgroundColor: v.background_color
-                                            ? `#${v.background_color}`
-                                            : undefined,
-                                    }}
-                                    loading="lazy"
-                                    className="rounded-sm h-60 object-cover w-full"
+                                <NFTDisplay 
+                                    nft={nft}
+                                    height={'h-72'}
                                 />
-                                <h3 className="pt-2 pb-1">{ v.name }</h3>
-                                <small>{ v.description }</small>
                             </Card>
                         </ImageListItem>
                     )) : loading ? (

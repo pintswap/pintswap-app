@@ -13,6 +13,20 @@ export type IUserDataProps = {
   offers?: any[]
 }
 
+export type INFTProps = {
+  attributes: any[];
+  background_color: string;
+  external_url: string;
+  image: string;
+  name: string;
+  description: string;
+  amount?: string;
+  token: string;
+  tokenId: string | number;
+  imageBlob: Blob | MediaSource;
+  hash: string;
+}
+
 // CONSTANTS
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
