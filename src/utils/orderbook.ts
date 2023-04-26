@@ -155,6 +155,16 @@ export function orderTokens(offer: any) {
     } else return givesTrade(mapped);
 }
 
+export async function formattedFromTransfer(transfer: any, provider: any) {
+    const token = toAddress(transfer.token);
+    return {
+            token,
+            amount: ethers.toBeHex(
+                ethers.parseUnits(transfer.amount, await getDecimals(token, provider)),
+            ),
+        };
+}
+
 export async function fromFormatted(trade: any, provider: any) {
     const [givesToken, getsToken] = [trade.gives, trade.gets].map((v) => toAddress(v.token));
     return {

@@ -3,7 +3,7 @@ import { useTrade } from '../hooks/trade';
 import { useLocation, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
 import { ethers } from "ethers6";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { matchOffers } from "../utils/orderbook";
 
 const columns = [
@@ -41,9 +41,22 @@ export const PeerTickerOrderbookView = () => {
     const { multiaddr } = useParams();
     const { ticker, bidLimitOrders, askLimitOrders, forTicker } = useLimitOrders('peer-ticker-orderbook');
     const { state } = useLocation();
-    const [rowData, setRowData] = useState<any[]>([]);
+    const [ matchInputs, setMatchInputs ] = useState<any>({
+      amount: '',
+      list: []
+    });
+    
+    const [ tradeType, setTradeType ] = useState('');
+
+    useEffect(() => {
+      let list = tradeType === 'bid' ? bidLimitOrders : askLimitOrders;
+      setMatchInputs({
+        amount: matchInputs.amount || '0',
+        list
+      });
+    }, [ tradeType ]);
+       
     const onClickRow = (row: any) => {
-      (async () => {
       let item = row.index;
       let orderType = 'bid';
       let list = bidLimitOrders;
@@ -52,10 +65,11 @@ export const PeerTickerOrderbookView = () => {
         orderType = 'ask';
         list = askLimitOrders;
       }
-      console.log([list[item], item, list, orderType]);
-      console.log(matchOffers(list, list.slice(0, item + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0))));
-      setRowData(row);
-      })().catch((err) => console.error(err));
+      setTradeType(orderType === 'ask' ? 'Buy' : 'Sell');
+      setMatchInputs({
+        amount: list.slice(0, item + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
+        list
+      });
     }
       
 
@@ -107,8 +121,10 @@ export const PeerTickerOrderbookView = () => {
                 />
             </div>
             <PeerTickerFulfill 
-                forTicker={forTicker} 
-                input={rowData}
+                matchInputs={ matchInputs }
+                setMatchInputs={ setMatchInputs }
+                tradeType={ tradeType }
+                setTradeType={ setTradeType }
             />
         </div>
     );
