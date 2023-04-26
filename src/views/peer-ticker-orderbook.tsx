@@ -1,4 +1,4 @@
-import { Avatar, DataTable, TransitionModal, PeerTickerFulfill } from '../components';
+import { Avatar, DataTable, TransitionModal, PeerTickerFulfill, Card } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
@@ -85,8 +85,9 @@ export const PeerTickerOrderbookView = () => {
                 <span className="text-lg">{ticker}</span>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
+                <Card>
+                <h3 className="mb-2 lg:mb-0 text-center">Buys</h3>
                 <DataTable 
-                    title="Bids"
                     type="bids"
                     columns={columns}
                     data={bidLimitOrders.slice(0, ordersShown)}
@@ -102,8 +103,10 @@ export const PeerTickerOrderbookView = () => {
                         }
                     }}
                 />
+                </Card>
+                <Card>
+                <h3 className="mb-2 lg:mb-0 text-center">Sells</h3>
                 <DataTable 
-                    title="Asks"
                     type="asks"
                     columns={columns}
                     data={askLimitOrders.slice(0, ordersShown)}
@@ -119,6 +122,7 @@ export const PeerTickerOrderbookView = () => {
                         }
                     }}
                 />
+                </Card>
             </div>
             <PeerTickerFulfill 
                 matchInputs={ matchInputs }
