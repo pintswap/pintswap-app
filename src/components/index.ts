@@ -18,3 +18,5 @@ export * from './asset';
 export * from './modal';
 export * from './hamburger';
 export * from './peer-ticker-fulfill';
+export * from './nft-display';
+export * from './text-display';

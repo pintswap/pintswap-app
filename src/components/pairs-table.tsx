@@ -8,16 +8,14 @@ import { resolveName } from '../hooks/trade';
 import { useParams } from 'react-router-dom';
 import { groupBy } from 'lodash';
 
-const formatOrNothing = (type: any, best: any) => {
-    if (!best) return '';
-    return `${type.toUpperCase()}${best.price} `;
-};
-
 const bestPrices = (orders: any) => {
     const { ask, bid } = groupBy(orders, 'type');
     const bestAsk = (ask || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
     const bestBid = (bid || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
-    return formatOrNothing('bid', bestBid) + formatOrNothing('ask', bestAsk);
+    return {
+        bid: bestBid?.price || 'N/A',
+        ask: bestAsk?.price || 'N/A'
+    }
 };
 
 export const PairsTable = () => {
@@ -37,6 +35,7 @@ export const PairsTable = () => {
             }
         })().catch((err) => console.error(err));
     }, [multiaddr, pintswap.module]);
+
     useEffect(() => {
         const byTicker = groupBy(
             limitOrdersArr.filter((v) => [multiaddr, resolved].includes(v.peer)),
@@ -54,7 +53,6 @@ export const PairsTable = () => {
 
     return (
         <div className="flex flex-col">
-            <h3 className="text-xl text-center mb-4 lg:mb-6 font-semibold"></h3>
             <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4`}>
                 {!isLoading
                     ? uniquePairs.map((pair) => {
@@ -69,27 +67,34 @@ export const PairsTable = () => {
                                   onClick={() => navigate(`/${multiaddr}/${pair.ticker}`)}
                               >
                                   <Card className="hover:bg-gray-900" type="inner">
-                                      <div
+                                        <div
                                           className={`text-center flex items-center justify-center gap-3`}
-                                      >
+                                        >
                                               <Asset icon={icon1} symbol={token1} />
                                               <span>/</span>
                                               <Asset icon={icon2} symbol={token2} />
-                                      </div>
-                                      <div>{pair.price}</div>
+                                        </div>
+                                        <div className="flex items-center justify-around mt-1">
+                                            <small className="text-green-400">BID: {pair.price.bid}</small>
+                                            <small className="text-red-400">ASK: {pair.price.ask}</small>
+                                        </div>
                                   </Card>
                               </button>
                           );
                       })
                     : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                          <Card key={`loading-card-${i}`} className="justify-start" type="inner">
-                              <div className={`text-center flex items-center justify-center gap-3`}>
-                                  <Asset loading />
-                                  <span>/</span>
-                                  <Asset loading />
-                              </div>
-                          </Card>
-                      ))}
+                        <Card key={`loading-card-${i}`} className="justify-start" type="inner">
+                            <div className={`text-center flex items-center justify-center gap-3`}>
+                                <Asset loading />
+                                <span>/</span>
+                                <Asset loading />
+                            </div>
+                            <div className="flex items-center justify-around mt-1">
+                                <div className={`animate-pulse bg-neutral-700 h-4 w-16 rounded`} />
+                                <div className={`animate-pulse bg-neutral-700 h-4 w-16 rounded`} />
+                            </div>
+                        </Card>
+                    ))}
             </div>
         </div>
     );

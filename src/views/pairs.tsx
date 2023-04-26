@@ -8,7 +8,6 @@ export const PairsView = () => {
   const navigate = useNavigate();
   const { limitOrdersArr } = useOffersContext();
   const [uniquePairs, setUniquePairs] = useState<string[]>([]);
-  console.log('limitOrdersArr', limitOrdersArr);
 
   useEffect(() => {
     if(limitOrdersArr) {

@@ -50,13 +50,13 @@ export const Navbar = () => {
                         leave="transform transition ease-in-out duration-500"
                         leaveFrom="translate-y-0"
                         leaveTo="-translate-y-[100vw]"
-                        className="absolute -z-10 right-0 top-[54px]"
+                        className="absolute z-20 right-0 top-[54px]"
                     >
                         <ul className="flex flex-col w-screen bg-neutral-900 shadow-md p-2 items-start">
                             {NAV_ITEMS.map((item, i) => (
                                 <li key={`nav-item-${i}`} className="w-full">
                                     <button 
-                                    className="w-full -z-10 flex gap-2 items-center justify-end px-4 py-2" 
+                                    className="w-full flex gap-2 items-center justify-end px-4 py-2" 
                                     onClick={() => { 
                                         navigate(`${item.route}`);
                                         setIsMobileOpen(false);
@@ -81,7 +81,7 @@ export const Navbar = () => {
                         leave="transition-opacity ease-in-out duration-400"
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
-                        className={`fixed bottom-0 left-0 w-screen ${dashboardHeightClass} -z-50`}
+                        className={`fixed bottom-0 left-0 w-screen ${dashboardHeightClass} z-10`}
                     >
                     <div
                         className="w-screen h-full bg-[rgba(0,0,0,0.25)]"

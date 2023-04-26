@@ -1,6 +1,6 @@
 import { Avatar, DataTable, TransitionModal, PeerTickerFulfill } from '../components';
 import { useTrade } from '../hooks/trade';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
 import { ethers } from "ethers6";
 import { useEffect, useState } from 'react';
@@ -37,6 +37,7 @@ const columns = [
 ];
 
 export const PeerTickerOrderbookView = () => {
+    const navigate = useNavigate();
     const { order } = useTrade();
     const { multiaddr } = useParams();
     const { ticker, bidLimitOrders, askLimitOrders, forTicker } = useLimitOrders('peer-ticker-orderbook');
@@ -72,16 +73,15 @@ export const PeerTickerOrderbookView = () => {
       });
     }
       
-
     const peer = state?.peer ? state.peer : multiaddr;
 
     const ordersShown = 10;
     return (
         <div className="flex flex-col gap-2 md:gap-3 lg:gap-4">
             <div className="flex items-center justify-between">
-                <TransitionModal button={<Avatar peer={peer} withBio withName align="left" size={60} type="profile" />}>
-                    <Avatar peer={peer} size={300} />
-                </TransitionModal>
+                <button onClick={() => navigate(`/${peer}`)} className="w-fit text-left">
+                    <Avatar peer={multiaddr} withBio withName nameClass="text-xl" type="profile" size={60} />
+                </button>
                 <span className="text-lg">{ticker}</span>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
