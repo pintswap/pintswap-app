@@ -59,7 +59,7 @@ export const PeerTickerOrderbookView = () => {
     const onClickRow = (row: any) => {
         const [ tradeType, price, size, sum ] = row;
         const { index } = row;
-        let list = !bidLimitOrders.includes(row) ? askLimitOrders : bidLimitOrders;
+        let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
         setTradeType(tradeType === 'bids' ? 'Buy' : 'Sell');
         setMatchInputs({
             amount: list.slice(0, index + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),

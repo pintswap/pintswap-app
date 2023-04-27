@@ -9,7 +9,7 @@ import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
 import { useOffersContext } from '../stores';
-import { hexlify } from 'ethers6';
+import { toBeHex, hexlify } from 'ethers6';
 
 const ln = (v: any) => (console.log(v), v);
 
@@ -104,9 +104,10 @@ export const useTrade = () => {
                     pintswap.module.createTrade(peeredUp, nftTrade);
                 // If peer orderbook swap
                 } else if(params.base && params.trade) {
+			console.log(fill);
                     pintswap.module.createBatchTrade(
                         peeredUp, 
-                        fill.offers.map((v: any) => ({ offerHash: hashOffer(v.offer), amount: hexlify(v.amount) }))
+                        fill.fill.map((v: any) => ({ offer: v.offer, amount: toBeHex(v.amount) }))
                     )
                 // If standard swap
                 } else {
