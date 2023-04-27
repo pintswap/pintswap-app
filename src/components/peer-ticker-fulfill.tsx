@@ -8,13 +8,11 @@ import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 import { useAccount, useSigner } from 'wagmi';
 import {
-    toFormatted,
     toLimitOrder,
     formattedFromTransfer,
     matchOffers,
 } from '../utils/orderbook';
 
-const ln = (v: any) => (console.log(v), v);
 export const PeerTickerFulfill = ({
     tradeType,
     setTradeType,
@@ -23,12 +21,11 @@ export const PeerTickerFulfill = ({
 }: any) => {
     const { address } = useAccount();
     const { data: signer } = useSigner();
-    const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
+    const { fulfillTrade, loading, trade, steps, order, error, fill, setFill } = useTrade();
     const [limitOrder, setLimitOrder] = useState<any>({
         price: '',
         output: '',
     });
-    const [fill, setFill] = useState<any>(null);
 
     const handleAmountChange = async (e: FormEvent<HTMLInputElement>) => {
         const formattedAmount = (await formattedFromTransfer({

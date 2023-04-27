@@ -9,6 +9,7 @@ import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
 import { useOffersContext } from '../stores';
+import { hexlify } from 'ethers6';
 
 const ln = (v: any) => (console.log(v), v);
 
@@ -33,6 +34,7 @@ export const resolveName = async (pintswap: any, name: any) => {
 };
 
 export const useTrade = () => {
+    const params = useParams();
     const { pathname } = useLocation();
     const { pintswap, peer } = useGlobalContext();
     const { addTrade, openTrades, setPeerTrades, peerTrades, setOpenTrades } = useOffersContext();
@@ -47,6 +49,7 @@ export const useTrade = () => {
     });
     const [error, setError] = useState(false);
     const { multiaddr, hash } = useParams();
+    const [fill, setFill] = useState<any>(null);
 
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/explore';
@@ -93,12 +96,19 @@ export const useTrade = () => {
         if (pintswap.module) {
             try {
                 let multiAddr = order.multiAddr;
-                if (multiAddr.match(/\.drip$/))
-                    multiAddr = await resolveName(pintswap.module, order.multiAddr);
+                if (multiAddr.match(/\.drip$/)) multiAddr = await resolveName(pintswap.module, order.multiAddr);
                 const peeredUp = PeerId.createFromB58String(multiAddr);
+                // If NFT swap
                 if (window.location.hash.match('nft') && hash) {
                     const nftTrade = openTrades.get(hash) || peerTrades.get(hash);
                     pintswap.module.createTrade(peeredUp, nftTrade);
+                // If peer orderbook swap
+                } else if(params.base && params.trade) {
+                    pintswap.module.createBatchTrade(
+                        peeredUp, 
+                        fill.offers.map((v: any) => ({ offerHash: hashOffer(v.offer), amount: hexlify(v.amount) }))
+                    )
+                // If standard swap
                 } else {
                     pintswap.module.createTrade(peeredUp, ln(buildTradeObj(trade)));
                 }
@@ -128,7 +138,6 @@ export const useTrade = () => {
                         resolved,
                     );
                     if (TESTING) console.log('#getTrades - Offers:', offers);
-                    console.log('offers', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
                         console.log(hash, 'orderHash');
@@ -326,5 +335,7 @@ export const useTrade = () => {
         steps,
         updateSteps,
         error,
+        fill,
+        setFill
     };
 };
