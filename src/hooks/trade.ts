@@ -104,6 +104,7 @@ export const useTrade = () => {
                     pintswap.module.createTrade(peeredUp, nftTrade);
                 // If peer orderbook swap
                 } else if(params.base && params.trade) {
+			console.log(fill);
                     pintswap.module.createBatchTrade(
                         peeredUp, 
                         fill.offers.map((v: any) => ({ offerHash: hashOffer(v.offer), amount: hexlify(v.amount) }))

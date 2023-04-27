@@ -670,14 +670,11 @@ html,
 .top-\[54px\]{
   top: 54px;
 }
-.-z-10{
-  z-index: -10;
-}
-.-z-50{
-  z-index: -50;
-}
 .z-10{
   z-index: 10;
+}
+.z-20{
+  z-index: 20;
 }
 .z-50{
   z-index: 50;
@@ -698,6 +695,9 @@ html,
 }
 .mb-4{
   margin-bottom: 1rem;
+}
+.mt-1{
+  margin-top: 0.25rem;
 }
 .mt-2{
   margin-top: 0.5rem;
@@ -747,6 +747,9 @@ html,
 .h-2\.5{
   height: 0.625rem;
 }
+.h-4{
+  height: 1rem;
+}
 .h-5{
   height: 1.25rem;
 }
@@ -755,6 +758,9 @@ html,
 }
 .h-8{
   height: 2rem;
+}
+.h-96{
+  height: 24rem;
 }
 .h-\[125px\]{
   height: 125px;
@@ -788,6 +794,9 @@ html,
 }
 .w-0{
   width: 0px;
+}
+.w-16{
+  width: 4rem;
 }
 .w-2{
   width: 0.5rem;
@@ -1004,6 +1013,9 @@ html,
 .flex-col{
   flex-direction: column;
 }
+.flex-wrap{
+  flex-wrap: wrap;
+}
 .items-start{
   align-items: flex-start;
 }
@@ -1027,6 +1039,12 @@ html,
 }
 .justify-between{
   justify-content: space-between;
+}
+.justify-around{
+  justify-content: space-around;
+}
+.\!gap-3{
+  gap: 0.75rem !important;
 }
 .gap-1{
   gap: 0.25rem;
@@ -1306,6 +1324,10 @@ html,
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
 }
+.py-8{
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
 .py-\[1px\]{
   padding-top: 1px;
   padding-bottom: 1px;
@@ -1481,6 +1503,10 @@ html,
 }
 .shadow-neutral-700{
   --tw-shadow-color: #404040;
+  --tw-shadow: var(--tw-shadow-colored);
+}
+.shadow-neutral-950{
+  --tw-shadow-color: #0a0a0a;
   --tw-shadow: var(--tw-shadow-colored);
 }
 .outline{
@@ -1729,6 +1755,10 @@ html,
   }
 }
 @media (min-width: 1024px){
+
+  .lg\:mb-0{
+    margin-bottom: 0px;
+  }
 
   .lg\:mb-6{
     margin-bottom: 1.5rem;
