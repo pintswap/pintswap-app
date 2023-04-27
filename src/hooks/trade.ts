@@ -91,8 +91,7 @@ export const useTrade = () => {
     // Fulfill trade
     const fulfillTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-
-        if (TESTING) console.log('#fulfillTrade - Trade Obj:', buildTradeObj(trade));
+        setLoading({ ...loading, fulfill: true })
         if (pintswap.module) {
             try {
                 let multiAddr = order.multiAddr;
@@ -101,16 +100,18 @@ export const useTrade = () => {
                 // If NFT swap
                 if (window.location.hash.match('nft') && hash) {
                     const nftTrade = openTrades.get(hash) || peerTrades.get(hash);
+                    if(TESTING) console.log("#fulfillTrade - NFT Trade:", nftTrade);
                     pintswap.module.createTrade(peeredUp, nftTrade);
                 // If peer orderbook swap
                 } else if(params.base && params.trade) {
-			console.log(fill);
+                    if(TESTING) console.log("#fulfillTrade - Fill:", fill)
                     pintswap.module.createBatchTrade(
                         peeredUp, 
                         fill.fill.map((v: any) => ({ offer: v.offer, amount: toBeHex(v.amount) }))
                     )
                 // If standard swap
                 } else {
+                    if (TESTING) console.log('#fulfillTrade - Trade Obj:', buildTradeObj(trade));
                     pintswap.module.createTrade(peeredUp, ln(buildTradeObj(trade)));
                 }
                 if (TESTING) console.log('Fulfilled trade!');
@@ -281,6 +282,7 @@ export const useTrade = () => {
             case 5:
                 console.log('#takerLister: swap complete');
                 updateSteps('Complete'); // only for taker
+                setLoading({ ...loading, fulfill: false })
                 shallow.delete(order.orderHash);
                 setOpenTrades(shallow);
                 shallow = openTrades;

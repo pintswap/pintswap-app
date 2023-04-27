@@ -153,7 +153,7 @@ export const PeerTickerFulfill = ({
                 >
                     <p className="text-sm">Trade Link:</p>
                     <CopyClipboard
-                        value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`}
+                        value={`${BASE_URL}/#/fulfill/${order.multiAddr}/${order.orderHash}`}
                         icon
                         lg
                         truncate={5}

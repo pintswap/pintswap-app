@@ -33,8 +33,8 @@ export const TradeSearchView = () => {
           />
           <Button 
             form="submit" 
-            disabled={!form.multiAddr || !form.orderHash}
-            onClick={() => navigate(`/fulfill/${form.multiAddr}/${form.orderHash}`)}
+            disabled={!form.multiAddr}
+            onClick={() => navigate(form.orderHash ? `/fulfill/${form.multiAddr}/${form.orderHash}` : `/fulfill/${form.multiAddr}`)}
             className="xl:col-span-2"
           >
             Search

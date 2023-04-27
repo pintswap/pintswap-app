@@ -30,7 +30,7 @@ export const AccountView = () => {
         setIsEditing(false);
     }
 
-    const TABS = [width > 600 ? 'Your Orders' : 'Orders', 'Settings']
+    const TABS = ['Profile', width > 600 ? 'Your Orders' : 'Orders']
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
@@ -51,56 +51,9 @@ export const AccountView = () => {
             </div>
             <Card tabs={TABS} type="tabs" scroll>
                 <Tab.Panel>
-                    <Table
-                        headers={['Hash', 'Sending', 'Receiving']}
-                        onClick={(order: any) =>
-                            navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)
-                        }
-                        items={Array.from(openTrades, (entry) => ({
-                            hash: entry[0],
-                            gives: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
-                            gets: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
-                        }))}
-                        emptyContent={
-                            pintswap.loading ? (
-                                <ImSpinner9 className="animate-spin" size="20px" />
-                            ) : (
-                                <span>
-                                    You currently have no open trades.{' '}
-                                    <button onClick={() => navigate('/create')}>
-                                        Create a trade now!
-                                    </button>
-                                </span>
-                            )
-                        }
-                    />
-                    {/* TODO: replace above table with this content to match peer */}
-                    {/* <div className={`flex flex-col gap-3 lg:gap-6`}>
-                        <div className="flex flex-col gap-3">
-                            <span>NFTs</span>
-                            <NFTTable 
-                                data={filteredNfts} 
-                                peer={peer.module.id}
-                                loading={pintswap.loading}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-3">
-                            <span>Tokens</span>
-                            <DataTable
-                                title="Peer Trades"
-                                columns={columns}
-                                data={limitOrders}
-                                loading={pintswap.loading}
-                                type="orderbook"
-                                peer={peer.module.id}
-                            />
-                        </div>
-                    </div> */}
-                </Tab.Panel>
-                <Tab.Panel>
                     <form>
                     <div className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}>
-                        <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2`}>
+                        <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}>
                             {isEditing ? (
                                 <div className="p-0.5">
                                 <input
@@ -117,11 +70,11 @@ export const AccountView = () => {
                                             Click to Upload
                                         </span>
                                     </span>
-                                    <Avatar size={125} />
+                                    <Avatar size={150} />
                                 </div>
                             ) : (
                                 <div>
-                                    <Avatar size={125} type="clickable" />
+                                    <Avatar size={150} type="clickable" />
                                 </div>
                             )}
                         </div>
@@ -161,6 +114,31 @@ export const AccountView = () => {
                         )}
                         </div>
                         </form>
+                </Tab.Panel>
+                <Tab.Panel>
+                    <Table
+                        headers={['Hash', 'Sending', 'Receiving']}
+                        onClick={(order: any) =>
+                            navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)
+                        }
+                        items={Array.from(openTrades, (entry) => ({
+                            hash: entry[0],
+                            gives: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
+                            gets: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
+                        }))}
+                        emptyContent={
+                            pintswap.loading ? (
+                                <ImSpinner9 className="animate-spin" size="20px" />
+                            ) : (
+                                <span>
+                                    You currently have no open trades.{' '}
+                                    <button onClick={() => navigate('/create')}>
+                                        Create a trade now!
+                                    </button>
+                                </span>
+                            )
+                        }
+                    />
                 </Tab.Panel>
             </Card>
             <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
