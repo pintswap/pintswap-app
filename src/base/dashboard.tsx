@@ -11,6 +11,7 @@ type IDashboardProps = {
 }
 
 export const dashboardHeightClass = `h-[calc(100vh-68px)] lg:h-[calc(100vh-84px)]`
+export const dashboardColor = `bg-neutral-900`;
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
@@ -22,7 +23,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     // Desktop
     return (
       <div className={`flex ${dashboardHeightClass}`}>
-        <ul className="bg-neutral-900 p-4 py-6 pl-0 flex flex-col gap-2">
+        <ul className={`${dashboardColor} p-4 py-6 pl-0 flex flex-col gap-2`}>
           {NAV_ITEMS.map((el, i) => (
             <li key={`sidebar-nav-${i}`}>
               <button 
@@ -39,7 +40,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
             </li>
           ))}
         </ul>
-        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-6">
+        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-8 shadow-inner shadow-neutral-950">
           <main className="max-w-7xl mx-auto">
             {children}
           </main>

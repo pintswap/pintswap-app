@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi';
 import { ActiveText, AnimatedHamburger, Avatar, DropdownMenu, Wallet } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { useGlobalContext } from '../stores';
-import { dashboardHeightClass } from './dashboard';
+import { dashboardColor, dashboardHeightClass } from './dashboard';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useGlobalContext();
@@ -18,7 +18,7 @@ export const Navbar = () => {
 
     return (
         <>
-        <nav className="bg-neutral-900 py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center z-50 relative">
+        <nav className={`${dashboardColor} py-2 lg:py-4 px-3 lg:px-6 w-full grid grid-cols-2 items-center z-50 relative`}>
             <button onClick={() => navigate('/')} className="flex items-center gap-2 lg:gap-3">
                 <img src="/logo/ps-logo.png" alt="PintSwap Logo" height={logoSize} width={logoSize} />
                 <span className="text-xl">
@@ -26,7 +26,7 @@ export const Navbar = () => {
                     <span className="text-sky-400">{width >= breakpoints.sm ? 'Swap' : 'S'}</span>
                 </span>
             </button>
-            <div className="flex items-center gap-2 justify-self-end bg-neutral-900">
+            <div className={`flex items-center gap-2 justify-self-end ${dashboardColor}`}>
                 <Wallet />
                 {width < breakpoints.md ? 
                     

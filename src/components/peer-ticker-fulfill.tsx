@@ -1,24 +1,18 @@
 import { Transition } from '@headlessui/react';
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { FormEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
 import { Button, Card, CopyClipboard, PageStatus, Input, ProgressIndicator } from '.';
 import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
-import { useGlobalContext } from '../stores';
 import { BASE_URL } from '../utils/common';
 import { useAccount, useSigner } from 'wagmi';
 import {
-    toFormatted,
     toLimitOrder,
-    getDecimals,
     formattedFromTransfer,
-    fromFormatted,
     matchOffers,
 } from '../utils/orderbook';
 
-const ln = (v: any) => (console.log(v), v);
 export const PeerTickerFulfill = ({
     tradeType,
     setTradeType,
@@ -27,58 +21,52 @@ export const PeerTickerFulfill = ({
 }: any) => {
     const { address } = useAccount();
     const { data: signer } = useSigner();
-    const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
-    const { peer, setPeer, pintswap } = useGlobalContext();
+    const { fulfillTrade, loading, trade, steps, order, error, fill, setFill } = useTrade();
     const [limitOrder, setLimitOrder] = useState<any>({
         price: '',
         output: '',
     });
-    const [fill, setFill] = useState<any>(null);
-    const [getsDecimals, setGetsDecimals] = useState(18);
-    useEffect(() => {
-        (async () => {
-            if (matchInputs.list.length)
-                setGetsDecimals(await getDecimals(matchInputs.gets.token, signer));
-        })().catch((err) => console.error(err));
-    }, []);
+
+    const handleAmountChange = async (e: FormEvent<HTMLInputElement>) => {
+        const formattedAmount = (await formattedFromTransfer({
+                token:
+                    (matchInputs.list[0] || {}).token ||
+                    ethers.ZeroAddress,
+                amount: e,
+            }, signer)).amount
+        setFill({
+            input: e.currentTarget.value,
+            ...fill,
+        });
+        setMatchInputs({
+            amount: formattedAmount,
+            list: matchInputs.list,
+        });
+    }
 
     useEffect(() => {
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
+                const limit = (await toLimitOrder(
+                    {
+                        gets: {
+                            token: matchInputs.list[0].gets.token,
+                            amount: match.effective.gets,
+                        },
+                        gives: {
+                            token: matchInputs.list[0].gives.token,
+                            amount: match.effective.gives,
+                        },
+                    },
+                    signer,
+                )) as any;
                 setFill({
                     ...match,
-                    input: (
-                        await toFormatted(
-                            { amount: match.effective.gets, token: matchInputs.list[0].gets.token },
-                            signer,
-                        )
-                    ).amount,
-                    output: (
-                        await toFormatted(
-                            ln({
-                                amount: match.effective.gives,
-                                token: matchInputs.list[0].gives.token,
-                            }),
-                            signer,
-                        )
-                    ).amount,
+                    input: limit.amount,
+                    output: (Number(limit.amount) * Number(limit.price)).toFixed(4),
                 });
-                setLimitOrder(
-                    (await toLimitOrder(
-                        {
-                            gets: {
-                                token: matchInputs.list[0].gets.token,
-                                amount: match.effective.gets,
-                            },
-                            gives: {
-                                token: matchInputs.list[0].gives.token,
-                                amount: match.effective.gives,
-                            },
-                        },
-                        signer,
-                    )) as any,
-                );
+                setLimitOrder(limit);
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);
@@ -97,10 +85,7 @@ export const PeerTickerFulfill = ({
                             loading={loading.trade}
                             disabled={loading.allTrades}
                             options={['Buy', 'Sell']}
-                            setState={(e: any) => {
-                                console.log(e);
-                                setTradeType(e);
-                            }}
+                            setState={(e: any) => setTradeType(e)}
                         />
                         <Input
                             title="Price"
@@ -109,9 +94,10 @@ export const PeerTickerFulfill = ({
                             type="number"
                             loading={loading.trade}
                             disabled={loading.allTrades}
-                            onChange={(e) =>
-                                setLimitOrder({ ...limitOrder, price: e.currentTarget.value })
-                            }
+                            onChange={(e) => setLimitOrder({ 
+                                ...limitOrder, 
+                                price: e.currentTarget.value 
+                            })}
                         />
                         <Input
                             title="Amount"
@@ -120,32 +106,8 @@ export const PeerTickerFulfill = ({
                             type="number"
                             loading={loading.trade}
                             disabled={loading.allTrades}
-                            onChange={(e) => {
-                                (async () => {
-                                    console.log(e.target);
-                                    console.log(e);
-                                    setFill({
-                                        input: e,
-                                        ...fill,
-                                    });
-                                    setMatchInputs({
-                                        amount: (
-                                            await formattedFromTransfer(
-                                                {
-                                                    token:
-                                                        (matchInputs.list[0] || {}).token ||
-                                                        ethers.ZeroAddress,
-                                                    amount: e,
-                                                },
-                                                signer,
-                                            )
-                                        ).amount,
-                                        list: matchInputs.list,
-                                    });
-                                })().catch((err) => console.error(err));
-                            }}
+                            onChange={handleAmountChange}
                         />
-                        {/* TODO */}
                         <Input
                             title="Output"
                             placeholder="Output amount"

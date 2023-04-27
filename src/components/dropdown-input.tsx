@@ -1,4 +1,4 @@
-import { ChangeEvent, Fragment, MouseEventHandler, useRef, useState } from 'react'
+import { ChangeEvent, Dispatch, Fragment, MouseEventHandler, SetStateAction, useRef, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { MdChevronRight } from 'react-icons/md'
 import { alphaTokenSort, classNames } from '../utils/common'
@@ -10,7 +10,7 @@ import { Asset } from './asset'
 
 type IDropdownProps = {
   state: any;
-  setState?: any;
+  setState?: Dispatch<SetStateAction<any>> | any;
   options?: string[];
   placeholder?: string;
   type: 'gives.token' | 'gets.token' | 'string';
