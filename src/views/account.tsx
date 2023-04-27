@@ -53,7 +53,7 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <form>
                     <div className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}>
-                        <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2`}>
+                        <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}>
                             {isEditing ? (
                                 <div className="p-0.5">
                                 <input
@@ -70,11 +70,11 @@ export const AccountView = () => {
                                             Click to Upload
                                         </span>
                                     </span>
-                                    <Avatar size={125} />
+                                    <Avatar size={150} />
                                 </div>
                             ) : (
                                 <div>
-                                    <Avatar size={125} type="clickable" />
+                                    <Avatar size={150} type="clickable" />
                                 </div>
                             )}
                         </div>

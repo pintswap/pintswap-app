@@ -17,7 +17,6 @@ import { FulfillNFTView } from "./views/fulfill-nft";
 import { setFallbackWETH } from '@pintswap/sdk';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAccount } from 'wagmi';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -27,7 +26,6 @@ function App() {
       (window as any).pintswap = pintswap.module;
       (window as any).pintswap.logger.info = () => {};
     }
-    const { address } = useAccount();
     return (
         <>
             <Base loading={pintswap.loading}>

@@ -91,6 +91,7 @@ export const useTrade = () => {
     // Fulfill trade
     const fulfillTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
+        setLoading({ ...loading, fulfill: true })
         if (pintswap.module) {
             try {
                 let multiAddr = order.multiAddr;
@@ -281,6 +282,7 @@ export const useTrade = () => {
             case 5:
                 console.log('#takerLister: swap complete');
                 updateSteps('Complete'); // only for taker
+                setLoading({ ...loading, fulfill: false })
                 shallow.delete(order.orderHash);
                 setOpenTrades(shallow);
                 shallow = openTrades;
