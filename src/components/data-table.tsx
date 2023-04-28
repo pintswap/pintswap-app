@@ -13,7 +13,7 @@ type IDataTableProps = {
     data: (object | number[] | string[])[];
     columns: MUIDataTableColumnDef[];
     loading?: boolean;
-    type: 'explore' | 'pairs' | 'peers' | 'orderbook' | 'asks' | 'bids';
+    type: 'explore' | 'pairs' | 'peers' | 'orderbook' | 'asks' | 'bids' | 'manage';
     peer?: string;
     toolbar?: boolean;
     pagination?: boolean;
@@ -98,6 +98,8 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
         switch (type) {
             case 'explore': // TODO: fix
                 return navigate(`${url}${firstCell}`);
+            case 'manage': // TODO: fix
+                return navigate(`${url}manage/${firstCell}`)
             case 'pairs':
                 url = `${url}pairs`;
                 break;

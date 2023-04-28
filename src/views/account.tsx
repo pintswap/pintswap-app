@@ -9,6 +9,21 @@ import { convertAmount } from '../utils/common';
 import { Tab } from '@headlessui/react';
 import { useState } from 'react';
 
+const columns = [
+    {
+        name: 'hash',
+        label: 'Hash',
+    },
+    {
+        name: 'sending',
+        label: 'Sending',
+    },
+    {
+        name: 'receiving',
+        label: 'Receiving',
+    },
+];
+
 export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
@@ -116,28 +131,15 @@ export const AccountView = () => {
                         </form>
                 </Tab.Panel>
                 <Tab.Panel>
-                    <Table
-                        headers={['Hash', 'Sending', 'Receiving']}
-                        onClick={(order: any) =>
-                            navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)
-                        }
-                        items={Array.from(openTrades, (entry) => ({
+                    <DataTable 
+                        title="Open Orders"
+                        columns={columns}
+                        data={Array.from(openTrades, (entry) => ({
                             hash: entry[0],
-                            gives: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
-                            gets: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
+                            sending: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
+                            receiving: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
                         }))}
-                        emptyContent={
-                            pintswap.loading ? (
-                                <ImSpinner9 className="animate-spin" size="20px" />
-                            ) : (
-                                <span>
-                                    You currently have no open trades.{' '}
-                                    <button onClick={() => navigate('/create')}>
-                                        Create a trade now!
-                                    </button>
-                                </span>
-                            )
-                        }
+                        type="manage"
                     />
                 </Tab.Panel>
             </Card>

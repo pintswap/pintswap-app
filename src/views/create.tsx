@@ -1,6 +1,4 @@
 import { Tab, Transition } from '@headlessui/react';
-import { ImSpinner9 } from 'react-icons/im';
-import { useNavigate } from 'react-router-dom';
 import {
     Button,
     Card,
@@ -8,17 +6,30 @@ import {
     Input,
     DropdownInput,
     PageStatus,
-    Table,
+    DataTable,
 } from '../components';
 import { useTrade } from '../hooks/trade';
-import { useGlobalContext, useOffersContext } from '../stores';
+import { useOffersContext } from '../stores';
 import { BASE_URL, convertAmount } from '../utils/common';
 
+const columns = [
+    {
+        name: 'hash',
+        label: 'Hash',
+    },
+    {
+        name: 'sending',
+        label: 'Sending',
+    },
+    {
+        name: 'receiving',
+        label: 'Receiving',
+    },
+];
+
 export const CreateView = () => {
-    const navigate = useNavigate();
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
     const { openTrades } = useOffersContext();
-    const { pintswap } = useGlobalContext();
 
     const createTradeLink = () => {
         let finalUrl = `${BASE_URL}/#/fulfill/${order.multiAddr}`;
@@ -159,28 +170,15 @@ export const CreateView = () => {
                 <div className="flex flex-col">
                     <h2 className="view-header">Open Trades</h2>
                     <Card>
-                        <Table
-                            headers={['Hash', 'Sending', 'Receiving']}
-                            onClick={(order: any) =>
-                                navigate(`/${pintswap?.module?.peerId.toB58String()}/${order.hash}`)
-                            }
-                            items={Array.from(openTrades, (entry) => ({
+                        <DataTable 
+                            title="Open Orders"
+                            columns={columns}
+                            data={Array.from(openTrades, (entry) => ({
                                 hash: entry[0],
-                                gives: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
-                                gets: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
+                                sending: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
+                                receiving: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
                             }))}
-                            emptyContent={
-                                pintswap.loading ? (
-                                    <ImSpinner9 className="animate-spin" size="20px" />
-                                ) : (
-                                    <span>
-                                        You currently have no open trades.{' '}
-                                        <button onClick={() => navigate('/create')}>
-                                            Create a trade now!
-                                        </button>
-                                    </span>
-                                )
-                            }
+                            type="manage"
                         />
                     </Card>
                 </div>
