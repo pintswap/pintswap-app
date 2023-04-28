@@ -1,7 +1,6 @@
 import { ethers } from 'ethers6';
-import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Button, Card, CopyClipboard, DataTable, Input, NFTTable, Skeleton, Table, TransitionModal } from '../components';
+import { Avatar, Button, Card, CopyClipboard, DataTable, Input, Skeleton, TransitionModal } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { useOffersContext, useUserContext } from '../stores';
 import { useGlobalContext } from '../stores/global';
