@@ -65,7 +65,7 @@ export const CreateView = () => {
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="view-header">Create Trade</h2>
+                        <h2 className="view-header mb-0">Create Trade</h2>
                         <Transition
                             show={!!order.orderHash && !!order.multiAddr}
                             enter="transition-opacity duration-75"

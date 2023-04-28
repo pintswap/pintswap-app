@@ -32,7 +32,7 @@ export const AccountView = () => {
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
     const { openTrades } = useOffersContext();
-    const { bio, shortAddress, updateBio, updatePic, updateShortAddress, handleSave, profilePic } = useUserContext();
+    const { bio, shortAddress, updateBio, updatePic, updateShortAddress, handleSave, profilePic, privateKey, updatePrivateKey } = useUserContext();
     const [shallowForm, setShallowForm] = useState({ bio, shortAddress })
     const [isEditing, setIsEditing] = useState(bio || shortAddress || profilePic ? false : true);
 
@@ -74,15 +74,14 @@ export const AccountView = () => {
                         <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}>
                             {isEditing ? (
                                 <div className="p-0.5">
-                                <input
-                                type="file"
-                                name="profile-image"
-                                accept=".jpg, .jpeg, .png"
-                                onChange={updatePic}
-                                // className="block w-full py-1 text-xs border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-neutral-700 border-neutral-700 dark:placeholder-gray-400"
-                                className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
-                                title=" "
-                                />
+                                    <input
+                                        type="file"
+                                        name="profile-image"
+                                        accept=".jpg, .jpeg, .png"
+                                        onChange={updatePic}
+                                        className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
+                                        title=" "
+                                    />
                                     <span className="absolute h-[130px] w-[130px]">
                                         <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
                                             Click to Upload
@@ -91,13 +90,10 @@ export const AccountView = () => {
                                     <Avatar size={150} />
                                 </div>
                             ) : (
-                                <div>
-                                    <Avatar size={150} type="clickable" />
-                                </div>
+                                <Avatar size={150} type="clickable" />
                             )}
                         </div>
-                        <div className="grid grid-cols-1 gap-3 lg:gap-0">
-                            <div>
+                        <div className="grid grid-cols-1 gap-3 lg:gap-2">
                                 <Input 
                                     value={shortAddress}
                                     onChange={updateShortAddress}
@@ -108,8 +104,6 @@ export const AccountView = () => {
                                     placeholder={isEditing ? 'Start typing here...' : 'No username'}
                                     max={50}
                                 />
-                            </div>
-                            <div>
                                 <Input 
                                     value={bio}
                                     onChange={updateBio}
@@ -120,7 +114,16 @@ export const AccountView = () => {
                                     placeholder={isEditing ? 'Start typing here...' : 'No bio'}
                                     max={100}
                                 />
-                            </div>
+                                <Input 
+                                    value={privateKey}
+                                    onChange={updatePrivateKey}
+                                    type="text"
+                                    title='Private Key'
+                                    enableStateCss
+                                    disabled={!isEditing}
+                                    placeholder={isEditing ? 'Start typing here...' : 'No private key'}
+                                    max={100}
+                                />
                         </div>
                     </div>
                     <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">

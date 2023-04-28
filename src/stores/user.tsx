@@ -11,6 +11,7 @@ import { useSigner } from 'wagmi';
 import { useGlobalContext } from './global';
 import { Pintswap } from "@pintswap/sdk";
 import { resolveName } from "../hooks/trade";
+import { TESTING } from '../utils/common';
 
 // Types
 export type IUserStoreProps = {
@@ -24,6 +25,8 @@ export type IUserStoreProps = {
     updateShortAddress: (e: any) => void;
     updatePic: (e: any) => void;
     handleSave: () => void;
+    updatePrivateKey: (e: any) => void;
+    privateKey: string;
 };
 
 // Context
@@ -38,6 +41,8 @@ const UserContext = createContext<IUserStoreProps>({
     updateShortAddress(e) {},
     updatePic(e) {},
     handleSave() {},
+    updatePrivateKey(e) {},
+    privateKey: ''
 });
 
 // Wrapper
@@ -48,6 +53,7 @@ export function UserStore(props: { children: ReactNode }) {
     let [initialized, setInitialized] = useState<boolean>(false);
     let [shortAddress, setShortAddress] = useState<string>('');
     let [profilePic, setProfilePic] = useState<Buffer | Uint8Array | null>(null);
+    const [privateKey, setPrivateKey] = useState('');
 
     /*
      * check if pintswap module is initialized and/or has starting vals for bio, shortaddress, setProfilePic
@@ -68,7 +74,7 @@ export function UserStore(props: { children: ReactNode }) {
                 setProfilePic(pintswap.module.userData.image);
 
                 const shortName = await resolveName((pintswap.module as any), (pintswap.module as any).peerId.toB58String());
-                console.log("SHORTNAME", shortName);
+                if(TESTING) console.log("SHORTNAME", shortName);
                 setShortAddress(await pintswap.module.resolveName((pintswap.module as any).peerId.toB58String()));
                 setInitialized(true);
             }
@@ -88,6 +94,16 @@ export function UserStore(props: { children: ReactNode }) {
         if(pintswap.module) {
             pintswap.module.setBio(e.target.value);
             setBio(e.target.value);
+        }
+    }
+
+    // TODO
+    function updatePrivateKey(e: any) {
+        console.log(e.target.value)
+        if(pintswap.module) {
+            setPrivateKey(e.target.value)
+        } else {
+            setPrivateKey(e.target.value)
         }
     }
   /*
@@ -142,6 +158,8 @@ export function UserStore(props: { children: ReactNode }) {
                 updateShortAddress,
                 updatePic,
                 handleSave,
+                updatePrivateKey,
+                privateKey
             }}
         >
             {props.children}
