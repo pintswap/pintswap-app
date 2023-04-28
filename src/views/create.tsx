@@ -28,6 +28,10 @@ const columns = [
         name: 'receiving',
         label: 'Receiving',
     },
+    {
+        name: '',
+        label: ''
+    }
 ];
 
 export const CreateView = () => {

@@ -8,17 +8,18 @@ import {
     useState,
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
-import { defer } from '../utils/common';
+import { defer, TESTING } from '../utils/common';
 import { useGlobalContext } from './global';
 import { memoize } from 'lodash';
 import { toLimitOrder } from '../utils/orderbook';
 import { ethers } from 'ethers6';
-import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
+import { hashOffer, isERC20Transfer } from '@pintswap/sdk/lib/trade';
 
 // Types
 export type IOffersStoreProps = {
     openTrades: Map<string, IOffer>;
     addTrade: (hash: string, { gives, gets }: IOffer) => void;
+    deleteTrade: (hash: string) => void;
     peerTrades: Map<string, IOffer>;
     availableTrades: Map<string, IOffer>;
     setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
@@ -33,6 +34,7 @@ const OffersContext = createContext<IOffersStoreProps>({
     peerTrades: new Map(),
     availableTrades: new Map(),
     addTrade(hash, { gives, gets }) {},
+    deleteTrade(hash) {},
     setOpenTrades: () => {},
     setPeerTrades: () => {},
     setAvailableTrades: () => {},
@@ -125,6 +127,17 @@ export function OffersStore(props: { children: ReactNode }) {
         setOpenTrades(openTrades.set(hash, tradeProps));
     };
 
+    const deleteTrade = (hash: string) => {
+        const foundTrade = openTrades.get(hash);
+        if(foundTrade && pintswap.module) {
+            if(TESTING) console.log("#deleteTrade - Hash:", hash)
+            pintswap.module.offers.delete(hashOffer(foundTrade))
+            const shallow = new Map(openTrades);
+            shallow.delete(hash);
+            setOpenTrades(shallow);
+        }
+    }
+
     // Get Active Trades
     useEffect(() => {
         const { module } = pintswap;
@@ -179,6 +192,7 @@ export function OffersStore(props: { children: ReactNode }) {
                 setAvailableTrades,
                 availableTrades,
                 limitOrdersArr,
+                deleteTrade
             }}
         >
             {props.children}

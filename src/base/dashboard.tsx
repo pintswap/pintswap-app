@@ -40,7 +40,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
             </li>
           ))}
         </ul>
-        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-8 shadow-inner shadow-neutral-950">
+        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-8 mb-2 shadow-inner shadow-neutral-950">
           <main className="max-w-7xl mx-auto">
             {children}
           </main>
@@ -52,7 +52,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     return (
       <>
         <div className="flex justify-center">
-          <main className="w-full p-4">
+          <main className="w-full p-4 mb-2">
             {children}
           </main>
         </div>

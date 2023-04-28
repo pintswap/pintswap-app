@@ -6,7 +6,9 @@ import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
 import { truncate } from '../utils/common';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
+import { Button } from './button';
+import { useOffersContext } from '../stores';
 
 type IDataTableProps = {
     title?: string;
@@ -52,7 +54,7 @@ export const DataTable = ({
                                 noMatch: loading ? (
                                     <SpinnerLoader className={'justify-start lg:justify-center'} />
                                 ) : (
-                                    'Error occured while fetching data. Please refresh the page.'
+                                    'No data available'
                                 ),
                             },
                         },
@@ -87,10 +89,16 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
     (cells as any).index = (data as any).index;
     const cols = columns as string[];
     const { width } = useWindowSize();
+    const { deleteTrade } = useOffersContext();
     const navigate = useNavigate();
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
         loading ? '' : 'hover:bg-gray-900 hover:cursor-pointer'
     }`;
+
+    const handleDelete = (e: SyntheticEvent, hash: string) => {
+        e.stopPropagation();
+        deleteTrade(hash);
+    }
 
     const route = (cells: string[]) => {
         const firstCell = cells[0];
@@ -147,6 +155,25 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                 return `text-neutral-100`;
         }
     };
+
+    const determineCell = (cell: string) => {
+        const charsShown = width > 900 ? 3 : 5;
+        if(cell) {
+            return cell?.startsWith('Q') || cell?.startsWith('0x')
+                ? truncate(cell, charsShown)
+                : formatCell(cell)
+        } else {
+            if(type === 'manage') {
+                return (
+                    <Button className="text-red-400 hover:text-red-500 w-full text-right" type="transparent" onClick={(e) => handleDelete(e, cells[0])}>
+                        Delete
+                    </Button>
+                )
+            } else {
+                return <></>
+            }
+        }
+    }
     // Desktop
     if (width >= 900) {
         return (
@@ -156,9 +183,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
                         className={`py-2 pl-4`}
                     >
-                        {cell?.startsWith('Q') || cell?.startsWith('0x')
-                            ? truncate(cell, 2)
-                            : formatCell(cell)}
+                        {determineCell(cell)}
                     </td>
                 ))}
             </tr>
@@ -177,12 +202,20 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                     >
                         <span className="text-gray-300 font-thin">{cols[i]}</span>
                         <span>
-                            {cell?.startsWith('Q') || cell?.startsWith('0x')
-                                ? truncate(cell, 5)
-                                : formatCell(cell)}
+                            {determineCell(cell)}
                         </span>
                     </td>
                 ))}
+                {type === 'manage' && (
+                    <td
+                        key={`data-table-cell-${Math.floor(Math.random() * 1000)}`}
+                        className={`py-[1px] flex justify-between items-center`}
+                    >
+                        <Button className="bg-red-400" onClick={(e) => handleDelete(e, cells[0])}>
+                            Delete
+                        </Button>
+                    </td>
+                )}
             </tr>
         );
     }
