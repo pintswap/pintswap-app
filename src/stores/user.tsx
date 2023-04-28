@@ -12,6 +12,7 @@ import { useGlobalContext } from './global';
 import { Pintswap } from "@pintswap/sdk";
 import { resolveName } from "../hooks/trade";
 import { TESTING } from '../utils/common';
+import { ethers } from 'ethers6';
 
 // Types
 export type IUserStoreProps = {
@@ -123,7 +124,6 @@ export function UserStore(props: { children: ReactNode }) {
           if (_image) setProfilePic(_image);
           if (localUser) {
             const psUser = await Pintswap.fromObject(JSON.parse(localUser), signer);
-            console.log()
             setPintswap({ ...pintswap, module: psUser });
           }
           setInitialized(true);
@@ -135,11 +135,15 @@ export function UserStore(props: { children: ReactNode }) {
         setShortAddress(e.target.value);
     }
     function handleSave() {
-        if (pintswap.module) {
-          localStorage.setItem('_pintUser', JSON.stringify(pintswap.module.toObject(), null, 2));
+        const { module } = pintswap;
+        if (module) {
+          localStorage.setItem('_pintUser', JSON.stringify(module.toObject(), null, 2));
           (async () => {
-            if (pintswap.module) {
-              console.log('REGISTERNAME', await pintswap.module.registerName(shortAddress));
+            if (module) {
+                await module.registerName(shortAddress);
+                // TODO: fix saving private key
+                const psUser = localStorage.getItem('_pintUser');
+                if(psUser) await Pintswap.fromObject(JSON.parse(psUser), new ethers.Wallet(privateKey))
             }
           })().catch((err) => console.error(err));
         }

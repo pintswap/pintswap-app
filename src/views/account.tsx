@@ -117,7 +117,7 @@ export const AccountView = () => {
                                 <Input 
                                     value={privateKey}
                                     onChange={updatePrivateKey}
-                                    type="text"
+                                    type="password"
                                     title='Private Key'
                                     enableStateCss
                                     disabled={!isEditing}

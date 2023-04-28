@@ -10,7 +10,7 @@ type IInputProps = {
     onChange?: (e: FormEvent<HTMLInputElement>) => void;
     className?: string;
     max?: number;
-    type?: 'text' | 'number';
+    type?: 'text' | 'number' | 'password';
     title?: string;
     disabled?: boolean;
     loading?: boolean;
