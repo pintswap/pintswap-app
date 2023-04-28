@@ -14,7 +14,7 @@ export const Card = ({ children, className, header, scroll, type, tabs }: ICardP
     if(type === 'skeleton') {
         return (
             <div role="status" className="w-full animate-pulse">
-                <div className={`${className ? className : ''} bg-neutral-800 h-[5rem] rounded-lg shadow w-full`}></div>
+                <div className={`${className ? className : ''} bg-neutral-700 h-[5rem] rounded-lg shadow w-full`}></div>
             </div>
         )
     }
@@ -30,9 +30,9 @@ export const Card = ({ children, className, header, scroll, type, tabs }: ICardP
                             {tabs.map((tab, i) => (
                                 <Tab key={`tabs-${i}`} className="focus-visible:outline-none">
                                     {({ selected }) => (
-                                        <button className={`${selected ? 'border-indigo-600' : 'border-neutral-800 text-neutral-400 hover:text-neutral-300'} border-b-2 lg:border-b-4 rounded w-full pb-2 transition duration-200`}>
+                                        <div className={`${selected ? 'border-indigo-600' : 'border-neutral-800 text-neutral-400 hover:text-neutral-300'} border-b-2 lg:border-b-4 rounded w-full pb-2 transition duration-200`}>
                                             {tab}
-                                        </button>
+                                        </div>
                                     )}
                                 </Tab>
                             ))}

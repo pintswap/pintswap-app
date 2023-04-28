@@ -97,7 +97,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
         <div className="float-left">
             {loading ? (
               <div
-                className={`rounded-full self-center bg-neutral-800`}
+                className={`rounded-full self-center bg-neutral-700`}
                 style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
               />
             ) : (
@@ -114,7 +114,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
             <div>
             {withName && loading ? (
               <div
-                className={`rounded-md self-center bg-neutral-800`}
+                className={`rounded-md self-center bg-neutral-700`}
                 style={{ width: 150, height: 20 }}
               />
             ) : (
@@ -126,7 +126,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
           <div>
           {withBio && loading ? (
             <div
-                className={`rounded-md bg-neutral-800`}
+                className={`rounded-md bg-neutral-700`}
                 style={{ width: 200, height: 15 }}
             />
           ) : (
@@ -145,7 +145,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
           <div className={`flex flex-row gap-3 ${alginClass()} !items-center`}>
             {loading ? (
               <div
-                className={`rounded-full self-center bg-neutral-800`}
+                className={`rounded-full self-center bg-neutral-700`}
                 style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
               />
             ) : (
@@ -161,7 +161,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
               <>
                 {loading ? (
                   <div
-                    className={`rounded-md self-center bg-neutral-800`}
+                    className={`rounded-md self-center bg-neutral-700`}
                     style={{ width: 150, height: 20 }}
                   />
                 ) : (
@@ -176,7 +176,7 @@ export const Avatar = ({ size = 50, type, peer, withBio, withName, nameClass, bi
             <>
               {loading ? (
                 <div
-                  className={`rounded-md bg-neutral-800`}
+                  className={`rounded-md bg-neutral-700`}
                   style={{ width: 200, height: 15 }}
                 />
               ) : (

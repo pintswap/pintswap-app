@@ -173,7 +173,7 @@ export const useTrade = () => {
 
     // Update order form
     const updateTrade = (
-        key: 'gives.token' | 'gets.token' | 'gives.amount' | 'gets.amount',
+        key: 'gives.token' | 'gets.token' | 'gives.amount' | 'gets.amount' | 'gives.tokenId' | 'gets.tokenId',
         val: string,
     ) => {
         const parts: any = key.split('.');
