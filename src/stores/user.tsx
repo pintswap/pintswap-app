@@ -76,15 +76,19 @@ export function UserStore(props: { children: ReactNode }) {
     }, [pintswap.module, initialized]);
 
     async function updatePic(e: any) {
-        let image = (e.target.files as any)[0] ?? null;
-        let _buff = Buffer.from(await image.arrayBuffer());
-        (pintswap as any).setImage(_buff);
-        setProfilePic(_buff);
+        if(pintswap.module) {
+            let image = (e.target.files as any)[0] ?? null;
+            let _buff = Buffer.from(await image.arrayBuffer());
+            pintswap.module.setImage(_buff);
+            setProfilePic(_buff);
+        }
     }
 
     function updateBio(e: any) {
-        (pintswap as any).setBio(e.target.value);
-        setBio(e.target.value);
+        if(pintswap.module) {
+            pintswap.module.setBio(e.target.value);
+            setBio(e.target.value);
+        }
     }
   /*
   * check if pintswap module is initialized and/or has starting vals for bio, shortaddress, setProfilePic

@@ -21,12 +21,16 @@ const columns = [
         name: 'receiving',
         label: 'Receiving',
     },
+    {
+        name: '',
+        label: '',
+    }
 ];
 
 export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
-    const { pintswap, peer } = useGlobalContext();
+    const { pintswap } = useGlobalContext();
     const { openTrades } = useOffersContext();
     const { bio, shortAddress, updateBio, updatePic, updateShortAddress, handleSave, profilePic } = useUserContext();
     const [shallowForm, setShallowForm] = useState({ bio, shortAddress })
@@ -76,7 +80,7 @@ export const AccountView = () => {
                                 accept=".jpg, .jpeg, .png"
                                 onChange={updatePic}
                                 // className="block w-full py-1 text-xs border rounded-lg cursor-pointer text-gray-400 focus:outline-none bg-neutral-700 border-neutral-700 dark:placeholder-gray-400"
-                                className="absolute bg-transparent rounded-full h-[125px] w-[125px] text-transparent z-50 hover:cursor-pointer"
+                                className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
                                 title=" "
                                 />
                                     <span className="absolute h-[130px] w-[130px]">
@@ -131,7 +135,6 @@ export const AccountView = () => {
                 </Tab.Panel>
                 <Tab.Panel>
                     <DataTable 
-                        title="Open Orders"
                         columns={columns}
                         data={Array.from(openTrades, (entry) => ({
                             hash: entry[0],
@@ -139,6 +142,7 @@ export const AccountView = () => {
                             receiving: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
                         }))}
                         type="manage"
+                        toolbar={false}
                     />
                 </Tab.Panel>
             </Card>
