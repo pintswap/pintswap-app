@@ -2,7 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { connectorsForWallets, darkTheme, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { hardhat, mainnet, zksync } from 'wagmi/chains';
+import { hardhat, mainnet } from 'wagmi/chains';
 import { NETWORK } from './common';
 import {
     coinbaseWallet,
@@ -18,7 +18,7 @@ import {
 import merge from 'lodash.merge';
 
 export const { chains, provider } = configureChains(
-    [NETWORK === 'LOCALHOST' ? hardhat : NETWORK === 'zksync' ? zksync : mainnet],
+    [NETWORK === 'LOCALHOST' ? hardhat : NETWORK === 'zksync' ? mainnet : mainnet],
     [publicProvider()],
 );
 
