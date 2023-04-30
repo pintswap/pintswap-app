@@ -2,13 +2,13 @@ import { Transition } from '@headlessui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
-import { ActiveText, AnimatedHamburger, Avatar, DropdownMenu, Wallet } from '../components';
+import { ActiveText, AnimatedHamburger, Avatar, Wallet } from '../components';
+import { useDashNav } from '../hooks';
 import { useWindowSize } from '../hooks/window-size';
-import { useGlobalContext } from '../stores';
 import { dashboardColor, dashboardHeightClass } from './dashboard';
 
 export const Navbar = () => {
-    const { NAV_ITEMS } = useGlobalContext();
+    const { NAV_ITEMS } = useDashNav();
     const { width, breakpoints } = useWindowSize();
     const { address } = useAccount();
     const navigate = useNavigate();

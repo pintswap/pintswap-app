@@ -1,10 +1,9 @@
 import { ReactNode } from "react"
 import { useNavigate } from "react-router-dom";
 import { ActiveText } from "../components";
-import { useWindowSize } from "../hooks/window-size";
 import { Avatar } from '../components';
-import { useGlobalContext } from "../stores";
 import { useAccount } from "wagmi";
+import { useDashNav, useWindowSize } from "../hooks";
 
 type IDashboardProps = {
   children: ReactNode;
@@ -16,7 +15,7 @@ export const dashboardColor = `bg-neutral-900`;
 export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
   const { width, breakpoints } = useWindowSize();
-  const { NAV_ITEMS } = useGlobalContext();
+  const { NAV_ITEMS } = useDashNav();
   const navigate = useNavigate();
 
   if(width >= breakpoints.md) {
@@ -52,7 +51,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     return (
       <>
         <div className="flex justify-center">
-          <main className="w-full p-4 mb-2">
+          <main className="w-full p-4 mb-6">
             {children}
           </main>
         </div>

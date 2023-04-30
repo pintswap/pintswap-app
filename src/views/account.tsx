@@ -32,19 +32,21 @@ export const AccountView = () => {
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
     const { openTrades } = useOffersContext();
-    const { bio, shortAddress, updateBio, updatePic, updateShortAddress, handleSave, profilePic, privateKey, updatePrivateKey } = useUserContext();
-    const [shallowForm, setShallowForm] = useState({ bio, shortAddress })
-    const [isEditing, setIsEditing] = useState(bio || shortAddress || profilePic ? false : true);
+    const { updateBio, updateImg, updateName, handleSave, updatePrivateKey, userData } = useUserContext();
+    const { name, bio, img, privateKey } = userData;
+
+    const [shallowForm, setShallowForm] = useState({ bio, name })
+    const [isEditing, setIsEditing] = useState(bio || name || img ? false : true);
 
     const handleUpdate = () => {
         handleSave();
-        setShallowForm({ bio, shortAddress })
+        setShallowForm({ bio, name })
         setIsEditing(false);
     };
 
     const handleCancel = () => {
         updateBio({ target:{ value: shallowForm.bio }});
-        updateShortAddress({ target:{ value: shallowForm.shortAddress }})
+        updateName({ target:{ value: shallowForm.name }})
         setIsEditing(false);
     }
 
@@ -78,7 +80,7 @@ export const AccountView = () => {
                                         type="file"
                                         name="profile-image"
                                         accept=".jpg, .jpeg, .png"
-                                        onChange={updatePic}
+                                        onChange={updateImg}
                                         className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
                                         title=" "
                                     />
@@ -95,8 +97,8 @@ export const AccountView = () => {
                         </div>
                         <div className="grid grid-cols-1 gap-3 lg:gap-2">
                                 <Input 
-                                    value={shortAddress}
-                                    onChange={updateShortAddress}
+                                    value={name}
+                                    onChange={updateName}
                                     type="text"
                                     title='Username'
                                     enableStateCss

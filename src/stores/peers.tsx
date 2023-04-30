@@ -5,9 +5,10 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { formattedPeerName, getPeerData, IUserDataProps } from '../utils/common';
+import { formattedPeerName, getPeerData } from '../utils/common';
 import { useGlobalContext } from './global';
 import { useOffersContext } from './offers';
+import { IUserDataProps } from './user';
 
 // Types
 export type IPeersStoreProps = {

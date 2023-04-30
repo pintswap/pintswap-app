@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useGlobalContext, useUserContext } from "../stores"
+import { IUserDataProps, useGlobalContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
-import { formattedPeerName, getPeerData, IUserDataProps, truncate } from "../utils/common";
+import { formattedPeerName, getPeerData, truncate } from "../utils/common";
 
 type IAvatarProps = {
   size?: number | `${string}px` | 'full';
@@ -22,14 +22,15 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
   const { pathname } = useLocation();
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
-  const { profilePic, bio, shortAddress } = useUserContext();
+  const { userData } = useUserContext();
   const navigate = useNavigate();
 
   const defaultImgSrc = '/black.jpg';
   const defaultUserState = { 
-    imgSrc: defaultImgSrc, 
-    bio: pathname.includes('account') ? (bio ? bio : '') : '', 
-    name: peer && typeof peer === 'string' ? peer : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero) 
+    img: defaultImgSrc, 
+    bio: pathname.includes('account') ? (userData.bio ? userData.bio : '') : '', 
+    name: peer && typeof peer === 'string' ? peer : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero),
+    privateKey: ''
   }
   const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState)
 
@@ -42,9 +43,10 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
           const res = await getPeerData(pintswap, peer);
           if(res) {
             return {
-              imgSrc: `${baseUrl}${res.image.toString('base64')}`,
+              img: `${baseUrl}${res.image.toString('base64')}`,
               bio: res.bio,
-              name: formName
+              name: formName,
+              privateKey: ''
             }
           }
         } catch (err) {
@@ -53,12 +55,13 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
         }
       } else return peer;
     }
-    if(!profilePic) return defaultUserState;
+    if(!userData.img) return defaultUserState;
     else {
       return {
-        imgSrc: `${baseUrl}${profilePic?.toString('base64')}`,
-        bio,
-        name: shortAddress ? shortAddress : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero)
+        img: `${baseUrl}${userData.img?.toString('base64')}`,
+        bio: userData.bio,
+        name: userData.name ? userData.name : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero),
+        privateKey: ''
       }
     }
   }
@@ -83,7 +86,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
       <div className={`${loading ? 'animate-pulse' : ''}`}>
         <button onClick={() => navigate(`/account`)} className={`bg-gradient-to-r from-indigo-600 to-sky-400 p-[2.5px] hover:to-sky-500 rounded-full`}>
           <img
-              src={peerData.imgSrc}
+              src={(peerData.img as string)}
               height={size}
               width={size}
               className="rounded-full bg-neutral-900 self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray"
@@ -104,7 +107,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
               />
             ) : (
               <img
-                src={peerData.imgSrc}
+                src={(peerData.img as string)}
                 height={size}
                 width={size}
                 className="rounded-full"
@@ -155,7 +158,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
                   />
                 ) : (
                   <img
-                    src={peerData.imgSrc}
+                    src={(peerData.img as string)}
                     height={size}
                     width={size}
                     className="rounded-full self-center"

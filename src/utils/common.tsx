@@ -2,17 +2,10 @@ import { createFromB58String, JSONPeerId } from 'peer-id';
 import { IOffer } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { ITokenProps, TOKENS } from './token-list';
-import { IPintswapProps } from '../stores';
+import { IPintswapProps, IUserDataProps } from '../stores';
 import { constants } from 'ethers';
 
 // TYPES
-export type IUserDataProps = {
-  imgSrc: string;
-  bio: string;
-  name: string;
-  offers?: any[]
-}
-
 export type INFTProps = {
   attributes: any[];
   background_color: string;
@@ -40,10 +33,12 @@ export const EMPTY_TRADE: IOffer = {
 };
 
 export const EMPTY_PEER: JSONPeerId = {
-    id: '',
-    privKey: '',
-    pubKey: '',
+    id: '', privKey: '', pubKey: '',
 };
+
+export const EMPTY_USER_DATA: IUserDataProps = {
+  img: '', bio: '', name: '', offers: [], privateKey: ''
+}
 
 // CSS HELPERS
 export function classNames(...classes: string[]) {
