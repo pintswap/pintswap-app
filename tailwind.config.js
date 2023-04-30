@@ -4,7 +4,20 @@ module.exports = {
     content: ['./src/**/*.{js,jsx,ts,tsx}'],
     theme: {
         extend: {
-            colors: {},
+            screens: {
+                '3xl': '1920px'
+            },
+            colors: {
+                brand: {
+                    dashboard: '#171717',
+                }
+            },
+            maxWidth: {
+                dashboard: '1920px'
+            },
+            width: {
+                dashboard: '1920px'
+            },
             animation: {
                 'ping-slow': 'ping 1.2s linear infinite',
                 'drip-1': 'drip cubic-bezier(0.86, 0.1, 0.8, 0.36) 3s infinite',
