@@ -21,7 +21,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     // Desktop
     return (
       <div className={`3xl:max-w-dashboard 3xl:px-12 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 ${dashboardHeightClass}`}>
-        <ul className={`bg-brand-dashboard p-4 py-6 pl-0 flex flex-col gap-2 3xl:h-[50vh] 3xl:mt-12 3xl:rounded`}>
+        <ul className={`bg-brand-dashboard p-4 py-6 pl-0 flex flex-col gap-2 3xl:h-[50vh] 3xl:mt-12 3xl:rounded-lg`}>
           {NAV_ITEMS.map((el, i) => (
             <li key={`sidebar-nav-${i}`}>
               <button 
