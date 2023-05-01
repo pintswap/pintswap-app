@@ -1,5 +1,5 @@
 import { Transition } from '@headlessui/react';
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
 import { Button, Card, CopyClipboard, PageStatus, Input, ProgressIndicator } from '.';
@@ -12,6 +12,7 @@ import {
     formattedFromTransfer,
     matchOffers,
 } from '../utils/orderbook';
+import { useParams } from 'react-router-dom';
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -19,6 +20,7 @@ export const PeerTickerFulfill = ({
     matchInputs,
     setMatchInputs,
 }: any) => {
+    const { base: baseAsset, trade: tradeAsset } = useParams();
     const { address } = useAccount();
     const { data: signer } = useSigner();
     const { fulfillTrade, loading, trade, steps, order, error, fill, setFill } = useTrade();
@@ -27,7 +29,8 @@ export const PeerTickerFulfill = ({
         output: '',
     });
 
-    const handleAmountChange = async (e: FormEvent<HTMLInputElement>) => {
+    const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
         const formattedAmount = (await formattedFromTransfer({
                 token:
                     (matchInputs.list[0] || {}).token ||
@@ -35,7 +38,7 @@ export const PeerTickerFulfill = ({
                 amount: e,
             }, signer)).amount
         setFill({
-            input: e.currentTarget.value,
+            input: e.target.value,
             ...fill,
         });
         setMatchInputs({
@@ -84,7 +87,7 @@ export const PeerTickerFulfill = ({
                             type="string"
                             loading={loading.trade}
                             disabled={loading.allTrades}
-                            options={['Buy', 'Sell']}
+                            options={[`Buy ${tradeAsset ? tradeAsset : ''}`, `Sell ${baseAsset ? baseAsset : ''}`]}
                             setState={(e: any) => setTradeType(e)}
                         />
                         <Input
@@ -93,7 +96,7 @@ export const PeerTickerFulfill = ({
                             value={Number(limitOrder.price).toFixed(4)}
                             type="number"
                             loading={loading.trade}
-                            disabled={loading.allTrades}
+                            disabled
                             onChange={(e) => setLimitOrder({ 
                                 ...limitOrder, 
                                 price: e.currentTarget.value 

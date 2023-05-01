@@ -156,6 +156,5 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
         ticker,
         bidLimitOrders,
         askLimitOrders,
-        forTicker,
     };
 };

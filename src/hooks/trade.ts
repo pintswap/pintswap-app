@@ -207,6 +207,7 @@ export const useTrade = () => {
                     await getTrades(multiaddr, splitUrl[3]);
                 } else if (multiaddr) {
                     // Only multiAddr
+                    if(params.base && params.trade && steps[1].status !== 'current') updateSteps('Fulfill') 
                     setLoading({ ...loading, allTrades: true });
                     setOrder({ multiAddr: multiaddr, orderHash: '' });
                     await getTrades(multiaddr);
