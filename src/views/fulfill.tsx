@@ -10,6 +10,7 @@ import {
     PageStatus,
     Input,
     ProgressIndicator,
+    TransitionModal,
 } from '../components';
 import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
@@ -90,13 +91,9 @@ export const FulfillView = () => {
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-6">
-            <Avatar 
-                peer={order.multiAddr}
-                withBio
-                withName
-                nameClass="text-xl"
-                type="profile"
-            />
+            <TransitionModal button={<Avatar peer={order.multiAddr} withBio withName align="left" size={60} type="profile" />}>
+                    <Avatar peer={order.multiAddr} size={300} />
+                </TransitionModal>
                 <Card 
                 header={"Fullfill Trade"}
                 >
