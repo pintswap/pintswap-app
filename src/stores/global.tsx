@@ -1,12 +1,9 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useAccount, useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
 import { defer, EMPTY_PEER, TESTING } from '../utils/common';
 import { ethers } from 'ethers6';
-import { BiDrink, BiHappyAlt, BiDonateBlood, BiRun, BiShapeCircle, BiWind, BiUserPlus } from "react-icons/bi";
-import { IconType } from 'react-icons';
-import { IDropdownMenuItemsProps } from '../components';
 
 // Types
 export type IPintswapProps = {
@@ -26,7 +23,6 @@ export type IGlobalStoreProps = {
     peer: IPeerProps;
     setPeer?: any;
     setPintswap?: any;
-    NAV_ITEMS: IDropdownMenuItemsProps[]
 };
 
 // Context
@@ -40,8 +36,7 @@ const GlobalContext = createContext<IGlobalStoreProps>({
         module: EMPTY_PEER,
         loading: true,
         error: false,
-    },
-    NAV_ITEMS: []
+    }
 });
 
 // Peer
@@ -50,7 +45,6 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
-    const { address } = useAccount();
     const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e')
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
@@ -63,20 +57,6 @@ export function GlobalStore(props: { children: ReactNode }) {
         loading: true,
         error: false,
     });
-
-    const ICON_SIZE = '20px';
-    const NAV_ITEMS = address ? [
-        { text: 'Explore', route: '/explore', disabled: false, icon: <BiDrink size={ICON_SIZE} /> },
-        { text: 'Pairs', route: '/pairs', disabled: false, icon: <BiDonateBlood size={ICON_SIZE} /> },
-        { text: 'Peers', route: '/peers', disabled: false, icon: <BiShapeCircle size={ICON_SIZE} /> },
-        { text: 'Create', route: '/create', disabled: false, icon: <BiRun size={ICON_SIZE} /> },
-        { text: 'Fulfill', route: '/fulfill', disabled: false, icon: <BiWind size={ICON_SIZE} /> },
-        { text: 'Account', route: '/account', disabled: false, icon: <BiHappyAlt size={ICON_SIZE} /> },
-    ] : [
-        { text: 'Explore', route: '/explore', disabled: false, icon: <BiDrink size={ICON_SIZE} /> },
-        { text: 'Pairs', route: '/pairs', disabled: false, icon: <BiDonateBlood size={ICON_SIZE} /> },
-        { text: 'Peers', route: '/peers', disabled: false, icon: <BiShapeCircle size={ICON_SIZE} /> },
-    ]
 
     // Initialize Pintswap
     useEffect(() => {
@@ -144,7 +124,6 @@ export function GlobalStore(props: { children: ReactNode }) {
                 peer,
                 setPeer,
                 setPintswap,
-                NAV_ITEMS
             }}
         >
             {props.children}

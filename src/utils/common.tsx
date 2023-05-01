@@ -2,17 +2,10 @@ import { createFromB58String, JSONPeerId } from 'peer-id';
 import { IOffer } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { ITokenProps, TOKENS } from './token-list';
-import { IPintswapProps } from '../stores';
+import { IPintswapProps, IUserDataProps } from '../stores';
 import { constants } from 'ethers';
 
 // TYPES
-export type IUserDataProps = {
-  imgSrc: string;
-  bio: string;
-  name: string;
-  offers?: any[]
-}
-
 export type INFTProps = {
   attributes: any[];
   background_color: string;
@@ -40,10 +33,12 @@ export const EMPTY_TRADE: IOffer = {
 };
 
 export const EMPTY_PEER: JSONPeerId = {
-    id: '',
-    privKey: '',
-    pubKey: '',
+    id: '', privKey: '', pubKey: '',
 };
+
+export const EMPTY_USER_DATA: IUserDataProps = {
+  img: '', bio: '', name: '', offers: [], privateKey: ''
+}
 
 // CSS HELPERS
 export function classNames(...classes: string[]) {
@@ -153,7 +148,7 @@ export async function getPeerData(ps: IPintswapProps, peer: string) {
   else return { offers: [], bio: '', image: '' };
 }
 
-export const formattedPeerName = async (ps: IPintswapProps, peer: string) => {
+export const formatPeerName = async (ps: IPintswapProps, peer: string) => {
   const { module } = ps;
   if(peer.includes('.drip')) return peer;
   else {
@@ -162,3 +157,22 @@ export const formattedPeerName = async (ps: IPintswapProps, peer: string) => {
   }
   return peer;
 };
+
+export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
+  const baseUrl = `data:image/jpg;base64,`;
+  try {
+    const res = await getPeerData(ps, peer);
+    const formattedName = await formatPeerName(ps, peer);
+    if(res) {
+      return {
+        img: `${baseUrl}${res.image.toString('base64')}`,
+        bio: res.bio,
+        name: formattedName,
+        privateKey: ''
+      }
+    }
+  } catch (err) {
+    console.error(`Failed to get peer's (${peer}) avatar\n${err}`);
+    return EMPTY_USER_DATA;
+  }
+} 

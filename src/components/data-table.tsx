@@ -102,10 +102,11 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
 
     const route = (cells: string[]) => {
         const firstCell = cells[0];
+        const secondCell = cells[1];
         let url = '/';
         switch (type) {
-            case 'explore': // TODO: fix
-                return navigate(`${url}${firstCell}`);
+            case 'explore': 
+                return navigate(`${url}fulfill/${firstCell}/${secondCell}`);
             case 'manage': // TODO: fix
                 return navigate(`${url}manage/${firstCell}`)
             case 'pairs':

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchBalance } from '@wagmi/core'
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
@@ -7,10 +7,10 @@ import { getTokenAttributes, round } from '../utils/common';
 type IInputProps = {
     placeholder?: string;
     value: string;
-    onChange?: (e: FormEvent<HTMLInputElement>) => void;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     className?: string;
     max?: number;
-    type?: 'text' | 'number';
+    type?: 'text' | 'number' | 'password';
     title?: string;
     disabled?: boolean;
     loading?: boolean;

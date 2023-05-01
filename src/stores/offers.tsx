@@ -17,27 +17,27 @@ import { hashOffer, isERC20Transfer } from '@pintswap/sdk/lib/trade';
 
 // Types
 export type IOffersStoreProps = {
-    openTrades: Map<string, IOffer>;
+    userTrades: Map<string, IOffer>;
     addTrade: (hash: string, { gives, gets }: IOffer) => void;
     deleteTrade: (hash: string) => void;
     peerTrades: Map<string, IOffer>;
-    availableTrades: Map<string, IOffer>;
+    tokenTrades: Map<string, IOffer>;
     setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
-    setOpenTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
-    setAvailableTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
+    setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
+    setTokenTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     limitOrdersArr: any[];
 };
 
 // Context
 const OffersContext = createContext<IOffersStoreProps>({
-    openTrades: new Map(),
+    userTrades: new Map(),
     peerTrades: new Map(),
-    availableTrades: new Map(),
+    tokenTrades: new Map(),
     addTrade(hash, { gives, gets }) {},
     deleteTrade(hash) {},
-    setOpenTrades: () => {},
+    setUserTrades: () => {},
     setPeerTrades: () => {},
-    setAvailableTrades: () => {},
+    setTokenTrades: () => {},
     limitOrdersArr: [],
 });
 
@@ -118,23 +118,23 @@ const toFlattened = memoize((v) =>
 export function OffersStore(props: { children: ReactNode }) {
     const { pintswap } = useGlobalContext();
 
-    const [openTrades, setOpenTrades] = useState<Map<string, IOffer>>(new Map());
+    const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
-    const [availableTrades, setAvailableTrades] = useState<Map<string, IOffer>>(new Map());
+    const [tokenTrades, setTokenTrades] = useState<Map<string, IOffer>>(new Map());
     const [limitOrdersArr, setLimitOrdersArr] = useState<any[]>([]);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
-        setOpenTrades(openTrades.set(hash, tradeProps));
+        setUserTrades(userTrades.set(hash, tradeProps));
     };
 
     const deleteTrade = (hash: string) => {
-        const foundTrade = openTrades.get(hash);
+        const foundTrade = userTrades.get(hash);
         if(foundTrade && pintswap.module) {
             if(TESTING) console.log("#deleteTrade - Hash:", hash)
             pintswap.module.offers.delete(hashOffer(foundTrade))
-            const shallow = new Map(openTrades);
+            const shallow = new Map(userTrades);
             shallow.delete(hash);
-            setOpenTrades(shallow);
+            setUserTrades(shallow);
         }
     }
 
@@ -151,7 +151,7 @@ export function OffersStore(props: { children: ReactNode }) {
                                 pintswap.module as any,
                             )) as any,
                         );
-                        setAvailableTrades(grouped.erc20 as any);
+                        setTokenTrades(grouped.erc20 as any);
                     }
                 })().catch((err) => console.error(err));
             };
@@ -166,7 +166,7 @@ export function OffersStore(props: { children: ReactNode }) {
         (async () => {
             if (pintswap.module) {
                 const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
-                const flattened = toFlattened(availableTrades);
+                const flattened = toFlattened(tokenTrades);
                 const mapped = (
                     await Promise.all(
                         flattened.map(async (v: any) => await toLimitOrder(v, signer)),
@@ -179,18 +179,18 @@ export function OffersStore(props: { children: ReactNode }) {
                 setLimitOrdersArr(mapped);
             }
         })().catch((err) => console.error(err));
-    }, [pintswap.module, availableTrades]);
+    }, [pintswap.module, tokenTrades]);
 
     return (
         <OffersContext.Provider
             value={{
-                openTrades,
+                userTrades,
                 addTrade,
                 peerTrades,
                 setPeerTrades,
-                setOpenTrades,
-                setAvailableTrades,
-                availableTrades,
+                setUserTrades,
+                setTokenTrades,
+                tokenTrades,
                 limitOrdersArr,
                 deleteTrade
             }}

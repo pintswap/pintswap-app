@@ -18,7 +18,7 @@ import {
 import merge from 'lodash.merge';
 
 export const { chains, provider } = configureChains(
-    [NETWORK === 'LOCALHOST' ? hardhat : mainnet],
+    [NETWORK === 'LOCALHOST' ? hardhat : NETWORK === 'zksync' ? mainnet : mainnet],
     [publicProvider()],
 );
 
