@@ -37,7 +37,7 @@ export const useTrade = () => {
     const params = useParams();
     const { pathname } = useLocation();
     const { pintswap, peer } = useGlobalContext();
-    const { addTrade, openTrades, setPeerTrades, peerTrades, setOpenTrades } = useOffersContext();
+    const { addTrade, userTrades, setPeerTrades, peerTrades, setUserTrades } = useOffersContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
@@ -99,7 +99,7 @@ export const useTrade = () => {
                 const peeredUp = PeerId.createFromB58String(multiAddr);
                 // If NFT swap
                 if (window.location.hash.match('nft') && hash) {
-                    const nftTrade = openTrades.get(hash) || peerTrades.get(hash);
+                    const nftTrade = userTrades.get(hash) || peerTrades.get(hash);
                     if(TESTING) console.log("#fulfillTrade - NFT Trade:", nftTrade);
                     pintswap.module.createTrade(peeredUp, nftTrade);
                 // If peer orderbook swap
@@ -128,7 +128,7 @@ export const useTrade = () => {
         const ps = pintswap.module;
         if (multiAddr.match(/\.drip$/) && ps) resolved = await resolveName(ps, multiAddr);
         if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
-        const trade = ln(hash ? openTrades.get(hash) : undefined);
+        const trade = ln(hash ? userTrades.get(hash) : undefined);
         // MAKER
         if (trade) setTrade(ln(trade));
         // TAKER
@@ -241,7 +241,7 @@ export const useTrade = () => {
     };
 
     const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-        let shallow = new Map(openTrades);
+        let shallow = new Map(userTrades);
         switch (step) {
             case 0:
                 console.log('#makerListener: taker approving trade');
@@ -255,14 +255,14 @@ export const useTrade = () => {
                 console.log('#makerListener: swap is complete');
                 updateSteps('Complete'); // only for maker
                 shallow.delete(order.orderHash);
-                setOpenTrades(shallow);
-                shallow = openTrades;
+                setUserTrades(shallow);
+                shallow = userTrades;
                 break;
         }
     };
 
     const takerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-        let shallow = new Map(openTrades);
+        let shallow = new Map(userTrades);
         switch (step) {
             case 0:
                 console.log('#takerListener: fulfilling trade');
@@ -284,8 +284,7 @@ export const useTrade = () => {
                 updateSteps('Complete'); // only for taker
                 setLoading({ ...loading, fulfill: false })
                 shallow.delete(order.orderHash);
-                setOpenTrades(shallow);
-                shallow = openTrades;
+                setUserTrades(shallow);
                 break;
         }
     };

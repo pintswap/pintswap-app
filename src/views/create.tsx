@@ -36,7 +36,7 @@ const columns = [
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
-    const { openTrades } = useOffersContext();
+    const { userTrades } = useOffersContext();
     const [nft, setNFT] = useState<INFTProps | null>(null);
 
     const createTradeLink = () => {
@@ -209,7 +209,7 @@ export const CreateView = () => {
                 </div>
                 
                 <Transition
-                    show={openTrades.size !== 0}
+                    show={userTrades.size !== 0}
                     enter="transition-opacity duration-75"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
@@ -223,7 +223,7 @@ export const CreateView = () => {
                         <DataTable 
                             title="Open Orders"
                             columns={columns}
-                            data={Array.from(openTrades, (entry) => ({
+                            data={Array.from(userTrades, (entry) => ({
                                 hash: entry[0],
                                 sending: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
                                 receiving: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),

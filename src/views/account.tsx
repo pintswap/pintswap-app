@@ -31,7 +31,7 @@ export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { pintswap } = useGlobalContext();
-    const { openTrades } = useOffersContext();
+    const { userTrades } = useOffersContext();
     const { updateBio, updateImg, updateName, handleSave, updatePrivateKey, userData } = useUserContext();
     const { name, bio, img, privateKey } = userData;
 
@@ -141,7 +141,7 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <DataTable 
                         columns={columns}
-                        data={Array.from(openTrades, (entry) => ({
+                        data={Array.from(userTrades, (entry) => ({
                             hash: entry[0],
                             sending: convertAmount('readable', (entry[1].gives.amount || ''), entry[1].gives.token),
                             receiving: convertAmount('readable', (entry[1].gets.amount || ''), entry[1].gets.token),
