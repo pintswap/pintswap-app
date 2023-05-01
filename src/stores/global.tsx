@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useAccount, useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import PeerId, { JSONPeerId } from 'peer-id';
 import { defer, EMPTY_PEER, TESTING } from '../utils/common';
@@ -45,7 +45,6 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 // Wrapper
 export function GlobalStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
-    const { address } = useAccount();
     const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e')
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({

@@ -5,7 +5,8 @@ module.exports = {
     theme: {
         extend: {
             screens: {
-                '3xl': '1920px'
+                '3xl': '1920px',
+                '4xl': '2560px'
             },
             colors: {
                 brand: {
@@ -16,10 +17,12 @@ module.exports = {
                 }
             },
             maxWidth: {
-                dashboard: '1920px'
+                '8xl': '1920px',
+                '9xl': '2560px'
             },
             width: {
-                dashboard: '1920px'
+                '8xl': '1920px',
+                '9xl': '2560px'
             },
             animation: {
                 'ping-slow': 'ping 1.2s linear infinite',
