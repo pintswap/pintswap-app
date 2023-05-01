@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Pathway+Gothic+One&display=swap');
 
 /*
-! tailwindcss v3.3.1 | MIT License | https://tailwindcss.com
+! tailwindcss v3.3.2 | MIT License | https://tailwindcss.com
 */
 
 /*
@@ -538,6 +538,9 @@ html,
   --tw-pan-y:  ;
   --tw-pinch-zoom:  ;
   --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
   --tw-ordinal:  ;
   --tw-slashed-zero:  ;
   --tw-numeric-figure:  ;
@@ -585,6 +588,9 @@ html,
   --tw-pan-y:  ;
   --tw-pinch-zoom:  ;
   --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position:  ;
+  --tw-gradient-via-position:  ;
+  --tw-gradient-to-position:  ;
   --tw-ordinal:  ;
   --tw-slashed-zero:  ;
   --tw-numeric-figure:  ;
@@ -1221,42 +1227,31 @@ html,
 }
 .from-gray-800{
   --tw-gradient-from: #1f2937 var(--tw-gradient-from-position);
-  --tw-gradient-from-position:  ;
-  --tw-gradient-to: rgb(31 41 55 / 0)  var(--tw-gradient-from-position);
-  --tw-gradient-to-position:  ;
+  --tw-gradient-to: rgb(31 41 55 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 .from-indigo-500{
   --tw-gradient-from: #6366f1 var(--tw-gradient-from-position);
-  --tw-gradient-from-position:  ;
-  --tw-gradient-to: rgb(99 102 241 / 0)  var(--tw-gradient-from-position);
-  --tw-gradient-to-position:  ;
+  --tw-gradient-to: rgb(99 102 241 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 .from-indigo-600{
   --tw-gradient-from: #4f46e5 var(--tw-gradient-from-position);
-  --tw-gradient-from-position:  ;
-  --tw-gradient-to: rgb(79 70 229 / 0)  var(--tw-gradient-from-position);
-  --tw-gradient-to-position:  ;
+  --tw-gradient-to: rgb(79 70 229 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 .via-gray-900{
-  --tw-gradient-via-position:  ;
   --tw-gradient-to: rgb(17 24 39 / 0)  var(--tw-gradient-to-position);
-  --tw-gradient-to-position:  ;
   --tw-gradient-stops: var(--tw-gradient-from), #111827 var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
 .to-gray-800{
   --tw-gradient-to: #1f2937 var(--tw-gradient-to-position);
-  --tw-gradient-to-position:  ;
 }
 .to-gray-900{
   --tw-gradient-to: #111827 var(--tw-gradient-to-position);
-  --tw-gradient-to-position:  ;
 }
 .to-sky-400{
   --tw-gradient-to: #38bdf8 var(--tw-gradient-to-position);
-  --tw-gradient-to-position:  ;
 }
 .bg-clip-text{
   -webkit-background-clip: text;
@@ -1628,7 +1623,6 @@ html,
 }
 .hover\:to-sky-500:hover{
   --tw-gradient-to: #0ea5e9 var(--tw-gradient-to-position);
-  --tw-gradient-to-position:  ;
 }
 .hover\:text-brand-purple:hover{
   --tw-text-opacity: 1;

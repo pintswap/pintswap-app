@@ -2790,10 +2790,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@pintswap/sdk@^1.2.39":
-  version "1.2.40"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.2.40.tgz#dd74901ed4c85fea8169c3d12e2e2e6c48a61847"
-  integrity sha512-Dl1f92B0y/GJ3ldIsQuqR9ePY+BHB01nGP6hVgGsBzrQMS9wOOHT4tawv7xc0dUvIP0H/EyAXjpmnTHQOpja6w==
+"@pintswap/sdk@1.2.37":
+  version "1.2.37"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.2.37.tgz#11370c76371885ca76bee6a6e13fb453975635a1"
+  integrity sha512-AwIlYlgPo4pFRr8YKsHtqVtoCWbtTgsjkzWaecZYU162W3QQFZEQWXeLhGLIRoqmyQrO7Epw8kmTuVpdRH2wgw==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -2810,7 +2810,6 @@
     cryptico-js "^1.1.0"
     emasm "https://github.com/kungfuflex/emasm"
     ethers "^6.1.0"
-    ethers-v6-zksync-compat "https://github.com/pintswap/ethers-v6-zksync-compat"
     is-browser "^2.1.0"
     libp2p "^0.36.2"
     libp2p-bootstrap "^0.14.0"
@@ -7640,12 +7639,6 @@ eth-rpc-errors@^4.0.2:
   dependencies:
     fast-safe-stringify "^2.0.6"
 
-"ethers-v6-zksync-compat@https://github.com/pintswap/ethers-v6-zksync-compat":
-  version "0.1.0"
-  resolved "https://github.com/pintswap/ethers-v6-zksync-compat#cb55b6c65f06258b2727501e4eedd54c8d6495ee"
-  dependencies:
-    path "^0.12.7"
-
 "ethers6@npm:ethers@^6.3.0", ethers@^6.1.0:
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.3.0.tgz#c61efaafa2bd9a4d9f0c799d932ef3b5cd4bd37d"
@@ -12471,14 +12464,6 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-path@^0.12.7:
-  version "0.12.7"
-  resolved "https://registry.yarnpkg.com/path/-/path-0.12.7.tgz#d4dc2a506c4ce2197eb481ebfcd5b36c0140b10f"
-  integrity sha512-aXXC6s+1w7otVF9UletFkFcDsJeO7lSZBPUQhtb5O0xJe8LtYhj/GxldoL09bBj9+ZmE2hNoHqQSFMN5fikh4Q==
-  dependencies:
-    process "^0.11.1"
-    util "^0.10.3"
-
 pathval@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/pathval/-/pathval-1.1.1.tgz#8534e77a77ce7ac5a2512ea21e0fdb8fcf6c3d8d"
@@ -13357,7 +13342,7 @@ process-warning@^1.0.0:
   resolved "https://registry.yarnpkg.com/process-warning/-/process-warning-1.0.0.tgz#980a0b25dc38cd6034181be4b7726d89066b4616"
   integrity sha512-du4wfLyj4yCZq1VupnVSZmRsPJsNuxoDQFdCFHLaYiEbFBD7QE0a+I4D7hOxrVnh78QE/YipFAj9lXHiXocV+Q==
 
-process@^0.11.1, process@^0.11.10:
+process@^0.11.10:
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
@@ -15968,13 +15953,6 @@ util.promisify@~1.0.0:
     es-abstract "^1.17.2"
     has-symbols "^1.0.1"
     object.getownpropertydescriptors "^2.1.0"
-
-util@^0.10.3:
-  version "0.10.4"
-  resolved "https://registry.yarnpkg.com/util/-/util-0.10.4.tgz#3aa0125bfe668a4672de58857d3ace27ecb76901"
-  integrity sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A==
-  dependencies:
-    inherits "2.0.3"
 
 util@^0.12.0, util@^0.12.3, util@^0.12.4, util@^0.12.5:
   version "0.12.5"
