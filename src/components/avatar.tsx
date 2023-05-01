@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IUserDataProps, useGlobalContext, usePeersContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
-import { formattedPeerName, getPeerData, truncate } from "../utils/common";
+import { formatPeerName, getFormattedPeer, getPeerData, truncate } from "../utils/common";
 
 type IAvatarProps = {
   size?: number | `${string}px` | 'full';
@@ -41,20 +41,9 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
       if(typeof peer === 'string') {
         const found = peersData.find((el => el.name.toLowerCase() === peer.toLowerCase()));
         if(found) return found;
-        const formName = await formattedPeerName(pintswap, peer);
-        try {
-          const res = await getPeerData(pintswap, peer);
-          if(res) {
-            return {
-              img: `${baseUrl}${res.image.toString('base64')}`,
-              bio: res.bio,
-              name: formName,
-              privateKey: ''
-            }
-          }
-        } catch (err) {
-          console.error(`Failed to get peer's (${peer}) avatar\n${err}`);
-          return defaultUserState;
+        else {
+          const formattedPeer = await getFormattedPeer(pintswap, peer);
+          if(formattedPeer) return formattedPeer;
         }
       } else return peer;
     }

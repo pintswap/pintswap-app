@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { formattedPeerName, getPeerData } from '../utils/common';
+import { formatPeerName, getFormattedPeer, getPeerData } from '../utils/common';
 import { useGlobalContext } from './global';
 import { useOffersContext } from './offers';
 import { IUserDataProps } from './user';
@@ -32,23 +32,15 @@ export function PeersStore(props: { children: ReactNode }) {
   const [error, setError] = useState(false);
   const [data, setData] = useState<any[]>([]);
 
+  const baseUrl = `data:image/jpg;base64,`;
+
   const getAllPeersData = async () => {
     setLoading(true);
       const peerAddresses = Array.from(new Set(limitOrdersArr.map(o => o.peer)));
       try {
-        const res = await Promise.all(peerAddresses.map(async (address) => {
-          const res = await getPeerData(pintswap, address);
-          const baseUrl = `data:image/jpg;base64,`;
-          console.log(res.image)
-          return {
-            imgSrc: `${baseUrl}${res.image.toString('base64')}`,
-            bio: res.bio,
-            name: await formattedPeerName(pintswap, address),
-            offers: res.offers
-          }
-        }))
+        const allPeersData = await Promise.all(peerAddresses.map(async (address) => await getFormattedPeer(pintswap, address)))
         setLoading(false)
-        setData(res)
+        setData(allPeersData)
       } catch (err) {
         console.error(err);
         setLoading(false);

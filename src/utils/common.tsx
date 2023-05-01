@@ -148,7 +148,7 @@ export async function getPeerData(ps: IPintswapProps, peer: string) {
   else return { offers: [], bio: '', image: '' };
 }
 
-export const formattedPeerName = async (ps: IPintswapProps, peer: string) => {
+export const formatPeerName = async (ps: IPintswapProps, peer: string) => {
   const { module } = ps;
   if(peer.includes('.drip')) return peer;
   else {
@@ -157,3 +157,22 @@ export const formattedPeerName = async (ps: IPintswapProps, peer: string) => {
   }
   return peer;
 };
+
+export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
+  const baseUrl = `data:image/jpg;base64,`;
+  try {
+    const res = await getPeerData(ps, peer);
+    const formattedName = await formatPeerName(ps, peer);
+    if(res) {
+      return {
+        img: `${baseUrl}${res.image.toString('base64')}`,
+        bio: res.bio,
+        name: formattedName,
+        privateKey: ''
+      }
+    }
+  } catch (err) {
+    console.error(`Failed to get peer's (${peer}) avatar\n${err}`);
+    return EMPTY_USER_DATA;
+  }
+} 
