@@ -38,8 +38,8 @@ const columns = [
 export const PeerTickerOrderbookView = () => {
     const navigate = useNavigate();
     const { order } = useTrade();
-    const { multiaddr } = useParams();
-    const { ticker, bidLimitOrders, askLimitOrders, forTicker } = useLimitOrders('peer-ticker-orderbook');
+    const { multiaddr, base: baseAsset, trade: tradeAsset } = useParams();
+    const { ticker, bidLimitOrders, askLimitOrders } = useLimitOrders('peer-ticker-orderbook');
     const { state } = useLocation();
     const [ matchInputs, setMatchInputs ] = useState<any>({
       amount: '',
@@ -55,12 +55,12 @@ export const PeerTickerOrderbookView = () => {
         list
       });
     }, [ tradeType ]);
-       
+
     const onClickRow = (row: any) => {
         const [ tradeType, price, size, sum ] = row;
         const { index } = row;
         let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
-        setTradeType(tradeType === 'bids' ? 'Buy' : 'Sell');
+        setTradeType(tradeType === 'bids' ? `Buy ${tradeAsset ? tradeAsset : ''}` : `Sell ${baseAsset ? baseAsset : ''}`);
         setMatchInputs({
             amount: list.slice(0, index + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
             list

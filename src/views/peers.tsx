@@ -9,7 +9,7 @@ export const PeersView = () => {
   return (
       <div className="flex flex-col">
         <h3 className="view-header">Available Peers</h3>
-        <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3`}>
+        <div className={`grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}>
           {!peersLoading ? peersData.map((peer, i) => {
             return (
               <button key={`unique-peer-${i}`} onClick={() => navigate(`/${peer.name}`, { state: { peer }})}>

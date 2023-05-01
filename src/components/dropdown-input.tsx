@@ -51,6 +51,11 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
     isToken ? setState(type, '') : setState('')
   };
 
+  const dropdownItemClass = (active: boolean) => classNames(
+    active ? 'bg-gray-900 text-neutral-200' : 'text-neutral-300',
+    'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full'
+  )
+
   return (
     <div className="flex flex-col gap-1 justify-end">
       <div className="flex justify-between items-center text-sm">
@@ -105,10 +110,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
                 <Menu.Item key={`dropdown-item-${el.symbol}-${i}`}>
                 {({ active }) => (
                   <button
-                    className={classNames(
-                      active ? 'bg-gray-900 text-neutral-200' : 'text-neutral-300',
-                      'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full'
-                    )}
+                    className={dropdownItemClass(active)}
                     onClick={() => setState(type, el.symbol)}
                   >
                     <Asset icon={el.logoURI} symbol={el.symbol} alt={el.asset} />
@@ -119,10 +121,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
                 <Menu.Item key={`dropdown-item-${el}-${i}`}>
                 {({ active }) => (
                   <button
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block px-4 py-2 text-sm transition duration-150'
-                    )}
+                    className={dropdownItemClass(active)}
                     onClick={() => setState(el)}
                   >
                     {el}
