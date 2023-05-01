@@ -31,16 +31,17 @@ export const PeerTickerFulfill = ({
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        const formattedAmount = (await formattedFromTransfer({
-                token:
-                    (matchInputs.list[0] || {}).token ||
-                    ethers.ZeroAddress,
-                amount: e,
-            }, signer)).amount
         setFill({
             input: e.target.value,
             ...fill,
         });
+
+        const formattedAmount = (await formattedFromTransfer({
+            token:
+                (matchInputs.list[0] || {}).token ||
+                ethers.ZeroAddress,
+            amount: e,
+        }, signer)).amount
         setMatchInputs({
             amount: formattedAmount,
             list: matchInputs.list,
@@ -108,7 +109,7 @@ export const PeerTickerFulfill = ({
                             value={(fill || {}).input || ''}
                             type="number"
                             loading={loading.trade}
-                            disabled={loading.allTrades}
+                            disabled
                             onChange={handleAmountChange}
                         />
                         <Input

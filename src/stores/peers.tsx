@@ -39,6 +39,7 @@ export function PeersStore(props: { children: ReactNode }) {
         const res = await Promise.all(peerAddresses.map(async (address) => {
           const res = await getPeerData(pintswap, address);
           const baseUrl = `data:image/jpg;base64,`;
+          console.log(res.image)
           return {
             imgSrc: `${baseUrl}${res.image.toString('base64')}`,
             bio: res.bio,

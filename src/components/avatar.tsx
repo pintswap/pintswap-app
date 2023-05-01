@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IUserDataProps, useGlobalContext, useUserContext } from "../stores"
+import { IUserDataProps, useGlobalContext, usePeersContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
 import { formattedPeerName, getPeerData, truncate } from "../utils/common";
 
@@ -23,6 +23,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
   const { userData } = useUserContext();
+  const { peersData } = usePeersContext();
   const navigate = useNavigate();
 
   const defaultImgSrc = '/black.jpg';
@@ -38,6 +39,8 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
     const baseUrl = `data:image/jpg;base64,`;
     if(peer) {
       if(typeof peer === 'string') {
+        const found = peersData.find((el => el.name.toLowerCase() === peer.toLowerCase()));
+        if(found) return found;
         const formName = await formattedPeerName(pintswap, peer);
         try {
           const res = await getPeerData(pintswap, peer);

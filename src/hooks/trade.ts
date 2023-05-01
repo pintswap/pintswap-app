@@ -203,12 +203,12 @@ export const useTrade = () => {
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
-                    console.log('getTrades', [multiaddr, splitUrl[3]]);
                     await getTrades(multiaddr, splitUrl[3]);
+                    setLoading({ ...loading, trade: false });
                 } else if (multiaddr) {
                     // Only multiAddr
-                    if(params.base && params.trade && steps[1].status !== 'current') updateSteps('Fulfill') 
                     setLoading({ ...loading, allTrades: true });
+                    if(params.base && params.trade && steps[1].status !== 'current') updateSteps('Fulfill') 
                     setOrder({ multiAddr: multiaddr, orderHash: '' });
                     await getTrades(multiaddr);
                     setLoading({ ...loading, allTrades: false });
