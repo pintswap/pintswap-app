@@ -1,5 +1,6 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useDisconnect } from 'wagmi';
+import { useWindowSize } from '../hooks';
 import { Button } from './button';
 
 type IWalletProps = {
@@ -9,7 +10,8 @@ type IWalletProps = {
 export const Wallet = (props: IWalletProps) => {
     const { disconnect } = useDisconnect();
     const { address } = useAccount();
-    const renderContent = address ? address : 'Connect Wallet';
+    const { width } = useWindowSize();
+    const renderContent = address ? address : width > 600 ? 'Connect Wallet' : 'Connect';
 
     return (
         <ConnectButton.Custom>
