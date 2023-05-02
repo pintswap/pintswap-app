@@ -13,7 +13,7 @@ export const PeersView = () => {
           {!peersLoading ? peersData.map((peer, i) => {
             return (
               <button key={`unique-peer-${i}`} onClick={() => navigate(`/${peer.name}`, { state: { peer }})}>
-                <Card className="hover:bg-gray-950">
+                <Card className="hover:bg-gray-950 h-full">
                       <Avatar 
                         peer={peer} 
                         size={30} 

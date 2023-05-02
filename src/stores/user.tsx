@@ -18,6 +18,8 @@ export type IUserDataProps = {
     name: string;
     offers?: any[];
     privateKey: string;
+    extension: string;
+    active: boolean;
 }
 
 export type IUserStoreProps = {
@@ -27,6 +29,8 @@ export type IUserStoreProps = {
     updateImg: (e: any) => void;
     updatePrivateKey: (e: any) => void;
     handleSave: () => void;
+    updateExt: (e: any) => void;
+    toggleActive: () => void;
 };
 
 // Context
@@ -37,6 +41,8 @@ const UserContext = createContext<IUserStoreProps>({
     updateImg(e) {},
     handleSave() {},
     updatePrivateKey(e) {},
+    updateExt(e) {},
+    toggleActive() {}
 });
 
 // Wrapper
@@ -45,33 +51,17 @@ export function UserStore(props: { children: ReactNode }) {
     const { module } = pintswap;
     const { data: signer } = useSigner();
     const [ userData, setUserData ] = useState<IUserDataProps>(EMPTY_USER_DATA);
-    let [initialized, setInitialized] = useState<boolean>(false);
+    const [initialized, setInitialized] = useState<boolean>(false);
 
-    /*
-     * check if pintswap module is initialized and/or has starting vals for bio, shortaddress, setProfilePic
-     * only should run if pintswap is initialized and only run once
-     */
-    useEffect(() => {
-        (async () => {
-            if (!initialized && module) {
-/* 
-                const pintswapSigner = signer || ethers.Wallet.createRandom().connect(new ethers.InfuraProvider('mainnet'));
-                const pintswapLoaded = localStorage.getItem('_pintUser') ? await Pintswap.fromObject(
-                    JSON.parse(localStorage.getItem('_pintUser') as string),
-                    pintswapSigner as any
-                ) : await Pintswap.initialize({ signer: (pintswapSigner as any), awaitReceipts: false });
-                setPintswap({ ...pintswap, module: pintswapLoaded, loading: false });
-*/
-                setUserData({
-                    name: await module.resolveName(module.peerId.toB58String()),
-                    bio: module.userData.bio,
-                    img: module.userData.image,
-                    privateKey: ''
-                })
-                setInitialized(true);
-            }
-        })().catch((err) => console.error(err));
-    }, [module, initialized]);
+    function toggleActive() {
+        if(!userData.active) module?.startPublishingOffers(60000);
+        else module?.startPublishingOffers(60000).stop();
+        setUserData({ ...userData, active: !userData.active });
+    }
+
+    function updateExt(e: any) {
+        console.log(e)
+    }
 
     async function updateImg(e: any) {
         if(module) {
@@ -99,11 +89,10 @@ export function UserStore(props: { children: ReactNode }) {
     }
 
     function updateName(e: any) {
-        setUserData({ ...userData, name: e.target.value });
+        setUserData({ ...userData, name: `${e.target.value}${userData.extension}`});
     }
 
     function handleSave() {
-        const { module } = pintswap;
         if (module) {
           localStorage.setItem('_pintUser', JSON.stringify(module.toObject(), null, 2));
           (async () => {
@@ -126,6 +115,14 @@ export function UserStore(props: { children: ReactNode }) {
     useEffect(() => {
         (async () => {
         if (module && !initialized) {
+            setUserData({
+                name: await module.resolveName(module.peerId.toB58String()),
+                bio: module.userData.bio,
+                img: module.userData.image,
+                privateKey: '',
+                active: false,
+                extension: '.drip'
+            })
             const localUser = localStorage.getItem('_pintUser')
             let { bio: _bio, image: _image } = (module as any).userData ?? {
                 bio: '',
@@ -151,6 +148,8 @@ export function UserStore(props: { children: ReactNode }) {
                 updateImg,
                 handleSave,
                 updatePrivateKey,
+                updateExt,
+                toggleActive
             }}
         >
             {props.children}

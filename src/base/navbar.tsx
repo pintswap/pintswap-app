@@ -18,7 +18,7 @@ export const Navbar = () => {
     return (
         <>
             <nav className={`bg-brand-dashboard py-2 lg:py-4 px-3 lg:px-6 w-full z-50 relative`}>
-                <div className="4xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
+                <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button onClick={() => navigate('/')} className="flex items-center gap-2 lg:gap-3">
                         <img src="/logo/ps-logo.png" alt="PintSwap Logo" height={logoSize} width={logoSize} />
                         <span className="text-xl">

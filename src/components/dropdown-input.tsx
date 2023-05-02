@@ -13,7 +13,7 @@ type IDropdownProps = {
   setState?: Dispatch<SetStateAction<any>> | any;
   options?: string[];
   placeholder?: string;
-  type: 'gives.token' | 'gets.token' | 'string';
+  type?: 'gives.token' | 'gets.token' | 'string' | 'input-ext';
   title?: string;
   search?: boolean;
   disabled?: boolean;
@@ -21,7 +21,7 @@ type IDropdownProps = {
   customInput?: boolean;
 }
 
-export const DropdownInput = ({ state, setState, options, placeholder, type, title, search, disabled, loading, customInput }: IDropdownProps) => {
+export const DropdownInput = ({ state, setState, options, placeholder, type = 'string', title, search, disabled, loading, customInput }: IDropdownProps) => {
   const isToken = type === 'gives.token' || type === 'gets.token';
   const { width } = useWindowSize();
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] });
@@ -80,7 +80,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type, tit
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <Menu.Button 
-              className={`inline-flex w-full ${!disabled ? 'justify-between' : 'justify-end'} items-center gap-x-1.5 rounded bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${loading ? 'animate-pulse' : ''}`}
+              className={`inline-flex w-full ${!disabled ? 'justify-between' : 'justify-end'} items-center gap-x-1.5 bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${loading ? 'animate-pulse' : ''} ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
               disabled={disabled} 
             >
               {!disabled && <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />}

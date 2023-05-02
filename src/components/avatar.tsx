@@ -30,30 +30,34 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
   const defaultUserState = { 
     img: defaultImgSrc, 
     bio: pathname.includes('account') ? (userData.bio ? userData.bio : '') : '', 
-    name: peer && typeof peer === 'string' ? peer : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero),
-    privateKey: ''
+    name: peer && typeof peer === 'string' ? peer : truncate(userData.name),
+    privateKey: '',
+    active: false,
+    extension: '.drip'
   }
-  const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState)
+  const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
 
-  const getUserData = async (): Promise<IUserDataProps> => {
+  const getUserData = async (): Promise<IUserDataProps | undefined> => {
     const baseUrl = `data:image/jpg;base64,`;
-    if(peer) {
-      if(typeof peer === 'string') {
-        const found = peersData.find((el => el.name.toLowerCase() === peer.toLowerCase()));
-        if(found) return found;
-        else {
-          const formattedPeer = await getFormattedPeer(pintswap, peer);
-          if(formattedPeer) return formattedPeer;
+    if(module) {
+      if(peer) {
+        if(typeof peer === 'string') {
+          const found = peersData.find((el => el.name.toLowerCase() === peer.toLowerCase()));
+          if(found) return found;
+          else {
+            const formattedPeer = await getFormattedPeer(pintswap, peer);
+            if(formattedPeer) return formattedPeer;
+          }
+        } else return peer;
+      } else {
+        return {
+          img: `${baseUrl}${userData.img?.toString('base64')}`,
+          bio: userData.bio,
+          name: userData.name ? userData.name : truncate(module.peerId.toB58String()),
+          privateKey: '',
+          active: false,
+          extension: '.drip'
         }
-      } else return peer;
-    }
-    if(!userData.img) return defaultUserState;
-    else {
-      return {
-        img: `${baseUrl}${userData.img?.toString('base64')}`,
-        bio: userData.bio,
-        name: userData.name ? userData.name : truncate(module?.peerId.toB58String() || ethers.constants.AddressZero),
-        privateKey: ''
       }
     }
   }
@@ -61,10 +65,11 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
   useEffect(() => {
     const getter = async () => {
       const userData = await getUserData();
-      setPeerData(userData)
+      if(userData) setPeerData(userData);
+      else setPeerData(defaultUserState)
     };
     if(peer && module) getter();
-  }, [peer, module]);
+  }, [peer, module, peerData.name]);
 
   const alginClass = () => {
     switch(align) {
@@ -102,7 +107,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
                 src={(peerData.img as string)}
                 height={size}
                 width={size}
-                className="rounded-full"
+                className="rounded-full self-center bg-neutral-100"
                 alt="Avatar"
               />
             )}
@@ -153,7 +158,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
                     src={(peerData.img as string)}
                     height={size}
                     width={size}
-                    className="rounded-full self-center"
+                    className="rounded-full self-center bg-neutral-100"
                     alt="Avatar"
                   />
                 )}
