@@ -11,7 +11,7 @@ import {
     NFTDisplay,
 } from '../components';
 import { useTrade } from '../hooks/trade';
-import { useOffersContext } from '../stores';
+import { useOffersContext, useUserContext } from '../stores';
 import { BASE_URL, convertAmount, INFTProps } from '../utils/common';
 import { fetchNFT } from '../utils/fetch-nft';
 
@@ -36,6 +36,7 @@ const columns = [
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
+    const { userData, toggleActive } = useUserContext();
     const { userTrades } = useOffersContext();
     const [nft, setNFT] = useState<INFTProps | null>(null);
 
@@ -231,7 +232,10 @@ export const CreateView = () => {
                             type="manage"
                             toolbar={false}
                         />
-                    </Card>               
+                    </Card>
+                    <Button onClick={toggleActive} className="sm:max-w-lg sm:self-center mt-4" type="outline">
+                        {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                    </Button>              
                 </Transition>
             </div>
 

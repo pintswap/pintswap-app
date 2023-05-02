@@ -20,8 +20,8 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
   if(width >= breakpoints.md) {
     // Desktop
     return (
-      <div className={`4xl:max-w-8xl 4xl:px-12 4xl:w-full 4xl:mx-auto flex 4xl:gap-6 ${dashboardHeightClass}`}>
-        <ul className={`bg-brand-dashboard p-4 py-6 pl-0 flex flex-col gap-2 4xl:h-5/6 4xl:mt-12 4xl:rounded-lg`}>
+      <div className={`3xl:max-w-8xl 3xl:px-12 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 ${dashboardHeightClass}`}>
+        <ul className={`bg-brand-dashboard p-4 py-6 pl-0 flex flex-col gap-2 3xl:h-5/6 3xl:my-auto 3xl:rounded-lg`}>
           {NAV_ITEMS.map((el, i) => (
             <li key={`sidebar-nav-${i}`}>
               <button 
@@ -38,7 +38,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
             </li>
           ))}
         </ul>
-        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-8 mb-2 shadow-inner shadow-neutral-950 4xl:shadow-none 4xl:px-0">
+        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-8 mb-2 shadow-inner shadow-neutral-950 3xl:shadow-none 3xl:px-0">
           <main className="mx-auto">
             {children}
           </main>
@@ -57,7 +57,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
 
         {address && (
           <div className="fixed left-2 bottom-2">
-            <Avatar type="clickable" />
+            <Avatar type="clickable" showActive />
           </div>
         )}
       </>

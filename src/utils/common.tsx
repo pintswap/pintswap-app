@@ -37,7 +37,7 @@ export const EMPTY_PEER: JSONPeerId = {
 };
 
 export const EMPTY_USER_DATA: IUserDataProps = {
-  img: '', bio: '', name: '', offers: [], privateKey: ''
+  img: '', bio: '', name: '', offers: [], privateKey: '', active: false, extension: '.drip'
 }
 
 // CSS HELPERS
@@ -168,7 +168,9 @@ export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
         img: `${baseUrl}${res.image.toString('base64')}`,
         bio: res.bio,
         name: formattedName,
-        privateKey: ''
+        privateKey: '',
+        active: false,
+        extension: '.drip'
       }
     }
   } catch (err) {

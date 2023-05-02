@@ -771,11 +771,11 @@ html,
 .h-96{
   height: 24rem;
 }
-.h-\[130px\]{
-  height: 130px;
-}
 .h-\[150px\]{
   height: 150px;
+}
+.h-\[152px\]{
+  height: 152px;
 }
 .h-\[5rem\]{
   height: 5rem;
@@ -825,11 +825,11 @@ html,
 .w-8{
   width: 2rem;
 }
-.w-\[130px\]{
-  width: 130px;
-}
 .w-\[150px\]{
   width: 150px;
+}
+.w-\[152px\]{
+  width: 152px;
 }
 .w-\[42px\]{
   width: 42px;
@@ -1105,6 +1105,14 @@ html,
 .rounded-sm{
   border-radius: 0.125rem;
 }
+.\!rounded-r-none{
+  border-top-right-radius: 0px !important;
+  border-bottom-right-radius: 0px !important;
+}
+.rounded-r{
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
 .\!border-0{
   border-width: 0px !important;
 }
@@ -1188,6 +1196,10 @@ html,
 .bg-indigo-800{
   --tw-bg-opacity: 1;
   background-color: rgb(55 48 163 / var(--tw-bg-opacity));
+}
+.bg-neutral-100{
+  --tw-bg-opacity: 1;
+  background-color: rgb(245 245 245 / var(--tw-bg-opacity));
 }
 .bg-neutral-600{
   --tw-bg-opacity: 1;
@@ -1857,52 +1869,51 @@ html,
 }
 @media (min-width: 1920px){
 
-  .\33xl\:grid-cols-5{
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-  }
-}
-@media (min-width: 2560px){
-
-  .\34xl\:mx-auto{
+  .\33xl\:mx-auto{
     margin-left: auto;
     margin-right: auto;
   }
 
-  .\34xl\:mt-12{
-    margin-top: 3rem;
+  .\33xl\:my-auto{
+    margin-top: auto;
+    margin-bottom: auto;
   }
 
-  .\34xl\:h-5\/6{
+  .\33xl\:h-5\/6{
     height: 83.333333%;
   }
 
-  .\34xl\:w-full{
+  .\33xl\:w-full{
     width: 100%;
   }
 
-  .\34xl\:max-w-8xl{
+  .\33xl\:max-w-8xl{
     max-width: 1920px;
   }
 
-  .\34xl\:gap-6{
+  .\33xl\:grid-cols-5{
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .\33xl\:gap-6{
     gap: 1.5rem;
   }
 
-  .\34xl\:rounded-lg{
+  .\33xl\:rounded-lg{
     border-radius: 0.5rem;
   }
 
-  .\34xl\:px-0{
+  .\33xl\:px-0{
     padding-left: 0px;
     padding-right: 0px;
   }
 
-  .\34xl\:px-12{
+  .\33xl\:px-12{
     padding-left: 3rem;
     padding-right: 3rem;
   }
 
-  .\34xl\:shadow-none{
+  .\33xl\:shadow-none{
     --tw-shadow: 0 0 #0000;
     --tw-shadow-colored: 0 0 #0000;
     box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
