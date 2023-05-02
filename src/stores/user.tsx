@@ -89,7 +89,8 @@ export function UserStore(props: { children: ReactNode }) {
     }
 
     function updateName(e: any) {
-        setUserData({ ...userData, name: `${e.target.value}${userData.extension}`});
+        if(e.target.value && e.target.value.length > 0) setUserData({ ...userData, name: `${e.target.value}${userData.extension}`});
+        else setUserData({ ...userData, name: `${e.target.value}`});
     }
 
     function handleSave() {

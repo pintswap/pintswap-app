@@ -54,10 +54,10 @@ export const AccountView = () => {
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
-                <TransitionModal button={<Avatar peer={pintswap?.module?.peerId.toB58String()} withBio withName align="left" size={60} type="profile" />}>
+                <TransitionModal button={<Avatar peer={pintswap?.module?.peerId.toB58String()} align="left" size={60} type="profile" />}>
                     <Avatar peer={pintswap?.module?.peerId.toB58String()} size={300} />
                 </TransitionModal>
-                <div className="text-right">
+                <div className="text-right hidden md:block">
                     <p className="text-sm">Your Multi Address</p>
                     <Skeleton loading={pintswap.loading}>
                         <CopyClipboard
@@ -84,15 +84,15 @@ export const AccountView = () => {
                                         className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
                                         title=" "
                                     />
-                                    <span className="absolute h-[151px] w-[151px]">
+                                    <span className="absolute h-[154px] w-[154px] -translate-x-0.5 translate-y-0.5">
                                         <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
-                                            Click to Upload
+                                            Click to<br />Upload
                                         </span>
                                     </span>
                                     <Avatar size={150} />
                                 </div>
                             ) : (
-                                <Avatar size={150} type="clickable" />
+                                <Avatar size={150} />
                             )}
                         </div>
                         <div className="grid grid-cols-1 gap-3 lg:gap-2">
@@ -108,7 +108,9 @@ export const AccountView = () => {
                                         max={50}
                                         className="!rounded-r-none"
                                     />
-                                    <DropdownInput state={extension} type="input-ext" />
+                                    {isEditing && (
+                                        <DropdownInput state={extension} type="input-ext" />
+                                    )}
                                 </div>
                                 <Input 
                                     value={bio}
@@ -155,12 +157,15 @@ export const AccountView = () => {
                     />
                 </Tab.Panel>
             </Card>
-            <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
-                Create Order
-            </Button>
-            <Button onClick={toggleActive} className="sm:max-w-lg sm:self-center" type="transparent">
-                {userData.active ? 'Stop Publishing Offers' : 'Start Publishing Offers'}
-            </Button>
+            
+            <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
+                <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
+                    Create Order
+                </Button>
+                <Button onClick={toggleActive} className="sm:max-w-lg sm:self-center" type="transparent">
+                    {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                </Button>
+            </div>
         </div>
     );
 };

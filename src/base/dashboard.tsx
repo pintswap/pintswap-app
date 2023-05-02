@@ -57,7 +57,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
 
         {address && (
           <div className="fixed left-2 bottom-2">
-            <Avatar type="clickable" />
+            <Avatar type="clickable" showActive />
           </div>
         )}
       </>

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { IUserDataProps, useGlobalContext, usePeersContext, useUserContext } from "../stores"
 import { ethers } from "ethers";
 import { formatPeerName, getFormattedPeer, getPeerData, truncate } from "../utils/common";
+import { StatusIndicator } from "./status-indicator";
 
 type IAvatarProps = {
   size?: number | `${string}px` | 'full';
@@ -11,6 +12,7 @@ type IAvatarProps = {
   withBio?: boolean;
   withName?: boolean;
   withImage?: boolean;
+  showActive?: boolean;
   nameClass?: string;
   bioClass?: string;
   align?: 'left' | 'center' | 'right';
@@ -18,7 +20,7 @@ type IAvatarProps = {
   type?: 'clickable' | 'default' | 'profile';
 }
 
-export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withName, nameClass, bioClass, loading, align}: IAvatarProps) => {
+export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withName, nameClass, bioClass, loading, align, showActive }: IAvatarProps) => {
   const { pathname } = useLocation();
   const { pintswap } = useGlobalContext();
   const { module } = pintswap;
@@ -82,6 +84,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
     return (
       <div className={`${loading ? 'animate-pulse' : ''}`}>
         <button onClick={() => navigate(`/account`)} className={`bg-gradient-to-r from-indigo-600 to-sky-400 p-[2.5px] hover:to-sky-500 rounded-full`}>
+          {showActive && <StatusIndicator active={userData.active} />}
           <img
               src={(peerData.img as string)}
               height={size}
@@ -95,14 +98,15 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
   } else if(type === 'profile') {
     return (
       <div className={loading ? 'animate-pulse' : ''}>
-        {withImage && (
-          <div className="float-left">
-            {loading ? (
-              <div
-                className={`rounded-full self-center bg-neutral-700`}
-                style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
-              />
-            ) : (
+        <div className="float-left">
+          {loading ? (
+            <div
+              className={`rounded-full self-center bg-neutral-700`}
+              style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
+            />
+          ) : (
+            <>
+              {showActive && <StatusIndicator active={userData.active} />}
               <img
                 src={(peerData.img as string)}
                 height={size}
@@ -110,12 +114,12 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
                 className="rounded-full self-center bg-neutral-100"
                 alt="Avatar"
               />
-            )}
-          </div>
-        )}
+            </>
+          )}
+        </div>
         <div className="flex flex-col pl-3 sm:pl-4">
           <div>
-          {withName && loading ? (
+          {loading ? (
             <div
               className={`rounded-md self-center bg-neutral-700`}
               style={{ width: 150, height: 20 }}
@@ -127,7 +131,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
           )}
         </div>
         <div>
-          {withBio && loading ? (
+          {loading ? (
             <div
                 className={`rounded-md bg-neutral-700`}
                 style={{ width: 200, height: 15 }}
@@ -154,13 +158,16 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
                     style={{ minWidth: size, minHeight: size, maxHeight: size, maxWidth: size }}
                   />
                 ) : (
-                  <img
-                    src={(peerData.img as string)}
-                    height={size}
-                    width={size}
-                    className="rounded-full self-center bg-neutral-100"
-                    alt="Avatar"
-                  />
+                  <>
+                    {showActive && <StatusIndicator active={userData.active} />}
+                    <img
+                      src={(peerData.img as string)}
+                      height={size}
+                      width={size}
+                      className="rounded-full self-center bg-neutral-100"
+                      alt="Avatar"
+                    />
+                  </>
                 )}
               </>
             )}

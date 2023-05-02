@@ -33,7 +33,7 @@ export const Navbar = () => {
                                 <AnimatedHamburger state={isMobileOpen} />
                             </button>
                         ) : 
-                            address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} /> : <></> 
+                            address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} showActive /> : <></> 
                         }
                     </div>
                 </div>
