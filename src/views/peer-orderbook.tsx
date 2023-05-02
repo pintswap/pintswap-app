@@ -9,7 +9,7 @@ import { PairsTable } from '../components/pairs-table';
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
-    const { handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'Overview' }, { text: 'NFTs' }, { text: 'Pairs' }], 0, true);
+    const { handleCurrentClick, items, currentIndex } = useDropdown([{ text: 'All' }, { text: 'NFTs' }, { text: 'Pairs' }], 0, true);
     const { order, loading } = useTrade();
     const { filteredNfts } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
@@ -23,7 +23,7 @@ export const PeerOrderbookView = () => {
                     <Avatar peer={peer} size={300} />
                 </TransitionModal>
                 <DropdownMenu 
-                    customIcon={<span className="flex items-center gap-1 md:gap-2">{items[currentIndex].text} <FaChevronDown /></span>}
+                    customIcon={<span className="flex items-center gap-1 md:gap-2 py-2 text-md">{items[currentIndex].text} <FaChevronDown /></span>}
                     items={items}
                     onClick={handleCurrentClick}
                 />
@@ -52,12 +52,12 @@ export const PeerOrderbookView = () => {
                         peer={order.multiAddr}
                         loading={loading.allTrades}
                     />
-                    <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
+                    <Button onClick={() => handleCurrentClick('all')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
                 <div className={`${currentIndex === 2 ? 'block' : 'hidden'} flex flex-col gap-3 lg:gap-6`}>
                     <span className="text-lg">Pairs</span>
                     <PairsTable />
-                    <Button onClick={() => handleCurrentClick('overview')} className="w-fit self-center" type="outline">Back to All</Button>
+                    <Button onClick={() => handleCurrentClick('all')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
             </Card>
         </div>
