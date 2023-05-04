@@ -99,10 +99,8 @@ export function UserStore(props: { children: ReactNode }) {
           (async () => {
             if (module) {
                 await module.registerName(userData.name);
-                // TODO: fix saving private key
                 const psUser = localStorage.getItem('_pintUser');
                 if(psUser && userData.privateKey && userData.privateKey.length > 50) {
-                    // await Pintswap.fromObject(JSON.parse(psUser), new ethers.Wallet(userData.privateKey))
                     module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
                 }
             }
