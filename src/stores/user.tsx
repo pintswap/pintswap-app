@@ -5,7 +5,7 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { useSigner } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
 import { useGlobalContext } from './global';
 import { Pintswap } from "@pintswap/sdk";
 import { EMPTY_USER_DATA } from '../utils/common';
@@ -50,8 +50,10 @@ export function UserStore(props: { children: ReactNode }) {
     const { pintswap, setPintswap } = useGlobalContext();
     const { module } = pintswap;
     const { data: signer } = useSigner();
+    const { address } = useAccount();
     const [ userData, setUserData ] = useState<IUserDataProps>(EMPTY_USER_DATA);
     const [initialized, setInitialized] = useState<boolean>(false);
+    const psUser = localStorage.getItem('_pintUser');
 
     function toggleActive() {
         if(!userData.active) module?.startPublishingOffers(60000);
@@ -89,8 +91,7 @@ export function UserStore(props: { children: ReactNode }) {
     }
 
     function updateName(e: any) {
-        if(e.target.value && e.target.value.length > 0) setUserData({ ...userData, name: `${e.target.value}${userData.extension}`});
-        else setUserData({ ...userData, name: `${e.target.value}`});
+        setUserData({ ...userData, name: `${e.target.value}`});
     }
 
     function handleSave() {
@@ -98,8 +99,14 @@ export function UserStore(props: { children: ReactNode }) {
           localStorage.setItem('_pintUser', JSON.stringify(module.toObject(), null, 2));
           (async () => {
             if (module) {
-                await module.registerName(userData.name);
                 const psUser = localStorage.getItem('_pintUser');
+                // Save name with extension
+                let nameWExt = `${userData.name}`;
+                if(!nameWExt.includes('.drip')) {
+                    nameWExt = `${nameWExt}${userData.extension}`;
+                }
+                await module.registerName(nameWExt);
+                // Save private key
                 if(psUser && userData.privateKey && userData.privateKey.length > 50) {
                     module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
                 }
@@ -123,21 +130,29 @@ export function UserStore(props: { children: ReactNode }) {
                 active: false,
                 extension: '.drip'
             })
-            const localUser = localStorage.getItem('_pintUser')
             let { bio: _bio, image: _image } = (module as any).userData ?? {
                 bio: '',
                 image: new Uint8Array(0),
             };
             if (_bio !== '') setUserData({...userData, bio: _bio });
             if (_image) setUserData({...userData, img: _image });
-            if (localUser) {
-                const psUser = await Pintswap.fromObject(JSON.parse(localUser), signer);
-                setPintswap({ ...pintswap, module: psUser });
+            if (psUser) {
+                const localUser = await Pintswap.fromObject(JSON.parse(psUser), signer);
+                setPintswap({ ...pintswap, module: localUser });
             }
             setInitialized(true);
         }
         })().catch((err) => console.error(err));
     }, [pintswap.module, initialized])
+
+    /* 
+    * subscribe to wallet address changes to maintain the same multiAddr
+    */
+    useEffect(() => {
+        (async () => {
+            if(!psUser && module && address) await Pintswap.fromPassword({ signer, multiaddr: module.peerId.toB58String(), password: await signer?.getAddress() })
+        })().catch((err) => console.error(err))
+    }, [address, signer])
 
     return (
         <UserContext.Provider
