@@ -37,7 +37,7 @@ export const EMPTY_PEER: JSONPeerId = {
 };
 
 export const EMPTY_USER_DATA: IUserDataProps = {
-  img: '', bio: '', name: '', offers: [], privateKey: '', active: false, extension: '.drip'
+  img: '', bio: '', name: '', offers: [], privateKey: '', active: false, extension: '.drip', multiAddr: ''
 }
 
 // CSS HELPERS

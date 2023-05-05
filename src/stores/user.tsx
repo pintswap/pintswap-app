@@ -20,6 +20,7 @@ export type IUserDataProps = {
     privateKey: string;
     extension: string;
     active: boolean;
+    multiAddr?: string;
 }
 
 export type IUserStoreProps = {
