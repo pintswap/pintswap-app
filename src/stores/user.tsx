@@ -150,7 +150,7 @@ export function UserStore(props: { children: ReactNode }) {
     */
     useEffect(() => {
         (async () => {
-            if(!psUser && module && address) await Pintswap.fromPassword({ signer, multiaddr: module.peerId.toB58String(), password: await signer?.getAddress() })
+            if(!psUser && module && address) setPintswap(Object.assign({}, pintswap, { module: await Pintswap.fromPassword({ signer, password: await signer?.getAddress() } as any) }));
         })().catch((err) => console.error(err))
     }, [address, signer])
 

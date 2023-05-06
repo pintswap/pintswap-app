@@ -143,7 +143,7 @@ export async function getPeerData(ps: IPintswapProps, peer: string) {
     formattedPeerAddress = peer;
   }
   const b58peer = createFromB58String(formattedPeerAddress).toB58String();
-  const res = await module?.getUserDataByPeerId(b58peer);
+  const res = formattedPeerAddress === module?.peerId.toB58String() ? module?.userData : await module?.getUserDataByPeerId(b58peer);
   if(res) return res;
   else return { offers: [], bio: '', image: '' };
 }
