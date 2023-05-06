@@ -11,6 +11,7 @@ import { Pintswap } from "@pintswap/sdk";
 import { EMPTY_USER_DATA, TESTING } from '../utils/common';
 import { ethers } from 'ethers6';
 import PeerId, { JSONPeerId } from 'peer-id';
+let tick = 0;
 
 // Types
 export type IUserDataProps = {
@@ -111,6 +112,7 @@ export function UserStore(props: { children: ReactNode }) {
                 // Save private key
                 if(psUser && userData.privateKey && userData.privateKey.length > 50) {
                     module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
+                    setLoadedSigner(module.signer);
                 }
             }
           })().catch((err) => console.error(err));
@@ -148,11 +150,29 @@ export function UserStore(props: { children: ReactNode }) {
     /* 
     * subscribe to wallet address changes to maintain the same multiAddr
     */
+    const [ loadedSigner, setLoadedSigner ] = useState<any>(null);
     useEffect(() => {
+        if (tick < 3) {
+          console.log('TICK');
+          tick++;
+          return;
+        }
+        if (!loadedSigner) return;
         (async () => {
-            if(!psUser && module && address) setPintswap(Object.assign({}, pintswap, { module: await Pintswap.fromPassword({ signer, password: await signer?.getAddress() } as any) }));
+            const ps = Object.assign({}, pintswap, { module: await Pintswap.fromPassword({ signer: loadedSigner, password: await signer?.getAddress() } as any) });
+            console.log('PS', ps);
+            if (pintswap.module) {
+              await pintswap.module.pubsub.stop();
+              await pintswap.module.stop();
+            }
+            await ps.module.startNode();
+            setPintswap(ps);
         })().catch((err) => console.error(err))
-    }, [address, signer])
+    }, [loadedSigner])
+
+    useEffect(() => {
+      setLoadedSigner(signer);
+    }, [ signer ]);
 
     /* 
     * get peer id on mount

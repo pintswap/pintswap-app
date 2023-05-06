@@ -52,7 +52,7 @@ export function GlobalStore(props: { children: ReactNode }) {
                                       JSON.parse(localStorage.getItem('_pintUser') as string),
                                       _signer,
                                   )
-                                : await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
+                                : signer ? await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap : await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
                         (window as any).ps = ps;
                         ps.on('pintswap/node/status', (s: any) => {
                             if (TESTING) console.log('Node emitting', s);

@@ -16,12 +16,20 @@ import {
 import { FulfillNFTView } from "./views/fulfill-nft";
 import { setFallbackWETH } from '@pintswap/sdk';
 import { ToastContainer } from 'react-toastify';
+import { Pintswap } from "@pintswap/sdk";
+import { useSigner } from "wagmi";
 import 'react-toastify/dist/ReactToastify.css';
+import { cryptoFromSeed } from "@pintswap/sdk/lib/p2p";
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
+(window as any).Pintswap = Pintswap;
+(window as any).cryptoFromSeed = cryptoFromSeed;
+
 function App() {
     const { pintswap } = useGlobalContext();
+    const { data: signer } = useSigner();
+    (window as any).signer = signer;
     if (!(window as any).pintswap && pintswap.module) {
       (window as any).pintswap = pintswap.module;
       (window as any).pintswap.logger.info = () => {};
