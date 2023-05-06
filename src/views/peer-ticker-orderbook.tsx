@@ -46,7 +46,11 @@ export const PeerTickerOrderbookView = () => {
       list: []
     });
     
-    const [ tradeType, setTradeType ] = useState('');
+    const [ tradeType, _setTradeType ] = useState('');
+    const setTradeType = (v: any) => {
+      console.log('tradeType', v);
+      _setTradeType(v);
+    };
 
     useEffect(() => {
       let list = tradeType === 'bids' ? bidLimitOrders : askLimitOrders;
@@ -60,7 +64,7 @@ export const PeerTickerOrderbookView = () => {
         const [ tradeType, price, size, sum ] = row;
         const { index } = row;
         let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
-        setTradeType(tradeType === 'bids' ? `Buy ${tradeAsset ? tradeAsset : ''}` : `Sell ${baseAsset ? baseAsset : ''}`);
+        setTradeType(tradeType);
         setMatchInputs({
             amount: list.slice(0, index + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
             list

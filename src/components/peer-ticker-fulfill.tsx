@@ -1,5 +1,5 @@
 import { Transition } from '@headlessui/react';
-import { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
+import { ChangeEvent, SyntheticEvent, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
 import { Button, Card, CopyClipboard, PageStatus, Input, ProgressIndicator } from '.';
@@ -7,11 +7,7 @@ import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 import { useAccount, useSigner } from 'wagmi';
-import {
-    toLimitOrder,
-    formattedFromTransfer,
-    matchOffers,
-} from '../utils/orderbook';
+import { toLimitOrder, formattedFromTransfer, matchOffers } from '../utils/orderbook';
 import { useParams } from 'react-router-dom';
 
 export const PeerTickerFulfill = ({
@@ -30,23 +26,29 @@ export const PeerTickerFulfill = ({
     });
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault();
-        setFill({
-            input: e.target.value,
-            ...fill,
-        });
-
-        const formattedAmount = (await formattedFromTransfer({
-            token:
-                (matchInputs.list[0] || {}).token ||
-                ethers.ZeroAddress,
-            amount: e,
-        }, signer)).amount
-        setMatchInputs({
-            amount: formattedAmount,
-            list: matchInputs.list,
-        });
-    }
+        try {
+            e.preventDefault();
+            setFill({
+                input: e.target.value,
+                ...fill,
+            });
+            const formattedAmount = (
+                await formattedFromTransfer(
+                    {
+                        token: (matchInputs.list[0] || {}).token || ethers.ZeroAddress,
+                        amount: e,
+                    },
+                    signer,
+                )
+            ).amount;
+            setMatchInputs({
+                amount: formattedAmount,
+                list: matchInputs.list,
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     useEffect(() => {
         (async () => {
@@ -74,6 +76,13 @@ export const PeerTickerFulfill = ({
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);
+    const options = useMemo(() => {
+        return [`Buy ${tradeAsset ? tradeAsset : ''}`, `Sell ${tradeAsset ? tradeAsset : ''}`];
+    }, [tradeAsset]);
+    const tradeTypeOption = useMemo(
+        () => (tradeType === 'asks' ? options[0] : options[1]),
+        [options, tradeType],
+    );
 
     return (
         <>
@@ -84,12 +93,14 @@ export const PeerTickerFulfill = ({
                         <DropdownInput
                             title="Type"
                             placeholder="Trade Type"
-                            state={tradeType}
+                            state={tradeTypeOption}
                             type="string"
                             loading={loading.trade}
                             disabled={loading.allTrades}
-                            options={[`Buy ${tradeAsset ? tradeAsset : ''}`, `Sell ${baseAsset ? baseAsset : ''}`]}
-                            setState={(e: any) => setTradeType(e)}
+                            options={options}
+                            setState={(e: any) => {
+                                setTradeType(e.match('Buy') ? 'asks' : 'bids');
+                            }}
                         />
                         <Input
                             title="Price"
@@ -98,10 +109,12 @@ export const PeerTickerFulfill = ({
                             type="number"
                             loading={loading.trade}
                             disabled
-                            onChange={(e) => setLimitOrder({ 
-                                ...limitOrder, 
-                                price: e.currentTarget.value 
-                            })}
+                            onChange={(e) =>
+                                setLimitOrder({
+                                    ...limitOrder,
+                                    price: e.currentTarget.value,
+                                })
+                            }
                         />
                         <Input
                             title="Amount"
