@@ -9,6 +9,9 @@ import { BASE_URL } from '../utils/common';
 import { useAccount, useSigner } from 'wagmi';
 import { getDecimals, toLimitOrder, formattedFromTransfer, matchOffers } from '../utils/orderbook';
 import { useParams } from 'react-router-dom';
+import { isEqual } from 'lodash';
+
+let lastFill: any;
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -26,7 +29,6 @@ export const PeerTickerFulfill = ({
     });
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        try {
             e.preventDefault();
             setFill({
                 input: e.target.value,
@@ -36,18 +38,17 @@ export const PeerTickerFulfill = ({
                 await formattedFromTransfer(
                     {
                         token: (matchInputs.list[0] || {}).token || ethers.ZeroAddress,
-                        amount: e,
+                        amount: e.target.value,
                     },
                     signer,
                 )
             ).amount;
-            setMatchInputs({
+            const newMatchInputs = {
                 amount: formattedAmount,
                 list: matchInputs.list,
-            });
-        } catch (e) {
-            console.error(e);
-        }
+            };
+            console.log([newMatchInputs, matchInputs]);
+            if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 
     useEffect(() => {
@@ -67,13 +68,16 @@ export const PeerTickerFulfill = ({
                     },
                     signer,
                 )) as any;
-                const output = (Number(limit.amount)*Number(limit.price)).toFixed(4);
-                setFill({
+                const output = (Number(limit.amount) * Number(limit.price)).toFixed(4);
+                const newFill = {
                     ...match,
                     input: limit.amount,
-                    output
-                });
-                setLimitOrder(limit);
+                    output,
+                };
+                if (!isEqual(newFill, fill)) {
+                    setFill(newFill);
+                    setLimitOrder(limit);
+                }
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);
@@ -123,7 +127,6 @@ export const PeerTickerFulfill = ({
                             value={(fill || {}).input || ''}
                             type="number"
                             loading={loading.trade}
-                            disabled
                             onChange={handleAmountChange}
                         />
                         <Input
