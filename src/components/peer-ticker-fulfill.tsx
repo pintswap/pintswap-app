@@ -7,7 +7,7 @@ import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { BASE_URL } from '../utils/common';
 import { useAccount, useSigner } from 'wagmi';
-import { toLimitOrder, formattedFromTransfer, matchOffers } from '../utils/orderbook';
+import { getDecimals, toLimitOrder, formattedFromTransfer, matchOffers } from '../utils/orderbook';
 import { useParams } from 'react-router-dom';
 
 export const PeerTickerFulfill = ({
@@ -67,10 +67,11 @@ export const PeerTickerFulfill = ({
                     },
                     signer,
                 )) as any;
+                const output = (Number(limit.amount)*Number(limit.price)).toFixed(4);
                 setFill({
                     ...match,
                     input: limit.amount,
-                    output: (Number(limit.amount) * Number(limit.price)).toFixed(4),
+                    output
                 });
                 setLimitOrder(limit);
             }

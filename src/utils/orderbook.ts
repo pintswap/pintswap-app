@@ -238,8 +238,8 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
         .slice()
         .sort(
             (a, b) =>
-                (Number(b.gets.amount) * 1e9) / Number(b.gives.amount) -
-                ((Number(a.gets.amount) * 1e9) - Number(a.gives.amount)));
+                (Number(a.gets.amount) * 1e9) / Number(a.gives.amount) -
+                ((Number(b.gets.amount) * 1e9) / Number(b.gives.amount)));
     const toFill = ethers.toBigInt(amount as any);
     const fill = sorted.reduce(
         (() => {
@@ -249,6 +249,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
                 const remaining = toFill - filled;
                 if (remaining <= 0) return r;
                 filled += getsAmount;
+		console.log('remaining,getsAmount', [ remaining, getsAmount ]);
                 if (remaining >= getsAmount) {
                     r.push({
                         amount: getsAmount,
@@ -273,6 +274,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
         })(),
         [],
     );
+    console.log('fill', fill);
     const effective = fill.reduce(
         (r: any, v: any) => ({
             gets: v.effective.gets + r.gets,
@@ -280,6 +282,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
         }),
         { gets: ethers.toBigInt(0), gives: ethers.toBigInt(0) },
     );
+    console.log('effective', effective);
     return {
         fill,
         effective,
