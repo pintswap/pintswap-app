@@ -1,8 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
-import PeerId, { JSONPeerId } from 'peer-id';
-import { defer, EMPTY_PEER, TESTING } from '../utils/common';
+import { defer, TESTING } from '../utils/common';
 import { ethers } from 'ethers6';
 
 // Types
@@ -12,15 +11,8 @@ export type IPintswapProps = {
     error: boolean;
 };
 
-export type IPeerProps = {
-    module: JSONPeerId;
-    loading: boolean;
-    error: boolean;
-};
-
 export type IGlobalStoreProps = {
     pintswap: IPintswapProps;
-    peer: IPeerProps;
     setPeer?: any;
     setPintswap?: any;
 };
@@ -32,11 +24,6 @@ const GlobalContext = createContext<IGlobalStoreProps>({
         loading: true,
         error: false,
     },
-    peer: {
-        module: EMPTY_PEER,
-        loading: true,
-        error: false,
-    }
 });
 
 // Peer
@@ -49,11 +36,6 @@ export function GlobalStore(props: { children: ReactNode }) {
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
-        loading: true,
-        error: false,
-    });
-    const [peer, setPeer] = useState<IPeerProps>({
-        module: EMPTY_PEER,
         loading: true,
         error: false,
     });
@@ -88,7 +70,6 @@ export function GlobalStore(props: { children: ReactNode }) {
                     } catch (err) {
                         console.error('Initializing error:', err);
                         setPintswap({ ...pintswap, loading: false });
-                        setPeer({ ...peer, loading: false });
                     }
                 })().catch(reject);
             });
@@ -101,28 +82,10 @@ export function GlobalStore(props: { children: ReactNode }) {
         if (!pintswap.module && _signer) initialize();
     }, [signer]);
 
-    // Find Peer Id
-    useEffect(() => {
-        const getPeer = async () => {
-            const key = 'peerId';
-            const localPeerId = localStorage.getItem(key);
-            if (localPeerId && localPeerId != null && !TESTING) {
-                setPeer({ ...peer, module: JSON.parse(localPeerId) });
-            } else {
-                const id = await PeerId.create();
-                setPeer({ ...peer, module: id.toJSON() });
-                localStorage.setItem(key, JSON.stringify(id.toJSON()));
-            }
-        };
-        getPeer();
-    }, []);
-
     return (
         <GlobalContext.Provider
             value={{
                 pintswap,
-                peer,
-                setPeer,
                 setPintswap,
             }}
         >

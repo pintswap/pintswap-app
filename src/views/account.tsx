@@ -123,7 +123,7 @@ export const AccountView = () => {
                                     max={100}
                                 />
                                 <Input 
-                                    value={privateKey}
+                                    value={privateKey || ''}
                                     onChange={updatePrivateKey}
                                     type="password"
                                     title='Private Key'

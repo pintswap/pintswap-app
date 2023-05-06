@@ -33,9 +33,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
     img: defaultImgSrc, 
     bio: pathname.includes('account') ? (userData.bio ? userData.bio : '') : '', 
     name: peer && typeof peer === 'string' ? peer : truncate(userData.name),
-    privateKey: '',
     active: false,
-    extension: '.drip'
   }
   const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
 
@@ -53,12 +51,10 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
         } else return peer;
       } else {
         return {
+          ...userData,
           img: `${baseUrl}${userData.img?.toString('base64')}`,
           bio: userData.bio,
           name: userData.name ? userData.name : truncate(module.peerId.toB58String()),
-          privateKey: '',
-          active: false,
-          extension: '.drip'
         }
       }
     }

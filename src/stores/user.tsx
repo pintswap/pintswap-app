@@ -8,8 +8,9 @@ import {
 import { useAccount, useSigner } from 'wagmi';
 import { useGlobalContext } from './global';
 import { Pintswap } from "@pintswap/sdk";
-import { EMPTY_USER_DATA } from '../utils/common';
+import { EMPTY_USER_DATA, TESTING } from '../utils/common';
 import { ethers } from 'ethers6';
+import PeerId, { JSONPeerId } from 'peer-id';
 
 // Types
 export type IUserDataProps = {
@@ -17,10 +18,10 @@ export type IUserDataProps = {
     bio: string;
     name: string;
     offers?: any[];
-    privateKey: string;
-    extension: string;
+    privateKey?: string;
+    extension?: string;
     active: boolean;
-    multiAddr?: string;
+    peer?: JSONPeerId;
 }
 
 export type IUserStoreProps = {
@@ -124,12 +125,10 @@ export function UserStore(props: { children: ReactNode }) {
         (async () => {
         if (module && !initialized) {
             setUserData({
+                ...userData,
                 name: await module.resolveName(module.peerId.toB58String()),
                 bio: module.userData.bio,
                 img: module.userData.image,
-                privateKey: '',
-                active: false,
-                extension: '.drip'
             })
             let { bio: _bio, image: _image } = (module as any).userData ?? {
                 bio: '',
@@ -154,6 +153,24 @@ export function UserStore(props: { children: ReactNode }) {
             if(!psUser && module && address) await Pintswap.fromPassword({ signer, multiaddr: module.peerId.toB58String(), password: await signer?.getAddress() })
         })().catch((err) => console.error(err))
     }, [address, signer])
+
+    /* 
+    * get peer id on mount
+    */
+    useEffect(() => {
+        const getPeer = async () => {
+            const key = 'peerId';
+            const localPeerId = localStorage.getItem(key);
+            if (localPeerId && localPeerId != null && !TESTING) {
+                setUserData({ ...userData, peer: JSON.parse(localPeerId) });
+            } else {
+                const id = await PeerId.create();
+                setUserData({ ...userData, peer: id.toJSON() });
+                localStorage.setItem(key, JSON.stringify(id.toJSON()));
+            }
+        };
+        getPeer();
+    }, []);
 
     return (
         <UserContext.Provider
