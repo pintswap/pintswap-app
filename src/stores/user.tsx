@@ -151,7 +151,9 @@ export function UserStore(props: { children: ReactNode }) {
                 })
             }
         })().catch(err => console.error(err))
-    }, [module?.userData, loadedSigner]);
+    }, [module?.userData, loadedSigner, module?.peerId]);
+
+    console.log("module user data", module?.userData)
 
     /* 
     * subscribe to wallet address changes to maintain the same multiAddr
