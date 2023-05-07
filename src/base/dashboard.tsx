@@ -4,6 +4,7 @@ import { ActiveText } from "../components";
 import { Avatar } from '../components';
 import { useAccount } from "wagmi";
 import { useDashNav, useWindowSize } from "../hooks";
+import { useGlobalContext } from "../stores";
 
 type IDashboardProps = {
   children: ReactNode;
@@ -15,6 +16,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
   const { width, breakpoints } = useWindowSize();
   const { NAV_ITEMS } = useDashNav();
+  const { pintswap } = useGlobalContext();
   const navigate = useNavigate();
 
   if(width >= breakpoints.md) {
@@ -38,7 +40,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
             </li>
           ))}
         </ul>
-        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-8 mb-2 shadow-inner shadow-neutral-950 3xl:shadow-none 3xl:px-0">
+        <div className="overflow-y-scroll w-full px-4 lg:px-6 py-8 mb-2 shadow-inner shadow-neutral-950 3xl:shadow-none 3xl:px-0 h-full">
           <main className="mx-auto">
             {children}
           </main>
@@ -57,7 +59,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
 
         {address && (
           <div className="fixed left-2 bottom-2">
-            <Avatar type="clickable" showActive />
+            <Avatar type="clickable" showActive peer={pintswap?.module?.peerId.toB58String()} />
           </div>
         )}
       </>

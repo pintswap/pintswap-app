@@ -37,6 +37,7 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
   }
   const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
 
+  // TODO: fix so that not all avatars require a "peer" to be passed
   const getUserData = async (): Promise<IUserDataProps | undefined> => {
     const baseUrl = `data:image/jpg;base64,`;
     if(module) {

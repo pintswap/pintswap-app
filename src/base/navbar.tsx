@@ -5,11 +5,13 @@ import { useAccount } from 'wagmi';
 import { ActiveText, AnimatedHamburger, Avatar, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
 import { dashboardHeightClass } from './dashboard';
+import { useGlobalContext } from '../stores';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useDashNav();
     const { width, breakpoints } = useWindowSize();
     const { address } = useAccount();
+    const { pintswap } = useGlobalContext();
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -33,7 +35,7 @@ export const Navbar = () => {
                                 <AnimatedHamburger state={isMobileOpen} />
                             </button>
                         ) : 
-                            address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} showActive /> : <></> 
+                            address ? <Avatar type="clickable" size={width >= 1024 ? 42 : 32} showActive peer={pintswap?.module?.peerId.toB58String()} /> : <></> 
                         }
                     </div>
                 </div>

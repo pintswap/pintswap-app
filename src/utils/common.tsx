@@ -152,10 +152,15 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string) => {
   const { module } = ps;
   if(peer.includes('.drip')) return peer;
   else {
-    const shortAddress = await module?.resolveName(peer);
-    if(shortAddress) return shortAddress;
+    try {
+      const name = await module?.resolveName(peer);
+      if(name) return name;
+      else return peer;
+    } catch (err) {
+      console.error("#formatPeerName:", err);
+      return peer;
+    }
   }
-  return peer;
 };
 
 export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
