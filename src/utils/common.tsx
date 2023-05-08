@@ -169,8 +169,10 @@ export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
     const res = await getPeerData(ps, peer);
     const formattedName = await formatPeerName(ps, peer);
     if(res) {
+      const renderPic = res.image.toString('base64') !== '' ?
+       `${baseUrl}${res.image?.toString('base64')}` : '/black.jpg';
       return {
-        img: `${baseUrl}${res.image.toString('base64')}`,
+        img: renderPic,
         bio: res.bio,
         name: formattedName,
         privateKey: '',

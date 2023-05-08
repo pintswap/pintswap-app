@@ -51,11 +51,15 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
           }
         } else return peer;
       } else {
+        const renderName = userData.name ? 
+          userData.name : truncate(module.peerId.toB58String());
+        const renderPic = userData.img?.toString('base64') !== '' ?
+          `${baseUrl}${userData.img?.toString('base64')}` : defaultImgSrc;
         return {
           ...userData,
-          img: `${baseUrl}${userData.img?.toString('base64')}`,
+          img: renderPic,
           bio: userData.bio,
-          name: userData.name ? userData.name : truncate(module.peerId.toB58String()),
+          name: renderName,
         }
       }
     }
