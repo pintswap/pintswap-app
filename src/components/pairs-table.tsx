@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card } from '../components';
 import { useOffersContext } from '../stores';
-import { useGlobalContext } from '../stores/global';
+import { usePintswapContext } from '../stores/pinstwap';
 import { getTokenAttributes } from '../utils/common';
 import { resolveName } from '../hooks/trade';
 import { useParams } from 'react-router-dom';
@@ -22,7 +22,7 @@ export const PairsTable = () => {
     const navigate = useNavigate();
     const { limitOrdersArr } = useOffersContext();
     const [uniquePairs, setUniquePairs] = useState<any[]>([]);
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const { multiaddr } = useParams();
     const [resolved, setResolved] = useState<any>(null);
 

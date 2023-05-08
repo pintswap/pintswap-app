@@ -4,7 +4,7 @@ import { ActiveText } from "../components";
 import { Avatar } from '../components';
 import { useAccount } from "wagmi";
 import { useDashNav, useWindowSize } from "../hooks";
-import { useGlobalContext } from "../stores";
+import { usePintswapContext } from "../stores";
 
 type IDashboardProps = {
   children: ReactNode;
@@ -16,7 +16,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
   const { address } = useAccount();
   const { width, breakpoints } = useWindowSize();
   const { NAV_ITEMS } = useDashNav();
-  const { pintswap } = useGlobalContext();
+  const { pintswap } = usePintswapContext();
   const navigate = useNavigate();
 
   if(width >= breakpoints.md) {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Buffer } from 'buffer';
-import { useGlobalContext } from '../stores';
+import { usePintswapContext } from '../stores';
 
 export function BroadcastView() {
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     return (
         <>
             <div>

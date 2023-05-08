@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { IUserDataProps, useGlobalContext, usePeersContext, useUserContext } from "../stores"
-import { ethers } from "ethers";
-import { formatPeerName, getFormattedPeer, getPeerData, truncate } from "../utils/common";
+import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from "../stores"
+import { getFormattedPeer, truncate } from "../utils/common";
 import { StatusIndicator } from "./status-indicator";
 
 type IAvatarProps = {
@@ -22,7 +21,7 @@ type IAvatarProps = {
 
 export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withName, nameClass, bioClass, loading, align, showActive }: IAvatarProps) => {
   const { pathname } = useLocation();
-  const { pintswap } = useGlobalContext();
+  const { pintswap } = usePintswapContext();
   const { module } = pintswap;
   const { userData } = useUserContext();
   const { peersData } = usePeersContext();
@@ -51,11 +50,15 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
           }
         } else return peer;
       } else {
+        const renderName = userData.name ? 
+          userData.name : truncate(module.peerId.toB58String());
+        const renderPic = userData.img?.toString('base64') !== '' ?
+          `${baseUrl}${userData.img?.toString('base64')}` : defaultImgSrc;
         return {
           ...userData,
-          img: `${baseUrl}${userData.img?.toString('base64')}`,
+          img: renderPic,
           bio: userData.bio,
-          name: userData.name ? userData.name : truncate(module.peerId.toB58String()),
+          name: renderName,
         }
       }
     }

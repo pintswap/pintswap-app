@@ -5,8 +5,8 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { formatPeerName, getFormattedPeer, getPeerData } from '../utils/common';
-import { useGlobalContext } from './global';
+import { getFormattedPeer } from '../utils/common';
+import { usePintswapContext } from './pinstwap';
 import { useOffersContext } from './offers';
 import { IUserDataProps } from './user';
 
@@ -26,7 +26,7 @@ const PeersContext = createContext<IPeersStoreProps>({
 
 // Wrapper
 export function PeersStore(props: { children: ReactNode }) {
-  const { pintswap } = useGlobalContext();
+  const { pintswap } = usePintswapContext();
   const { limitOrdersArr } = useOffersContext();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

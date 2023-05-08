@@ -11,14 +11,14 @@ export type IPintswapProps = {
     error: boolean;
 };
 
-export type IGlobalStoreProps = {
+export type IPintswapStoreProps = {
     pintswap: IPintswapProps;
     setPeer?: any;
     setPintswap?: any;
 };
 
 // Context
-const GlobalContext = createContext<IGlobalStoreProps>({
+const PintswapContext = createContext<IPintswapStoreProps>({
     pintswap: {
         module: undefined,
         loading: true,
@@ -26,13 +26,19 @@ const GlobalContext = createContext<IGlobalStoreProps>({
     },
 });
 
-// Peer
+// Utils
 (window as any).discoveryDeferred = defer();
 
+function mergeUserData(a: any, b: any): typeof a {
+    if (b && b.userData) a.userData = b.userData;
+    return a;
+}
+
 // Wrapper
-export function GlobalStore(props: { children: ReactNode }) {
+export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
-    const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e')
+    const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e');
+    const localPsUser = localStorage.getItem('_pintUser');
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
@@ -40,19 +46,31 @@ export function GlobalStore(props: { children: ReactNode }) {
         error: false,
     });
 
+    const determinePsModule = async () => {
+        if(typeof localPsUser === 'string') {
+            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), _signer);
+            console.log("psFromLocal:", psFromLocal)
+            return psFromLocal;
+        } else {
+            if(signer) {
+                const psFromPass = await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap;
+                console.log("psFromPass:", psFromPass);
+                return mergeUserData(psFromPass, pintswap.module);
+            } else {
+                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
+                console.log("initPs:", initPs)
+                return initPs;
+            }
+        }
+    }
+
     // Initialize Pintswap
     useEffect(() => {
         const initialize = async () => {
             const ps: Pintswap = await new Promise((resolve, reject) => {
                 (async () => {
                     try {
-                        const ps =
-                            typeof localStorage.getItem('_pintUser') === 'string'
-                                ? await Pintswap.fromObject(
-                                      JSON.parse(localStorage.getItem('_pintUser') as string),
-                                      _signer,
-                                  )
-                                : signer ? await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap : await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
+                        const ps = await determinePsModule();
                         (window as any).ps = ps;
                         ps.on('pintswap/node/status', (s: any) => {
                             if (TESTING) console.log('Node emitting', s);
@@ -83,18 +101,18 @@ export function GlobalStore(props: { children: ReactNode }) {
     }, [signer]);
 
     return (
-        <GlobalContext.Provider
+        <PintswapContext.Provider
             value={{
                 pintswap,
                 setPintswap,
             }}
         >
             {props.children}
-        </GlobalContext.Provider>
+        </PintswapContext.Provider>
     );
 }
 
 // Independent
-export function useGlobalContext() {
-    return useContext(GlobalContext);
+export function usePintswapContext() {
+    return useContext(PintswapContext);
 }

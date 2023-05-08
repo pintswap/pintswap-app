@@ -1,4 +1,4 @@
-export * from './global';
+export * from './pinstwap';
 export * from './offers';
 export * from './theme';
 export * from './user';

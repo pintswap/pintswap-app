@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { memoize } from 'lodash';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
-import { useGlobalContext, useOffersContext } from '../stores';
+import { usePintswapContext, useOffersContext } from '../stores';
 import { ethers } from 'ethers6';
 import { toLimitOrder, filterERC20OffersForTicker } from '../utils/orderbook';
 import { useTrade } from './trade';
@@ -19,7 +19,7 @@ const markIndex = (o: any, index: number) =>
 
 export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     const { trade, base } = useParams();
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const { peerTrades } = useOffersContext();
     const { order } = useTrade();
 

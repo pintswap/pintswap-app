@@ -14,7 +14,7 @@ import {
 } from '../components';
 import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
-import { useGlobalContext, useUserContext } from '../stores';
+import { usePintswapContext } from '../stores';
 import { BASE_URL } from '../utils/common';
 import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
 import { useAccount } from 'wagmi';
@@ -22,7 +22,7 @@ import { useAccount } from 'wagmi';
 export const FulfillView = () => {
     const { address } = useAccount()
     const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const [limitOrder, setLimitOrder] = useState({
         price: Number(0),
         amount: '',
