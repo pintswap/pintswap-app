@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Card, CopyClipboard, DataTable, DropdownInput, DropdownMenu, Input, Skeleton, TransitionModal } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { useOffersContext, useUserContext } from '../stores';
-import { useGlobalContext } from '../stores/global';
+import { usePintswapContext } from '../stores/pinstwap';
 import { convertAmount } from '../utils/common';
 import { Tab } from '@headlessui/react';
 import { useState } from 'react';
@@ -30,13 +30,13 @@ const columns = [
 export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const { userTrades } = useOffersContext();
     const { updateBio, updateImg, updateName, handleSave, updatePrivateKey, userData, toggleActive } = useUserContext();
     const { name, bio, img, privateKey, extension } = userData;
 
     const [shallowForm, setShallowForm] = useState({ bio, name })
-    const [isEditing, setIsEditing] = useState(bio || name || img ? false : true);
+    const [isEditing, setIsEditing] = useState(false);
 
     const handleUpdate = () => {
         handleSave();
@@ -72,75 +72,75 @@ export const AccountView = () => {
             <Card tabs={TABS} type="tabs" scroll>
                 <Tab.Panel>
                     <form>
-                    <div className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}>
-                        <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}>
-                            {isEditing ? (
-                                <div className="p-0.5">
-                                    <input
-                                        type="file"
-                                        name="profile-image"
-                                        accept=".jpg, .jpeg, .png"
-                                        onChange={updateImg}
-                                        className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
-                                        title=" "
-                                    />
-                                    <span className="absolute h-[154px] w-[154px] -translate-x-0.5 translate-y-0.5">
-                                        <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
-                                            Click to<br />Upload
+                        <div className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}>
+                            <div className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}>
+                                {isEditing ? (
+                                    <div className="p-0.5">
+                                        <input
+                                            type="file"
+                                            name="profile-image"
+                                            accept=".jpg, .jpeg, .png"
+                                            onChange={updateImg}
+                                            className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
+                                            title=" "
+                                        />
+                                        <span className="absolute h-[154px] w-[154px] -translate-x-0.5 translate-y-0.5">
+                                            <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
+                                                Click to<br />Upload
+                                            </span>
                                         </span>
-                                    </span>
-                                    <Avatar size={150} />
-                                </div>
-                            ) : (
-                                <Avatar size={150} />
-                            )}
-                        </div>
-                        <div className="grid grid-cols-1 gap-3 lg:gap-2">
-                                <div className="flex items-end w-full">
+                                        <Avatar size={150} peer={pintswap?.module?.peerId.toB58String()} />
+                                    </div>
+                                ) : (
+                                    <Avatar size={150} peer={pintswap?.module?.peerId.toB58String()} />
+                                )}
+                            </div>
+                            <div className="grid grid-cols-1 gap-3 lg:gap-2">
+                                    <div className="flex items-end w-full">
+                                        <Input 
+                                            value={name}
+                                            onChange={updateName}
+                                            type="text"
+                                            title='Username'
+                                            enableStateCss
+                                            disabled={!isEditing}
+                                            placeholder={isEditing ? 'Start typing here...' : 'No username'}
+                                            max={50}
+                                            className="!rounded-r-none"
+                                        />
+                                        {isEditing && (
+                                            <DropdownInput state={extension} type="input-ext" />
+                                        )}
+                                    </div>
                                     <Input 
-                                        value={name}
-                                        onChange={updateName}
+                                        value={bio}
+                                        onChange={updateBio}
                                         type="text"
-                                        title='Username'
+                                        title='Bio'
                                         enableStateCss
                                         disabled={!isEditing}
-                                        placeholder={isEditing ? 'Start typing here...' : 'No username'}
-                                        max={50}
-                                        className="!rounded-r-none"
+                                        placeholder={isEditing ? 'Start typing here...' : 'No bio'}
+                                        max={100}
                                     />
-                                    {isEditing && (
-                                        <DropdownInput state={extension} type="input-ext" />
-                                    )}
-                                </div>
-                                <Input 
-                                    value={bio}
-                                    onChange={updateBio}
-                                    type="text"
-                                    title='Bio'
-                                    enableStateCss
-                                    disabled={!isEditing}
-                                    placeholder={isEditing ? 'Start typing here...' : 'No bio'}
-                                    max={100}
-                                />
-                                <Input 
-                                    value={(!isEditing && (privateKey && privateKey.replace(/\w/g, '*') || '') || privateKey || '')}
-                                    onChange={updatePrivateKey}
-                                    type="password"
-                                    title='Private Key'
-                                    enableStateCss
-                                    disabled={!isEditing}
-                                    placeholder={isEditing ? 'Start typing here...' : 'No private key'}
-                                    max={100}
-                                />
+                                    <Input 
+                                        value={(!isEditing && (privateKey && privateKey.replace(/\w/g, '*') || '') || privateKey || '')}
+                                        onChange={updatePrivateKey}
+                                        type="password"
+                                        title='Private Key'
+                                        enableStateCss
+                                        disabled={!isEditing}
+                                        placeholder={isEditing ? 'Start typing here...' : 'No private key'}
+                                        max={100}
+                                    />
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
-                        {!isEditing ? <Button onClick={() => setIsEditing(true)} form="reset" type='outline'>Edit</Button> : (
-                            <>
-                            <Button form="reset" onClick={handleCancel} type='transparent'>Cancel</Button>
-                            <Button form="submit" onClick={handleUpdate}>Save</Button>
-                            </>
-                        )}
+                        <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
+                            {!isEditing ? <Button onClick={() => setIsEditing(true)} form="reset" type='outline'>Edit</Button> : (
+                                <>
+                                <Button form="reset" onClick={handleCancel} type='transparent'>Cancel</Button>
+                                <Button form="submit" onClick={handleUpdate}>Save</Button>
+                                </>
+                            )}
                         </div>
                         </form>
                 </Tab.Panel>

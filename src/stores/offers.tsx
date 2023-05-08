@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
 import { defer, TESTING } from '../utils/common';
-import { useGlobalContext } from './global';
+import { usePintswapContext } from './pinstwap';
 import { memoize } from 'lodash';
 import { toLimitOrder } from '../utils/orderbook';
 import { ethers } from 'ethers6';
@@ -116,7 +116,7 @@ const toFlattened = memoize((v) =>
 
 // Wrapper
 export function OffersStore(props: { children: ReactNode }) {
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());

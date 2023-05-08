@@ -1,6 +1,6 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { Base } from './base';
-import { useGlobalContext } from './stores';
+import { usePintswapContext } from './stores';
 import {
     ExploreView,
     CreateView,
@@ -27,7 +27,7 @@ setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 (window as any).cryptoFromSeed = cryptoFromSeed;
 
 function App() {
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const { data: signer } = useSigner();
     (window as any).signer = signer;
     if (!(window as any).pintswap && pintswap.module) {

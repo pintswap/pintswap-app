@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useGlobalContext } from '../stores/global';
+import { usePintswapContext } from '../stores/pinstwap';
 import { convertAmount, EMPTY_TRADE, getTokenAttributes, TESTING } from '../utils/common';
 import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
@@ -8,8 +8,8 @@ import { ITokenProps } from '../utils/token-list';
 import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
-import { useOffersContext, useUserContext } from '../stores';
-import { toBeHex, hexlify } from 'ethers6';
+import { useOffersContext } from '../stores';
+import { toBeHex } from 'ethers6';
 
 const ln = (v: any) => (console.log(v), v);
 
@@ -36,8 +36,7 @@ export const resolveName = async (pintswap: any, name: any) => {
 export const useTrade = () => {
     const params = useParams();
     const { pathname } = useLocation();
-    const { pintswap } = useGlobalContext();
-    const { userData } = useUserContext();
+    const { pintswap } = usePintswapContext();
     const { addTrade, userTrades, setPeerTrades, peerTrades, setUserTrades } = useOffersContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
@@ -216,9 +215,8 @@ export const useTrade = () => {
                 }
             }
         };
-        if (pintswap.module && (userData.peer?.id || (userData.peer as any)?._id))
-            getter().catch((err) => console.error(err));
-    }, [pintswap.module, userData.peer, multiaddr]);
+        if (pintswap.module) getter().catch((err) => console.error(err));
+    }, [pintswap.module, multiaddr]);
 
     /*
      * TRADE EVENT MANAGER - START

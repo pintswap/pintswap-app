@@ -37,7 +37,7 @@ export const EMPTY_PEER: JSONPeerId = {
 };
 
 export const EMPTY_USER_DATA: IUserDataProps = {
-  img: '', bio: '', name: '', offers: [], privateKey: '', active: false, extension: '.drip', peer: EMPTY_PEER
+  img: '', bio: '', name: '', offers: [], privateKey: '', active: false, extension: '.drip'
 }
 
 // CSS HELPERS
@@ -152,10 +152,15 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string) => {
   const { module } = ps;
   if(peer.includes('.drip')) return peer;
   else {
-    const shortAddress = await module?.resolveName(peer);
-    if(shortAddress) return shortAddress;
+    try {
+      const name = await module?.resolveName(peer);
+      if(name) return name;
+      else return peer;
+    } catch (err) {
+      console.warn(`#formatPeerName: no names found for multiAddr ${peer}`);
+      return peer;
+    }
   }
-  return peer;
 };
 
 export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
@@ -164,8 +169,10 @@ export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
     const res = await getPeerData(ps, peer);
     const formattedName = await formatPeerName(ps, peer);
     if(res) {
+      const renderPic = res.image.toString('base64') !== '' ?
+       `${baseUrl}${res.image?.toString('base64')}` : '/black.jpg';
       return {
-        img: `${baseUrl}${res.image.toString('base64')}`,
+        img: renderPic,
         bio: res.bio,
         name: formattedName,
         privateKey: '',

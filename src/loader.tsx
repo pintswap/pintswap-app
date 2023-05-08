@@ -4,7 +4,7 @@ import App from './App';
 import { WagmiConfig } from 'wagmi';
 import { chains, RainbowKitProvider, wagmiClient, walletTheme } from './utils/wallet';
 import { HashRouter } from 'react-router-dom';
-import { GlobalStore, OffersStore, ThemeStore, UserStore, PeersStore } from './stores';
+import { PintswapStore, OffersStore, ThemeStore, UserStore, PeersStore } from './stores';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
@@ -12,7 +12,7 @@ root.render(
         <ThemeStore>
             <WagmiConfig client={wagmiClient}>
                 <RainbowKitProvider chains={chains} theme={walletTheme}>
-                    <GlobalStore>
+                    <PintswapStore>
                         <OffersStore>
                             <UserStore>
                                 <PeersStore>
@@ -22,7 +22,7 @@ root.render(
                                 </PeersStore>
                             </UserStore>
                         </OffersStore>
-                    </GlobalStore>
+                    </PintswapStore>
                 </RainbowKitProvider>
             </WagmiConfig>
         </ThemeStore>

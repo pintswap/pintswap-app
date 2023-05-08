@@ -5,13 +5,9 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { useAccount, useSigner } from 'wagmi';
-import { useGlobalContext } from './global';
-import { Pintswap } from "@pintswap/sdk";
-import { EMPTY_USER_DATA, TESTING } from '../utils/common';
+import { usePintswapContext } from './pinstwap';
+import { EMPTY_USER_DATA } from '../utils/common';
 import { ethers } from 'ethers6';
-import PeerId, { JSONPeerId } from 'peer-id';
-let tick = 0;
 
 // Types
 export type IUserDataProps = {
@@ -22,7 +18,6 @@ export type IUserDataProps = {
     privateKey?: string;
     extension?: string;
     active: boolean;
-    peer?: JSONPeerId;
 }
 
 export type IUserStoreProps = {
@@ -50,12 +45,9 @@ const UserContext = createContext<IUserStoreProps>({
 
 // Wrapper
 export function UserStore(props: { children: ReactNode }) {
-    const { pintswap, setPintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const { module } = pintswap;
-    const { data: signer } = useSigner();
-    const { address } = useAccount();
     const [ userData, setUserData ] = useState<IUserDataProps>(EMPTY_USER_DATA);
-    const [initialized, setInitialized] = useState<boolean>(false);
     const psUser = localStorage.getItem('_pintUser');
 
     function toggleActive() {
@@ -97,100 +89,44 @@ export function UserStore(props: { children: ReactNode }) {
         setUserData({ ...userData, name: `${e.target.value}`});
     }
 
-    function handleSave() {
+    async function handleSave() {
         if (module) {
-          localStorage.setItem('_pintUser', JSON.stringify(module.toObject(), null, 2));
-          (async () => {
-            if (module) {
-                const psUser = localStorage.getItem('_pintUser');
-                // Save name with extension
-                let nameWExt = `${userData.name}`;
-                if(!nameWExt.includes('.drip')) {
-                    nameWExt = `${nameWExt}${userData.extension}`;
-                }
-                await module.registerName(nameWExt);
-                // Save private key
-                if(psUser && userData.privateKey && userData.privateKey.length > 50) {
-                    module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
-                    setLoadedSigner(module.signer);
-                }
+            localStorage.setItem('_pintUser', JSON.stringify(module.toObject(), null, 2));
+            // Save name with extension
+            let nameWExt = `${userData.name}`;
+            if(!nameWExt.includes('.drip')) {
+                nameWExt = `${nameWExt}${userData.extension}`;
             }
-          })().catch((err) => console.error(err));
+            await module.registerName(nameWExt);
+            // Save private key
+            if(psUser && userData.privateKey && userData.privateKey.length > 50) {
+                module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
+            }
         }
     }
 
     /*
-    * check if pintswap module is initialized and/or has starting vals for bio, shortaddress, setProfilePic
+    * check if pintswap module has starting vals for bio, shortaddress, setProfilePic
     * only should run if pintswap is initialized and only run once
     */
     useEffect(() => {
         (async () => {
-        if (module && !initialized) {
-            setUserData({
-                ...userData,
-                name: await module.resolveName(module.peerId.toB58String()),
-                bio: module.userData.bio,
-                img: module.userData.image,
-            })
-            let { bio: _bio, image: _image } = (module as any).userData ?? {
-                bio: '',
-                image: new Uint8Array(0),
-            };
-            if (_bio !== '') setUserData({...userData, bio: _bio });
-            if (_image) setUserData({...userData, img: _image });
-            if (psUser) {
-                const localUser = await Pintswap.fromObject(JSON.parse(psUser), signer);
-                setPintswap({ ...pintswap, module: localUser });
+            if(module) {
+                let name = '';
+                try {
+                    name = await module.resolveName(module.peerId.toB58String())
+                } catch (err) {
+                    console.warn(`#setUserData useEffect: no names found for multiAddr ${module.peerId.toB58String()}`);
+                }
+                setUserData({
+                    ...userData,
+                    name: name,
+                    bio: module.userData.bio,
+                    img: module.userData.image,
+                })
             }
-            setInitialized(true);
-        }
-        })().catch((err) => console.error(err));
-    }, [pintswap.module, initialized])
-
-    /* 
-    * subscribe to wallet address changes to maintain the same multiAddr
-    */
-    const [ loadedSigner, setLoadedSigner ] = useState<any>(null);
-    useEffect(() => {
-        if (tick < 3) {
-          console.log('TICK');
-          tick++;
-          return;
-        }
-        if (!loadedSigner) return;
-        (async () => {
-            const ps = Object.assign({}, pintswap, { module: await Pintswap.fromPassword({ signer: loadedSigner, password: await signer?.getAddress() } as any) });
-            console.log('PS', ps);
-            if (pintswap.module) {
-              await pintswap.module.pubsub.stop();
-              await pintswap.module.stop();
-            }
-            await ps.module.startNode();
-            setPintswap(ps);
-        })().catch((err) => console.error(err))
-    }, [loadedSigner])
-
-    useEffect(() => {
-      setLoadedSigner(signer);
-    }, [ signer ]);
-
-    /* 
-    * get peer id on mount
-    */
-    useEffect(() => {
-        const getPeer = async () => {
-            const key = 'peerId';
-            const localPeerId = localStorage.getItem(key);
-            if (localPeerId && localPeerId != null && !TESTING) {
-                setUserData({ ...userData, peer: JSON.parse(localPeerId) });
-            } else {
-                const id = await PeerId.create();
-                setUserData({ ...userData, peer: id.toJSON() });
-                localStorage.setItem(key, JSON.stringify(id.toJSON()));
-            }
-        };
-        getPeer();
-    }, []);
+        })().catch(err => console.error(err))
+    }, [module?.userData, module?.peerId]);
 
     return (
         <UserContext.Provider
