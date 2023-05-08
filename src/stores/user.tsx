@@ -5,7 +5,7 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { useGlobalContext } from './pinstwap';
+import { usePintswapContext } from './pinstwap';
 import { EMPTY_USER_DATA } from '../utils/common';
 import { ethers } from 'ethers6';
 
@@ -45,7 +45,7 @@ const UserContext = createContext<IUserStoreProps>({
 
 // Wrapper
 export function UserStore(props: { children: ReactNode }) {
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const [ userData, setUserData ] = useState<IUserDataProps>(EMPTY_USER_DATA);
     const psUser = localStorage.getItem('_pintUser');

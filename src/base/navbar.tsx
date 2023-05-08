@@ -5,13 +5,13 @@ import { useAccount } from 'wagmi';
 import { ActiveText, AnimatedHamburger, Avatar, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
 import { dashboardHeightClass } from './dashboard';
-import { useGlobalContext } from '../stores';
+import { usePintswapContext } from '../stores';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useDashNav();
     const { width, breakpoints } = useWindowSize();
     const { address } = useAccount();
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 

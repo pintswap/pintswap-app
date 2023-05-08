@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Card, CopyClipboard, DataTable, DropdownInput, DropdownMenu, Input, Skeleton, TransitionModal } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { useOffersContext, useUserContext } from '../stores';
-import { useGlobalContext } from '../stores/pinstwap';
+import { usePintswapContext } from '../stores/pinstwap';
 import { convertAmount } from '../utils/common';
 import { Tab } from '@headlessui/react';
 import { useState } from 'react';
@@ -30,7 +30,7 @@ const columns = [
 export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
-    const { pintswap } = useGlobalContext();
+    const { pintswap } = usePintswapContext();
     const { userTrades } = useOffersContext();
     const { updateBio, updateImg, updateName, handleSave, updatePrivateKey, userData, toggleActive } = useUserContext();
     const { name, bio, img, privateKey, extension } = userData;

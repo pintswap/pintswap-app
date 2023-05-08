@@ -11,14 +11,14 @@ export type IPintswapProps = {
     error: boolean;
 };
 
-export type IGlobalStoreProps = {
+export type IPintswapStoreProps = {
     pintswap: IPintswapProps;
     setPeer?: any;
     setPintswap?: any;
 };
 
 // Context
-const GlobalContext = createContext<IGlobalStoreProps>({
+const PintswapContext = createContext<IPintswapStoreProps>({
     pintswap: {
         module: undefined,
         loading: true,
@@ -32,10 +32,10 @@ const GlobalContext = createContext<IGlobalStoreProps>({
 function mergeUserData(a: any, b: any): typeof a {
     if (b && b.userData) a.userData = b.userData;
     return a;
-  }
+}
 
 // Wrapper
-export function GlobalStore(props: { children: ReactNode }) {
+export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
     const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e');
     const localPsUser = localStorage.getItem('_pintUser');
@@ -55,7 +55,7 @@ export function GlobalStore(props: { children: ReactNode }) {
             if(signer) {
                 const psFromPass = await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap;
                 console.log("psFromPass:", psFromPass);
-                return psFromPass;
+                return mergeUserData(psFromPass, pintswap.module);
             } else {
                 const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
                 console.log("initPs:", initPs)
@@ -101,18 +101,18 @@ export function GlobalStore(props: { children: ReactNode }) {
     }, [signer]);
 
     return (
-        <GlobalContext.Provider
+        <PintswapContext.Provider
             value={{
                 pintswap,
                 setPintswap,
             }}
         >
             {props.children}
-        </GlobalContext.Provider>
+        </PintswapContext.Provider>
     );
 }
 
 // Independent
-export function useGlobalContext() {
-    return useContext(GlobalContext);
+export function usePintswapContext() {
+    return useContext(PintswapContext);
 }
