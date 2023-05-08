@@ -11,6 +11,7 @@ import { Pintswap } from "@pintswap/sdk";
 import { EMPTY_USER_DATA, TESTING } from '../utils/common';
 import { ethers } from 'ethers6';
 import PeerId, { JSONPeerId } from 'peer-id';
+import { mergeUserData } from "../utils/pintswap";
 
 let tick = 0;
 
@@ -165,7 +166,7 @@ export function UserStore(props: { children: ReactNode }) {
         }
         if (!loadedSigner) return;
         (async () => {
-            const ps = Object.assign({}, pintswap, { module: await Pintswap.fromPassword({ signer: loadedSigner, password: await signer?.getAddress() } as any) });
+            const ps = Object.assign({}, pintswap, { module: mergeUserData(await Pintswap.fromPassword({ signer: loadedSigner, password: await signer?.getAddress() } as any), pintswap.module) });
             if (pintswap.module) {
               await pintswap.module.pubsub.stop();
               await pintswap.module.stop();
