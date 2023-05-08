@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 import { formatPeerName, getFormattedPeer, getPeerData } from '../utils/common';
-import { useGlobalContext } from './global';
+import { useGlobalContext } from './pinstwap';
 import { useOffersContext } from './offers';
 import { IUserDataProps } from './user';
 

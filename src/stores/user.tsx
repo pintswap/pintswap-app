@@ -5,11 +5,9 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { useGlobalContext } from './global';
+import { useGlobalContext } from './pinstwap';
 import { EMPTY_USER_DATA } from '../utils/common';
 import { ethers } from 'ethers6';
-
-let tick = 0;
 
 // Types
 export type IUserDataProps = {
@@ -103,7 +101,6 @@ export function UserStore(props: { children: ReactNode }) {
             // Save private key
             if(psUser && userData.privateKey && userData.privateKey.length > 50) {
                 module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
-                // setLoadedSigner(module.signer);
             }
         }
     }
