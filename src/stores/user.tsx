@@ -5,12 +5,9 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { useSigner } from 'wagmi';
 import { useGlobalContext } from './global';
-import { Pintswap } from "@pintswap/sdk";
-import { EMPTY_USER_DATA, TESTING } from '../utils/common';
+import { EMPTY_USER_DATA } from '../utils/common';
 import { ethers } from 'ethers6';
-import PeerId, { JSONPeerId } from 'peer-id';
 
 let tick = 0;
 
@@ -23,7 +20,6 @@ export type IUserDataProps = {
     privateKey?: string;
     extension?: string;
     active: boolean;
-    peer?: JSONPeerId;
 }
 
 export type IUserStoreProps = {
@@ -53,10 +49,7 @@ const UserContext = createContext<IUserStoreProps>({
 export function UserStore(props: { children: ReactNode }) {
     const { pintswap } = useGlobalContext();
     const { module } = pintswap;
-    // const { data: signer } = useSigner();
     const [ userData, setUserData ] = useState<IUserDataProps>(EMPTY_USER_DATA);
-    // const [initialized, setInitialized] = useState<boolean>(false);
-    // const [ loadedSigner, setLoadedSigner ] = useState<any>(null);
     const psUser = localStorage.getItem('_pintUser');
 
     function toggleActive() {
@@ -137,27 +130,6 @@ export function UserStore(props: { children: ReactNode }) {
             }
         })().catch(err => console.error(err))
     }, [module?.userData, module?.peerId]);
-
-    console.log("module user data", module?.userData)
-
-    /* 
-    * TODO: this is not needed
-    * get peer id on mount
-    */
-    useEffect(() => {
-        const getPeer = async () => {
-            const key = 'peerId';
-            const localPeerId = localStorage.getItem(key);
-            if (localPeerId && localPeerId != null && !TESTING) {
-                setUserData({ ...userData, peer: JSON.parse(localPeerId) });
-            } else {
-                const id = await PeerId.create();
-                setUserData({ ...userData, peer: id.toJSON() });
-                localStorage.setItem(key, JSON.stringify(id.toJSON()));
-            }
-        };
-        getPeer();
-    }, []);
 
     return (
         <UserContext.Provider

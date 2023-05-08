@@ -216,9 +216,8 @@ export const useTrade = () => {
                 }
             }
         };
-        if (pintswap.module && (userData.peer?.id || (userData.peer as any)?._id))
-            getter().catch((err) => console.error(err));
-    }, [pintswap.module, userData.peer, multiaddr]);
+        if (pintswap.module) getter().catch((err) => console.error(err));
+    }, [pintswap.module, multiaddr]);
 
     /*
      * TRADE EVENT MANAGER - START
