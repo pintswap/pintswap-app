@@ -54,6 +54,7 @@ export const PeerOrderbookView = () => {
                         peer={order.multiAddr}
                         loading={loading.allTrades}
                         paginated
+                        perPage={width > breakpoints.md ? 6 : 3}
                     />
                     <Button onClick={() => handleCurrentClick('all')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>
