@@ -1,6 +1,6 @@
 import fetch from "cross-fetch";
 import { ethers } from "ethers6";
-import { INFTProps } from "./common";
+import { INFTProps, TESTING } from "./common";
 
 import { providerFromChainId } from "./provider";
 
@@ -21,7 +21,7 @@ export const hashNftIdentifier = ({ token, tokenId }: any) => {
   return ethers.solidityPackedKeccak256(['string', 'address', 'uint256'], [ '/pintswap/nft', token, tokenId ]);
 }
 
-export async function fetchNFT({ token, tokenId, chainId }: any): Promise<INFTProps> {
+export async function fetchNFT({ token, tokenId, chainId }: any, txHash?: string): Promise<INFTProps> {
   const hash = hashNftIdentifier({ token, tokenId });
   if (nftCache[hash]) return nftCache[hash];
   chainId = chainId || 1;
@@ -36,7 +36,8 @@ export async function fetchNFT({ token, tokenId, chainId }: any): Promise<INFTPr
   nft.imageBlob = await (await fetch(toGateway(nft.image), { method: 'GET' })).blob();
   nft.tokenId = tokenId;
   nft.token = token;
+  if(txHash) nft.hash = txHash;
   nftCache[hash] = nft;
-  console.log('nft', nft)
+  if(TESTING) console.log('NFT Props:', nft)
   return nft;
 }

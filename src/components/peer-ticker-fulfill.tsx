@@ -47,7 +47,7 @@ export const PeerTickerFulfill = ({
                 amount: formattedAmount,
                 list: matchInputs.list,
             };
-            console.log([newMatchInputs, matchInputs]);
+            console.log("newMatchInputs, matchInputs", [newMatchInputs, matchInputs]);
             if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 

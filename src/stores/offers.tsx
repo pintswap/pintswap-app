@@ -69,7 +69,6 @@ const groupByType = (m: any) => {
         erc20: new Map(
             flattened
                 .map(([key, [hash, offers]]: any[]) => {
-                    console.log(key, hash, offers);
                     return [
                         key,
                         [
