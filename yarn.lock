@@ -2790,10 +2790,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@pintswap/sdk@1.2.42":
-  version "1.2.42"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.2.42.tgz#f90c1abd447371b940e536c353953d0474581457"
-  integrity sha512-saZHHjGQ9bofrwPx0POO7quHxZTDIyNLBPszSRk/EVvLsK4Rj56NVar/P8e2Yt+ZxIfCyAjmX8/PVdu3kUXOAw==
+"@pintswap/sdk@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.3.0.tgz#3cb9649074a88233e5800419c0dbe7d6e8a5448c"
+  integrity sha512-IceVi/9gN0Wl2vfk0+e8mTfAgCJBMqQh7n+5UWeFiOygQ4j58lBhrdZHFU3XAePxYAcwrMu55+4IaCqDSZ/pFA==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -7035,9 +7035,9 @@ elliptic@6.5.4, elliptic@^6.5.3, elliptic@^6.5.4:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-"emasm@https://github.com/kungfuflex/emasm":
+"emasm@git+https://github.com/kungfuflex/emasm.git":
   version "0.2.0"
-  resolved "https://github.com/kungfuflex/emasm#d2f5d922f0dc0440e7b227a441ce516058e2682f"
+  resolved "git+https://github.com/kungfuflex/emasm.git#d2f5d922f0dc0440e7b227a441ce516058e2682f"
 
 emittery@^0.10.2:
   version "0.10.2"
