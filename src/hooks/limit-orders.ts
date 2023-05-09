@@ -145,7 +145,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
     const filteredNfts = useMemo(
-        () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)).slice(0, 6),
+        () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)),
         [sorted.nfts],
     );
 

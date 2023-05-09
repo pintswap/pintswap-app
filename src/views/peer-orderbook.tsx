@@ -14,6 +14,8 @@ export const PeerOrderbookView = () => {
     const { filteredNfts } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
 
+    console.log("filteredNfts", filteredNfts);
+
     const peer = state?.peer ? state.peer : order.multiAddr;
 
     return (
@@ -51,6 +53,7 @@ export const PeerOrderbookView = () => {
                         data={filteredNfts} 
                         peer={order.multiAddr}
                         loading={loading.allTrades}
+                        paginated
                     />
                     <Button onClick={() => handleCurrentClick('all')} className="w-fit self-center" type="outline">Back to All</Button>
                 </div>

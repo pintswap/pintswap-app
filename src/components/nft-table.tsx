@@ -10,23 +10,44 @@ import { Card } from './card';
 import { SpinnerLoader } from './spinner-loader';
 import { useNavigate } from 'react-router-dom';
 import { NFTDisplay } from './nft-display';
+import { usePagination } from '../hooks';
+import { Pagination } from './pagination';
 
 type INFTTableProps = {
     title?: string;
     data: (object | number[] | string[])[];
     loading?: boolean;
     peer?: string;
+    paginated?: boolean;
+    perPage?: number;
 };
 
-export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
+export const NFTTable = ({ data, loading, title, peer, paginated, perPage = 6 }: INFTTableProps) => {
+    const [nfts, setNFTs] = useState<any[]>([]);
+
     const navigate = useNavigate();
     const { width, breakpoints } = useWindowSize();
-    const [nfts, setNFTs] = useState<any[]>([]);
+    const { renderData: renderPaginatedData, next, prev, jump, currentPage, maxPage } = usePagination(nfts, perPage);
+
+    const renderCols = () => {
+        if(nfts.length === 0) return 1;
+        else {
+            if(width > breakpoints.lg) return 3;
+            else if (width > breakpoints.sm) return 2;
+            else return 1;
+        }
+    }
+
+    const renderData = () => {
+        if(paginated && nfts.length > perPage) {
+            return renderPaginatedData();
+        } else return nfts
+    }
 
     useEffect(() => {
         (async () => {
             setNFTs(
-                (await Promise.all(data.map(async (v) => await fetchNFT((v as any).gives))))
+                (await Promise.all(data.map(async v => await fetchNFT((v as any).gives))))
             );
         })().catch((err) => console.error(err));
     }, [data]);
@@ -34,9 +55,13 @@ export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
-                <ImageList cols={nfts.length === 0 ? 1 : (width > breakpoints.lg ? 3 : width > breakpoints.sm ? 2 : 1)} className="!gap-3">
-                    {nfts.length > 0 ? nfts.map((nft: any, i) => (
-                        <ImageListItem key={hashNftIdentifier(nft)} className="hover:cursor-pointer" onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i] as any).hash}`)}>
+                <ImageList cols={renderCols()} className="!gap-3">
+                    {nfts.length > 0 ? renderData().map((nft: any, i) => (
+                        <ImageListItem 
+                            key={hashNftIdentifier(nft)} 
+                            className="hover:cursor-pointer" 
+                            onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i] as any).hash}`)}
+                        >
                             <Card type="inner" className="hover:bg-gray-900">
                                 <NFTDisplay 
                                     nft={nft}
@@ -52,6 +77,16 @@ export const NFTTable = ({ data, loading, title, peer }: INFTTableProps) => {
                         </div>
                     )}
                 </ImageList>
+
+                {nfts.length > perPage && (
+                    <Pagination 
+                        max={maxPage} 
+                        next={next} 
+                        prev={prev} 
+                        perPage={perPage} 
+                        currentPage={currentPage} 
+                    />
+                )}
             </ThemeProvider>
         </CacheProvider>
     );

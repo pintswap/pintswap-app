@@ -97,10 +97,14 @@ export function UserStore(props: { children: ReactNode }) {
             if(!nameWExt.includes('.drip')) {
                 nameWExt = `${nameWExt}${userData.extension}`;
             }
-            await module.registerName(nameWExt);
-            // Save private key
-            if(psUser && userData.privateKey && userData.privateKey.length > 50) {
-                module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
+            try {
+                await module.registerName(nameWExt);
+                // Save private key
+                if(psUser && userData.privateKey && userData.privateKey.length > 50) {
+                    module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
+                }
+            } catch (err) {
+                console.error(`#handleSave:`, err)
             }
         }
     }
@@ -126,7 +130,7 @@ export function UserStore(props: { children: ReactNode }) {
                 })
             }
         })().catch(err => console.error(err))
-    }, [module?.userData, module?.peerId]);
+    }, [module?.userData, module?.peerId, module?.peerId.toB58String()]);
 
     return (
         <UserContext.Provider
