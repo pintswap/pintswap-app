@@ -4,7 +4,7 @@ import { INFTProps } from "./common";
 
 import { providerFromChainId } from "./provider";
 
-const IPFS_GATEWAY = "https://cloudflare-ipfs.com/ipfs/";
+const IPFS_GATEWAY = "https://ipfs.io/ipfs/";
 
 export function toGateway(uri: string) {
   if (isGateway(uri)) return IPFS_GATEWAY + uri.substr(7);

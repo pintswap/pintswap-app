@@ -61,7 +61,7 @@ export const NFTTable = ({ data, loading, title, peer, paginated, perPage = 6 }:
                         <ImageListItem 
                             key={hashNftIdentifier(nft)} 
                             className="hover:cursor-pointer" 
-                            onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i] as any).hash}`)}
+                            onClick={() => navigate(`/fulfill/${peer}/nft/${(data[i + (currentPage - 1)*perPage] as any).hash}`)}
                         >
                             <Card type="inner" className="hover:bg-gray-900">
                                 <NFTDisplay 
