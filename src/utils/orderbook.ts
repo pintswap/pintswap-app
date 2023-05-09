@@ -2,7 +2,7 @@ import { TOKENS } from './token-list';
 import { BigNumberish, ethers } from 'ethers6';
 import { keyBy } from 'lodash';
 import { sortBy, groupBy } from 'lodash';
-import { round, shorten } from './common';
+import { TESTING, round, shorten } from './common';
 import { hashOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 
@@ -249,7 +249,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
                 const remaining = toFill - filled;
                 if (remaining <= 0) return r;
                 filled += getsAmount;
-		console.log('remaining,getsAmount', [ remaining, getsAmount ]);
+                if(TESTING) console.log('remaining, getsAmount', [ remaining, getsAmount ]);
                 if (remaining >= getsAmount) {
                     r.push({
                         amount: getsAmount,
@@ -274,7 +274,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
         })(),
         [],
     );
-    console.log('fill', fill);
+    if(TESTING) console.log('fill', fill);
     const effective = fill.reduce(
         (r: any, v: any) => ({
             gets: v.effective.gets + r.gets,
@@ -282,7 +282,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
         }),
         { gets: ethers.toBigInt(0), gives: ethers.toBigInt(0) },
     );
-    console.log('effective', effective);
+    if(TESTING) console.log('effective', effective);
     return {
         fill,
         effective,

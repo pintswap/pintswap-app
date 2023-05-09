@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from "../stores"
 import { getFormattedPeer, truncate } from "../utils/common";
@@ -19,7 +19,19 @@ type IAvatarProps = {
   type?: 'clickable' | 'default' | 'profile';
 }
 
-export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withName, nameClass, bioClass, loading, align, showActive }: IAvatarProps) => {
+export const Avatar = ({ 
+  size = 50, 
+  withImage = true, 
+  type, 
+  peer, 
+  withBio, 
+  withName, 
+  nameClass, 
+  bioClass, 
+  loading, 
+  align, 
+  showActive 
+}: IAvatarProps) => {
   const { pathname } = useLocation();
   const { pintswap } = usePintswapContext();
   const { module } = pintswap;
@@ -70,8 +82,8 @@ export const Avatar = ({ size = 50,withImage = true, type, peer, withBio, withNa
       if(userData) setPeerData(userData);
       else setPeerData(defaultUserState)
     };
-    if(peer && module) getter();
-  }, [peer, module, peerData.name]);
+    getter();
+  }, [peer, module, peerData.name, peersData.length]);
 
   const alginClass = () => {
     switch(align) {

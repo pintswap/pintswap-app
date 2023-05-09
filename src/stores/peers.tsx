@@ -15,13 +15,15 @@ export type IPeersStoreProps = {
   peersData: IUserDataProps[];
   peersLoading: boolean;
   peersError: boolean;
+  updatePeersData: (peer: IUserDataProps) => void;
 };
 
 // Context
 const PeersContext = createContext<IPeersStoreProps>({
   peersData: [],
   peersLoading: true,
-  peersError: false
+  peersError: false,
+  updatePeersData: () => {}
 });
 
 // Wrapper
@@ -32,7 +34,9 @@ export function PeersStore(props: { children: ReactNode }) {
   const [error, setError] = useState(false);
   const [data, setData] = useState<any[]>([]);
 
-  const baseUrl = `data:image/jpg;base64,`;
+  const updatePeersData = (peer: IUserDataProps) => {
+    // TODO: function to add any peers not currently stored to be added or updated with appropriate data
+  }
 
   const getAllPeersData = async () => {
     setLoading(true);
@@ -59,7 +63,8 @@ export function PeersStore(props: { children: ReactNode }) {
           value={{
               peersData: data,
               peersLoading: loading,
-              peersError: error
+              peersError: error,
+              updatePeersData
           }}
       >
           {props.children}

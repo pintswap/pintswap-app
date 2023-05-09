@@ -47,8 +47,8 @@ export const PeerTickerOrderbookView = () => {
     });
     
     const [ tradeType, _setTradeType ] = useState('');
+    
     const setTradeType = (v: any) => {
-      console.log('tradeType', v);
       _setTradeType(v);
     };
 

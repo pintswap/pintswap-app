@@ -137,15 +137,20 @@ export function defer() {
 export async function getPeerData(ps: IPintswapProps, peer: string) {
   const { module } = ps;
   let formattedPeerAddress;
-  if(peer.includes('.drip')) {
-    formattedPeerAddress = await module?.resolveName(peer) || constants.AddressZero;
-  } else {
-    formattedPeerAddress = peer;
+  try {
+    if(peer.includes('.drip')) {
+      formattedPeerAddress = await module?.resolveName(peer) || constants.AddressZero;
+    } else {
+      formattedPeerAddress = peer;
+    }
+    const b58peer = createFromB58String(formattedPeerAddress).toB58String();
+    const res = formattedPeerAddress === module?.peerId.toB58String() ? module?.userData : await module?.getUserDataByPeerId(b58peer);
+    if(res) return res;
+    else return { offers: [], bio: '', image: '' };
+  } catch (err) {
+    console.warn("#getPeerData:", err);
+    return { offers: [], bio: '', image: '' }
   }
-  const b58peer = createFromB58String(formattedPeerAddress).toB58String();
-  const res = formattedPeerAddress === module?.peerId.toB58String() ? module?.userData : await module?.getUserDataByPeerId(b58peer);
-  if(res) return res;
-  else return { offers: [], bio: '', image: '' };
 }
 
 export const formatPeerName = async (ps: IPintswapProps, peer: string) => {
@@ -181,7 +186,9 @@ export const getFormattedPeer = async (ps: IPintswapProps, peer: string) => {
       }
     }
   } catch (err) {
-    console.error(`Failed to get peer's (${peer}) avatar\n${err}`);
-    return EMPTY_USER_DATA;
+    return {
+      ...EMPTY_USER_DATA,
+      name: peer
+    };
   }
 } 

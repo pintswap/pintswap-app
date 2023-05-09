@@ -1,6 +1,6 @@
 import { Avatar, Card, NFTTable, DataTable, TransitionModal, DropdownMenu, Button } from '../components';
 import { useTrade } from '../hooks/trade';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useWindowSize } from '../hooks/window-size';
 import { FaChevronDown } from 'react-icons/fa';
 import { useDropdown } from '../hooks/dropdown';
@@ -13,10 +13,9 @@ export const PeerOrderbookView = () => {
     const { order, loading } = useTrade();
     const { filteredNfts } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
+    const { multiaddr } = useParams();
 
-    console.log("filteredNfts", filteredNfts);
-
-    const peer = state?.peer ? state.peer : order.multiAddr;
+    const peer = state?.peer ? state.peer : multiaddr ? multiaddr : order.multiAddr;
 
     return (
         <div className="flex flex-col gap-6">

@@ -14,13 +14,14 @@ import {
 import { useTrade } from '../hooks/trade';
 import { useOffersContext } from '../stores';
 import { useSigner } from 'wagmi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toFormatted } from '../utils/orderbook';
 import { INFTProps } from '../utils/common';
 
 export const FulfillNFTView = () => {
     const navigate = useNavigate();
     const { multiaddr, hash } = useParams();
+    const { state } = useLocation();
     const { peerTrades } = useOffersContext();
     const { fulfillTrade, steps, error } = useTrade();
     const [loading, setLoading] = useState(true);
@@ -41,13 +42,15 @@ export const FulfillNFTView = () => {
             }
         })().catch((err) => console.error(err));
     }, [offer]);
+
+    const peer = state?.peer ? state.peer : multiaddr;
     
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-6">
                 <button onClick={() => navigate(`/${multiaddr}`)} className="w-fit text-left">
-                    <Avatar peer={multiaddr} withBio withName nameClass="text-xl" type="profile" size={60} />
+                    <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
                 </button>
                 <Card header={'Buy NFT'}>
                     {loading ? (
