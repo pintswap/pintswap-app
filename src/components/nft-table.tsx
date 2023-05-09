@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { NFTDisplay } from './nft-display';
 import { usePagination } from '../hooks';
 import { Pagination } from './pagination';
+import { TablePagination } from 'mui-datatables';
 
 type INFTTableProps = {
     title?: string;
@@ -78,11 +79,12 @@ export const NFTTable = ({ data, loading, title, peer, paginated, perPage = 6 }:
                     )}
                 </ImageList>
 
-                {nfts.length > perPage && (
+                {paginated && nfts.length > perPage && (
                     <Pagination 
                         max={maxPage} 
                         next={next} 
                         prev={prev} 
+                        jump={jump}
                         perPage={perPage} 
                         currentPage={currentPage} 
                     />
