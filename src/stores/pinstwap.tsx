@@ -100,6 +100,10 @@ export function PintswapStore(props: { children: ReactNode }) {
         if (!pintswap.module && _signer) initialize();
     }, [signer]);
 
+    useEffect(() => {
+      if (pintswap.module && pintswap.module.signer && !pintswap.module.signer.provider) pintswap.module.signer = signer;
+    }, [ signer, pintswap ]);
+
     return (
         <PintswapContext.Provider
             value={{
