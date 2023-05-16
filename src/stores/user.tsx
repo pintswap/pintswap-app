@@ -8,6 +8,7 @@ import {
 import { usePintswapContext } from './pinstwap';
 import { EMPTY_USER_DATA } from '../utils/common';
 import { ethers } from 'ethers6';
+import { useProvider } from "wagmi";
 
 // Types
 export type IUserDataProps = {
@@ -47,6 +48,7 @@ const UserContext = createContext<IUserStoreProps>({
 export function UserStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
+    const provider: any = useProvider();
     const [ userData, setUserData ] = useState<IUserDataProps>(EMPTY_USER_DATA);
     const psUser = localStorage.getItem('_pintUser');
 
@@ -101,7 +103,7 @@ export function UserStore(props: { children: ReactNode }) {
                 await module.registerName(nameWExt);
                 // Save private key
                 if(psUser && userData.privateKey && userData.privateKey.length > 50) {
-                    module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
+                    module.signer = new ethers.Wallet(userData.privateKey).connect(provider)
                 }
             } catch (err) {
                 console.error(`#handleSave:`, err)
