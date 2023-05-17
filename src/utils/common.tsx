@@ -110,6 +110,16 @@ export const shorten = (s: string) => {
   return `${s.substr(0, 4)}...${s.substr(s.length - 4, 4)}`;
 };
 
+export function parseTickerAsset(ticker: string, asset: 1 | 2, icon?: boolean) {
+  if(!ticker) return '';
+  else {
+    if(!ticker.includes('/')) return ticker;
+    const split = ticker.split('/');
+    if(asset === 1) return split[0];
+    else return split[1]
+  }
+}
+
 // NUMBER HELPERS
 export function round(value: string | number, decimals: number, returnType?: 'number' | 'string') {
   if (value === '0.00') return '0.00';

@@ -213,7 +213,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                         className={`py-[1px] flex justify-between items-center`}
                     >
                         <Button className="bg-red-400" onClick={(e) => handleDelete(e, cells[0])}>
-                            Delete
+                            Cancel
                         </Button>
                     </td>
                 )}
