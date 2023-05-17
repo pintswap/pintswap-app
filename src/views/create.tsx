@@ -77,7 +77,7 @@ export const CreateView = () => {
                             leaveTo="opacity-0"
                             className="flex flex-col justify-center items-start text-center"
                         >
-                            <p className="text-sm">Trade Link:</p>
+                            <p className="text-sm">Share Trade:</p>
                             <CopyClipboard
                                 value={createTradeLink()}
                                 icon

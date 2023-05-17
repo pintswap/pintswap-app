@@ -11,11 +11,12 @@ import {
     Input,
     ProgressIndicator,
     TransitionModal,
+    Skeleton,
 } from '../components';
 import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from '../stores';
-import { BASE_URL } from '../utils/common';
+import { BASE_URL, parseTickerAsset } from '../utils/common';
 import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
 import { useAccount } from 'wagmi';
 
@@ -91,11 +92,25 @@ export const FulfillView = () => {
                     <Avatar peer={order.multiAddr} size={300} />
                 </TransitionModal>
                 <Card 
-                header={"Fullfill Trade"}
+                    header={
+                        <div>
+                            <span>Fullfill Trade</span>
+                            <div className="flex justify-center">
+                                <Skeleton loading={loading.trade}>
+                                    <div className={`text-sm font-extralight flex items-center gap-2 justify-center ${loading.trade ? 'text-neutral-700' : 'text-gray-400'}`}>
+                                        <span>Sending {parseTickerAsset(limitOrder.ticker, 2)}</span>
+                                        <span>&</span>
+                                        <span>Receiving {parseTickerAsset(limitOrder.ticker, 1)}</span>
+                                    </div>
+                                </Skeleton>
+                            </div>
+                        </div>
+                    }
+                    className=''
                 >
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
-                            title="Pair"
+                            title={`Pair (Sending ${parseTickerAsset(limitOrder.ticker, 1)})`}
                             placeholder="Pair"
                             state={limitOrder.ticker}
                             type="gives.token"
