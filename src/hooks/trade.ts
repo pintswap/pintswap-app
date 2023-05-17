@@ -8,7 +8,7 @@ import { ITokenProps } from '../utils/token-list';
 import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
-import { useOffersContext } from '../stores';
+import { useOffersContext, useUserContext } from '../stores';
 import { toBeHex } from 'ethers6';
 
 const ln = (v: any) => (console.log(v), v);
@@ -37,6 +37,7 @@ export const useTrade = () => {
     const params = useParams();
     const { pathname } = useLocation();
     const { pintswap } = usePintswapContext();
+    const { toggleActive, userData } = useUserContext();
     const { addTrade, userTrades, setPeerTrades, peerTrades, setUserTrades } = useOffersContext();
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
@@ -81,6 +82,7 @@ export const useTrade = () => {
         if (pintswap.module) {
             try {
                 pintswap.module.broadcastOffer(buildTradeObj(trade));
+                if(!userData.active) toggleActive();
             } catch (err) {
                 console.error(err);
             }
