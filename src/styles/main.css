@@ -1426,6 +1426,9 @@ html,
   font-size: 0.75rem;
   line-height: 1rem;
 }
+.font-extralight{
+  font-weight: 200;
+}
 .font-semibold{
   font-weight: 600;
 }
@@ -1481,6 +1484,10 @@ html,
 .text-neutral-400{
   --tw-text-opacity: 1;
   color: rgb(163 163 163 / var(--tw-text-opacity));
+}
+.text-neutral-700{
+  --tw-text-opacity: 1;
+  color: rgb(64 64 64 / var(--tw-text-opacity));
 }
 .text-pink-500{
   --tw-text-opacity: 1;
