@@ -35,6 +35,7 @@ function mergeUserData(a: any, b: any): typeof a {
 }
 
 // Wrapper
+const ln = (v: any, label: string) => ((console.log(label, v)), v);
 export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
     const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e');
@@ -48,16 +49,16 @@ export function PintswapStore(props: { children: ReactNode }) {
 
     const determinePsModule = async () => {
         if(typeof localPsUser === 'string') {
-            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), _signer);
+            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), ln(_signer, "signer"));
             console.log("psFromLocal:", psFromLocal)
             return psFromLocal;
         } else {
             if(signer) {
-                const psFromPass = await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap;
+                const psFromPass = await Pintswap.fromPassword({ signer: ln(signer, "signer"), password: await signer.getAddress() } as any) as Pintswap;
                 console.log("psFromPass:", psFromPass);
                 return mergeUserData(psFromPass, pintswap.module);
             } else {
-                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
+                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: ln(_signer, "signer") });
                 console.log("initPs:", initPs)
                 return initPs;
             }
