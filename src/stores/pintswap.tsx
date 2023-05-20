@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { useMemo, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { defer, TESTING } from '../utils/common';
@@ -13,6 +13,7 @@ export type IPintswapProps = {
 
 export type IPintswapStoreProps = {
     pintswap: IPintswapProps;
+    initializePintswapFromSigner?: any;
     setPeer?: any;
     setPintswap?: any;
 };
@@ -34,10 +35,41 @@ function mergeUserData(a: any, b: any): typeof a {
     return a;
 }
 
+export async function initializePintswapFromSigner({ signer, pintswap, setPintswap }: any) {
+  await (window as any).discoveryDeferred.promise;
+  if (pintswap.module) await pintswap.module.stopNode();
+  const metamask = getMetamask(signer);
+  if (metamask) await metamask.request({
+    method: 'wallet_requestPermissions',
+    params: [{ eth_accounts: {} }]
+  });
+  const ps = await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap;
+  const newPintswap = pintswap.module ? mergeUserData(ps, pintswap.module) : ps;
+  newPintswap.logger.info(newPintswap);
+  (window as any).discoveryDeferred = defer();
+  newPintswap.on('peer:discovery', async (peer: any) => {
+    if (TESTING) console.log('Discovered peer:', peer);
+    (window as any).discoveryDeferred.resolve(peer);
+  });
+  setPintswap({
+     module: newPintswap,
+     ...pintswap,
+     loading: true
+  });
+  await newPintswap.startNode();
+  await newPintswap.subscribeOffers();
+  setPintswap({
+    module: newPintswap,
+    ...pintswap,
+    loading: false
+  });
+}
+  
+const getMetamask = (signer: any) => signer && signer.provider && signer.provider.provider && signer.provider.provider.isMetaMask && signer.provider.provider;
+
 // Wrapper
-const ln = (v: any, label: string) => ((console.log(label, v)), v);
 export function PintswapStore(props: { children: ReactNode }) {
-    const { data: signer } = useSigner();
+    const { data: signer }: any = useSigner();
     const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e');
     const localPsUser = localStorage.getItem('_pintUser');
 
@@ -46,19 +78,29 @@ export function PintswapStore(props: { children: ReactNode }) {
         loading: true,
         error: false,
     });
+    const metamask = useMemo(() => getMetamask(signer), [ signer ]);
+    useEffect(() => {
+      if (metamask) {
+        const listener = async () => {
+          await initializePintswapFromSigner({ signer, pintswap, setPintswap });
+        };
+        metamask.on('accountsChanged', listener);
+        return () => metamask.removeListener('accountsChanged', listener);
+      }
+    }, [ signer ]);
 
     const determinePsModule = async () => {
         if(typeof localPsUser === 'string') {
-            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), ln(_signer, "signer"));
+            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), _signer);
             console.log("psFromLocal:", psFromLocal)
             return psFromLocal;
         } else {
             if(signer) {
-                const psFromPass = await Pintswap.fromPassword({ signer: ln(signer, "signer"), password: await signer.getAddress() } as any) as Pintswap;
+                const psFromPass = await Pintswap.fromPassword({ signer: signer, password: await signer.getAddress() } as any) as Pintswap;
                 console.log("psFromPass:", psFromPass);
                 return mergeUserData(psFromPass, pintswap.module);
             } else {
-                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: ln(_signer, "signer") });
+                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
                 console.log("initPs:", initPs)
                 return initPs;
             }
@@ -109,6 +151,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         <PintswapContext.Provider
             value={{
                 pintswap,
+                initializePintswapFromSigner: async ({ signer }: any) => await initializePintswapFromSigner({ pintswap, setPintswap, signer }),
                 setPintswap,
             }}
         >
