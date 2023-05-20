@@ -7,6 +7,7 @@ import {
 } from 'react';
 import { usePintswapContext } from './pinstwap';
 import { EMPTY_USER_DATA } from '../utils/common';
+import { savePintswap } from "../utils/save";
 import { ethers } from 'ethers6';
 
 // Types
@@ -91,7 +92,7 @@ export function UserStore(props: { children: ReactNode }) {
 
     async function handleSave() {
         if (module) {
-            localStorage.setItem('_pintUser', JSON.stringify(module.toObject(), null, 2));
+            savePintswap(module);
             // Save name with extension
             let nameWExt = `${userData.name}`;
             if(!nameWExt.includes('.drip')) {

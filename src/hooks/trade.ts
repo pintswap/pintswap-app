@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { updateToast } from '../utils/toast';
 import { useOffersContext, useUserContext } from '../stores';
 import { toBeHex } from 'ethers6';
+import { savePintswap } from '../utils/save';
 
 const ln = (v: any) => (console.log(v), v);
 
@@ -82,7 +83,8 @@ export const useTrade = () => {
         if (pintswap.module) {
             try {
                 pintswap.module.broadcastOffer(buildTradeObj(trade));
-                if(!userData.active) toggleActive();
+                savePintswap(pintswap.module);
+                if (!userData.active) toggleActive();
             } catch (err) {
                 console.error(err);
             }
@@ -93,25 +95,26 @@ export const useTrade = () => {
     // Fulfill trade
     const fulfillTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        setLoading({ ...loading, fulfill: true })
+        setLoading({ ...loading, fulfill: true });
         if (pintswap.module) {
             try {
                 let multiAddr = order.multiAddr;
-                if (multiAddr.match(/\.drip$/)) multiAddr = await resolveName(pintswap.module, order.multiAddr);
+                if (multiAddr.match(/\.drip$/))
+                    multiAddr = await resolveName(pintswap.module, order.multiAddr);
                 const peeredUp = PeerId.createFromB58String(multiAddr);
                 // If NFT swap
                 if (window.location.hash.match('nft') && hash) {
                     const nftTrade = userTrades.get(hash) || peerTrades.get(hash);
-                    if(TESTING) console.log("#fulfillTrade - NFT Trade:", nftTrade);
+                    if (TESTING) console.log('#fulfillTrade - NFT Trade:', nftTrade);
                     pintswap.module.createTrade(peeredUp, nftTrade);
-                // If peer orderbook swap
-                } else if(params.base && params.trade) {
-                    if(TESTING) console.log("#fulfillTrade - Fill:", fill)
+                    // If peer orderbook swap
+                } else if (params.base && params.trade) {
+                    if (TESTING) console.log('#fulfillTrade - Fill:', fill);
                     pintswap.module.createBatchTrade(
-                        peeredUp, 
-                        fill.fill.map((v: any) => ({ offer: v.offer, amount: toBeHex(v.amount) }))
-                    )
-                // If standard swap
+                        peeredUp,
+                        fill.fill.map((v: any) => ({ offer: v.offer, amount: toBeHex(v.amount) })),
+                    );
+                    // If standard swap
                 } else {
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', buildTradeObj(trade));
                     pintswap.module.createTrade(peeredUp, ln(buildTradeObj(trade)));
@@ -175,7 +178,13 @@ export const useTrade = () => {
 
     // Update order form
     const updateTrade = (
-        key: 'gives.token' | 'gets.token' | 'gives.amount' | 'gets.amount' | 'gives.tokenId' | 'gets.tokenId',
+        key:
+            | 'gives.token'
+            | 'gets.token'
+            | 'gives.amount'
+            | 'gets.amount'
+            | 'gives.tokenId'
+            | 'gets.tokenId',
         val: string,
     ) => {
         const parts: any = key.split('.');
@@ -210,7 +219,8 @@ export const useTrade = () => {
                 } else if (multiaddr) {
                     // Only multiAddr
                     setLoading({ ...loading, allTrades: true });
-                    if(params.base && params.trade && steps[1].status !== 'current') updateSteps('Fulfill') 
+                    if (params.base && params.trade && steps[1].status !== 'current')
+                        updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: '' });
                     await getTrades(multiaddr);
                     setLoading({ ...loading, allTrades: false });
@@ -246,6 +256,7 @@ export const useTrade = () => {
         let shallow = new Map(userTrades);
         switch (step) {
             case 0:
+                if (pintswap.module) savePintswap(pintswap.module);
                 console.log('#makerListener: taker approving trade');
                 toast('Taker is approving transaction...');
                 break;
@@ -284,13 +295,20 @@ export const useTrade = () => {
             case 5:
                 console.log('#takerLister: swap complete');
                 updateSteps('Complete'); // only for taker
-                setLoading({ ...loading, fulfill: false })
+                setLoading({ ...loading, fulfill: false });
                 shallow.delete(order.orderHash);
                 setUserTrades(shallow);
                 break;
         }
     };
-
+    const makerTradeListener = (trade: any) => {
+        trade.on('error', (e: any) => {
+            if (pintswap.module) {
+                pintswap.module.logger.error(e);
+                savePintswap(pintswap.module);
+            }
+        });
+    };
     useEffect(() => {
         const { module } = pintswap;
         if (module) {
@@ -299,7 +317,10 @@ export const useTrade = () => {
             module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);
+            module.on('trade:maker', makerTradeListener);
+
             return () => {
+                module.removeListener('trade:maker', makerTradeListener);
                 module.removeListener('pintswap/trade/taker', takerListener);
                 module.removeListener('pintswap/trade/peer', peerListener);
                 module.removeListener('pintswap/trade/maker', makerListener);
@@ -340,6 +361,6 @@ export const useTrade = () => {
         updateSteps,
         error,
         fill,
-        setFill
+        setFill,
     };
 };
