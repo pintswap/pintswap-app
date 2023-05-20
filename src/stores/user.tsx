@@ -5,7 +5,7 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { usePintswapContext } from './pinstwap';
+import { usePintswapContext } from './pintswap';
 import { EMPTY_USER_DATA } from '../utils/common';
 import { savePintswap } from "../utils/save";
 import { ethers } from 'ethers6';

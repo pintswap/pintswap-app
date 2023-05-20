@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { usePintswapContext } from '../stores/pinstwap';
+import { usePintswapContext } from '../stores/pintswap';
 import { convertAmount, EMPTY_TRADE, getTokenAttributes, TESTING } from '../utils/common';
 import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';

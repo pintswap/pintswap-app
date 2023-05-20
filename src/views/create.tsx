@@ -11,6 +11,7 @@ import {
     NFTDisplay,
 } from '../components';
 import { useTrade } from '../hooks/trade';
+import { usePintswapContext } from "../stores/pintswap";
 import { useOffersContext, useUserContext } from '../stores';
 import { BASE_URL, convertAmount, INFTProps } from '../utils/common';
 import { fetchNFT } from '../utils/fetch-nft';
@@ -36,12 +37,29 @@ const columns = [
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
+
+    const { pintswap } = usePintswapContext();
     const { userData, toggleActive } = useUserContext();
     const { userTrades } = useOffersContext();
     const [nft, setNFT] = useState<INFTProps | null>(null);
 
+    const [ resolvedName, setResolvedName ] = useState<any>(order.multiAddr);
+
+    useEffect(() => {
+      (async () => {
+        setResolvedName(order.multiAddr);
+        if (pintswap.module) {
+          try {
+            setResolvedName(await pintswap.module.resolveName(order.multiAddr));
+          } catch (e) {
+            pintswap.module.logger.error(e);
+          }
+        }
+      })().catch((err) => pintswap.module && pintswap.module.logger.error(err) || console.error(err));
+    }, [ order ]);
+
     const createTradeLink = () => {
-        let finalUrl = `${BASE_URL}/#/fulfill/${order.multiAddr}`;
+        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName}`;
         if(trade.gives.tokenId) {
             finalUrl = `${finalUrl}/nft/${order.orderHash}`
         } else {

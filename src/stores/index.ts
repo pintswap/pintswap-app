@@ -1,4 +1,4 @@
-export * from './pinstwap';
+export * from './pintswap';
 export * from './offers';
 export * from './theme';
 export * from './user';

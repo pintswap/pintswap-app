@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card } from '../components';
 import { useOffersContext } from '../stores';
-import { usePintswapContext } from '../stores/pinstwap';
+import { usePintswapContext } from '../stores/pintswap';
 import { getTokenAttributes } from '../utils/common';
 import { resolveName } from '../hooks/trade';
 import { useParams } from 'react-router-dom';
