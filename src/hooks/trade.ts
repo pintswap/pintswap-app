@@ -198,14 +198,14 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            if (pathname.includes('/') && multiaddr) {
+            if (pathname.includes('/') && multiaddr && hash) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill') {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
-                    setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
-                    await getTrades(multiaddr, splitUrl[3]);
+                    setOrder({ multiAddr: multiaddr, orderHash: hash });
+                    await getTrades(multiaddr, hash);
                     setLoading({ ...loading, trade: false });
                 } else if (multiaddr) {
                     // Only multiAddr
@@ -218,7 +218,7 @@ export const useTrade = () => {
             }
         };
         if (pintswap.module) getter().catch((err) => console.error(err));
-    }, [pintswap.module, multiaddr]);
+    }, [pintswap.module, multiaddr, hash]);
 
     /*
      * TRADE EVENT MANAGER - START

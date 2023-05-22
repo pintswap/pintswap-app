@@ -2797,10 +2797,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@pintswap/sdk@^1.3.6":
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.3.6.tgz#2742ecd6a2b6cc740566f0803465a66f8b8f6caf"
-  integrity sha512-9T/ut5KT0wM6I2bNTmyFC0tnFosREHiCttX/8PkuWS2zFS+9bL9aMWF5nIrIU54y2tXn3rKim51N5IRZOMAtWA==
+"@pintswap/sdk@^1.3.7":
+  version "1.3.7"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.3.7.tgz#6dfc1e9d48370dde5ad38304be381dd221000aca"
+  integrity sha512-DXmAy/yNNu+vBVMDw/2EAMjp8Pm/94Yqr8ErO8nEntD9GGc8cibqilWWeFHKLozAGzJm5eStt5FbBkZl1d77qw==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
