@@ -144,8 +144,9 @@ export const useTrade = () => {
                     if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
-                        console.log(hash, 'orderHash');
+                        if (TESTING) console.log('#getTrades - Order Hash:', hash);
                         const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
+                        if (TESTING) console.log('#getTrades - Map:', map);
                         setPeerTrades(map);
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
