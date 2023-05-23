@@ -22,21 +22,12 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     const { pintswap } = usePintswapContext();
     const { peerTrades } = useOffersContext();
     const { order } = useTrade();
+    const { hash, multiaddr } = useParams();
 
     // All peers limit orders states
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const [bidLimitOrders, setBidLimitOrders] = useState<any[]>([]);
     const [askLimitOrders, setAskLimitOrders] = useState<any[]>([]);
-    
-    // Current limit order states
-    const [limitOrder, setLimitOrder] = useState({
-        price: Number(0),
-        amount: '',
-        ticker: '',
-        type: '',
-    });
-    const [outputAmount, setOutputAmount] = useState('');
-    const [fillAmount, setFillAmount] = useState('');
 
     // Utils
     const ticker = `${trade}/${base}`;
@@ -157,66 +148,11 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
         }
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
+    console.log("sorted nfts", sorted.nfts)
     const filteredNfts = useMemo(
         () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)),
-        [sorted.nfts],
+        [sorted.nfts, multiaddr],
     );
-
-    // Current trade subscriber
-        useEffect(() => {
-        if(type === 'fulfill') {
-            (async () => {
-                if (pintswap.module) {
-                    const raw = await fromFormatted(trade, pintswap.module.signer);
-                    const {
-                        pair: [base, tradeToken],
-                    } = orderTokens(raw);
-                    const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
-                    setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
-                    const limitOrderRes = await toLimitOrder(raw as any, pintswap.module.signer);
-                    console.log("LIMIT ORDER", limitOrderRes);
-                    setLimitOrder(limitOrderRes as any);
-                }
-            })().catch((err) => console.error(err));
-        }
-    }, [trade, pintswap.module]);
-
-    useEffect(() => {
-        const m = pintswap.module;
-        if (m && type === 'fulfill')
-            (async () => {
-                const raw = await fromFormatted(trade, m.signer);
-                const {
-                    pair: [base, tradeToken],
-                } = orderTokens(raw);
-                const [baseDecimals, tradeDecimals] = await Promise.all(
-                    [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
-                );
-                if (tradeToken.address === raw.gives.token) {
-                    setOutputAmount(
-                        Number(
-                            ethers.formatUnits(
-                                (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
-                                    ethers.toBigInt(raw.gets.amount)) /
-                                    ethers.toBigInt(raw.gives.amount),
-                                baseDecimals,
-                            ),
-                        ).toFixed(6),
-                    );
-                } else {
-                    setOutputAmount(
-                        Number(
-                            ethers.formatUnits(
-                                (ethers.toBigInt(ethers.parseUnits(fillAmount, baseDecimals)) *
-                                    ethers.toBigInt(raw.gives.amount)) /
-                                    ethers.toBigInt(raw.gets.amount),
-                                baseDecimals,
-                            ),
-                        ).toFixed(6),
-                    );
-                }
-            })().catch((err) => console.error(err));
-    }, [pintswap.module, fillAmount, trade]);
 
     return {
         limitOrders,
@@ -225,10 +161,5 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
         ticker,
         bidLimitOrders,
         askLimitOrders,
-        limitOrder,
-        fillAmount,
-        outputAmount,
-        setFillAmount,
-
     };
 };
