@@ -38,7 +38,6 @@ function mergeUserData(a: any, b: any): typeof a {
 const ln = (v: any, label: string) => ((console.log(label, v)), v);
 export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
-    const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e');
     const localPsUser = localStorage.getItem('_pintUser');
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
@@ -49,7 +48,7 @@ export function PintswapStore(props: { children: ReactNode }) {
 
     const determinePsModule = async () => {
         if(typeof localPsUser === 'string') {
-            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), ln(_signer, "signer"));
+            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), ln(signer, "signer"));
             console.log("psFromLocal:", psFromLocal)
             return psFromLocal;
         } else {
@@ -58,7 +57,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 console.log("psFromPass:", psFromPass);
                 return mergeUserData(psFromPass, pintswap.module);
             } else {
-                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: ln(_signer, "signer") });
+                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: ln(signer, "signer") });
                 console.log("initPs:", initPs)
                 return initPs;
             }
@@ -98,7 +97,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 setPintswap({ ...pintswap, loading: false });
             }
         };
-        if (!pintswap.module && _signer) initialize();
+        if (!pintswap.module && signer) initialize();
     }, [signer]);
 
     useEffect(() => {
