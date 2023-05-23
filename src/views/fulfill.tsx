@@ -22,7 +22,7 @@ import { useAccount } from 'wagmi';
 
 export const FulfillView = () => {
     const { address } = useAccount()
-    const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
+    const { fulfillTrade, loading, trade, steps, order, error, setTrade } = useTrade();
     const { pintswap } = usePintswapContext();
     const [limitOrder, setLimitOrder] = useState({
         price: Number(0),
@@ -33,10 +33,13 @@ export const FulfillView = () => {
     const [outputAmount, setOutputAmount] = useState('');
     const [fillAmount, setFillAmount] = useState('');
 
+    console.log("TRADE", trade)
+
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
                 const raw = await fromFormatted(trade, pintswap.module.signer);
+                setTrade(raw);
                 const {
                     pair: [base, tradeToken],
                 } = orderTokens(raw);
