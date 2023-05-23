@@ -138,14 +138,34 @@ export const useTrade = () => {
             if (pintswap.module) {
                 try {
                     console.log('Discovery:', await (window as any).discoveryDeferred.promise);
+                    // TODO: optimize
                     const { offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
                         resolved,
                     );
+                    if (orderHash && peerTrades.get(orderHash)) {
+                        const { gives, gets } = peerTrades.get(orderHash) as any;
+                        setTrade({
+                            gives: {
+                                token:
+                                    (getTokenAttributes(gives.token) as ITokenProps).symbol ||
+                                    gives.token,
+                                amount: convertAmount('number', gives.amount || '', gives.token),
+                            },
+                            gets: {
+                                token:
+                                    (getTokenAttributes(gets.token) as ITokenProps).symbol ||
+                                    gets.token,
+                                amount: convertAmount('number', gets.amount || '', gets.token),
+                            },
+                        })
+                        return;
+                    }
                     if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
-                        console.log(hash, 'orderHash');
+                        if (TESTING) console.log('#getTrades - Order Hash:', hash);
                         const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
+                        if (TESTING) console.log('#getTrades - Map:', map);
                         setPeerTrades(map);
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
@@ -340,6 +360,7 @@ export const useTrade = () => {
         updateSteps,
         error,
         fill,
-        setFill
+        setFill,
+        setTrade
     };
 };

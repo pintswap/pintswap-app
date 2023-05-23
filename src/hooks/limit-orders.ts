@@ -3,11 +3,11 @@ import { memoize } from 'lodash';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { usePintswapContext, useOffersContext } from '../stores';
 import { ethers } from 'ethers6';
-import { toLimitOrder, filterERC20OffersForTicker } from '../utils/orderbook';
+import { toLimitOrder, filterERC20OffersForTicker, fromFormatted, orderTokens, getDecimals } from '../utils/orderbook';
 import { useTrade } from './trade';
 import { useParams } from 'react-router-dom';
 
-type IUseLimitOrdersProps = 'peer-orderbook' | 'peer-ticker-orderbook';
+type IUseLimitOrdersProps = 'peer-orderbook' | 'peer-ticker-orderbook' | 'fulfill';
 
 const markIndex = (o: any, index: number) =>
     Object.defineProperty(o, 'index', {
@@ -22,11 +22,14 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     const { pintswap } = usePintswapContext();
     const { peerTrades } = useOffersContext();
     const { order } = useTrade();
+    const { hash, multiaddr } = useParams();
 
+    // All peers limit orders states
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const [bidLimitOrders, setBidLimitOrders] = useState<any[]>([]);
     const [askLimitOrders, setAskLimitOrders] = useState<any[]>([]);
 
+    // Utils
     const ticker = `${trade}/${base}`;
 
     const mapToArray = (v: any) => {
@@ -74,6 +77,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
               }, [sorted])
             : null;
 
+    // Subscribers
     useEffect(() => {
         if (type === 'peer-orderbook') {
             (async () => {
@@ -144,9 +148,10 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
         }
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
+    console.log("sorted nfts", sorted.nfts)
     const filteredNfts = useMemo(
         () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)),
-        [sorted.nfts],
+        [sorted.nfts, multiaddr],
     );
 
     return {
