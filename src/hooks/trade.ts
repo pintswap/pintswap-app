@@ -138,18 +138,7 @@ export const useTrade = () => {
             if (pintswap.module) {
                 try {
                     console.log('Discovery:', await (window as any).discoveryDeferred.promise);
-                    
                     // TODO: optimize
-                    // let offers;
-                    // console.log("PEER TRADES", peerTrades)
-                    // if(peerTrades.size > 0 && orderHash && peerTrades.get(orderHash)) {
-                        
-                    // } else {
-                    //     const { offers: _offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
-                    //         resolved,
-                    //     );
-                    //     offers = _offers;
-                    // }
                     const { offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
                         resolved,
                     );
@@ -177,7 +166,6 @@ export const useTrade = () => {
                         if (TESTING) console.log('#getTrades - Order Hash:', hash);
                         const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
                         if (TESTING) console.log('#getTrades - Map:', map);
-                        if (TESTING && orderHash) console.log('#getTrades - Found Trade:', peerTrades.get(orderHash));
                         setPeerTrades(map);
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
