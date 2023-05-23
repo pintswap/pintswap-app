@@ -102,7 +102,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     }, [signer]);
 
     useEffect(() => {
-      if (pintswap.module && pintswap.module.signer && (!pintswap.module.signer.provider || (signer.address || '').toLowerCase() === '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) && signer) pintswap.module.signer = signer;
+      if (signer && pintswap.module && pintswap.module.signer && (!pintswap.module.signer.provider || ((signer as any).address || '').toLowerCase() === '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) && signer) pintswap.module.signer = signer;
     }, [ signer, pintswap ]);
 
     return (
