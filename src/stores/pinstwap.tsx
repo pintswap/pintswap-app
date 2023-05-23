@@ -47,19 +47,27 @@ export function PintswapStore(props: { children: ReactNode }) {
     });
 
     const determinePsModule = async () => {
-        if(typeof localPsUser === 'string') {
-            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), ln(signer, "signer"));
-            console.log("psFromLocal:", psFromLocal)
-            return psFromLocal;
+        if(!signer) {
+            const noSignerInit = await Pintswap.initialize({ 
+                awaitReceipts: false, 
+                signer: new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e') 
+            });
+            return noSignerInit;
         } else {
-            if(signer) {
-                const psFromPass = await Pintswap.fromPassword({ signer: ln(signer, "signer"), password: await signer.getAddress() } as any) as Pintswap;
-                console.log("psFromPass:", psFromPass);
-                return mergeUserData(psFromPass, pintswap.module);
+            if(typeof localPsUser === 'string') {
+                const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), ln(signer, "signer"));
+                console.log("psFromLocal:", psFromLocal)
+                return psFromLocal;
             } else {
-                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: ln(signer, "signer") });
-                console.log("initPs:", initPs)
-                return initPs;
+                if(signer) {
+                    const psFromPass = await Pintswap.fromPassword({ signer: ln(signer, "signer"), password: await signer.getAddress() } as any) as Pintswap;
+                    console.log("psFromPass:", psFromPass);
+                    return mergeUserData(psFromPass, pintswap.module);
+                } else {
+                    const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: ln(signer, "signer") });
+                    console.log("initPs:", initPs)
+                    return initPs;
+                }
             }
         }
     }
@@ -97,7 +105,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 setPintswap({ ...pintswap, loading: false });
             }
         };
-        if (!pintswap.module && signer) initialize();
+        initialize();
     }, [signer]);
 
     useEffect(() => {
