@@ -141,14 +141,34 @@ export const useTrade = () => {
             if (pintswap.module) {
                 try {
                     console.log('Discovery:', await (window as any).discoveryDeferred.promise);
+                    // TODO: optimize
                     const { offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
                         resolved,
                     );
+                    if (orderHash && peerTrades.get(orderHash)) {
+                        const { gives, gets } = peerTrades.get(orderHash) as any;
+                        setTrade({
+                            gives: {
+                                token:
+                                    (getTokenAttributes(gives.token) as ITokenProps).symbol ||
+                                    gives.token,
+                                amount: convertAmount('number', gives.amount || '', gives.token),
+                            },
+                            gets: {
+                                token:
+                                    (getTokenAttributes(gets.token) as ITokenProps).symbol ||
+                                    gets.token,
+                                amount: convertAmount('number', gets.amount || '', gets.token),
+                            },
+                        })
+                        return;
+                    }
                     if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
-                        console.log(hash, 'orderHash');
+                        if (TESTING) console.log('#getTrades - Order Hash:', hash);
                         const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
+                        if (TESTING) console.log('#getTrades - Map:', map);
                         setPeerTrades(map);
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
@@ -207,14 +227,14 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            if (pathname.includes('/') && multiaddr) {
+            if (pathname.includes('/') && multiaddr && hash) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill') {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
-                    setOrder({ multiAddr: multiaddr, orderHash: splitUrl[3] });
-                    await getTrades(multiaddr, splitUrl[3]);
+                    setOrder({ multiAddr: multiaddr, orderHash: hash });
+                    await getTrades(multiaddr, hash);
                     setLoading({ ...loading, trade: false });
                 } else if (multiaddr) {
                     // Only multiAddr
@@ -228,7 +248,7 @@ export const useTrade = () => {
             }
         };
         if (pintswap.module) getter().catch((err) => console.error(err));
-    }, [pintswap.module, multiaddr]);
+    }, [pintswap.module, multiaddr, hash]);
 
     /*
      * TRADE EVENT MANAGER - START
@@ -362,5 +382,6 @@ export const useTrade = () => {
         error,
         fill,
         setFill,
+        setTrade
     };
 };

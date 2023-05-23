@@ -19,11 +19,16 @@ import { usePintswapContext } from '../stores';
 import { BASE_URL, parseTickerAsset } from '../utils/common';
 import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
 import { useAccount } from 'wagmi';
+import { useLimitOrders } from '../hooks';
+import { useParams } from 'react-router-dom';
 
 export const FulfillView = () => {
     const { address } = useAccount()
     const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
     const { pintswap } = usePintswapContext();
+    const { limitOrders  } = useLimitOrders('peer-orderbook');
+    const { hash, multiaddr } = useParams();
+
     const [limitOrder, setLimitOrder] = useState({
         price: Number(0),
         amount: '',
@@ -36,16 +41,25 @@ export const FulfillView = () => {
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
-                const raw = await fromFormatted(trade, pintswap.module.signer);
-                const {
-                    pair: [base, tradeToken],
-                } = orderTokens(raw);
-                const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
-                setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
-                (setLimitOrder as any)(await toLimitOrder(raw as any, pintswap.module.signer));
+                const foundLimitOrder = limitOrders.find(order => order?.hash === hash);
+                if(foundLimitOrder) {
+                    console.log("LIMIT ORDER EXISTING", foundLimitOrder);
+                    setLimitOrder(foundLimitOrder);
+                    setFillAmount(foundLimitOrder?.amount || '')
+                } else {
+                    const raw = await fromFormatted(trade, pintswap.module.signer);
+                    const {
+                        pair: [base, tradeToken],
+                    } = orderTokens(raw);
+                    const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
+                    setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
+                    const limitOrderRes = await toLimitOrder(raw as any, pintswap.module.signer);
+                    console.log("LIMIT ORDER NEW", limitOrderRes);
+                    setLimitOrder(limitOrderRes as any);
+                }
             }
         })().catch((err) => console.error(err));
-    }, [trade, pintswap.module]);
+    }, [trade, pintswap.module, hash, multiaddr, limitOrders]);
 
     useEffect(() => {
         const m = pintswap.module;

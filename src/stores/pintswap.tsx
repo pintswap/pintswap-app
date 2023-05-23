@@ -69,8 +69,7 @@ const getMetamask = (signer: any) => signer && signer.provider && signer.provide
 
 // Wrapper
 export function PintswapStore(props: { children: ReactNode }) {
-    const { data: signer }: any = useSigner();
-    const _signer = signer || new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e');
+    const { data: signer } = useSigner();
     const localPsUser = localStorage.getItem('_pintUser');
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
@@ -91,7 +90,7 @@ export function PintswapStore(props: { children: ReactNode }) {
 
     const determinePsModule = async () => {
         if(typeof localPsUser === 'string') {
-            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), _signer);
+            const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), signer);
             console.log("psFromLocal:", psFromLocal)
             return psFromLocal;
         } else {
@@ -100,7 +99,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 console.log("psFromPass:", psFromPass);
                 return mergeUserData(psFromPass, pintswap.module);
             } else {
-                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer: _signer });
+                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer });
                 console.log("initPs:", initPs)
                 return initPs;
             }
@@ -140,11 +139,11 @@ export function PintswapStore(props: { children: ReactNode }) {
                 setPintswap({ ...pintswap, loading: false });
             }
         };
-        if (!pintswap.module && _signer) initialize();
+        if (!pintswap.module && signer) initialize();
     }, [signer]);
 
     useEffect(() => {
-      if (pintswap.module && pintswap.module.signer && !pintswap.module.signer.provider && signer) pintswap.module.signer = signer;
+      if (signer && pintswap.module && pintswap.module.signer && (!pintswap.module.signer.provider || ((signer as any).address || '').toLowerCase() === '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) && signer) pintswap.module.signer = signer;
     }, [ signer, pintswap ]);
 
     return (
