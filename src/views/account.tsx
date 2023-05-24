@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Card, CopyClipboard, DataTable, DropdownInput, DropdownMenu, Input, Skeleton, TransitionModal } from '../components';
 import { useWindowSize } from '../hooks/window-size';
 import { useOffersContext, useUserContext } from '../stores';
-import { usePintswapContext } from '../stores/pinstwap';
+import { usePintswapContext } from '../stores/pintswap';
 import { convertAmount } from '../utils/common';
 import { Tab } from '@headlessui/react';
 import { useState } from 'react';

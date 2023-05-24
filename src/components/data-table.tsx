@@ -1,14 +1,15 @@
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { muiCache, muiOptions, muiTheme } from '../utils/mui';
-import MUIDataTable, { MUIDataTableColumnDef } from 'mui-datatables';
+import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
 import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
-import { truncate } from '../utils/common';
+import { BASE_URL, truncate } from '../utils/common';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
-import { useOffersContext } from '../stores';
+import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
+import copy from 'copy-to-clipboard';
 
 type IDataTableProps = {
     title?: string;
@@ -48,6 +49,25 @@ export const DataTable = ({
                         search: toolbar,
                         filter: toolbar,
                         searchAlwaysOpen: toolbar,
+                        customSearchRender: (
+                            searchText: string,
+                            handleSearch: (text: string) => void,
+                            hideSearch: () => void,
+                            options: any
+                        ) => (
+                            <TableSearch
+                                searchText={searchText}
+                                onSearch={handleSearch}
+                                onHide={hideSearch}
+                                options={{
+                                    ...options,
+                                    searchProps: {
+                                        autoFocus: false,
+                                        ...options.searchProps,
+                                    },
+                                }}
+                            />
+                        ),
                         pagination: pagination,
                         textLabels: {
                             body: {
@@ -85,6 +105,8 @@ export const DataTable = ({
 };
 
 const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTableProps) => {
+    const { userData } = useUserContext();
+    const { pintswap: { module } } = usePintswapContext();
     const cells = Object.values(data as object);
     (cells as any).index = (data as any).index;
     const cols = columns as string[];
@@ -107,8 +129,8 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
         switch (type) {
             case 'explore': 
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`);
-            case 'manage': // TODO: fix
-                return navigate(`${url}manage/${firstCell}`)
+            case 'manage': 
+                return copy(`${BASE_URL}/#/fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`)
             case 'pairs':
                 url = `${url}pairs`;
                 break;
@@ -167,7 +189,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
             if(type === 'manage') {
                 return (
                     <Button className="text-red-400 hover:text-red-500 w-full text-right" type="transparent" onClick={(e) => handleDelete(e, cells[0])}>
-                        Delete
+                        Cancel
                     </Button>
                 )
             } else {
@@ -199,24 +221,14 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-[1px] flex justify-between items-center`}
+                        className={`py-[1px] flex justify-between items-center text-sm`}
                     >
                         <span className="text-gray-300 font-thin">{cols[i]}</span>
-                        <span>
+                        <span className={`${!cell ? 'w-full' : ''}`}>
                             {determineCell(cell)}
                         </span>
                     </td>
                 ))}
-                {type === 'manage' && (
-                    <td
-                        key={`data-table-cell-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-[1px] flex justify-between items-center`}
-                    >
-                        <Button className="bg-red-400" onClick={(e) => handleDelete(e, cells[0])}>
-                            Cancel
-                        </Button>
-                    </td>
-                )}
             </tr>
         );
     }

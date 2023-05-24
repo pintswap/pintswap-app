@@ -11,6 +11,7 @@ import {
     NFTDisplay,
 } from '../components';
 import { useTrade } from '../hooks/trade';
+import { usePintswapContext } from "../stores/pintswap";
 import { useOffersContext, useUserContext } from '../stores';
 import { BASE_URL, convertAmount, INFTProps } from '../utils/common';
 import { fetchNFT } from '../utils/fetch-nft';
@@ -36,12 +37,29 @@ const columns = [
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
+
+    const { pintswap } = usePintswapContext();
     const { userData, toggleActive } = useUserContext();
     const { userTrades } = useOffersContext();
     const [nft, setNFT] = useState<INFTProps | null>(null);
 
+    const [ resolvedName, setResolvedName ] = useState<any>(order.multiAddr);
+
+    useEffect(() => {
+      (async () => {
+        setResolvedName(order.multiAddr);
+        if (pintswap.module) {
+          try {
+            setResolvedName(await pintswap.module.resolveName(order.multiAddr));
+          } catch (e) {
+            pintswap.module.logger.error(e);
+          }
+        }
+      })().catch((err) => pintswap.module && pintswap.module.logger.error(err) || console.error(err));
+    }, [ order ]);
+
     const createTradeLink = () => {
-        let finalUrl = `${BASE_URL}/#/fulfill/${order.multiAddr}`;
+        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName}`;
         if(trade.gives.tokenId) {
             finalUrl = `${finalUrl}/nft/${order.orderHash}`
         } else {
@@ -63,9 +81,9 @@ export const CreateView = () => {
     const TABS = ['ERC20', 'NFT']
     return (
         <>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 md:gap-6">
                 <div className="flex flex-col">
-                    <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center justify-between mb-4 md:mb-6">
                         <h2 className="view-header mb-0">Create Trade</h2>
                         <Transition
                             show={!!order.orderHash && !!order.multiAddr}
@@ -75,21 +93,22 @@ export const CreateView = () => {
                             leave="transition-opacity duration-150"
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
-                            className="flex flex-col justify-center items-start text-center"
+                            className="flex flex-col justify-center items-end text-center"
                         >
-                            <p className="text-sm">Share Trade:</p>
                             <CopyClipboard
                                 value={createTradeLink()}
                                 icon
                                 lg
                                 truncate={5}
-                            />
+                            >
+                                Share Trade
+                            </CopyClipboard>
                         </Transition>
                     </div>
                     <Card type="tabs" tabs={TABS}>
                         <Tab.Panel>
-                        <div className="grid grid-cols-1 gap-6 lg:gap-y-2 items-start">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
+                        <div className="grid grid-cols-1 gap-4 md:gap-6 lg:gap-y-2 items-start">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 items-start">
                                 <DropdownInput
                                     title="Send Details"
                                     placeholder="Select a token"
@@ -112,7 +131,7 @@ export const CreateView = () => {
                                     disabled={!!order.orderHash}
                                 />
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 items-start">
                                 <DropdownInput
                                     title="Receive Details"
                                     placeholder="Select a token"
@@ -142,7 +161,7 @@ export const CreateView = () => {
                             <NFTDisplay 
                                 nft={nft}
                             />
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3 items-start">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 items-start">
                                 <Input
                                     title="Send Details"
                                     placeholder="NFT Address"
@@ -192,7 +211,7 @@ export const CreateView = () => {
                         </Tab.Panel>
                         <Button
                             checkNetwork
-                            className="mt-6 w-full"
+                            className="mt-4 md:mt-6 w-full"
                             loadingText="Broadcasting"
                             loading={loading.broadcast}
                             onClick={broadcastTrade}
@@ -222,7 +241,6 @@ export const CreateView = () => {
                     <h2 className="view-header">Open Trades</h2>
                     <Card>
                         <DataTable 
-                            title="Open Orders"
                             columns={columns}
                             data={Array.from(userTrades, (entry) => ({
                                 hash: entry[0],

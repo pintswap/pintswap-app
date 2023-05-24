@@ -58,7 +58,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
 
   return (
     <div className="flex flex-col gap-1 justify-end">
-      <div className="flex justify-between items-center text-sm">
+      <div className="flex justify-between items-center text-xs md:text-sm">
         {title && (<p>{title}</p>)}
         {customInput && (
           <button className="text-indigo-600 flex gap-1 items-center transition duration-200 hover:text-indigo-700" onClick={toggleCustomInput}>
@@ -80,7 +80,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <Menu.Button 
-              className={`inline-flex w-full ${!disabled ? 'justify-between' : 'justify-end'} items-center gap-x-1.5 bg-neutral-600 px-3 py-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${loading ? 'animate-pulse' : ''} ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
+              className={`inline-flex w-full ${!disabled ? 'justify-between' : 'justify-end'} items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${loading ? 'animate-pulse' : ''} ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
               disabled={disabled} 
             >
               {!disabled && <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />}

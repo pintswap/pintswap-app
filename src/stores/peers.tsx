@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 import { getFormattedPeer } from '../utils/common';
-import { usePintswapContext } from './pinstwap';
+import { usePintswapContext } from './pintswap';
 import { useOffersContext } from './offers';
 import { IUserDataProps } from './user';
 

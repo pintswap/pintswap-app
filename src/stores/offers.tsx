@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
 import { defer, TESTING } from '../utils/common';
-import { usePintswapContext } from './pinstwap';
+import { usePintswapContext } from './pintswap';
 import { memoize } from 'lodash';
 import { toLimitOrder } from '../utils/orderbook';
 import { ethers } from 'ethers6';
