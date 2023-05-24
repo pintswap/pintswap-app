@@ -92,7 +92,7 @@ export const PeerTickerFulfill = ({
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 md:gap-6">
                 <Card header={'Fullfill Trade'}>
                     <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
@@ -172,13 +172,14 @@ export const PeerTickerFulfill = ({
                     leaveTo="opacity-0"
                     className="flex flex-col justify-center items-center text-center"
                 >
-                    <p className="text-sm">Trade Link:</p>
                     <CopyClipboard
                         value={`${BASE_URL}/#/fulfill/${order.multiAddr}/${order.orderHash}`}
                         icon
                         lg
                         truncate={5}
-                    />
+                    >
+                        Trade Link
+                    </CopyClipboard>
                 </Transition>
             </div>
             <Transition

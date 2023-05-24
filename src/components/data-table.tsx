@@ -1,7 +1,7 @@
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
 import { muiCache, muiOptions, muiTheme } from '../utils/mui';
-import MUIDataTable, { MUIDataTableColumnDef } from 'mui-datatables';
+import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
 import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
@@ -48,6 +48,25 @@ export const DataTable = ({
                         search: toolbar,
                         filter: toolbar,
                         searchAlwaysOpen: toolbar,
+                        customSearchRender: (
+                            searchText: string,
+                            handleSearch: (text: string) => void,
+                            hideSearch: () => void,
+                            options: any
+                        ) => (
+                            <TableSearch
+                                searchText={searchText}
+                                onSearch={handleSearch}
+                                onHide={hideSearch}
+                                options={{
+                                    ...options,
+                                    searchProps: {
+                                        autoFocus: false,
+                                        ...options.searchProps,
+                                    },
+                                }}
+                            />
+                        ),
                         pagination: pagination,
                         textLabels: {
                             body: {
@@ -199,7 +218,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-[1px] flex justify-between items-center`}
+                        className={`py-[1px] flex justify-between items-center text-sm`}
                     >
                         <span className="text-gray-300 font-thin">{cols[i]}</span>
                         <span>
