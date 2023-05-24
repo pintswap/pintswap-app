@@ -58,7 +58,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
 
   return (
     <div className="flex flex-col gap-1 justify-end">
-      <div className="flex justify-between items-center text-sm">
+      <div className="flex justify-between items-center text-xs md:text-sm">
         {title && (<p>{title}</p>)}
         {customInput && (
           <button className="text-indigo-600 flex gap-1 items-center transition duration-200 hover:text-indigo-700" onClick={toggleCustomInput}>

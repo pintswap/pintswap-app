@@ -167,7 +167,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
             if(type === 'manage') {
                 return (
                     <Button className="text-red-400 hover:text-red-500 w-full text-right" type="transparent" onClick={(e) => handleDelete(e, cells[0])}>
-                        Delete
+                        Cancel
                     </Button>
                 )
             } else {
@@ -207,16 +207,6 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                         </span>
                     </td>
                 ))}
-                {type === 'manage' && (
-                    <td
-                        key={`data-table-cell-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-[1px] flex justify-between items-center`}
-                    >
-                        <Button className="bg-red-400" onClick={(e) => handleDelete(e, cells[0])}>
-                            Cancel
-                        </Button>
-                    </td>
-                )}
             </tr>
         );
     }

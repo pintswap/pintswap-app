@@ -22,10 +22,10 @@ export const Card = ({ children, className, header, scroll, type, tabs }: ICardP
         return (
         <Tab.Group>
             <div
-                className={`flex flex-col bg-neutral-900 pt-3 p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
+                className={`flex flex-col bg-neutral-900 pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
             >
                 {tabs && !header && (
-                    <div className="text-lg text-center mb-4 lg:mb-6 font-semibold">
+                    <div className="md:text-lg text-center mb-4 lg:mb-6 font-semibold">
                         <Tab.List className="grid grid-cols-2 gap-2 lg:gap-4">
                             {tabs.map((tab, i) => (
                                 <Tab key={`tabs-${i}`} className="focus-visible:outline-none">
@@ -53,7 +53,7 @@ export const Card = ({ children, className, header, scroll, type, tabs }: ICardP
             <div
                 className={`flex flex-col bg-neutral-800 pt-3 p-4 lg:px-6 rounded-lg shadow-inner shadow-neutral-700 w-full transition duration-200 ${className}`}
             >
-                {header && !tabs && <h3 className="text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">{header}</h3>}
+                {header && !tabs && <h3 className="md:text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">{header}</h3>}
                 <div className={`w-full ${scroll ? 'overflow-y-auto max-h-[60vh]' : ''}`}>
                     {children}
                 </div>
@@ -64,7 +64,7 @@ export const Card = ({ children, className, header, scroll, type, tabs }: ICardP
         <div
             className={`flex flex-col bg-neutral-900 pt-3 p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
         >
-            {header && !tabs && <h3 className="text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">{header}</h3>}
+            {header && !tabs && <h3 className="md:text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">{header}</h3>}
             <div className={`w-full ${scroll ? 'overflow-y-auto max-h-[60vh]' : ''}`}>
                 {children}
             </div>
