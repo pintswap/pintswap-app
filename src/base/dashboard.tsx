@@ -52,7 +52,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     return (
       <>
         <div className="flex justify-center">
-          <main className="w-full py-4 px-3 mb-6">
+          <main className="w-full py-4 px-2.5 mb-6">
             {children}
           </main>
         </div>
