@@ -199,7 +199,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-[1px] flex justify-between items-center`}
+                        className={`py-[1px] flex justify-between items-center text-sm`}
                     >
                         <span className="text-gray-300 font-thin">{cols[i]}</span>
                         <span>
