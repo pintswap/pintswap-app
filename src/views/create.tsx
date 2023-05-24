@@ -241,7 +241,6 @@ export const CreateView = () => {
                     <h2 className="view-header">Open Trades</h2>
                     <Card>
                         <DataTable 
-                            title="Open Orders"
                             columns={columns}
                             data={Array.from(userTrades, (entry) => ({
                                 hash: entry[0],
