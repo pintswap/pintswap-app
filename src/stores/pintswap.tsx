@@ -90,7 +90,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     }, [ signer ]);
 
     const determinePsModule = async () => {
-        if(!signer) {
+        if(!signer && !address) {
             const noWalletInitPs = await Pintswap.initialize({ 
                 awaitReceipts: false, 
                 signer: new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e') 
@@ -123,7 +123,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 (async () => {
                     try {
                         // Stop exisiting node if there is one started
-                        if(pintswap.module?.isStarted()) {
+                        if(pintswap.module?.isStarted() && pintswap.module) {
                             await pintswap.module.stopNode();
                             if(TESTING) console.log("Stopped previous node");
                         }
