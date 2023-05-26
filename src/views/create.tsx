@@ -117,7 +117,6 @@ export const CreateView = () => {
                                     type="gives.token"
                                     search
                                     disabled={!!order.orderHash}
-                                    customInput
                                 />
                                 <Input
                                     placeholder="Amount to Send"
@@ -140,7 +139,6 @@ export const CreateView = () => {
                                     type="gets.token"
                                     search
                                     disabled={!!order.orderHash}
-                                    customInput
                                 />
                                 <Input
                                     placeholder="Amount to Receive"
@@ -193,7 +191,6 @@ export const CreateView = () => {
                                     type="gets.token"
                                     search
                                     disabled={!!order.orderHash}
-                                    customInput
                                 />
                                 <Input
                                     placeholder="Amount to Receive"
