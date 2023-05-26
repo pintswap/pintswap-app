@@ -920,6 +920,10 @@ html,
   --tw-rotate: -45deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
+.rotate-180{
+  --tw-rotate: 180deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
 .rotate-45{
   --tw-rotate: 45deg;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -1109,6 +1113,11 @@ html,
 .gap-x-1\.5{
   column-gap: 0.375rem;
 }
+.space-y-1 > :not([hidden]) ~ :not([hidden]){
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.25rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.25rem * var(--tw-space-y-reverse));
+}
 .self-center{
   align-self: center;
 }
@@ -1151,9 +1160,17 @@ html,
   border-top-right-radius: 0px !important;
   border-bottom-right-radius: 0px !important;
 }
+.rounded-b{
+  border-bottom-right-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
 .rounded-r{
   border-top-right-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
+}
+.rounded-t{
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
 }
 .\!border-0{
   border-width: 0px !important;
@@ -1406,6 +1423,9 @@ html,
 }
 .pr-8{
   padding-right: 2rem;
+}
+.pt-1{
+  padding-top: 0.25rem;
 }
 .pt-2{
   padding-top: 0.5rem;
@@ -1720,6 +1740,10 @@ html,
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
 }
+.hover\:text-white:hover{
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
 .focus\:outline-none:focus{
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1789,6 +1813,10 @@ html,
 
   .md\:mb-6{
     margin-bottom: 1.5rem;
+  }
+
+  .md\:mt-4{
+    margin-top: 1rem;
   }
 
   .md\:mt-6{
@@ -1945,6 +1973,11 @@ html,
   .lg\:text-2xl{
     font-size: 1.5rem;
     line-height: 2rem;
+  }
+
+  .lg\:text-sm{
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 @media (min-width: 1280px){
