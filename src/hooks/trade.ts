@@ -140,11 +140,12 @@ export const useTrade = () => {
         else {
             if (pintswap.module) {
                 try {
-                    console.log('Discovery:', await (window as any).discoveryDeferred.promise);
                     // TODO: optimize
+                    console.log('getUserDataByPeerId', resolved);
                     const { offers }: IOrderbookProps = await (ps as any).getUserDataByPeerId(
                         resolved,
                     );
+                    console.log('offers', offers);
                     if (orderHash && peerTrades.get(orderHash)) {
                         const { gives, gets } = peerTrades.get(orderHash) as any;
                         setTrade({
@@ -160,7 +161,7 @@ export const useTrade = () => {
                                     gets.token,
                                 amount: convertAmount('number', gets.amount || '', gets.token),
                             },
-                        })
+                        });
                         return;
                     }
                     if (TESTING) console.log('#getTrades - Offers:', offers);
@@ -227,9 +228,9 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            if (pathname.includes('/') && multiaddr && hash) {
+            if (pathname.includes('/') && multiaddr) {
                 const splitUrl = pathname.split('/');
-                if (splitUrl[1] === 'fulfill') {
+                if (splitUrl[1] === 'fulfill' && hash) {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
@@ -382,6 +383,6 @@ export const useTrade = () => {
         error,
         fill,
         setFill,
-        setTrade
+        setTrade,
     };
 };
