@@ -12,6 +12,7 @@ import {
     ProgressIndicator,
     TransitionModal,
     Skeleton,
+    TxDetails,
 } from '../components';
 import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
@@ -43,7 +44,6 @@ export const FulfillView = () => {
             if (pintswap.module) {
                 const foundLimitOrder = limitOrders.find(order => order?.hash === hash);
                 if(foundLimitOrder) {
-                    console.log("LIMIT ORDER EXISTING", foundLimitOrder);
                     setLimitOrder(foundLimitOrder);
                     setFillAmount(foundLimitOrder?.amount || '')
                 } else {
@@ -54,7 +54,6 @@ export const FulfillView = () => {
                     const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
                     setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
                     const limitOrderRes = await toLimitOrder(raw as any, pintswap.module.signer);
-                    console.log("LIMIT ORDER NEW", limitOrderRes);
                     setLimitOrder(limitOrderRes as any);
                 }
             }
@@ -101,7 +100,7 @@ export const FulfillView = () => {
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 md:gap-6">
             <TransitionModal button={<Avatar peer={order.multiAddr} withBio withName align="left" size={60} type="profile" />}>
                     <Avatar peer={order.multiAddr} size={300} />
                 </TransitionModal>
@@ -111,7 +110,7 @@ export const FulfillView = () => {
                             <span>Fullfill Trade</span>
                             <div className="flex justify-center">
                                 <Skeleton loading={loading.trade}>
-                                    <div className={`text-sm font-extralight flex items-center gap-2 justify-center ${loading.trade ? 'text-neutral-700' : 'text-gray-400'}`}>
+                                    <div className={`text-xs md:text-sm font-extralight flex items-center gap-2 justify-center ${loading.trade ? 'text-neutral-700' : 'text-gray-400'}`}>
                                         <span>Sending {parseTickerAsset(limitOrder.ticker, 2)}</span>
                                         <span>&</span>
                                         <span>Receiving {parseTickerAsset(limitOrder.ticker, 1)}</span>
@@ -120,11 +119,10 @@ export const FulfillView = () => {
                             </div>
                         </div>
                     }
-                    className=''
                 >
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
+                    <div className="grid grid-cols-1 gap-1.5 md:gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
-                            title={`Pair (Sending ${parseTickerAsset(limitOrder.ticker, 1)})`}
+                            title={`Pair`}
                             placeholder="Pair"
                             state={limitOrder.ticker}
                             type="gives.token"
@@ -151,6 +149,7 @@ export const FulfillView = () => {
                             loading={loading.trade}
                         />
                         <Input
+                            title="Output"
                             placeholder="Output amount"
                             value={outputAmount}
                             type="number"
@@ -158,9 +157,14 @@ export const FulfillView = () => {
                             loading={loading.trade}
                         />
                     </div>
+
+                    <div className="mt-2 md:mt-4">
+                        <TxDetails trade={trade} loading={loading.trade} type="fulfill" />
+                    </div>
+
                     <Button
                         checkNetwork
-                        className="mt-6 w-full"
+                        className="mt-4 md:mt-6 w-full"
                         loadingText="Fulfilling"
                         loading={(loading.fulfill || loading.trade) && !error}
                         onClick={fulfillTrade}
@@ -192,13 +196,14 @@ export const FulfillView = () => {
                     leaveTo="opacity-0"
                     className="flex flex-col justify-center items-center text-center"
                 >
-                    <p className="text-sm">Trade Link:</p>
                     <CopyClipboard
                         value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`}
                         icon
                         lg
                         truncate={5}
-                    />
+                    >
+                        Trade Link
+                    </CopyClipboard>
                 </Transition>
             </div>
             <Transition
