@@ -12,6 +12,7 @@ import {
     ProgressIndicator,
     TransitionModal,
     Skeleton,
+    TxDetails,
 } from '../components';
 import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
@@ -43,7 +44,6 @@ export const FulfillView = () => {
             if (pintswap.module) {
                 const foundLimitOrder = limitOrders.find(order => order?.hash === hash);
                 if(foundLimitOrder) {
-                    console.log("LIMIT ORDER EXISTING", foundLimitOrder);
                     setLimitOrder(foundLimitOrder);
                     setFillAmount(foundLimitOrder?.amount || '')
                 } else {
@@ -54,7 +54,6 @@ export const FulfillView = () => {
                     const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
                     setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
                     const limitOrderRes = await toLimitOrder(raw as any, pintswap.module.signer);
-                    console.log("LIMIT ORDER NEW", limitOrderRes);
                     setLimitOrder(limitOrderRes as any);
                 }
             }
@@ -120,7 +119,6 @@ export const FulfillView = () => {
                             </div>
                         </div>
                     }
-                    className=''
                 >
                     <div className="grid grid-cols-1 gap-1.5 md:gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
@@ -159,6 +157,11 @@ export const FulfillView = () => {
                             loading={loading.trade}
                         />
                     </div>
+
+                    <div className="mt-2 md:mt-4">
+                        <TxDetails trade={trade} loading={loading.trade} type="fulfill" />
+                    </div>
+
                     <Button
                         checkNetwork
                         className="mt-4 md:mt-6 w-full"

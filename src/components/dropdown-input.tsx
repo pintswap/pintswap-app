@@ -1,12 +1,10 @@
-import { ChangeEvent, Dispatch, Fragment, MouseEventHandler, SetStateAction, useRef, useState } from 'react'
+import { ChangeEvent, Dispatch, Fragment, SetStateAction, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { MdChevronRight } from 'react-icons/md'
 import { alphaTokenSort, classNames } from '../utils/common'
 import { ITokenProps, TOKENS } from '../utils/token-list'
-import { MdOutlineAddCircleOutline, MdOutlineListAlt } from 'react-icons/md'
-import { Input } from './input'
-import { useWindowSize } from '../hooks/window-size'
 import { Asset } from './asset'
+import { ethers } from 'ethers'
 
 type IDropdownProps = {
   state: any;
@@ -18,14 +16,11 @@ type IDropdownProps = {
   search?: boolean;
   disabled?: boolean;
   loading?: boolean;
-  customInput?: boolean;
 }
 
-export const DropdownInput = ({ state, setState, options, placeholder, type = 'string', title, search, disabled, loading, customInput }: IDropdownProps) => {
+export const DropdownInput = ({ state, setState, options, placeholder, type = 'string', title, search, disabled, loading }: IDropdownProps) => {
   const isToken = type === 'gives.token' || type === 'gets.token';
-  const { width } = useWindowSize();
   const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] });
-  const [isCustom, setIsCustom] = useState(false);
   
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       let results;
@@ -46,11 +41,6 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
       })
   };
 
-  const toggleCustomInput = () => {
-    setIsCustom(!isCustom);
-    isToken ? setState(type, '') : setState('')
-  };
-
   const dropdownItemClass = (active: boolean) => classNames(
     active ? 'bg-gray-900 text-neutral-200' : 'text-neutral-300',
     'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full'
@@ -60,23 +50,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
     <div className="flex flex-col gap-1 justify-end">
       <div className="flex justify-between items-center text-xs md:text-sm">
         {title && (<p>{title}</p>)}
-        {customInput && (
-          <button className="text-indigo-600 flex gap-1 items-center transition duration-200 hover:text-indigo-700" onClick={toggleCustomInput}>
-            {isCustom ? width >= 768 && width < 900 ? 'Dropdown' : 'Show Dropdown' : width >= 768 && width < 900 ? 'Custom' : 'Custom Token'}
-            {isCustom ? <MdOutlineListAlt /> : <MdOutlineAddCircleOutline />}
-          </button>
-        )}
       </div>
-      {isCustom ? (
-        <Input 
-          placeholder="Token Address"
-          value={state}
-          onChange={(e) => setState(type, e.currentTarget.value)}
-          type="text"
-          noSpace
-          token
-        />
-      ) : (
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <Menu.Button 
@@ -103,9 +77,10 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
                     value={searchState.query}
                     onChange={handleChange}
                     className="bg-gray-700 text-neutral-200 px-4 py-2 text-sm ring-2 ring-gray-600 w-full"
-                    placeholder="Search here..."
+                    placeholder="Search name or paste address"
                   />
               )}
+
               {isToken ? (searchState.list as ITokenProps[]).sort(alphaTokenSort).map((el: ITokenProps, i) => (
                 <Menu.Item key={`dropdown-item-${el.symbol}-${i}`}>
                 {({ active }) => (
@@ -130,10 +105,21 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
               </Menu.Item>
               ))}
 
+              {isToken && ethers.utils.isAddress(searchState.query) && (
+                <Menu.Item>
+                  {({ active }) => (
+                    <button
+                      className={dropdownItemClass(active)}
+                      onClick={() => setState(type, searchState.query)}
+                    >
+                      <Asset symbol={"Unknown Token"} icon='/img/generic.svg' alt="Unknown Token" />
+                    </button>
+                  )}
+                </Menu.Item>
+              )}
             </Menu.Items>
           </Transition>
         </Menu>
-      )}
     </div>
   )
 }
