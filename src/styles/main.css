@@ -1819,6 +1819,10 @@ html,
     margin-top: 1rem;
   }
 
+  .md\:mt-6{
+    margin-top: 1.5rem;
+  }
+
   .md\:block{
     display: block;
   }
