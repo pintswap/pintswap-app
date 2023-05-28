@@ -63,12 +63,13 @@ const resolveNames = async (m: any, pintswap: any) => {
     );
 };
 
+const withoutTag = (ary: any) => ary.filter(([key]: any) => !key.match('::'));
+
 const groupByType = (m: any) => {
     const flattened: any = [...m.entries()];
     return {
         erc20: new Map(
-            flattened
-                .map(([key, [hash, offers]]: any[]) => {
+            withoutTag(flattened).map(([key, [hash, offers]]: any[]) => {
                     return [
                         key,
                         [
@@ -82,7 +83,7 @@ const groupByType = (m: any) => {
                 .filter(([key, orders]: any) => orders.length),
         ),
         nft: new Map(
-            flattened
+            withoutTag(flattened)
                 .map(([key, [hash, offers]]: any[]) => {
                     return [
                         key,
