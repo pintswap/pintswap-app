@@ -19,7 +19,10 @@ export const PairsView = () => {
 
     return (
         <div className="flex flex-col">
-          <h3 className="view-header">Available Pairs</h3>
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+              <h2 className="view-header mb-0">Explore</h2>
+
+          </div>
           <div className={`grid grid-cols-1 gap-2 md:gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}>
             {!isLoading ? uniquePairs.map(pair => {
               const split = pair.split('/');

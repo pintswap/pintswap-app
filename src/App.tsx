@@ -41,11 +41,10 @@ function App() {
         <>
             <Base loading={pintswap.loading}>
                     <Routes>
-                        <Route path="/explore" element={<ExploreView />} />
+                        <Route path="/explore" element={<PairsView />} />
                         <Route path="/create" element={<CreateView />} />
                         <Route path="/account" element={<AccountView />} />
 
-                        <Route path="/pairs" element={<PairsView />} />
                         <Route path="/pairs/:pair" element={<PairListView />} />
 
                         <Route path="/peers" element={<PeersView />} />
