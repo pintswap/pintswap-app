@@ -19,6 +19,7 @@ type IInputProps = {
     maxClick?: (key: 'gives.token' | 'gets.token' | 'gives.amount' | 'gets.amount', val: string) => void;
     noSpace?: boolean;
     enableStateCss?: boolean;
+    wrapperClass?: string;
 };
 
 export const Input = ({
@@ -34,7 +35,8 @@ export const Input = ({
     token,
     maxClick,
     noSpace,
-    enableStateCss
+    enableStateCss,
+    wrapperClass
 }: IInputProps) => {
     const { address } = useAccount();
     const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
@@ -57,23 +59,38 @@ export const Input = ({
             }
         }
         if(token && typeof token === 'string') getBalance()
-    }, [token])
+    }, [token]);
 
-    return (
-        <div className="flex flex-col gap-1 justify-end w-full">
-            {title ? <p className="text-xs md:text-sm">{title}</p> : !noSpace && <div className="w-full md:h-5" />}
-            <div className={`flex items-center gap-1 p-2 bg-neutral-600 ${enableStateCss ? 'disabled:bg-neutral-900' : ''} rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}>
+    if(type === 'search') {
+        return (
+            <div className={`flex items-center gap-1 p-2 bg-neutral-600 ${enableStateCss ? 'disabled:bg-neutral-900' : ''} rounded ${wrapperClass} ${loading ? 'animate-pulse' : ''}`}>
+                <div className="w-[20px] h-[20px] flex justify-center items-center">
+                <BiSearchAlt size="18px" className="text-neutral-200" />
+                </div>
                 <input
-                    className={`bg-transparent outline-none ring-none`}
+                    className={`bg-transparent outline-none ring-none ${className} min-w-0`}
                     value={value}
                     onChange={onChange}
-                    placeholder={type === 'search' && !placeholder ? 'Search here' : placeholder}
+                    placeholder={!placeholder ? 'Search here' : placeholder}
                     maxLength={max}
-                    type={type === 'search' ? 'text' : type}
+                    type={'text'}
                     disabled={disabled}
                 />
-                {type === 'search' && <BiSearchAlt size="20px" />}
             </div>
+        )
+    }
+    return (
+        <div className={`flex flex-col gap-1 justify-end w-full ${wrapperClass}`}>
+            {title ? <p className="text-xs md:text-sm">{title}</p> : !noSpace && <div className="w-full md:h-5" />}
+            <input
+                className={`flex items-center gap-1 p-2 bg-neutral-600 ${enableStateCss ? 'disabled:bg-neutral-900' : ''} rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                maxLength={max}
+                type={type}
+                disabled={disabled}
+            />
             {token && maxClick && (
                 <button className="text-xs text-indigo-600 transition duration-200 hover:text-indigo-700 text-right flex gap-1 justify-end" onClick={() => maxClick(tradeObjKey, balance.formatted)}>
                     MAX: 

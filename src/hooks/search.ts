@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { ITokenProps, TOKENS } from "../utils/token-list";
 
 export const useSearch = (list: string[] | ITokenProps[]) => {
@@ -13,7 +13,7 @@ export const useSearch = (list: string[] | ITokenProps[]) => {
           return el.symbol.toLowerCase().includes(e.target.value.toLowerCase())
         })
       } else {
-        results = (searchState.list as string[]).filter((el) => {
+        results = (list as string[]).filter((el) => {
           if (e.target.value === "") return searchState.list;
           return el.toLowerCase().includes(e.target.value.toLowerCase())
         })
@@ -26,7 +26,7 @@ export const useSearch = (list: string[] | ITokenProps[]) => {
 
   return {
     query: searchState.query,
-    list: searchState.list,
+    list: searchState.list.length === 0 ? list : searchState.list,
     handleChange
   }
 }

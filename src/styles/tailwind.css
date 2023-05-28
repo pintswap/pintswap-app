@@ -19,14 +19,6 @@
   .view-header {
     @apply text-lg md:text-xl text-center mb-4 lg:mb-6 font-semibold;
   }
-  
-  input, button {
-    width: 100%;
-    overflow-x: scroll;
-    box-sizing: border-box; /* add this */
-        -webkit-box-sizing: border-box;
-        -moz-box-sizing: border-box;
-  }
 
   /* For upload profile picture */
   ::file-selector-button {
