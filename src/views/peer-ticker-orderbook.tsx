@@ -84,42 +84,42 @@ export const PeerTickerOrderbookView = () => {
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
                 <Card>
-                <h3 className="mb-2 lg:mb-0 text-center">Buys</h3>
-                <DataTable 
-                    type="bids"
-                    columns={columns}
-                    data={bidLimitOrders.slice(0, ordersShown)}
-                    loading={bidLimitOrders.length === 0}
-                    toolbar={false}
-                    peer={order.multiAddr}
-                    pagination={false}
-                    getRow={onClickRow}
-                    options={{
-                        sortOrder: {
-                            name: 'price',
-                            direction: 'asc'
-                        }
-                    }}
-                />
+                    <h3 className="mb-2 lg:mb-0 text-center">Buys</h3>
+                    <DataTable 
+                        type="bids"
+                        columns={columns}
+                        data={bidLimitOrders.slice(0, ordersShown)}
+                        loading={bidLimitOrders.length === 0}
+                        toolbar={false}
+                        peer={order.multiAddr}
+                        pagination={false}
+                        getRow={onClickRow}
+                        options={{
+                            sortOrder: {
+                                name: 'price',
+                                direction: 'asc'
+                            }
+                        }}
+                    />
                 </Card>
                 <Card>
-                <h3 className="mb-2 lg:mb-0 text-center">Sells</h3>
-                <DataTable 
-                    type="asks"
-                    columns={columns}
-                    data={askLimitOrders.slice(0, ordersShown)}
-                    loading={askLimitOrders.length === 0}
-                    toolbar={false}
-                    peer={order.multiAddr}
-                    pagination={false}
-                    getRow={onClickRow}
-                    options={{
-                        sortOrder: {
-                            name: 'price',
-                            direction: 'desc'
-                        }
-                    }}
-                />
+                    <h3 className="mb-2 lg:mb-0 text-center">Sells</h3>
+                    <DataTable 
+                        type="asks"
+                        columns={columns}
+                        data={askLimitOrders.slice(0, ordersShown)}
+                        loading={askLimitOrders.length === 0}
+                        toolbar={false}
+                        peer={order.multiAddr}
+                        pagination={false}
+                        getRow={onClickRow}
+                        options={{
+                            sortOrder: {
+                                name: 'price',
+                                direction: 'desc'
+                            }
+                        }}
+                    />
                 </Card>
             </div>
             <PeerTickerFulfill 

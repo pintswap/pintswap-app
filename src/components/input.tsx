@@ -3,6 +3,7 @@ import { fetchBalance } from '@wagmi/core'
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
 import { getTokenAttributes, round } from '../utils/common';
+import { BiSearchAlt } from 'react-icons/bi'
 
 type IInputProps = {
     placeholder?: string;
@@ -10,7 +11,7 @@ type IInputProps = {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     className?: string;
     max?: number;
-    type?: 'text' | 'number' | 'password';
+    type?: 'text' | 'number' | 'password' | 'search';
     title?: string;
     disabled?: boolean;
     loading?: boolean;
@@ -61,15 +62,18 @@ export const Input = ({
     return (
         <div className="flex flex-col gap-1 justify-end w-full">
             {title ? <p className="text-xs md:text-sm">{title}</p> : !noSpace && <div className="w-full md:h-5" />}
-            <input
-                className={`p-2 bg-neutral-600 ${enableStateCss ? 'disabled:bg-neutral-900' : ''} rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}
-                value={value}
-                onChange={onChange}
-                placeholder={placeholder}
-                maxLength={max}
-                type={type}
-                disabled={disabled}
-            />
+            <div className={`flex items-center gap-1 p-2 bg-neutral-600 ${enableStateCss ? 'disabled:bg-neutral-900' : ''} rounded ${className} ${type === 'number' ? 'text-right' : ''} ${loading ? 'animate-pulse' : ''}`}>
+                <input
+                    className={`bg-transparent outline-none ring-none`}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={type === 'search' && !placeholder ? 'Search here' : placeholder}
+                    maxLength={max}
+                    type={type === 'search' ? 'text' : type}
+                    disabled={disabled}
+                />
+                {type === 'search' && <BiSearchAlt size="20px" />}
+            </div>
             {token && maxClick && (
                 <button className="text-xs text-indigo-600 transition duration-200 hover:text-indigo-700 text-right flex gap-1 justify-end" onClick={() => maxClick(tradeObjKey, balance.formatted)}>
                     MAX: 

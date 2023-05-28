@@ -1,10 +1,11 @@
-import { ChangeEvent, Dispatch, Fragment, SetStateAction, useState } from 'react'
+import { Dispatch, Fragment, SetStateAction } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { MdChevronRight } from 'react-icons/md'
 import { alphaTokenSort, classNames } from '../utils/common'
 import { ITokenProps, TOKENS } from '../utils/token-list'
 import { Asset } from './asset'
 import { ethers } from 'ethers'
+import { useSearch } from '../hooks'
 
 type IDropdownProps = {
   state: any;
@@ -20,26 +21,7 @@ type IDropdownProps = {
 
 export const DropdownInput = ({ state, setState, options, placeholder, type = 'string', title, search, disabled, loading }: IDropdownProps) => {
   const isToken = type === 'gives.token' || type === 'gets.token';
-  const [searchState, setSearchState] = useState({ query: '', list: isToken ? TOKENS : options || [] });
-  
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      let results;
-      if(isToken) {
-        results = TOKENS.filter((el: ITokenProps) => {
-          if (e.target.value === "") return TOKENS;
-          return el.symbol.toLowerCase().includes(e.target.value.toLowerCase())
-        })
-      } else {
-        results = (searchState.list as string[]).filter((el) => {
-          if (e.target.value === "") return searchState.list;
-          return el.toLowerCase().includes(e.target.value.toLowerCase())
-        })
-      }
-      setSearchState({
-        query: e.target.value,
-        list: results
-      })
-  };
+  const { query, list, handleChange } = useSearch(isToken ? TOKENS : options || []);
 
   const dropdownItemClass = (active: boolean) => classNames(
     active ? 'bg-gray-900 text-neutral-200' : 'text-neutral-300',
@@ -74,14 +56,14 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
             <Menu.Items className="absolute right-0 z-10 mt-2 origin-top rounded-md bg-gray-950 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full max-h-60 overflow-y-auto overflow-x-hidden">
               {search && (
                   <input 
-                    value={searchState.query}
+                    value={query}
                     onChange={handleChange}
                     className="bg-gray-700 text-neutral-200 px-4 py-2 text-sm ring-2 ring-gray-600 w-full"
                     placeholder="Search name or paste address"
                   />
               )}
 
-              {isToken ? (searchState.list as ITokenProps[]).sort(alphaTokenSort).map((el: ITokenProps, i) => (
+              {isToken ? (list as ITokenProps[]).sort(alphaTokenSort).map((el: ITokenProps, i) => (
                 <Menu.Item key={`dropdown-item-${el.symbol}-${i}`}>
                 {({ active }) => (
                   <button
@@ -92,7 +74,7 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
                   </button>
                 )}
               </Menu.Item>
-              )) : (searchState.list as string[]).map((el, i) => (
+              )) : (list as string[]).map((el, i) => (
                 <Menu.Item key={`dropdown-item-${el}-${i}`}>
                 {({ active }) => (
                   <button
@@ -105,12 +87,12 @@ export const DropdownInput = ({ state, setState, options, placeholder, type = 's
               </Menu.Item>
               ))}
 
-              {isToken && ethers.utils.isAddress(searchState.query) && (
+              {isToken && ethers.utils.isAddress(query) && (
                 <Menu.Item>
                   {({ active }) => (
                     <button
                       className={dropdownItemClass(active)}
-                      onClick={() => setState(type, searchState.query)}
+                      onClick={() => setState(type, query)}
                     >
                       <Asset symbol={"Unknown Token"} icon='/img/generic.svg' alt="Unknown Token" />
                     </button>
