@@ -1,9 +1,7 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { IOffer } from '@pintswap/sdk';
-import { useEffect, useState } from 'react';
 import { BiChevronUp } from 'react-icons/bi';
-import { fetchFeeData } from '@wagmi/core'
-import { utils } from 'ethers';
+import { convertAmount } from '../utils/common';
 
 type ITxDetailsProps = {
   trade: IOffer;
@@ -12,21 +10,10 @@ type ITxDetailsProps = {
 }
 
 export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
-  // const [gas, setGas] = useState('0');
-
-  const sending = type === 'fulfill' ? trade.gets : trade.gives;
-  const receiving = type === 'fulfill' ? trade.gives : trade.gets;
-
-  // useEffect(() => {
-  //   // TODO: get function gas price and multiply by gas Price
-  //   (async () => {
-  //       const { formatted } = await fetchFeeData();
-  //       if(formatted.gasPrice) {
-  //         const formattedGasPrice = utils.formatEther(formatted.gasPrice);
-  //         setGas(formattedGasPrice)
-  //       }
-  //   })().catch((err) => console.error(err));
-  // }, [])
+  const sending = trade.gives;
+    // type === 'fulfill' ? trade.gets : trade.gives;
+  const receiving = trade.gets;
+    // type === 'fulfill' ? trade.gives : trade.gets;
 
   return (
     <Disclosure>
@@ -45,29 +32,21 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
 
           <Transition
             enter="transition duration-100 ease-out"
-            // enterFrom="transform scale-95 opacity-0"
-            // enterTo="transform scale-100 opacity-100"
-                        enterFrom="transform h-0 scale-95 opacity-0"
+            enterFrom="transform h-0 scale-95 opacity-0"
             enterTo="transform h-full scale-100 opacity-100"
             leave="transition duration-100 ease-out"
-            // leaveFrom="transform scale-100 opacity-100"
-            // leaveTo="transform scale-95 opacity-0"
-                        leaveFrom="transform h-full scale-100 opacity-100"
+            leaveFrom="transform h-full scale-100 opacity-100"
             leaveTo="transform h-0 scale-95 opacity-0"
           >
             <Disclosure.Panel className="p-2 pt-1 rounded-b bg-neutral-800 text-xs lg:text-sm font-extralight space-y-1 cursor-pointer" as="ul" onClick={() => close()}>
               <li className="flex items-center justify-between">
                 <span>Sending</span>
-                <span>{sending.amount} {sending.token}</span>
+                <span>{convertAmount('readable', (sending.amount || '0'), sending.token)}</span>
               </li>
               <li className="flex items-center justify-between">
                 <span>Receiving</span>
-                <span>{receiving.amount} {receiving.token}</span>
+                <span>{convertAmount('readable', (receiving.amount || '0'), receiving.token)}</span>
               </li>
-              {/* <li className="flex items-center justify-between">
-                <span>Gas</span>
-                <span>{gas} ETH</span>
-              </li> */}
             </Disclosure.Panel>
           </Transition>
         </>

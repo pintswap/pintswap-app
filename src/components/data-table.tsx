@@ -130,7 +130,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
             case 'explore': 
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`);
             case 'manage': 
-                return copy(`${BASE_URL}/#/fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`)
+                return navigate(`${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`)
             case 'pairs':
                 url = `${url}pairs`;
                 break;
