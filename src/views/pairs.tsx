@@ -27,7 +27,7 @@ export const PairsView = () => {
               value={query}
               onChange={handleChange}
               type="search"
-              wrapperClass="max-w-[200px] md:max-w-[300px]"
+              wrapperClass="max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px]"
               noSpace
           />
       </div>
