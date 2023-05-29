@@ -1,4 +1,4 @@
-import { classNames } from "../utils/common"
+import { classNames } from "../utils/format"
 import { MdCheck } from 'react-icons/md'
 
 export type IOrderProgressProps = {

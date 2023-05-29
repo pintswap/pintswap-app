@@ -13,8 +13,8 @@ import {
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from "../stores/pintswap";
 import { useOffersContext, useUserContext } from '../stores';
-import { BASE_URL, convertAmount, INFTProps } from '../utils/common';
-import { fetchNFT } from '../utils/fetch-nft';
+import { BASE_URL, convertAmount, INFTProps } from '../utils';
+import { fetchNFT } from '../utils/nft';
 
 const columns = [
     {

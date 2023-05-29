@@ -1,10 +1,12 @@
 import fetch from "cross-fetch";
 import { ethers } from "ethers6";
-import { INFTProps, TESTING } from "./common";
-
 import { providerFromChainId } from "./provider";
+import { INFTProps } from "./types";
+import { TESTING } from "./constants";
 
 const IPFS_GATEWAY = "https://ipfs.io/ipfs/";
+
+export const nftCache: any = {};
 
 export function toGateway(uri: string) {
   if (isGateway(uri)) return IPFS_GATEWAY + uri.substr(7);
@@ -14,8 +16,6 @@ export function toGateway(uri: string) {
 export function isGateway(uri: string) {
   return uri.substr(0, 7) === 'ipfs://';
 }
-
-export const nftCache: any = {};
 
 export const hashNftIdentifier = ({ token, tokenId }: any) => {
   return ethers.solidityPackedKeccak256(['string', 'address', 'uint256'], [ '/pintswap/nft', token, tokenId ]);

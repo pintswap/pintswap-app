@@ -16,9 +16,9 @@ root.render(
                         <OffersStore>
                             <UserStore>
                                 <PeersStore>
-                                <HashRouter>
-                                    <App />
-                                </HashRouter>
+                                    <HashRouter>
+                                        <App />
+                                    </HashRouter>
                                 </PeersStore>
                             </UserStore>
                         </OffersStore>

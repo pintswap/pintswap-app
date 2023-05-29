@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchBalance } from '@wagmi/core'
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
-import { getTokenAttributes, round } from '../utils/common';
+import { getTokenAttributes, round } from '../utils';
 import { BiSearchAlt } from 'react-icons/bi'
 
 type IInputProps = {

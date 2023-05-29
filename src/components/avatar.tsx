@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from "../stores"
-import { getFormattedPeer, truncate } from "../utils/common";
+import { getFormattedPeer, truncate } from "../utils";
 import { StatusIndicator } from "./status-indicator";
 
 type IAvatarProps = {

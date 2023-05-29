@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { getFormattedPeer } from '../utils/common';
+import { getFormattedPeer } from '../utils/peer';
 import { usePintswapContext } from './pintswap';
 import { useOffersContext } from './offers';
 import { IUserDataProps } from './user';

@@ -1,7 +1,6 @@
-import React from 'react';
 import { Id, toast } from 'react-toastify';
 import { BsFillCheckCircleFill, BsFillExclamationCircleFill } from 'react-icons/bs';
-import { truncate } from './common';
+import { truncate } from './format';
 
 type IToastStatusProps = {
   status: 'error' | 'success' | 'pending';

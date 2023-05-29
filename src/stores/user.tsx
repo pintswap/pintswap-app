@@ -6,8 +6,7 @@ import {
     useState,
 } from 'react';
 import { usePintswapContext } from './pintswap';
-import { EMPTY_USER_DATA } from '../utils/common';
-import { savePintswap } from "../utils/save";
+import { EMPTY_USER_DATA, savePintswap } from '../utils';
 import { ethers } from 'ethers6';
 
 // Types

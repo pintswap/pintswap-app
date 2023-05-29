@@ -1,7 +1,7 @@
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdContentCopy } from 'react-icons/md';
 import { Button } from './button';
-import { truncate as _truncate } from '../utils/common';
+import { truncate as _truncate } from '../utils/format';
 import { ReactNode, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 

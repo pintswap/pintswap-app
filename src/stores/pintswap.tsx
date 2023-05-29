@@ -1,8 +1,8 @@
 import { useMemo, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner, useAccount } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
-import { defer, TESTING } from '../utils/common';
 import { ethers } from 'ethers';
+import { defer, TESTING } from '../utils';
 
 // Types
 export type IPintswapProps = {
@@ -46,7 +46,6 @@ export async function initializePintswapFromSigner({ signer, pintswap, setPintsw
   const ps = await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap;
   const newPintswap = pintswap.module ? mergeUserData(ps, pintswap.module) : ps;
   newPintswap.logger.info(newPintswap);
-  (window as any).discoveryDeferred = defer();
   newPintswap.on('peer:discovery', async (peer: any) => {
     if (TESTING) console.log('Discovered peer:', peer);
     (window as any).discoveryDeferred.resolve(peer);
@@ -78,6 +77,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         loading: true,
         error: false,
     });
+
     const metamask = useMemo(() => getMetamask(signer), [ signer ]);
     useEffect(() => {
       if (metamask) {

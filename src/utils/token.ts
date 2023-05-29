@@ -1,0 +1,116 @@
+import { TESTING, TOKENS_BY_ADDRESS, TOKENS_BY_SYMBOL } from "./constants";
+import { maybeShorten } from "./format";
+import { ITokenProps, TOKENS } from "./token-list";
+import { ethers } from 'ethers6';
+
+export const decimalsCache: any = {};
+export const symbolCache: any = {};
+
+export function toAddress(symbolOrAddress: string): string {
+    if(!symbolOrAddress) return '';
+    const token = TOKENS_BY_SYMBOL[symbolOrAddress];
+    if (token) return ethers.getAddress(token.address);
+    return ethers.getAddress(symbolOrAddress);
+}
+
+export function fromAddress(symbolOrAddress: string): string {
+    return (TOKENS_BY_ADDRESS[symbolOrAddress] || { address: symbolOrAddress }).symbol;
+}
+
+export async function toTicker(pair: any, provider: any) {
+    const flipped = [...pair].reverse();
+    return (
+        await Promise.all(
+            flipped.map(async (v: any) => maybeShorten(await getSymbol(v.address, provider))),
+        )
+    ).join('/');
+}
+
+export async function getSymbol(address: any, provider: any) {
+    address = ethers.getAddress(address);
+    const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
+    if (match) return match.symbol;
+    else if (symbolCache[address]) {
+        return symbolCache[address];
+    } else {
+        const contract = new ethers.Contract(
+            address,
+            ['function symbol() view returns (string)'],
+            provider,
+        );
+        try {
+            symbolCache[address] = await contract.symbol();
+        } catch (e) {
+            symbolCache[address] = address;
+        }
+        return symbolCache[address];
+    }
+}
+
+export const alphaTokenSort = (a: ITokenProps, b: ITokenProps) => {
+  const textA = a.symbol.toUpperCase();
+  const textB = b.symbol.toUpperCase();
+  return textA < textB ? -1 : textA > textB ? 1 : 0;
+};
+
+export function getTokenAttributes(token: string, attribute?: keyof ITokenProps) {
+  let found;
+  if (!token) return token;
+  if (token.includes('0x')) {
+      found = TOKENS.find((el) => el.address.toLowerCase() === token.toLowerCase());
+  } else {
+      found = TOKENS.find((el) => el.symbol.toLowerCase() === token.toLowerCase());
+  }
+  if (found) {
+      if (attribute) return found[attribute];
+      else return found;
+  } else {
+      console.warn('#getTokenAttributes: Error finding token', {
+          token,
+          found,
+      });
+      return '';
+  }
+}
+
+export async function getDecimals(address: any, provider: any) {
+  address = ethers.getAddress(address);
+  const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
+  if (match) return match.decimals;
+  else if (decimalsCache[address]) {
+      return decimalsCache[address];
+  } else {
+      const contract = new ethers.Contract(
+          address,
+          ['function decimals() view returns (uint8)'],
+          provider,
+      );
+      decimalsCache[address] = Number(await contract.decimals());
+      return decimalsCache[address];
+  }
+}
+
+export function convertAmount(to: 'hex' | 'number' | 'readable', amount: string, token: string) {
+  const getDecimals = (token: string) => {
+    let found;
+    if (token.startsWith('0x')) {
+        found = TOKENS.find((el) => el.address.toLowerCase() === token.toLowerCase())?.decimals;
+    } else {
+        found = TOKENS.find((el) => el.symbol.toLowerCase() === token.toLowerCase())?.decimals;
+    }
+    return found || 18;
+  };
+  
+  let output;
+  if (to === 'hex') {
+      if (amount.startsWith('0x')) output = amount;
+      else output = ethers.toBeHex(ethers.parseUnits(amount, getDecimals(token)));
+  } else {
+      if (amount.startsWith('0x')) output = ethers.formatUnits(amount, getDecimals(token));
+      else output = amount;
+  }
+  if (TESTING) console.log('#convertAmount:', { amount, token, output });
+  return to === 'readable'
+      ? `${output}  ${getTokenAttributes(token, 'symbol') || 'N/A'}`
+      : output;
+}

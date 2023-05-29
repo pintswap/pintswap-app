@@ -1,6 +1,6 @@
 import { Fragment, ReactNode, MouseEventHandler } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import { classNames } from '../utils/common'
+import { classNames } from '../utils/format'
 import { useNavigate } from 'react-router-dom'
 import { ActiveText } from './active-text'
 import { AnimatedHamburger } from './hamburger'
