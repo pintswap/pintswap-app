@@ -106,7 +106,7 @@ export const AccountView = () => {
                                             disabled={!isEditing}
                                             placeholder={isEditing ? 'Start typing here...' : 'No username'}
                                             max={50}
-                                            className="!rounded-r-none"
+                                            className={`!rounded-r-none`}
                                         />
                                         {isEditing && (
                                             <DropdownInput state={extension} type="input-ext" />

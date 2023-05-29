@@ -101,9 +101,30 @@ export const FulfillView = () => {
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-4 md:gap-6">
-            <TransitionModal button={<Avatar peer={order.multiAddr} withBio withName align="left" size={60} type="profile" />}>
-                    <Avatar peer={order.multiAddr} size={300} />
-                </TransitionModal>
+                <div className="flex items-center justify-between">
+                    <TransitionModal button={<Avatar peer={order.multiAddr} withBio withName align="left" size={60} type="profile" />}>
+                        <Avatar peer={order.multiAddr} size={300} />
+                    </TransitionModal>
+                    <Transition
+                        show={!!order.orderHash && !!order.multiAddr}
+                        enter="transition-opacity duration-75"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity duration-150"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                        className="flex flex-col justify-center items-center text-center"
+                    >
+                        <CopyClipboard
+                            value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`}
+                            icon
+                            lg
+                            truncate={5}
+                        >
+                            Trade Link
+                        </CopyClipboard>
+                    </Transition>
+                </div>
                 <Card 
                     header={
                         <div>
@@ -185,26 +206,6 @@ export const FulfillView = () => {
                 <div className="mx-auto">
                     <ProgressIndicator steps={steps} />
                 </div>
-
-                <Transition
-                    show={!!order.orderHash && !!order.multiAddr}
-                    enter="transition-opacity duration-75"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-150"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                    className="flex flex-col justify-center items-center text-center"
-                >
-                    <CopyClipboard
-                        value={`${BASE_URL}/#/${order.multiAddr}/${order.orderHash}`}
-                        icon
-                        lg
-                        truncate={5}
-                    >
-                        Trade Link
-                    </CopyClipboard>
-                </Transition>
             </div>
             <Transition
                 show={steps[2].status === 'current'}
