@@ -30,6 +30,7 @@ export const PeersView = () => {
                     size={30} 
                     withName
                     withBio
+                    withImage={false}
                     align="left"
                   />
                 </Card>
@@ -42,6 +43,7 @@ export const PeersView = () => {
                     size={40} 
                     withName
                     withBio
+                    withImage={false}
                     align="left"
                   />
                 </Card>

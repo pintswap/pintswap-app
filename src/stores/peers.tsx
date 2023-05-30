@@ -42,7 +42,7 @@ export function PeersStore(props: { children: ReactNode }) {
     setLoading(true);
       const peerAddresses = Array.from(new Set(limitOrdersArr.map(o => o.peer)));
       try {
-        const allPeersData = await Promise.all(peerAddresses.map(async (address) => await getFormattedPeer(pintswap, address)))
+        const allPeersData = await Promise.all(peerAddresses.map(async (address) => await getFormattedPeer(pintswap, address, 'minimal')))
         setLoading(false)
         setData(allPeersData)
       } catch (err) {

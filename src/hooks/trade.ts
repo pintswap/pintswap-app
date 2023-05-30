@@ -7,18 +7,9 @@ import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { useOffersContext, useUserContext } from '../stores';
 import { toBeHex } from 'ethers6';
-import { savePintswap, updateToast, convertAmount, EMPTY_TRADE, getTokenAttributes, TESTING, ITokenProps } from '../utils';
+import { savePintswap, updateToast, convertAmount, EMPTY_TRADE, getTokenAttributes, TESTING, ITokenProps, IOrderStateProps, IOrderbookProps } from '../utils';
 
 const ln = (v: any) => (console.log(v), v);
-
-type IOrderStateProps = {
-    orderHash: string;
-    multiAddr: string | any;
-};
-
-type IOrderbookProps = {
-    offers: IOffer[];
-};
 
 export const resolveName = async (pintswap: any, name: any) => {
     while (true as any) {

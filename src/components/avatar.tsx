@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from "../stores"
-import { getFormattedPeer, truncate } from "../utils";
+import { BASE_AVATAR_URL, DEFAULT_AVATAR, getFormattedPeer, getPeerImg, truncate } from "../utils";
 import { StatusIndicator } from "./status-indicator";
 
 type IAvatarProps = {
@@ -38,10 +38,10 @@ export const Avatar = ({
   const { userData } = useUserContext();
   const { peersData } = usePeersContext();
   const navigate = useNavigate();
+  const { multiaddr } = useParams();
 
-  const defaultImgSrc = '/black.jpg';
   const defaultUserState = { 
-    img: defaultImgSrc, 
+    img: DEFAULT_AVATAR, 
     bio: pathname.includes('account') ? (userData.bio ? userData.bio : '') : '', 
     name: peer && typeof peer === 'string' ? peer : truncate(userData.name),
     active: false,
@@ -50,22 +50,39 @@ export const Avatar = ({
 
   // TODO: fix so that not all avatars require a "peer" to be passed
   const getUserData = async (): Promise<IUserDataProps | undefined> => {
-    const baseUrl = `data:image/jpg;base64,`;
     if(module) {
       if(peer) {
         if(typeof peer === 'string') {
+          // Passed peer string
           const found = peersData.find((el => el.name.toLowerCase() === peer.toLowerCase()));
-          if(found) return found;
-          else {
-            const formattedPeer = await getFormattedPeer(pintswap, peer);
+          if(found) {
+            if((found.img === '' || found.img === '/black.jpg') && multiaddr) {
+              return {
+                ...found,
+                img: await getPeerImg(pintswap, peer)
+              }
+            }
+            return found
+          } else {
+            const formattedPeer = await getFormattedPeer(pintswap, peer, withImage ? 'full' : 'minimal');
             if(formattedPeer) return formattedPeer;
           }
-        } else return peer;
+        } else {
+          // Passed entire peer obj
+          if((peer.img === '' || peer.img === '/black.jpg') && multiaddr) {
+            return {
+              ...peer,
+              img: await getPeerImg(pintswap, peer)
+            }
+          }
+          return peer
+        }
       } else {
+        // Passed no peer / user data
         const renderName = userData.name ? 
           userData.name : truncate(module.peerId.toB58String());
         const renderPic = userData.img?.toString('base64') !== '' ?
-          `${baseUrl}${userData.img?.toString('base64')}` : defaultImgSrc;
+          `${BASE_AVATAR_URL}${userData.img?.toString('base64')}` : DEFAULT_AVATAR;
         return {
           ...userData,
           img: renderPic,
@@ -92,6 +109,7 @@ export const Avatar = ({
       default: return 'items-center justify-center text-center';
     }
   }
+
   if(type === 'clickable') {
     return (
       <div className={`${loading ? 'animate-pulse' : ''}`}>

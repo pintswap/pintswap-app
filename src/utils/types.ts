@@ -1,3 +1,5 @@
+import { IOffer } from "@pintswap/sdk";
+
 export interface BaseOffer {
     token: string;
     amount?: unknown;
@@ -25,4 +27,13 @@ export type INFTProps = {
     offerHash: string;
     amount: string;
 }
+
+export type IOrderStateProps = {
+  orderHash: string;
+  multiAddr: string | any;
+};
+
+export type IOrderbookProps = {
+  offers: IOffer[];
+};
 

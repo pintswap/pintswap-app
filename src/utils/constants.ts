@@ -35,3 +35,7 @@ export const EMPTY_PEER: JSONPeerId = {
 export const EMPTY_USER_DATA: IUserDataProps = {
   img: '', bio: '', name: '', offers: [], privateKey: '', active: false, extension: '.drip'
 }
+
+export const DEFAULT_AVATAR = '/black.jpg';
+
+export const BASE_AVATAR_URL = `data:image/jpg;base64,`;
