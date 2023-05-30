@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card } from '../components';
 import { useOffersContext, usePintswapContext } from '../stores';
-import { getTokenAttributes } from '../utils/token';
+import { getTokenLogo } from '../utils/token';
 import { resolveName } from '../hooks/trade';
 import { useParams } from 'react-router-dom';
 import { groupBy } from 'lodash';
@@ -58,8 +58,8 @@ export const PairsTable = () => {
                           const split = pair.ticker.split('/');
                           const token1 = split[0];
                           const token2 = split[1];
-                          const icon1 = getTokenAttributes(token1, 'logoURI')?.toString();
-                          const icon2 = getTokenAttributes(token2, 'logoURI')?.toString();
+                          const icon1 = getTokenLogo(token1);
+                          const icon2 = getTokenLogo(token2);
                           return (
                               <button
                                   key={`unique-pair-${pair.ticker}`}

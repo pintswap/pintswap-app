@@ -16,7 +16,7 @@ import { useOffersContext, useUserContext } from '../stores';
 import { usePintswapContext } from '../stores/pintswap';
 import { convertAmount } from '../utils/token';
 import { Tab } from '@headlessui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const columns = [
     {
@@ -55,6 +55,7 @@ export const AccountView = () => {
 
     const [shallowForm, setShallowForm] = useState({ bio, name });
     const [isEditing, setIsEditing] = useState(false);
+    const [tableData, setTableData] = useState<any[]>([])
 
     const handleUpdate = () => {
         handleSave();
@@ -67,6 +68,27 @@ export const AccountView = () => {
         updateName({ target: { value: shallowForm.name } });
         setIsEditing(false);
     };
+
+    useEffect(() => {
+        (async () => {
+            const tableDataRes = await Promise.all(Array.from(userTrades, async (entry) => ({
+                hash: entry[0],
+                sending: await convertAmount(
+                    'readable',
+                    entry[1].gives.amount || '',
+                    entry[1].gives.token,
+                    pintswap.module?.signer
+                ),
+                receiving: await convertAmount(
+                    'readable',
+                    entry[1].gets.amount || '',
+                    entry[1].gets.token,
+                    pintswap.module?.signer
+                ),
+            })))
+            setTableData(tableDataRes)
+        })().catch(err => console.error(err))
+    }, [userTrades.size])
 
     const TABS = ['Profile', width > 600 ? 'Your Orders' : 'Orders'];
     return (
@@ -208,19 +230,7 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <DataTable
                         columns={columns}
-                        data={Array.from(userTrades, (entry) => ({
-                            hash: entry[0],
-                            sending: convertAmount(
-                                'readable',
-                                entry[1].gives.amount || '',
-                                entry[1].gives.token,
-                            ),
-                            receiving: convertAmount(
-                                'readable',
-                                entry[1].gets.amount || '',
-                                entry[1].gets.token,
-                            ),
-                        }))}
+                        data={tableData}
                         type="manage"
                         toolbar={false}
                     />

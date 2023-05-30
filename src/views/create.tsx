@@ -42,8 +42,18 @@ export const CreateView = () => {
     const { userData, toggleActive } = useUserContext();
     const { userTrades } = useOffersContext();
     const [nft, setNFT] = useState<INFTProps | null>(null);
-
     const [resolvedName, setResolvedName] = useState<any>(order.multiAddr);
+    const [tableData, setTableData] = useState<any[]>([]);
+
+    const createTradeLink = () => {
+        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName}`;
+        if (trade.gives.tokenId) {
+            finalUrl = `${finalUrl}/nft/${order.orderHash}`;
+        } else {
+            finalUrl = `${finalUrl}/${order.orderHash}`;
+        }
+        return finalUrl;
+    };
 
     useEffect(() => {
         (async () => {
@@ -60,16 +70,6 @@ export const CreateView = () => {
         );
     }, [order]);
 
-    const createTradeLink = () => {
-        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName}`;
-        if (trade.gives.tokenId) {
-            finalUrl = `${finalUrl}/nft/${order.orderHash}`;
-        } else {
-            finalUrl = `${finalUrl}/${order.orderHash}`;
-        }
-        return finalUrl;
-    };
-
     useEffect(() => {
         (async () => {
             const { gives } = trade;
@@ -79,6 +79,28 @@ export const CreateView = () => {
             }
         })().catch((err) => console.error(err));
     }, [trade.gives.tokenId, trade.gives.token]);
+
+    useEffect(() => {
+        (async () => {
+            const tableDataRes = await Promise.all(Array.from(userTrades, async (entry) => ({
+                hash: entry[0],
+                sending: await convertAmount(
+                    'readable',
+                    entry[1].gives.amount || '',
+                    entry[1].gives.token,
+                    pintswap.module?.signer
+                ),
+                receiving: await convertAmount(
+                    'readable',
+                    entry[1].gets.amount || '',
+                    entry[1].gets.token,
+                    pintswap.module?.signer
+                ),
+            })))
+            console.log("tableDataRes", tableDataRes)
+            setTableData(tableDataRes)
+        })().catch(err => console.error(err))
+    }, [userTrades.size])
 
     const TABS = ['ERC20', 'NFT'];
     return (
@@ -240,19 +262,7 @@ export const CreateView = () => {
                     <Card>
                         <DataTable
                             columns={columns}
-                            data={Array.from(userTrades, (entry) => ({
-                                hash: entry[0],
-                                sending: convertAmount(
-                                    'readable',
-                                    entry[1].gives.amount || '',
-                                    entry[1].gives.token,
-                                ),
-                                receiving: convertAmount(
-                                    'readable',
-                                    entry[1].gets.amount || '',
-                                    entry[1].gets.token,
-                                ),
-                            }))}
+                            data={tableData}
                             type="manage"
                             toolbar={false}
                         />

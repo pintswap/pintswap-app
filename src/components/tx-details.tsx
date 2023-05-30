@@ -2,6 +2,8 @@ import { Disclosure, Transition } from '@headlessui/react';
 import { IOffer } from '@pintswap/sdk';
 import { BiChevronUp } from 'react-icons/bi';
 import { convertAmount } from '../utils/token';
+import { useEffect, useState } from 'react';
+import { usePintswapContext } from '../stores';
 
 type ITxDetailsProps = {
     trade: IOffer;
@@ -10,10 +12,31 @@ type ITxDetailsProps = {
 };
 
 export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
+    const { pintswap: { module } } = usePintswapContext();
+    const [displayTrade, setDisplayTrade] = useState({ sending: '0', receiving: '0' })
     const sending = trade.gives;
     // type === 'fulfill' ? trade.gets : trade.gives;
     const receiving = trade.gets;
     // type === 'fulfill' ? trade.gives : trade.gets;
+
+    useEffect(() => {
+        (async () => {
+            setDisplayTrade({
+                sending: await convertAmount(
+                    'readable',
+                    sending.amount || '0',
+                    sending.token,
+                    module?.signer
+                ),
+                receiving: await convertAmount(
+                    'readable',
+                    receiving.amount || '0',
+                    receiving.token,
+                    module?.signer
+                ),
+            })
+        })().catch(err => console.error(err))
+    }, [trade]);
 
     return (
         <Disclosure>
@@ -52,21 +75,13 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                             <li className="flex items-center justify-between">
                                 <span>Sending</span>
                                 <span>
-                                    {convertAmount(
-                                        'readable',
-                                        sending.amount || '0',
-                                        sending.token,
-                                    )}
+                                    {displayTrade.sending}
                                 </span>
                             </li>
                             <li className="flex items-center justify-between">
                                 <span>Receiving</span>
                                 <span>
-                                    {convertAmount(
-                                        'readable',
-                                        receiving.amount || '0',
-                                        receiving.token,
-                                    )}
+                                    {displayTrade.receiving}
                                 </span>
                             </li>
                         </Disclosure.Panel>

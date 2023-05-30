@@ -71,7 +71,6 @@ export const getFormattedPeer = async (
     const baseUrl = `data:image/jpg;base64,`;
     try {
         const res = await getPeerData(ps, peer, type);
-        console.log('#getFormattedPeer: res', res);
         const formattedName = await formatPeerName(ps, peer);
         if (res) {
             const renderPic =

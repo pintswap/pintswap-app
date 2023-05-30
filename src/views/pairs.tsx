@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card, Input } from '../components';
 import { useOffersContext } from '../stores';
-import { getTokenAttributes } from '../utils/token';
+import { getTokenLogo } from '../utils/token';
 import { useSearch } from '../hooks';
 
 export const PairsView = () => {
@@ -39,8 +39,8 @@ export const PairsView = () => {
                           const split = pair.split('/');
                           const token1 = split[0];
                           const token2 = split[1];
-                          const icon1 = getTokenAttributes(token1, 'logoURI')?.toString();
-                          const icon2 = getTokenAttributes(token2, 'logoURI')?.toString();
+                          const icon1 = getTokenLogo(token1);
+                          const icon2 = getTokenLogo(token2);
                           return (
                               <button
                                   key={`unique-pair-${pair}`}
