@@ -82,25 +82,27 @@ export const CreateView = () => {
 
     useEffect(() => {
         (async () => {
-            const tableDataRes = await Promise.all(Array.from(userTrades, async (entry) => ({
-                hash: entry[0],
-                sending: await convertAmount(
-                    'readable',
-                    entry[1].gives.amount || '',
-                    entry[1].gives.token,
-                    pintswap.module?.signer
-                ),
-                receiving: await convertAmount(
-                    'readable',
-                    entry[1].gets.amount || '',
-                    entry[1].gets.token,
-                    pintswap.module?.signer
-                ),
-            })))
-            console.log("tableDataRes", tableDataRes)
-            setTableData(tableDataRes)
-        })().catch(err => console.error(err))
-    }, [userTrades.size])
+            const tableDataRes = await Promise.all(
+                Array.from(userTrades, async (entry) => ({
+                    hash: entry[0],
+                    sending: await convertAmount(
+                        'readable',
+                        entry[1].gives.amount || '',
+                        entry[1].gives.token,
+                        pintswap.module?.signer,
+                    ),
+                    receiving: await convertAmount(
+                        'readable',
+                        entry[1].gets.amount || '',
+                        entry[1].gets.token,
+                        pintswap.module?.signer,
+                    ),
+                })),
+            );
+            console.log('tableDataRes', tableDataRes);
+            setTableData(tableDataRes);
+        })().catch((err) => console.error(err));
+    }, [userTrades.size]);
 
     const TABS = ['ERC20', 'NFT'];
     return (

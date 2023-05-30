@@ -12,8 +12,10 @@ type ITxDetailsProps = {
 };
 
 export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
-    const { pintswap: { module } } = usePintswapContext();
-    const [displayTrade, setDisplayTrade] = useState({ sending: '0', receiving: '0' })
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
+    const [displayTrade, setDisplayTrade] = useState({ sending: '0', receiving: '0' });
     const sending = trade.gives;
     // type === 'fulfill' ? trade.gets : trade.gives;
     const receiving = trade.gets;
@@ -26,16 +28,16 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                     'readable',
                     sending.amount || '0',
                     sending.token,
-                    module?.signer
+                    module?.signer,
                 ),
                 receiving: await convertAmount(
                     'readable',
                     receiving.amount || '0',
                     receiving.token,
-                    module?.signer
+                    module?.signer,
                 ),
-            })
-        })().catch(err => console.error(err))
+            });
+        })().catch((err) => console.error(err));
     }, [trade]);
 
     return (
@@ -74,15 +76,11 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                         >
                             <li className="flex items-center justify-between">
                                 <span>Sending</span>
-                                <span>
-                                    {displayTrade.sending}
-                                </span>
+                                <span>{displayTrade.sending}</span>
                             </li>
                             <li className="flex items-center justify-between">
                                 <span>Receiving</span>
-                                <span>
-                                    {displayTrade.receiving}
-                                </span>
+                                <span>{displayTrade.receiving}</span>
                             </li>
                         </Disclosure.Panel>
                     </Transition>

@@ -10,7 +10,7 @@
         "test": "jest",
         "eject": "react-app-rewired eject",
         "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
-        "lint": "eslint --fix",
+        "lint": "eslint . --ext ts --ext tsx",
         "pretty": "prettier --write .",
         "prepare": "husky install"
     },
@@ -131,14 +131,12 @@
     },
     "husky": {
         "hooks": {
-            "pre-push": "lint-staged"
+            "pre-commit": "lint-staged"
         }
     },
     "lint-staged": {
-        "*.{js,ts,tsx}": [
-            "yarn lint"
-        ],
-        "*.{json,js,ts,jsx,tsx,html}": [
+        "*.@(ts|tsx)": [
+            "yarn lint",
             "yarn pretty"
         ]
     }

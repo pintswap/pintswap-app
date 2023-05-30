@@ -35,10 +35,12 @@ export const resolveName = async (pintswap: any, name: any) => {
 export const useTrade = () => {
     const params = useParams();
     const { pathname } = useLocation();
-    const { pintswap: { module } } = usePintswapContext();
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
     const { addTrade, userTrades, setPeerTrades, peerTrades, setUserTrades } = useOffersContext();
-    
+
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
@@ -82,15 +84,24 @@ export const useTrade = () => {
                     token:
                         ((await getTokenAttributes(gives.token, 'symbol')) as string) ||
                         gives.token,
-                    amount: await convertAmount('number', gives.amount || '', gives.token, module?.signer),
+                    amount: await convertAmount(
+                        'number',
+                        gives.amount || '',
+                        gives.token,
+                        module?.signer,
+                    ),
                 },
                 gets: {
                     token:
-                        ((await getTokenAttributes(gets.token, 'symbol')) as string) ||
+                        ((await getTokenAttributes(gets.token, 'symbol')) as string) || gets.token,
+                    amount: await convertAmount(
+                        'number',
+                        gets.amount || '',
                         gets.token,
-                    amount: await convertAmount('number', gets.amount || '', gets.token, module?.signer),
+                        module?.signer,
+                    ),
                 },
-            }
+            };
         } catch (err) {
             console.error(err);
             return {
@@ -102,9 +113,9 @@ export const useTrade = () => {
                     token: gets.token,
                     amount: gets.amount,
                 },
-            }
+            };
         }
-    }
+    };
 
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent) => {
@@ -146,7 +157,8 @@ export const useTrade = () => {
                     );
                     // If standard swap
                 } else {
-                    if (TESTING) console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
+                    if (TESTING)
+                        console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
                     module.createTrade(peeredUp, ln(await buildTradeObj(trade)));
                 }
                 if (TESTING) console.log('Fulfilled trade!');
@@ -171,9 +183,7 @@ export const useTrade = () => {
                 try {
                     // TODO: optimize
                     console.log('getUserDataByPeerId', resolved);
-                    const { offers }: IOrderbookProps = await module.getUserDataByPeerId(
-                        resolved,
-                    );
+                    const { offers }: IOrderbookProps = await module.getUserDataByPeerId(resolved);
                     console.log('offers', offers);
                     if (orderHash && peerTrades.get(orderHash)) {
                         const { gives, gets } = peerTrades.get(orderHash) as any;

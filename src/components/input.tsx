@@ -55,7 +55,9 @@ export const Input = ({
                             ? { address }
                             : {
                                   address,
-                                  token: (await getTokenAttributes(token, 'address') as string) || token,
+                                  token:
+                                      ((await getTokenAttributes(token, 'address')) as string) ||
+                                      token,
                               };
                     const { formatted, symbol } = await fetchBalance(params);
                     if (formatted) setBalance({ loading: false, formatted, symbol });

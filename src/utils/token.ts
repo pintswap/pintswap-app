@@ -108,7 +108,7 @@ export async function getTokenAttributes(
 }
 
 export async function getDecimals(token: string, provider: any) {
-    if(token.startsWith('0x')) {
+    if (token.startsWith('0x')) {
         const address = ethers.getAddress(token);
         const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
         if (match) return match.decimals;
@@ -129,18 +129,24 @@ export async function getDecimals(token: string, provider: any) {
     }
 }
 
-export async function convertAmount(to: 'hex' | 'number' | 'readable', amount: string, token: string, provider: any) {
+export async function convertAmount(
+    to: 'hex' | 'number' | 'readable',
+    amount: string,
+    token: string,
+    provider: any,
+) {
     let output;
     if (to === 'hex') {
         if (amount.startsWith('0x')) output = amount;
         else output = ethers.toBeHex(ethers.parseUnits(amount, await getDecimals(token, provider)));
     } else {
-        if (amount.startsWith('0x')) output = ethers.formatUnits(amount, await getDecimals(token, provider));
+        if (amount.startsWith('0x'))
+            output = ethers.formatUnits(amount, await getDecimals(token, provider));
         else output = amount;
     }
     if (TESTING) console.log('#convertAmount:', { amount, token, output });
     return to === 'readable'
-        ? `${output}  ${await getTokenAttributes(token, 'symbol') || 'N/A'}`
+        ? `${output}  ${(await getTokenAttributes(token, 'symbol')) || 'N/A'}`
         : output;
 }
 
@@ -152,6 +158,6 @@ export function getTokenLogo(token: string) {
     } else {
         found = TOKENS.find((el) => el.symbol.toLowerCase() === token.toLowerCase());
     }
-    if(found) return found.logoURI.toString();
-    else return '/img/generic.svg'
+    if (found) return found.logoURI.toString();
+    else return '/img/generic.svg';
 }

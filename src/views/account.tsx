@@ -55,7 +55,7 @@ export const AccountView = () => {
 
     const [shallowForm, setShallowForm] = useState({ bio, name });
     const [isEditing, setIsEditing] = useState(false);
-    const [tableData, setTableData] = useState<any[]>([])
+    const [tableData, setTableData] = useState<any[]>([]);
 
     const handleUpdate = () => {
         handleSave();
@@ -71,24 +71,26 @@ export const AccountView = () => {
 
     useEffect(() => {
         (async () => {
-            const tableDataRes = await Promise.all(Array.from(userTrades, async (entry) => ({
-                hash: entry[0],
-                sending: await convertAmount(
-                    'readable',
-                    entry[1].gives.amount || '',
-                    entry[1].gives.token,
-                    pintswap.module?.signer
-                ),
-                receiving: await convertAmount(
-                    'readable',
-                    entry[1].gets.amount || '',
-                    entry[1].gets.token,
-                    pintswap.module?.signer
-                ),
-            })))
-            setTableData(tableDataRes)
-        })().catch(err => console.error(err))
-    }, [userTrades.size])
+            const tableDataRes = await Promise.all(
+                Array.from(userTrades, async (entry) => ({
+                    hash: entry[0],
+                    sending: await convertAmount(
+                        'readable',
+                        entry[1].gives.amount || '',
+                        entry[1].gives.token,
+                        pintswap.module?.signer,
+                    ),
+                    receiving: await convertAmount(
+                        'readable',
+                        entry[1].gets.amount || '',
+                        entry[1].gets.token,
+                        pintswap.module?.signer,
+                    ),
+                })),
+            );
+            setTableData(tableDataRes);
+        })().catch((err) => console.error(err));
+    }, [userTrades.size]);
 
     const TABS = ['Profile', width > 600 ? 'Your Orders' : 'Orders'];
     return (
@@ -228,12 +230,7 @@ export const AccountView = () => {
                     </form>
                 </Tab.Panel>
                 <Tab.Panel>
-                    <DataTable
-                        columns={columns}
-                        data={tableData}
-                        type="manage"
-                        toolbar={false}
-                    />
+                    <DataTable columns={columns} data={tableData} type="manage" toolbar={false} />
                 </Tab.Panel>
             </Card>
 
