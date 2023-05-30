@@ -10,43 +10,47 @@ type ICopyClipboardProps = {
     value: string;
     lg?: boolean;
     truncate?: number;
-    children?: ReactNode
+    children?: ReactNode;
 };
 
 export const CopyClipboard = ({ icon, value, lg, truncate, children }: ICopyClipboardProps) => {
     const [tooltipOpen, setTooltipOpen] = useState(false);
 
     const toggleTooltip = () => {
-        if(!tooltipOpen) {
+        if (!tooltipOpen) {
             setTooltipOpen(true);
             setTimeout(() => setTooltipOpen(false), 1000);
         } else {
-            setTooltipOpen(false)
+            setTooltipOpen(false);
         }
-    }
+    };
 
     return (
         <>
             {children ? (
-                <CopyToClipboard text={value} data-tooltip-id="clipboard-copy-click" onCopy={toggleTooltip}>
+                <CopyToClipboard
+                    text={value}
+                    data-tooltip-id="clipboard-copy-click"
+                    onCopy={toggleTooltip}
+                >
                     <div className="hover:cursor-pointer hover:text-neutral-300 transition duration-200 flex items-center gap-1 md:gap-2">
                         {children}
                         {icon && <MdContentCopy />}
                     </div>
                 </CopyToClipboard>
             ) : (
-                <CopyToClipboard text={value} data-tooltip-id="clipboard-copy-click" onCopy={toggleTooltip}>
+                <CopyToClipboard
+                    text={value}
+                    data-tooltip-id="clipboard-copy-click"
+                    onCopy={toggleTooltip}
+                >
                     <Button className={`mx-auto ${lg ? 'text-lg' : ''}`} type="transparent">
                         <span>{truncate ? _truncate(value, truncate) : value}</span>
                         {icon && <MdContentCopy />}
                     </Button>
                 </CopyToClipboard>
             )}
-            <Tooltip
-                id="clipboard-copy-click"
-                content="Copied!"
-                isOpen={tooltipOpen}
-            />
+            <Tooltip id="clipboard-copy-click" content="Copied!" isOpen={tooltipOpen} />
         </>
-    )
+    );
 };

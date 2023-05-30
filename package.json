@@ -11,7 +11,8 @@
         "eject": "react-app-rewired eject",
         "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
         "lint": "eslint --fix",
-        "pretty": "prettier --write"
+        "pretty": "prettier --write .",
+        "prepare": "husky install"
     },
     "dependencies": {
         "@emotion/react": "^11.10.6",

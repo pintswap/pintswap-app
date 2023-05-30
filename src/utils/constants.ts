@@ -25,16 +25,24 @@ export const DAI: any = TOKENS.find((v) => v.symbol === 'DAI');
 // DEFAULT VALS
 export const EMPTY_TRADE: IOffer = {
     gets: { token: '', amount: '' },
-    gives: { amount: '', token: '' }
+    gives: { amount: '', token: '' },
 };
 
 export const EMPTY_PEER: JSONPeerId = {
-    id: '', privKey: '', pubKey: '',
+    id: '',
+    privKey: '',
+    pubKey: '',
 };
 
 export const EMPTY_USER_DATA: IUserDataProps = {
-  img: '', bio: '', name: '', offers: [], privateKey: '', active: false, extension: '.drip'
-}
+    img: '',
+    bio: '',
+    name: '',
+    offers: [],
+    privateKey: '',
+    active: false,
+    extension: '.drip',
+};
 
 export const DEFAULT_AVATAR = '/black.jpg';
 

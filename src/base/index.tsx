@@ -14,9 +14,7 @@ export const Base = ({ children, loading }: IBaseProps) => {
             {loading && <PageStatus type="loading" />}
             <div className="flex flex-col h-screen">
                 <Navbar />
-                <DashboardLayout>
-                    {children}
-                </DashboardLayout>
+                <DashboardLayout>{children}</DashboardLayout>
             </div>
         </>
     );

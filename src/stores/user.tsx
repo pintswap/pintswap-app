@@ -1,10 +1,4 @@
-import {
-    createContext,
-    ReactNode,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { usePintswapContext } from './pintswap';
 import { EMPTY_USER_DATA, savePintswap } from '../utils';
 import { ethers } from 'ethers6';
@@ -18,7 +12,7 @@ export type IUserDataProps = {
     privateKey?: string;
     extension?: string;
     active: boolean;
-}
+};
 
 export type IUserStoreProps = {
     userData: IUserDataProps;
@@ -40,53 +34,53 @@ const UserContext = createContext<IUserStoreProps>({
     handleSave() {},
     updatePrivateKey(e) {},
     updateExt(e) {},
-    toggleActive() {}
+    toggleActive() {},
 });
 
 // Wrapper
 export function UserStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
-    const [ userData, setUserData ] = useState<IUserDataProps>(EMPTY_USER_DATA);
+    const [userData, setUserData] = useState<IUserDataProps>(EMPTY_USER_DATA);
     const psUser = localStorage.getItem('_pintUser');
 
     function toggleActive() {
-        if(!userData.active) module?.startPublishingOffers(60000);
+        if (!userData.active) module?.startPublishingOffers(60000);
         else module?.startPublishingOffers(60000).stop();
         setUserData({ ...userData, active: !userData.active });
     }
 
     function updateExt(e: any) {
-        console.log(e)
+        console.log(e);
     }
 
     async function updateImg(e: any) {
-        if(module) {
+        if (module) {
             let image = (e.target.files as any)[0] ?? null;
             let _buff = Buffer.from(await image.arrayBuffer());
             module.setImage(_buff);
-            setUserData({...userData, img: _buff});
+            setUserData({ ...userData, img: _buff });
         }
     }
 
     function updateBio(e: any) {
-        if(module) {
+        if (module) {
             module.setBio(e.target.value);
-            setUserData({ ...userData, bio: e.target.value })
+            setUserData({ ...userData, bio: e.target.value });
         }
     }
 
     // TODO
     function updatePrivateKey(e: any) {
-        if(module) {
-            setUserData({ ...userData, privateKey: e.target.value})
+        if (module) {
+            setUserData({ ...userData, privateKey: e.target.value });
         } else {
-            setUserData({ ...userData, privateKey: e.target.value })
+            setUserData({ ...userData, privateKey: e.target.value });
         }
     }
 
     function updateName(e: any) {
-        setUserData({ ...userData, name: `${e.target.value}`});
+        setUserData({ ...userData, name: `${e.target.value}` });
     }
 
     async function handleSave() {
@@ -94,42 +88,46 @@ export function UserStore(props: { children: ReactNode }) {
             savePintswap(module);
             // Save name with extension
             let nameWExt = `${userData.name}`;
-            if(!nameWExt.includes('.drip')) {
+            if (!nameWExt.includes('.drip')) {
                 nameWExt = `${nameWExt}${userData.extension}`;
             }
             try {
                 await module.registerName(nameWExt);
                 // Save private key
-                if(psUser && userData.privateKey && userData.privateKey.length > 50) {
-                    module.signer = new ethers.Wallet(userData.privateKey).connect(module.signer.provider)
+                if (psUser && userData.privateKey && userData.privateKey.length > 50) {
+                    module.signer = new ethers.Wallet(userData.privateKey).connect(
+                        module.signer.provider,
+                    );
                 }
             } catch (err) {
-                console.error(`#handleSave:`, err)
+                console.error(`#handleSave:`, err);
             }
         }
     }
 
     /*
-    * check if pintswap module has starting vals for bio, shortaddress, setProfilePic
-    * only should run if pintswap is initialized and only run once
-    */
+     * check if pintswap module has starting vals for bio, shortaddress, setProfilePic
+     * only should run if pintswap is initialized and only run once
+     */
     useEffect(() => {
         (async () => {
-            if(module) {
+            if (module) {
                 let name = '';
                 try {
-                    name = await module.resolveName(module.peerId.toB58String())
+                    name = await module.resolveName(module.peerId.toB58String());
                 } catch (err) {
-                    console.warn(`#setUserData useEffect: no names found for multiAddr ${module.peerId.toB58String()}`);
+                    console.warn(
+                        `#setUserData useEffect: no names found for multiAddr ${module.peerId.toB58String()}`,
+                    );
                 }
                 setUserData({
                     ...userData,
                     name: name,
                     bio: module.userData.bio,
                     img: module.userData.image,
-                })
+                });
             }
-        })().catch(err => console.error(err))
+        })().catch((err) => console.error(err));
     }, [module?.userData, module?.peerId, module?.peerId.toB58String()]);
 
     return (
@@ -142,7 +140,7 @@ export function UserStore(props: { children: ReactNode }) {
                 handleSave,
                 updatePrivateKey,
                 updateExt,
-                toggleActive
+                toggleActive,
             }}
         >
             {props.children}

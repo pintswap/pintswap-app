@@ -68,7 +68,8 @@ const groupByType = (m: any) => {
     const flattened: any = [...m.entries()];
     return {
         erc20: new Map(
-            withoutTag(flattened).map(([key, [hash, offers]]: any[]) => {
+            withoutTag(flattened)
+                .map(([key, [hash, offers]]: any[]) => {
                     return [
                         key,
                         [
@@ -127,14 +128,14 @@ export function OffersStore(props: { children: ReactNode }) {
 
     const deleteTrade = (hash: string) => {
         const foundTrade = userTrades.get(hash);
-        if(foundTrade && pintswap.module) {
-            if(TESTING) console.log("#deleteTrade - Hash:", hash)
-            pintswap.module.offers.delete(hashOffer(foundTrade))
+        if (foundTrade && pintswap.module) {
+            if (TESTING) console.log('#deleteTrade - Hash:', hash);
+            pintswap.module.offers.delete(hashOffer(foundTrade));
             const shallow = new Map(userTrades);
             shallow.delete(hash);
             setUserTrades(shallow);
         }
-    }
+    };
 
     // Get Active Trades
     useEffect(() => {
@@ -190,7 +191,7 @@ export function OffersStore(props: { children: ReactNode }) {
                 setTokenTrades,
                 tokenTrades,
                 limitOrdersArr,
-                deleteTrade
+                deleteTrade,
             }}
         >
             {props.children}

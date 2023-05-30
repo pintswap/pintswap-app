@@ -2,7 +2,7 @@ import { Avatar, DataTable, PeerTickerFulfill, Card } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
-import { ethers } from "ethers6";
+import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
 
 const columns = [
@@ -41,36 +41,38 @@ export const PeerTickerOrderbookView = () => {
     const { multiaddr, base: baseAsset, trade: tradeAsset } = useParams();
     const { ticker, bidLimitOrders, askLimitOrders } = useLimitOrders('peer-ticker-orderbook');
     const { state } = useLocation();
-    const [ matchInputs, setMatchInputs ] = useState<any>({
-      amount: '',
-      list: []
+    const [matchInputs, setMatchInputs] = useState<any>({
+        amount: '',
+        list: [],
     });
-    
-    const [ tradeType, _setTradeType ] = useState('');
-    
+
+    const [tradeType, _setTradeType] = useState('');
+
     const setTradeType = (v: any) => {
-      _setTradeType(v);
+        _setTradeType(v);
     };
 
     useEffect(() => {
-      let list = tradeType === 'bids' ? bidLimitOrders : askLimitOrders;
-      setMatchInputs({
-        amount: matchInputs.amount || '0',
-        list
-      });
-    }, [ tradeType ]);
+        let list = tradeType === 'bids' ? bidLimitOrders : askLimitOrders;
+        setMatchInputs({
+            amount: matchInputs.amount || '0',
+            list,
+        });
+    }, [tradeType]);
 
     const onClickRow = (row: any) => {
-        const [ tradeType, price, size, sum ] = row;
+        const [tradeType, price, size, sum] = row;
         const { index } = row;
         let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
         setTradeType(tradeType);
         setMatchInputs({
-            amount: list.slice(0, index + 1).reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
-            list
+            amount: list
+                .slice(0, index + 1)
+                .reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
+            list,
         });
-    }
-      
+    };
+
     const peer = state?.peer ? state.peer : multiaddr;
 
     const ordersShown = 10;
@@ -78,14 +80,21 @@ export const PeerTickerOrderbookView = () => {
         <div className="flex flex-col gap-2 md:gap-3 lg:gap-4">
             <div className="flex items-center justify-between">
                 <button onClick={() => navigate(`/${peer}`)} className="w-fit text-left">
-                    <Avatar peer={multiaddr} withBio withName nameClass="text-xl" type="profile" size={60} />
+                    <Avatar
+                        peer={multiaddr}
+                        withBio
+                        withName
+                        nameClass="text-xl"
+                        type="profile"
+                        size={60}
+                    />
                 </button>
                 <span className="text-lg">{ticker}</span>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
                 <Card>
                     <h3 className="mb-2 lg:mb-0 text-center">Buys</h3>
-                    <DataTable 
+                    <DataTable
                         type="bids"
                         columns={columns}
                         data={bidLimitOrders.slice(0, ordersShown)}
@@ -97,14 +106,14 @@ export const PeerTickerOrderbookView = () => {
                         options={{
                             sortOrder: {
                                 name: 'price',
-                                direction: 'asc'
-                            }
+                                direction: 'asc',
+                            },
                         }}
                     />
                 </Card>
                 <Card>
                     <h3 className="mb-2 lg:mb-0 text-center">Sells</h3>
-                    <DataTable 
+                    <DataTable
                         type="asks"
                         columns={columns}
                         data={askLimitOrders.slice(0, ordersShown)}
@@ -116,17 +125,17 @@ export const PeerTickerOrderbookView = () => {
                         options={{
                             sortOrder: {
                                 name: 'price',
-                                direction: 'desc'
-                            }
+                                direction: 'desc',
+                            },
                         }}
                     />
                 </Card>
             </div>
-            <PeerTickerFulfill 
-                matchInputs={ matchInputs }
-                setMatchInputs={ setMatchInputs }
-                tradeType={ tradeType }
-                setTradeType={ setTradeType }
+            <PeerTickerFulfill
+                matchInputs={matchInputs}
+                setMatchInputs={setMatchInputs}
+                tradeType={tradeType}
+                setTradeType={setTradeType}
             />
         </div>
     );

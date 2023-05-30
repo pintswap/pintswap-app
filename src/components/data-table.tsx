@@ -52,7 +52,7 @@ export const DataTable = ({
                             searchText: string,
                             handleSearch: (text: string) => void,
                             hideSearch: () => void,
-                            options: any
+                            options: any,
                         ) => (
                             <TableSearch
                                 searchText={searchText}
@@ -105,7 +105,9 @@ export const DataTable = ({
 
 const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTableProps) => {
     const { userData } = useUserContext();
-    const { pintswap: { module } } = usePintswapContext();
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
     const cells = Object.values(data as object);
     (cells as any).index = (data as any).index;
     const cols = columns as string[];
@@ -119,17 +121,19 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
         deleteTrade(hash);
-    }
+    };
 
     const route = (cells: string[]) => {
         const firstCell = cells[0];
         const secondCell = cells[1];
         let url = '/';
         switch (type) {
-            case 'explore': 
+            case 'explore':
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`);
-            case 'manage': 
-                return navigate(`${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`)
+            case 'manage':
+                return navigate(
+                    `${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`,
+                );
             case 'pairs':
                 url = `${url}pairs`;
                 break;
@@ -180,22 +184,26 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
 
     const determineCell = (cell: string) => {
         const charsShown = width > 900 ? 3 : 5;
-        if(cell) {
+        if (cell) {
             return cell?.startsWith('Q') || cell?.startsWith('0x')
                 ? truncate(cell, charsShown)
-                : formatCell(cell)
+                : formatCell(cell);
         } else {
-            if(type === 'manage') {
+            if (type === 'manage') {
                 return (
-                    <Button className="text-red-400 hover:text-red-500 w-full text-right" type="transparent" onClick={(e) => handleDelete(e, cells[0])}>
+                    <Button
+                        className="text-red-400 hover:text-red-500 w-full text-right"
+                        type="transparent"
+                        onClick={(e) => handleDelete(e, cells[0])}
+                    >
                         Cancel
                     </Button>
-                )
+                );
             } else {
-                return <></>
+                return <></>;
             }
         }
-    }
+    };
     // Desktop
     if (width >= 900) {
         return (
@@ -223,9 +231,7 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
                         className={`py-[1px] flex justify-between items-center text-sm`}
                     >
                         <span className="text-gray-300 font-thin">{cols[i]}</span>
-                        <span className={`${!cell ? 'w-full' : ''}`}>
-                            {determineCell(cell)}
-                        </span>
+                        <span className={`${!cell ? 'w-full' : ''}`}>{determineCell(cell)}</span>
                     </td>
                 ))}
             </tr>

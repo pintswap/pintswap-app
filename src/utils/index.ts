@@ -13,15 +13,15 @@ export * from './wallet';
 export * from './format';
 
 export function defer() {
-  let resolve,
-      reject,
-      promise = new Promise((_resolve, _reject) => {
-          resolve = _resolve;
-          reject = _reject;
-      });
-  return {
-      resolve,
-      reject,
-      promise,
-  };
+    let resolve,
+        reject,
+        promise = new Promise((_resolve, _reject) => {
+            resolve = _resolve;
+            reject = _reject;
+        });
+    return {
+        resolve,
+        reject,
+        promise,
+    };
 }

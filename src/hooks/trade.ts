@@ -7,7 +7,17 @@ import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { useOffersContext, useUserContext } from '../stores';
 import { toBeHex } from 'ethers6';
-import { savePintswap, updateToast, convertAmount, EMPTY_TRADE, getTokenAttributes, TESTING, ITokenProps, IOrderStateProps, IOrderbookProps } from '../utils';
+import {
+    savePintswap,
+    updateToast,
+    convertAmount,
+    EMPTY_TRADE,
+    getTokenAttributes,
+    TESTING,
+    ITokenProps,
+    IOrderStateProps,
+    IOrderbookProps,
+} from '../utils';
 
 const ln = (v: any) => (console.log(v), v);
 
@@ -44,12 +54,12 @@ export const useTrade = () => {
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/explore';
 
-    const buildTradeObj = ({ gets, gives }: IOffer): IOffer => {
+    const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
         if (gives && gets && gives.tokenId) return { gets, gives };
         if (!gets || !gives || !gets.token || !gets.amount || !gives.amount || !gives.token)
             return EMPTY_TRADE;
-        const foundGivesToken = getTokenAttributes(gives.token) as ITokenProps | undefined;
-        const foundGetsToken = getTokenAttributes(gets.token) as ITokenProps | undefined;
+        const foundGivesToken = (await getTokenAttributes(gives.token)) as ITokenProps | undefined;
+        const foundGetsToken = (await getTokenAttributes(gets.token)) as ITokenProps | undefined;
         const builtObj = {
             gives: {
                 token: foundGivesToken ? foundGivesToken.address : gives.token,
@@ -70,7 +80,7 @@ export const useTrade = () => {
         if (TESTING) console.log('#broadcastTrade: TradeObj', buildTradeObj(trade));
         if (pintswap.module) {
             try {
-                pintswap.module.broadcastOffer(buildTradeObj(trade));
+                pintswap.module.broadcastOffer(await buildTradeObj(trade));
                 savePintswap(pintswap.module);
                 if (!userData.active) toggleActive();
             } catch (err) {
@@ -139,13 +149,13 @@ export const useTrade = () => {
                         setTrade({
                             gives: {
                                 token:
-                                    (getTokenAttributes(gives.token) as ITokenProps).symbol ||
+                                    ((await getTokenAttributes(gives.token, 'symbol')) as string) ||
                                     gives.token,
                                 amount: convertAmount('number', gives.amount || '', gives.token),
                             },
                             gets: {
                                 token:
-                                    (getTokenAttributes(gets.token) as ITokenProps).symbol ||
+                                    ((await getTokenAttributes(gets.token, 'symbol')) as string) ||
                                     gets.token,
                                 amount: convertAmount('number', gets.amount || '', gets.token),
                             },
@@ -164,13 +174,13 @@ export const useTrade = () => {
                         setTrade({
                             gives: {
                                 token:
-                                    (getTokenAttributes(gives.token) as ITokenProps).symbol ||
+                                    ((await getTokenAttributes(gives.token, 'symbol')) as string) ||
                                     gives.token,
                                 amount: convertAmount('number', gives.amount || '', gives.token),
                             },
                             gets: {
                                 token:
-                                    (getTokenAttributes(gets.token) as ITokenProps).symbol ||
+                                    ((await getTokenAttributes(gets.token, 'symbol')) as string) ||
                                     gets.token,
                                 amount: convertAmount('number', gets.amount || '', gets.token),
                             },
@@ -339,20 +349,22 @@ export const useTrade = () => {
     }, [pintswap.module]);
 
     useEffect(() => {
-        const { module } = pintswap;
-        if (module) {
-            const broadcastListener = (hash: string) => {
-                if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
-                setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
-                addTrade(hash, buildTradeObj(trade));
-                updateSteps('Fulfill');
-            };
-            module.on('pintswap/trade/broadcast', broadcastListener);
-            return () => {
-                module.removeListener('pintswap/trade/broadcast', broadcastListener);
-            };
-        }
-        return () => {};
+        (async () => {
+            const { module } = pintswap;
+            if (module) {
+                const broadcastListener = async (hash: string) => {
+                    if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
+                    setOrder({ multiAddr: pintswap.module?.peerId.toB58String(), orderHash: hash });
+                    addTrade(hash, await buildTradeObj(trade));
+                    updateSteps('Fulfill');
+                };
+                module.on('pintswap/trade/broadcast', broadcastListener);
+                return () => {
+                    module.removeListener('pintswap/trade/broadcast', broadcastListener);
+                };
+            }
+            return () => {};
+        })().catch((err) => console.error(err));
     }, [pintswap.module, trade]);
     /*
      * TRADE EVENT MANAGER - END

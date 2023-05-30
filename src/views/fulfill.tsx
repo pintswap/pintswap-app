@@ -13,20 +13,27 @@ import {
     TransitionModal,
     Skeleton,
     TxDetails,
-    DropdownInput
+    DropdownInput,
 } from '../components';
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from '../stores';
-import { orderTokens, getDecimals, fromFormatted, toLimitOrder, BASE_URL, parseTickerAsset } from '../utils';
+import {
+    orderTokens,
+    getDecimals,
+    fromFormatted,
+    toLimitOrder,
+    BASE_URL,
+    parseTickerAsset,
+} from '../utils';
 import { useAccount } from 'wagmi';
 import { useLimitOrders } from '../hooks';
 import { useParams } from 'react-router-dom';
 
 export const FulfillView = () => {
-    const { address } = useAccount()
+    const { address } = useAccount();
     const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
     const { pintswap } = usePintswapContext();
-    const { limitOrders  } = useLimitOrders('peer-orderbook');
+    const { limitOrders } = useLimitOrders('peer-orderbook');
     const { hash, multiaddr } = useParams();
 
     const [limitOrder, setLimitOrder] = useState({
@@ -41,10 +48,10 @@ export const FulfillView = () => {
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
-                const foundLimitOrder = limitOrders.find(order => order?.hash === hash);
-                if(foundLimitOrder) {
+                const foundLimitOrder = limitOrders.find((order) => order?.hash === hash);
+                if (foundLimitOrder) {
                     setLimitOrder(foundLimitOrder);
-                    setFillAmount(foundLimitOrder?.amount || '')
+                    setFillAmount(foundLimitOrder?.amount || '');
                 } else {
                     const raw = await fromFormatted(trade, pintswap.module.signer);
                     const {
@@ -101,7 +108,18 @@ export const FulfillView = () => {
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-4 md:gap-6">
                 <div className="flex items-center justify-between">
-                    <TransitionModal button={<Avatar peer={order.multiAddr} withBio withName align="left" size={60} type="profile" />}>
+                    <TransitionModal
+                        button={
+                            <Avatar
+                                peer={order.multiAddr}
+                                withBio
+                                withName
+                                align="left"
+                                size={60}
+                                type="profile"
+                            />
+                        }
+                    >
                         <Avatar peer={order.multiAddr} size={300} />
                     </TransitionModal>
                     <Transition
@@ -124,16 +142,24 @@ export const FulfillView = () => {
                         </CopyClipboard>
                     </Transition>
                 </div>
-                <Card 
+                <Card
                     header={
                         <div>
                             <span>Fullfill Trade</span>
                             <div className="flex justify-center">
                                 <Skeleton loading={loading.trade}>
-                                    <div className={`text-xs md:text-sm font-extralight flex items-center gap-2 justify-center ${loading.trade ? 'text-neutral-700' : 'text-gray-400'}`}>
-                                        <span>Sending {parseTickerAsset(limitOrder.ticker, 2)}</span>
+                                    <div
+                                        className={`text-xs md:text-sm font-extralight flex items-center gap-2 justify-center ${
+                                            loading.trade ? 'text-neutral-700' : 'text-gray-400'
+                                        }`}
+                                    >
+                                        <span>
+                                            Sending {parseTickerAsset(limitOrder.ticker, 2)}
+                                        </span>
                                         <span>&</span>
-                                        <span>Receiving {parseTickerAsset(limitOrder.ticker, 1)}</span>
+                                        <span>
+                                            Receiving {parseTickerAsset(limitOrder.ticker, 1)}
+                                        </span>
                                     </div>
                                 </Skeleton>
                             </div>

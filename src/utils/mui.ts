@@ -9,11 +9,9 @@ export const muiCache = createCache({
 
 export function muiTheme() {
     return (createTheme as any)({
-      typography: {
-        fontFamily: [
-          'Dela Gothic One'
-        ].join(','),
-      },
+        typography: {
+            fontFamily: ['Dela Gothic One'].join(','),
+        },
         palette: {
             mode: 'dark',
             background: {
@@ -29,7 +27,7 @@ export function muiTheme() {
                     root: {
                         borderRadius: '0.5rem',
                         backgroundImage: 'none',
-                        boxShadow: 'none'
+                        boxShadow: 'none',
                     },
                 },
             },
@@ -43,17 +41,17 @@ export function muiTheme() {
             MUIDataTableToolbar: {
                 styleOverrides: {
                     root: {
-                        display: 'flex'
-                    }
-                }
+                        display: 'flex',
+                    },
+                },
             },
             MUIDataTableSearch: {
                 styleOverrides: {
                     clearIcon: {
-                        display: 'none'
+                        display: 'none',
                     },
-                }
-            }
+                },
+            },
         },
     });
 }

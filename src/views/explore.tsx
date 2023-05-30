@@ -67,7 +67,7 @@ export const ExploreView = () => {
         <div className="flex flex-col">
             <h2 className="view-header">Explore</h2>
             <Card>
-                <DataTable 
+                <DataTable
                     title="Open Orders"
                     columns={columns}
                     data={limitOrdersArr}

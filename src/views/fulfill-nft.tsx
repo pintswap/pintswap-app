@@ -44,7 +44,7 @@ export const FulfillNFTView = () => {
     }, [offer]);
 
     const peer = state?.peer ? state.peer : multiaddr;
-    
+
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
@@ -56,11 +56,7 @@ export const FulfillNFTView = () => {
                     {loading ? (
                         <SpinnerLoader height="min-h-96" />
                     ) : (
-                    <NFTDisplay 
-                        nft={nft} 
-                        show="full" 
-                        height="h-96"
-                    />
+                        <NFTDisplay nft={nft} show="full" height="h-96" />
                     )}
                     <Button
                         checkNetwork

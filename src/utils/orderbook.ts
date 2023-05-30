@@ -81,11 +81,11 @@ export function orderTokens(offer: any) {
 export async function formattedFromTransfer(transfer: any, provider: any) {
     const token = toAddress(transfer.token);
     return {
-            token,
-            amount: ethers.toBeHex(
-                ethers.parseUnits(transfer.amount, await getDecimals(token, provider)),
-            ),
-        };
+        token,
+        amount: ethers.toBeHex(
+            ethers.parseUnits(transfer.amount, await getDecimals(token, provider)),
+        ),
+    };
 }
 
 export async function fromFormatted(trade: any, provider: any) {
@@ -137,9 +137,13 @@ export async function toLimitOrder(offer: any, provider: any) {
     };
 }
 
-export function filterERC20OffersForTicker(offers: any[], pair: string, type: 'ask' | 'bid'): any[] {
-    if(!offers || offers.length === 0) return [];
-    const filtered = offers.filter((v) => isERC20Transfer(v.gives) && isERC20Transfer(v.gets));   
+export function filterERC20OffersForTicker(
+    offers: any[],
+    pair: string,
+    type: 'ask' | 'bid',
+): any[] {
+    if (!offers || offers.length === 0) return [];
+    const filtered = offers.filter((v) => isERC20Transfer(v.gives) && isERC20Transfer(v.gets));
     const [trade, base] = pair.split('/');
     const [tradeAddress, baseAddress] = [trade, base].map(toAddress).map((v) => v.toLowerCase());
     const [givesAddress, getsAddress] =
@@ -151,13 +155,14 @@ export function filterERC20OffersForTicker(offers: any[], pair: string, type: 'a
     );
 }
 
-export function matchOffers(offers: any[], amount:  BigNumberish) {
+export function matchOffers(offers: any[], amount: BigNumberish) {
     const sorted = offers
         .slice()
         .sort(
             (a, b) =>
                 (Number(a.gets.amount) * 1e9) / Number(a.gives.amount) -
-                ((Number(b.gets.amount) * 1e9) / Number(b.gives.amount)));
+                (Number(b.gets.amount) * 1e9) / Number(b.gives.amount),
+        );
     const toFill = ethers.toBigInt(amount as any);
     const fill = sorted.reduce(
         (() => {
@@ -167,7 +172,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
                 const remaining = toFill - filled;
                 if (remaining <= 0) return r;
                 filled += getsAmount;
-                if(TESTING) console.log('remaining, getsAmount', [ remaining, getsAmount ]);
+                if (TESTING) console.log('remaining, getsAmount', [remaining, getsAmount]);
                 if (remaining >= getsAmount) {
                     r.push({
                         amount: getsAmount,
@@ -183,16 +188,18 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
                         offer: v,
                         effective: {
                             gets: remaining,
-                            gives: ethers.toBigInt(remaining) * ethers.toBigInt(v.gives.amount) / ethers.toBigInt(getsAmount),
+                            gives:
+                                (ethers.toBigInt(remaining) * ethers.toBigInt(v.gives.amount)) /
+                                ethers.toBigInt(getsAmount),
                         },
                     });
                 }
-		return r;
+                return r;
             };
         })(),
         [],
     );
-    if(TESTING) console.log('fill', fill);
+    if (TESTING) console.log('fill', fill);
     const effective = fill.reduce(
         (r: any, v: any) => ({
             gets: v.effective.gets + r.gets,
@@ -200,7 +207,7 @@ export function matchOffers(offers: any[], amount:  BigNumberish) {
         }),
         { gets: ethers.toBigInt(0), gives: ethers.toBigInt(0) },
     );
-    if(TESTING) console.log('effective', effective);
+    if (TESTING) console.log('effective', effective);
     return {
         fill,
         effective,

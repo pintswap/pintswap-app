@@ -28,26 +28,26 @@ export const PeerTickerFulfill = ({
     });
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
-            e.preventDefault();
-            setFill({
-                input: e.target.value,
-                ...fill,
-            });
-            const formattedAmount = (
-                await formattedFromTransfer(
-                    {
-                        token: (matchInputs.list[0] || {}).token || ethers.ZeroAddress,
-                        amount: e.target.value,
-                    },
-                    signer,
-                )
-            ).amount;
-            const newMatchInputs = {
-                amount: formattedAmount,
-                list: matchInputs.list,
-            };
-            console.log("newMatchInputs, matchInputs", [newMatchInputs, matchInputs]);
-            if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
+        e.preventDefault();
+        setFill({
+            input: e.target.value,
+            ...fill,
+        });
+        const formattedAmount = (
+            await formattedFromTransfer(
+                {
+                    token: (matchInputs.list[0] || {}).token || ethers.ZeroAddress,
+                    amount: e.target.value,
+                },
+                signer,
+            )
+        ).amount;
+        const newMatchInputs = {
+            amount: formattedAmount,
+            list: matchInputs.list,
+        };
+        console.log('newMatchInputs, matchInputs', [newMatchInputs, matchInputs]);
+        if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 
     useEffect(() => {

@@ -13,15 +13,15 @@ import {
     PeerTickerOrderbookView,
     TradeSearchView,
 } from './views';
-import { FulfillNFTView } from "./views/fulfill-nft";
+import { FulfillNFTView } from './views/fulfill-nft';
 import { setFallbackWETH } from '@pintswap/sdk';
 import { ToastContainer } from 'react-toastify';
-import { Pintswap } from "@pintswap/sdk";
-import { detectPermit } from "@pintswap/sdk/lib/detect-permit";
+import { Pintswap } from '@pintswap/sdk';
+import { detectPermit } from '@pintswap/sdk/lib/detect-permit';
 
-import { useSigner } from "wagmi";
+import { useSigner } from 'wagmi';
 import 'react-toastify/dist/ReactToastify.css';
-import { cryptoFromSeed } from "@pintswap/sdk/lib/p2p";
+import { cryptoFromSeed } from '@pintswap/sdk/lib/p2p';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -34,31 +34,31 @@ function App() {
     const { data: signer } = useSigner();
     (window as any).signer = signer;
     if (!(window as any).pintswap && pintswap.module) {
-      (window as any).pintswap = pintswap.module;
-      (window as any).pintswap.logger.info = () => {};
+        (window as any).pintswap = pintswap.module;
+        (window as any).pintswap.logger.info = () => {};
     }
     return (
         <>
             <Base loading={pintswap.loading}>
-                    <Routes>
-                        <Route path="/explore" element={<PairsView />} />
-                        <Route path="/create" element={<CreateView />} />
-                        <Route path="/account" element={<AccountView />} />
+                <Routes>
+                    <Route path="/explore" element={<PairsView />} />
+                    <Route path="/create" element={<CreateView />} />
+                    <Route path="/account" element={<AccountView />} />
 
-                        <Route path="/pairs/:pair" element={<PairListView />} />
+                    <Route path="/pairs/:pair" element={<PairListView />} />
 
-                        <Route path="/peers" element={<PeersView />} />
+                    <Route path="/peers" element={<PeersView />} />
 
-                        <Route path="/:multiaddr" element={<PeerOrderbookView />} />
-                        <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} />
-                        <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
+                    <Route path="/:multiaddr" element={<PeerOrderbookView />} />
+                    <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} />
+                    <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
-                        <Route path="/fulfill" element={<TradeSearchView />} />
-                        <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
-                        <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
+                    <Route path="/fulfill" element={<TradeSearchView />} />
+                    <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
+                    <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
 
-                        <Route path="*" element={<Navigate to='/explore' />} />
-                    </Routes>
+                    <Route path="*" element={<Navigate to="/explore" />} />
+                </Routes>
             </Base>
 
             <ToastContainer

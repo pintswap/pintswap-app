@@ -79,8 +79,8 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
 
     // Subscribers
     useEffect(() => {
-        if (type === 'peer-orderbook') {
-            (async () => {
+        (async () => {
+            if (type === 'peer-orderbook') {
                 if (pintswap.module) {
                     const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
                     const { erc20: flattened } = sorted;
@@ -96,9 +96,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     }));
                     setLimitOrders(mapped);
                 }
-            })().catch((err) => console.error(err));
-        } else if (type === 'peer-ticker-orderbook') {
-            (async () => {
+            } else if (type === 'peer-ticker-orderbook') {
                 if (pintswap.module && forTicker) {
                     const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
                     const flattened = forTicker.bid.concat(forTicker.ask);
@@ -144,11 +142,11 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     setBidLimitOrders(bidFilterAndSum);
                     setAskLimitOrders(askFilterAndSum);
                 }
-            })().catch((err) => console.error(err));
-        }
+            }
+        })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
-    console.log("sorted nfts", sorted.nfts)
+    console.log('sorted nfts', sorted.nfts);
     const filteredNfts = useMemo(
         () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)),
         [sorted.nfts, multiaddr],
