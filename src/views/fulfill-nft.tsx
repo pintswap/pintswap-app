@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { fetchNFT } from '../utils/fetch-nft';
+import { fetchNFT } from '../utils/nft';
 import {
     Avatar,
     Button,
@@ -16,7 +16,7 @@ import { useOffersContext } from '../stores';
 import { useSigner } from 'wagmi';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toFormatted } from '../utils/orderbook';
-import { INFTProps } from '../utils/common';
+import { INFTProps } from '../utils/types';
 
 export const FulfillNFTView = () => {
     const navigate = useNavigate();

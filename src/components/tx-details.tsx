@@ -1,7 +1,7 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { IOffer } from '@pintswap/sdk';
 import { BiChevronUp } from 'react-icons/bi';
-import { convertAmount } from '../utils/common';
+import { convertAmount } from '../utils/token';
 
 type ITxDetailsProps = {
   trade: IOffer;

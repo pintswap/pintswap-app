@@ -8,10 +8,9 @@ import {
     useState,
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
-import { defer, TESTING } from '../utils/common';
 import { usePintswapContext } from './pintswap';
 import { memoize } from 'lodash';
-import { toLimitOrder } from '../utils/orderbook';
+import { toLimitOrder, TESTING, defer } from '../utils';
 import { ethers } from 'ethers6';
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk/lib/trade';
 
@@ -41,7 +40,7 @@ const OffersContext = createContext<IOffersStoreProps>({
     limitOrdersArr: [],
 });
 
-// Peer
+// Utils
 (window as any).discoveryDeferred = defer();
 
 const maybeResolveName = async (name: string, pintswap: any) => {
@@ -100,7 +99,6 @@ const groupByType = (m: any) => {
     };
 };
 
-// Utils
 const toFlattened = memoize((v) =>
     [...v.entries()].reduce(
         (r, [multiaddr, [_, offerList]]) =>

@@ -4,7 +4,7 @@ import ImageList from '@mui/material/ImageList';
 import { useEffect, useState } from 'react';
 import { muiCache, muiTheme } from '../utils/mui';
 import ImageListItem from '@mui/material/ImageListItem';
-import { fetchNFT, hashNftIdentifier } from '../utils/fetch-nft';
+import { fetchNFT, hashNftIdentifier } from '../utils/nft';
 import { useWindowSize } from '../hooks/window-size';
 import { Card } from './card';
 import { SpinnerLoader } from './spinner-loader';

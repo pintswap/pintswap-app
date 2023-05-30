@@ -13,12 +13,11 @@ import {
     TransitionModal,
     Skeleton,
     TxDetails,
+    DropdownInput
 } from '../components';
-import { DropdownInput } from '../components/dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from '../stores';
-import { BASE_URL, parseTickerAsset } from '../utils/common';
-import { orderTokens, getDecimals, fromFormatted, toLimitOrder } from '../utils/orderbook';
+import { orderTokens, getDecimals, fromFormatted, toLimitOrder, BASE_URL, parseTickerAsset } from '../utils';
 import { useAccount } from 'wagmi';
 import { useLimitOrders } from '../hooks';
 import { useParams } from 'react-router-dom';

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Asset, Card, Input } from "../components";
 import { useOffersContext } from "../stores";
-import { getTokenAttributes } from "../utils/common";
+import { getTokenAttributes } from "../utils/token";
 import { useSearch } from "../hooks";
 
 export const PairsView = () => {

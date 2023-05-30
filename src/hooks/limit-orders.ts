@@ -3,7 +3,7 @@ import { memoize } from 'lodash';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { usePintswapContext, useOffersContext } from '../stores';
 import { ethers } from 'ethers6';
-import { toLimitOrder, filterERC20OffersForTicker, fromFormatted, orderTokens, getDecimals } from '../utils/orderbook';
+import { toLimitOrder, filterERC20OffersForTicker } from '../utils/orderbook';
 import { useTrade } from './trade';
 import { useParams } from 'react-router-dom';
 

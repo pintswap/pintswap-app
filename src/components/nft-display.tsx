@@ -1,4 +1,4 @@
-import { INFTProps } from "../utils/common";
+import { INFTProps } from "../utils/types";
 import { TextDisplay } from "./text-display";
 import { toNumber, toBigInt } from 'ethers6';
 

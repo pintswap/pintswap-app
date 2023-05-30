@@ -1,70 +1,10 @@
-import { TOKENS } from './token-list';
 import { BigNumberish, ethers } from 'ethers6';
-import { keyBy } from 'lodash';
-import { sortBy, groupBy } from 'lodash';
-import { TESTING, round, shorten } from './common';
+import { groupBy } from 'lodash';
 import { hashOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
-
-const ETH: any = TOKENS.find((v) => v.symbol === 'ETH');
-const USDC: any = TOKENS.find((v) => v.symbol === 'USDC');
-const USDT: any = TOKENS.find((v) => v.symbol === 'USDT');
-const DAI: any = TOKENS.find((v) => v.symbol === 'DAI');
-
-export const decimalsCache: any = {};
-export const symbolCache: any = {};
-
-export const TOKENS_BY_SYMBOL = keyBy(TOKENS, 'symbol');
-export const TOKENS_BY_ADDRESS = keyBy(
-    TOKENS.map((v) => ({ ...v, address: ethers.getAddress(v.address) })),
-    'address',
-);
-
-const maybeShorten = (s: string): string => {
-    if (s.substr(0, 2) === '0x') return shorten(s);
-    return s;
-};
-
-export function toAddress(symbolOrAddress: string): string {
-    if(!symbolOrAddress) return '';
-    const token = TOKENS_BY_SYMBOL[symbolOrAddress];
-    if (token) return ethers.getAddress(token.address);
-    return ethers.getAddress(symbolOrAddress);
-}
-
-export function fromAddress(symbolOrAddress: string): string {
-    return (TOKENS_BY_ADDRESS[symbolOrAddress] || { address: symbolOrAddress }).symbol;
-}
-
-export async function toTicker(pair: any, provider: any) {
-    const flipped = [...pair].reverse();
-    return (
-        await Promise.all(
-            flipped.map(async (v: any) => maybeShorten(await getSymbol(v.address, provider))),
-        )
-    ).join('/');
-}
-
-export async function getSymbol(address: any, provider: any) {
-    address = ethers.getAddress(address);
-    const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
-    if (match) return match.symbol;
-    else if (symbolCache[address]) {
-        return symbolCache[address];
-    } else {
-        const contract = new ethers.Contract(
-            address,
-            ['function symbol() view returns (string)'],
-            provider,
-        );
-        try {
-            symbolCache[address] = await contract.symbol();
-        } catch (e) {
-            symbolCache[address] = address;
-        }
-        return symbolCache[address];
-    }
-}
+import { fromAddress, getDecimals, toAddress, toTicker } from './token';
+import { DAI, ETH, TESTING, USDC, USDT } from './constants';
+import { round } from './format';
 
 function givesBase(offer: any) {
     return {
@@ -105,23 +45,6 @@ export const sortLimitOrders = (limitOrders: any) => {
         })
         .reduce((r, v) => r.concat(v), []);
 };
-
-export async function getDecimals(address: any, provider: any) {
-    address = ethers.getAddress(address);
-    const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
-    if (match) return match.decimals;
-    else if (decimalsCache[address]) {
-        return decimalsCache[address];
-    } else {
-        const contract = new ethers.Contract(
-            address,
-            ['function decimals() view returns (uint8)'],
-            provider,
-        );
-        decimalsCache[address] = Number(await contract.decimals());
-        return decimalsCache[address];
-    }
-}
 
 export function orderTokens(offer: any) {
     const mapped = {
@@ -212,11 +135,6 @@ export async function toLimitOrder(offer: any, provider: any) {
         ticker: await toTicker([base, trade], provider),
         hash: hashOffer(offer),
     };
-}
-
-export interface Fill {
-    offerHash: string;
-    amount: string;
 }
 
 export function filterERC20OffersForTicker(offers: any[], pair: string, type: 'ask' | 'bid'): any[] {

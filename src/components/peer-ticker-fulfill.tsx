@@ -1,13 +1,12 @@
 import { Transition } from '@headlessui/react';
-import { ChangeEvent, SyntheticEvent, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
 import { Button, Card, CopyClipboard, PageStatus, Input, ProgressIndicator } from '.';
 import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
-import { BASE_URL } from '../utils/common';
 import { useAccount, useSigner } from 'wagmi';
-import { getDecimals, toLimitOrder, formattedFromTransfer, matchOffers } from '../utils/orderbook';
+import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 

@@ -3,7 +3,7 @@ import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { hardhat, mainnet } from 'wagmi/chains';
-import { NETWORK } from './common';
+import { NETWORK } from './constants';
 import {
     coinbaseWallet,
     injectedWallet,

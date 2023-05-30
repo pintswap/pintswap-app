@@ -5,11 +5,10 @@ import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables
 import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
-import { BASE_URL, truncate } from '../utils/common';
+import { truncate } from '../utils/format';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
 import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
-import copy from 'copy-to-clipboard';
 
 type IDataTableProps = {
     title?: string;
