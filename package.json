@@ -129,12 +129,17 @@
             "last 1 safari version"
         ]
     },
+    "husky": {
+        "hooks": {
+            "pre-push": "lint-staged"
+        }
+    },
     "lint-staged": {
         "*.{js,ts,tsx}": [
-            "eslint --quiet --fix"
+            "yarn lint"
         ],
         "*.{json,js,ts,jsx,tsx,html}": [
-            "prettier --check --write"
+            "yarn pretty"
         ]
     }
 }
