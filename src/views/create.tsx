@@ -37,10 +37,10 @@ const columns = [
 
 export const CreateView = () => {
     const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
-
     const { pintswap } = usePintswapContext();
     const { userData, toggleActive } = useUserContext();
     const { userTrades } = useOffersContext();
+
     const [nft, setNFT] = useState<INFTProps | null>(null);
     const [resolvedName, setResolvedName] = useState<any>(order.multiAddr);
     const [tableData, setTableData] = useState<any[]>([]);
