@@ -74,7 +74,11 @@ export const DropdownInput = ({
                             <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />
                         )}
                         {state ? (
-                            state
+                            isToken && ethers.isAddress(query) ? (
+                                unknownToken.symbol
+                            ) : (
+                                state
+                            )
                         ) : (
                             <span className="text-gray-400">{placeholder || 'Select one...'}</span>
                         )}
