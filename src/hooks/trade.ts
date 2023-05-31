@@ -19,8 +19,6 @@ import {
     IOrderbookProps,
 } from '../utils';
 
-const ln = (v: any) => (console.log(v), v);
-
 export const resolveName = async (pintswap: any, name: any) => {
     while (true as any) {
         try {
@@ -61,8 +59,12 @@ export const useTrade = () => {
         if (gives && gets && gives.tokenId) return { gets, gives };
         if (!gets || !gives || !gets.token || !gets.amount || !gives.amount || !gives.token)
             return EMPTY_TRADE;
-        const foundGivesToken = (await getTokenAttributes(gives.token)) as ITokenProps | undefined;
-        const foundGetsToken = (await getTokenAttributes(gets.token)) as ITokenProps | undefined;
+        const foundGivesToken = (await getTokenAttributes(gives.token, module?.signer)) as
+            | ITokenProps
+            | undefined;
+        const foundGetsToken = (await getTokenAttributes(gets.token, module?.signer)) as
+            | ITokenProps
+            | undefined;
         const builtObj = {
             gives: {
                 token: foundGivesToken ? foundGivesToken.address : gives.token,
@@ -82,8 +84,11 @@ export const useTrade = () => {
             return {
                 gives: {
                     token:
-                        ((await getTokenAttributes(gives.token, 'symbol')) as string) ||
-                        gives.token,
+                        ((await getTokenAttributes(
+                            gives.token,
+                            module?.signer,
+                            'symbol',
+                        )) as string) || gives.token,
                     amount: await convertAmount(
                         'number',
                         gives.amount || '',
@@ -93,7 +98,11 @@ export const useTrade = () => {
                 },
                 gets: {
                     token:
-                        ((await getTokenAttributes(gets.token, 'symbol')) as string) || gets.token,
+                        ((await getTokenAttributes(
+                            gets.token,
+                            module?.signer,
+                            'symbol',
+                        )) as string) || gets.token,
                     amount: await convertAmount(
                         'number',
                         gets.amount || '',
@@ -159,7 +168,7 @@ export const useTrade = () => {
                 } else {
                     if (TESTING)
                         console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
-                    module.createTrade(peeredUp, ln(await buildTradeObj(trade)));
+                    module.createTrade(peeredUp, await buildTradeObj(trade));
                 }
                 if (TESTING) console.log('Fulfilled trade!');
             } catch (err) {
@@ -174,17 +183,15 @@ export const useTrade = () => {
         let resolved = multiAddr;
         if (multiAddr.match(/\.drip$/) && module) resolved = await resolveName(module, multiAddr);
         if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
-        const trade = ln(hash ? userTrades.get(hash) : undefined);
+        const trade = hash ? userTrades.get(hash) : undefined;
         // MAKER
-        if (trade) setTrade(ln(trade));
+        if (trade) setTrade(trade);
         // TAKER
         else {
             if (module) {
                 try {
                     // TODO: optimize
-                    console.log('getUserDataByPeerId', resolved);
                     const { offers }: IOrderbookProps = await module.getUserDataByPeerId(resolved);
-                    console.log('offers', offers);
                     if (orderHash && peerTrades.get(orderHash)) {
                         const { gives, gets } = peerTrades.get(orderHash) as any;
                         setTrade(await displayTradeObj({ gets, gives }));

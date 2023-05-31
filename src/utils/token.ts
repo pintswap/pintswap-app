@@ -41,6 +41,7 @@ export async function getSymbol(address: any, provider: any) {
         try {
             symbolCache[address] = await contract.symbol();
         } catch (e) {
+            console.warn('#getSymbol: error', e);
             symbolCache[address] = address;
         }
         return symbolCache[address];
@@ -55,38 +56,29 @@ export const alphaTokenSort = (a: ITokenProps, b: ITokenProps) => {
 
 export async function getTokenAttributes(
     token: string,
+    provider: any,
     attribute?: keyof ITokenProps,
-    provider?: any,
 ) {
     let found;
     if (!token) return token;
-    if (token.startsWith('0x')) {
+    if (ethers.isAddress(token)) {
         found = TOKENS.find((el) => el.address.toLowerCase() === token.toLowerCase());
     } else {
-        found = TOKENS.find((el) => el.symbol.toLowerCase() === token.toLowerCase());
+        found = TOKENS.find((el) => el.symbol.toLowerCase() === (token as string).toLowerCase());
     }
     if (found) {
         if (attribute) return found[attribute];
         else return found;
     } else {
-        if (token.startsWith('0x') && provider) {
-            const contract = new ethers.Contract(
-                token,
-                [
-                    'function symbol() view returns (string)',
-                    'function decimals() view returns (uint8)',
-                    '',
-                ],
-                provider,
-            );
+        if (ethers.isAddress(token)) {
             try {
                 const tokenAttributes = {
                     asset: '',
                     type: 'ERC20',
-                    address: await contract.getAddress(),
+                    address: token,
                     name: '',
-                    symbol: await contract.symbol(),
-                    decimals: await contract.decimals(),
+                    symbol: await getSymbol(token, provider),
+                    decimals: await getDecimals(token, provider),
                     logoURI: '/img/generic.svg',
                 };
                 if (attribute) return tokenAttributes[attribute];
@@ -108,7 +100,7 @@ export async function getTokenAttributes(
 }
 
 export async function getDecimals(token: string, provider: any) {
-    if (token.startsWith('0x')) {
+    if (ethers.isAddress(token)) {
         const address = ethers.getAddress(token);
         const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
         if (match) return match.decimals;
@@ -124,7 +116,9 @@ export async function getDecimals(token: string, provider: any) {
             return decimalsCache[address];
         }
     } else {
-        const found = TOKENS.find((el) => el.symbol.toLowerCase() === token.toLowerCase());
+        const found = TOKENS.find(
+            (el) => el.symbol.toLowerCase() === (token as string).toLowerCase(),
+        );
         return found?.decimals || 18;
     }
 }
@@ -146,7 +140,7 @@ export async function convertAmount(
     }
     if (TESTING) console.log('#convertAmount:', { amount, token, output });
     return to === 'readable'
-        ? `${output}  ${(await getTokenAttributes(token, 'symbol')) || 'N/A'}`
+        ? `${output}  ${(await getTokenAttributes(token, provider, 'symbol')) || 'N/A'}`
         : output;
 }
 

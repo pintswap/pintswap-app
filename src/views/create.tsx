@@ -99,7 +99,6 @@ export const CreateView = () => {
                     ),
                 })),
             );
-            console.log('tableDataRes', tableDataRes);
             setTableData(tableDataRes);
         })().catch((err) => console.error(err));
     }, [userTrades.size]);

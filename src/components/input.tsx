@@ -4,6 +4,7 @@ import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
 import { getTokenAttributes, round } from '../utils';
 import { BiSearchAlt } from 'react-icons/bi';
+import { usePintswapContext } from '../stores';
 
 type IInputProps = {
     placeholder?: string;
@@ -42,6 +43,9 @@ export const Input = ({
     wrapperClass,
 }: IInputProps) => {
     const { address } = useAccount();
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
     const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
     const tradeObjKey = placeholder?.includes('Receive') ? 'gets.amount' : 'gives.amount';
 
@@ -56,8 +60,11 @@ export const Input = ({
                             : {
                                   address,
                                   token:
-                                      ((await getTokenAttributes(token, 'address')) as string) ||
-                                      token,
+                                      ((await getTokenAttributes(
+                                          token,
+                                          module?.signer,
+                                          'address',
+                                      )) as string) || token,
                               };
                     const { formatted, symbol } = await fetchBalance(params);
                     if (formatted) setBalance({ loading: false, formatted, symbol });
@@ -68,7 +75,7 @@ export const Input = ({
             }
         };
         if (token && typeof token === 'string') getBalance();
-    }, [token]);
+    }, [token, module?.signer]);
 
     if (type === 'search') {
         return (

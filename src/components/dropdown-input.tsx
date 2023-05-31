@@ -1,10 +1,11 @@
-import { Dispatch, Fragment, SetStateAction } from 'react';
+import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { MdChevronRight } from 'react-icons/md';
-import { alphaTokenSort, classNames, ITokenProps, TOKENS } from '../utils';
+import { alphaTokenSort, classNames, getSymbol, ITokenProps, TOKENS } from '../utils';
 import { Asset } from './asset';
-import { ethers } from 'ethers';
+import { ethers } from 'ethers6';
 import { useSearch } from '../hooks';
+import { usePintswapContext } from '../stores';
 
 type IDropdownProps = {
     state: any;
@@ -31,12 +32,28 @@ export const DropdownInput = ({
 }: IDropdownProps) => {
     const isToken = type === 'gives.token' || type === 'gets.token';
     const { query, list, handleChange } = useSearch(isToken ? TOKENS : options || []);
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
+
+    const [unknownToken, setUnknownToken] = useState({ symbol: 'Unkown Token', loading: false });
 
     const dropdownItemClass = (active: boolean) =>
         classNames(
             active ? 'bg-gray-900 text-neutral-200' : 'text-neutral-300',
             'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full',
         );
+
+    useEffect(() => {
+        if (isToken && ethers.isAddress(query)) {
+            (async () => {
+                setUnknownToken({ ...unknownToken, loading: true });
+                const symbol = await getSymbol(query, module?.signer);
+                if (symbol) setUnknownToken({ symbol, loading: false });
+                else setUnknownToken({ ...unknownToken, loading: false });
+            })().catch((err) => console.error(err));
+        }
+    }, [query, module?.signer]);
 
     return (
         <div className="flex flex-col gap-1 justify-end">
@@ -115,15 +132,17 @@ export const DropdownInput = ({
                                   </Menu.Item>
                               ))}
 
-                        {isToken && ethers.utils.isAddress(query) && (
+                        {isToken && ethers.isAddress(query) && (
                             <Menu.Item>
                                 {({ active }) => (
                                     <button
-                                        className={dropdownItemClass(active)}
+                                        className={`${dropdownItemClass(active)} ${
+                                            unknownToken.loading ? 'animate-pulse' : ''
+                                        }`}
                                         onClick={() => setState(type, query)}
                                     >
                                         <Asset
-                                            symbol={'Unknown Token'}
+                                            symbol={unknownToken.symbol}
                                             icon="/img/generic.svg"
                                             alt="Unknown Token"
                                         />

@@ -40,7 +40,8 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => 
 
     return {
         query: searchState.query,
-        list: searchState.list.length === 0 ? list : searchState.list,
+        list:
+            searchState.list.length === 0 && determineType() !== 'token' ? list : searchState.list,
         handleChange,
     };
 };
