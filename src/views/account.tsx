@@ -62,13 +62,15 @@ export const AccountView = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
 
-    const handleUpdate = async () => {
+    const handleUpdate = async (e: any) => {
+        e.preventDefault();
         await handleSave();
         setShallowForm({ bio, name });
         setIsEditing(false);
     };
 
-    const handleCancel = () => {
+    const handleCancel = (e: any) => {
+        e.preventDefault();
         updateBio({ target: { value: shallowForm.bio } });
         updateName({ target: { value: shallowForm.name } });
         setIsEditing(false);
