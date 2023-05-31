@@ -50,6 +50,10 @@ export const AccountView = () => {
         updatePrivateKey,
         userData,
         toggleActive,
+        useNft,
+        toggleUseNft,
+        setUseNft,
+        loading,
     } = useUserContext();
     const { name, bio, img, privateKey, extension } = userData;
 
@@ -57,8 +61,8 @@ export const AccountView = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
 
-    const handleUpdate = () => {
-        handleSave();
+    const handleUpdate = async () => {
+        await handleSave();
         setShallowForm({ bio, name });
         setIsEditing(false);
     };
@@ -130,26 +134,70 @@ export const AccountView = () => {
                                 className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}
                             >
                                 {isEditing ? (
-                                    <div className="p-0.5">
-                                        <input
-                                            type="file"
-                                            name="profile-image"
-                                            accept=".jpg, .jpeg, .png"
-                                            onChange={updateImg}
-                                            className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
-                                            title=" "
-                                        />
-                                        <span className="absolute h-[154px] w-[154px] -translate-x-0.5 translate-y-0.5">
-                                            <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
-                                                Click to
-                                                <br />
-                                                Upload
-                                            </span>
-                                        </span>
-                                        <Avatar
-                                            size={150}
-                                            peer={pintswap?.module?.peerId.toB58String()}
-                                        />
+                                    <div
+                                        className={`flex flex-col justify-center items-center gap-2 w-full`}
+                                    >
+                                        {useNft.using ? (
+                                            <div
+                                                className={`flex flex-col gap-2 justify-center items-center w-full`}
+                                            >
+                                                <Input
+                                                    value={useNft.address}
+                                                    onChange={(e) =>
+                                                        setUseNft({
+                                                            ...useNft,
+                                                            address: e.target.value,
+                                                        })
+                                                    }
+                                                    type="text"
+                                                    title="Address"
+                                                    placeholder={'Start typing here'}
+                                                    disabled={loading}
+                                                    max={50}
+                                                />
+                                                <Input
+                                                    value={useNft.id}
+                                                    onChange={(e) =>
+                                                        setUseNft({ ...useNft, id: e.target.value })
+                                                    }
+                                                    type="number"
+                                                    title="ID"
+                                                    placeholder={'Start typing here'}
+                                                    disabled={loading}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="p-0.5">
+                                                <input
+                                                    type="file"
+                                                    name="profile-image"
+                                                    accept=".jpg, .jpeg, .png"
+                                                    onChange={updateImg}
+                                                    className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
+                                                />
+                                                <span className="absolute h-[154px] w-[154px] -translate-x-0.5 translate-y-0.5">
+                                                    <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
+                                                        Click to
+                                                        <br />
+                                                        Upload
+                                                    </span>
+                                                </span>
+                                                <Avatar
+                                                    size={150}
+                                                    peer={pintswap?.module?.peerId.toB58String()}
+                                                />
+                                            </div>
+                                        )}
+                                        <Button
+                                            className={`text-sm text-center ${
+                                                useNft.using ? 'mt-5' : ''
+                                            }`}
+                                            type="outline"
+                                            onClick={toggleUseNft}
+                                            disabled={loading}
+                                        >
+                                            Use {useNft.using ? 'File' : 'NFT'}
+                                        </Button>
                                     </div>
                                 ) : (
                                     <Avatar
@@ -166,7 +214,7 @@ export const AccountView = () => {
                                         type="text"
                                         title="Username"
                                         enableStateCss
-                                        disabled={!isEditing}
+                                        disabled={!isEditing || loading}
                                         placeholder={
                                             isEditing ? 'Start typing here...' : 'No username'
                                         }
@@ -183,7 +231,7 @@ export const AccountView = () => {
                                     type="text"
                                     title="Bio"
                                     enableStateCss
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || loading}
                                     placeholder={isEditing ? 'Start typing here...' : 'No bio'}
                                     max={100}
                                 />
@@ -199,7 +247,7 @@ export const AccountView = () => {
                                     type="password"
                                     title="Private Key"
                                     enableStateCss
-                                    disabled={!isEditing}
+                                    disabled={!isEditing || loading}
                                     placeholder={
                                         isEditing ? 'Start typing here...' : 'No private key'
                                     }
@@ -221,7 +269,7 @@ export const AccountView = () => {
                                     <Button form="reset" onClick={handleCancel} type="transparent">
                                         Cancel
                                     </Button>
-                                    <Button form="submit" onClick={handleUpdate}>
+                                    <Button form="submit" onClick={handleUpdate} loading={loading}>
                                         Save
                                     </Button>
                                 </>

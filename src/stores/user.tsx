@@ -1,6 +1,14 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import {
+    createContext,
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 import { usePintswapContext } from './pintswap';
-import { EMPTY_USER_DATA, savePintswap } from '../utils';
+import { EMPTY_USER_DATA, fetchNFT, savePintswap } from '../utils';
 import { ethers } from 'ethers6';
 
 // Types
@@ -14,40 +22,64 @@ export type IUserDataProps = {
     active: boolean;
 };
 
+type IUseNftProps = {
+    using: boolean;
+    address: string;
+    id: string;
+};
+
 export type IUserStoreProps = {
     userData: IUserDataProps;
+    useNft: IUseNftProps;
+    loading: boolean;
     updateBio: (e: any) => void;
     updateName: (e: any) => void;
     updateImg: (e: any) => void;
     updatePrivateKey: (e: any) => void;
-    handleSave: () => void;
+    handleSave: () => Promise<void>;
     updateExt: (e: any) => void;
     toggleActive: () => void;
+    toggleUseNft: () => void;
+    setUseNft: Dispatch<SetStateAction<any>>;
 };
+
+// Utils
+const DEFAULT_USE_NFT = { using: false, address: '', id: '' };
 
 // Context
 const UserContext = createContext<IUserStoreProps>({
     userData: EMPTY_USER_DATA,
+    useNft: DEFAULT_USE_NFT,
+    loading: false,
     updateBio(e) {},
     updateName(e) {},
     updateImg(e) {},
-    handleSave() {},
+    handleSave: async () => {},
     updatePrivateKey(e) {},
     updateExt(e) {},
     toggleActive() {},
+    toggleUseNft() {},
+    setUseNft() {},
 });
 
 // Wrapper
 export function UserStore(props: { children: ReactNode }) {
+    const psUser = localStorage.getItem('_pintUser');
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const [userData, setUserData] = useState<IUserDataProps>(EMPTY_USER_DATA);
-    const psUser = localStorage.getItem('_pintUser');
+    const [useNft, setUseNft] = useState(DEFAULT_USE_NFT);
+    const [loading, setLoading] = useState(false);
 
     function toggleActive() {
         if (!userData.active) module?.startPublishingOffers(60000);
         else module?.startPublishingOffers(60000).stop();
         setUserData({ ...userData, active: !userData.active });
+    }
+
+    function toggleUseNft() {
+        if (!useNft.using) setUseNft({ ...useNft, using: true });
+        else setUseNft({ ...useNft, using: false });
     }
 
     function updateExt(e: any) {
@@ -56,8 +88,8 @@ export function UserStore(props: { children: ReactNode }) {
 
     async function updateImg(e: any) {
         if (module) {
-            let image = (e.target.files as any)[0] ?? null;
-            let _buff = Buffer.from(await image.arrayBuffer());
+            const image = (e.target.files as any)[0] ?? null;
+            const _buff = Buffer.from(await image.arrayBuffer());
             module.setImage(_buff);
             setUserData({ ...userData, img: _buff });
         }
@@ -84,6 +116,7 @@ export function UserStore(props: { children: ReactNode }) {
     }
 
     async function handleSave() {
+        setLoading(true);
         if (module) {
             savePintswap(module);
             // Save name with extension
@@ -92,6 +125,17 @@ export function UserStore(props: { children: ReactNode }) {
                 nameWExt = `${nameWExt}${userData.extension}`;
             }
             try {
+                if (useNft.address && useNft.id && ethers.isAddress(useNft.address)) {
+                    const { imageBlob } = await fetchNFT({
+                        token: useNft.address,
+                        tokenId: useNft.id,
+                    });
+                    if (imageBlob) {
+                        const buff = Buffer.from(await (imageBlob as Blob).arrayBuffer());
+                        module.setImage(buff);
+                        setUserData({ ...userData, img: buff });
+                    }
+                }
                 await module.registerName(nameWExt);
                 // Save private key
                 if (psUser && userData.privateKey && userData.privateKey.length > 50) {
@@ -103,6 +147,7 @@ export function UserStore(props: { children: ReactNode }) {
                 console.error(`#handleSave:`, err);
             }
         }
+        setLoading(false);
     }
 
     /*
@@ -141,6 +186,10 @@ export function UserStore(props: { children: ReactNode }) {
                 updatePrivateKey,
                 updateExt,
                 toggleActive,
+                useNft,
+                toggleUseNft,
+                setUseNft,
+                loading,
             }}
         >
             {props.children}
