@@ -10,10 +10,11 @@ import {
 import { usePintswapContext } from './pintswap';
 import { EMPTY_USER_DATA, fetchNFT, savePintswap } from '../utils';
 import { ethers } from 'ethers6';
+import { NFTPFP } from '@pintswap/sdk';
 
 // Types
 export type IUserDataProps = {
-    img: string | Buffer;
+    img: NFTPFP | Buffer | string;
     bio: string;
     name: string;
     offers?: any[];
@@ -41,6 +42,7 @@ export type IUserStoreProps = {
     toggleActive: () => void;
     toggleUseNft: () => void;
     setUseNft: Dispatch<SetStateAction<any>>;
+    setUserData: Dispatch<SetStateAction<IUserDataProps>>;
 };
 
 // Utils
@@ -60,6 +62,7 @@ const UserContext = createContext<IUserStoreProps>({
     toggleActive() {},
     toggleUseNft() {},
     setUseNft() {},
+    setUserData() {},
 });
 
 // Wrapper
@@ -167,7 +170,7 @@ export function UserStore(props: { children: ReactNode }) {
                 }
                 setUserData({
                     ...userData,
-                    name: name,
+                    name,
                     bio: module.userData.bio,
                     img: module.userData.image,
                 });
@@ -190,6 +193,7 @@ export function UserStore(props: { children: ReactNode }) {
                 toggleUseNft,
                 setUseNft,
                 loading,
+                setUserData,
             }}
         >
             {props.children}

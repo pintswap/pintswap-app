@@ -7,8 +7,10 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
     const { module } = ps;
     try {
         if (inverse) {
+            // TODO: make sure this inverse works
             if (peer.includes('.drip')) {
-                return (await module?.resolveName(peer)) || constants.AddressZero;
+                const b58 = await module?.resolveName(peer);
+                return b58 ? b58 : peer;
             } else {
                 return peer;
             }
@@ -54,7 +56,6 @@ export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full
                 res = await module?.getUserDataByPeerId(b58peer);
             }
         }
-
         if (res) return res;
         else return { offers: [], bio: '', image: '' };
     } catch (err) {
