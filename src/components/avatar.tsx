@@ -56,7 +56,6 @@ export const Avatar = ({
                     const found = peersData.find(
                         (el) => el.name.toLowerCase() === peer.toLowerCase(),
                     );
-                    console.log('found', found);
                     if (found) {
                         if ((found.img === '' || found.img === '/black.jpg') && multiaddr) {
                             return {
@@ -71,7 +70,6 @@ export const Avatar = ({
                             peer,
                             withImage ? 'full' : 'minimal',
                         );
-                        console.log('formattedPeer', formattedPeer);
                         if (formattedPeer) {
                             // If current user
                             if (peer === module.peerId.toB58String()) setUserData(formattedPeer);
@@ -81,7 +79,6 @@ export const Avatar = ({
                 } else {
                     // Passed entire peer obj
                     if ((peer.img === '' || peer.img === '/black.jpg') && multiaddr) {
-                        console.log('passing entire', peer);
                         return {
                             ...peer,
                             img: await getPeerImg(pintswap, peer),
@@ -96,7 +93,7 @@ export const Avatar = ({
                     : truncate(module.peerId.toB58String());
                 const renderPic =
                     userData.img?.toString('base64') !== ''
-                        ? `${BASE_AVATAR_URL}${userData.img?.toString('base64')}`
+                        ? `${userData.img?.toString('base64')}`
                         : DEFAULT_AVATAR;
                 return {
                     ...userData,

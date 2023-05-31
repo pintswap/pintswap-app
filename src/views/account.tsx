@@ -17,6 +17,7 @@ import { usePintswapContext } from '../stores/pintswap';
 import { convertAmount } from '../utils/token';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
+import { truncate } from '../utils';
 
 const columns = [
     {
@@ -209,7 +210,9 @@ export const AccountView = () => {
                             <div className="grid grid-cols-1 gap-3 lg:gap-2">
                                 <div className="flex items-end w-full">
                                     <Input
-                                        value={name}
+                                        value={
+                                            name && name.includes('.drip') ? name : truncate(name)
+                                        }
                                         onChange={updateName}
                                         type="text"
                                         title="Username"

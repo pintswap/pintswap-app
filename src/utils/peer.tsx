@@ -29,11 +29,11 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
 export const getPeerImg = async (ps: IPintswapProps, peer: string | IUserDataProps) => {
     if (typeof peer === 'string') {
         const { image } = await getPeerData(ps, peer);
-        return image ? `${BASE_AVATAR_URL}${image.toString('base64')}` : DEFAULT_AVATAR;
+        return image ? `${image.toString('base64')}` : DEFAULT_AVATAR;
     }
     const b58peer = await formatPeerName(ps, (peer as IUserDataProps).name, true);
     const { image } = await getPeerData(ps, b58peer);
-    return image ? `${BASE_AVATAR_URL}${image.toString('base64')}` : DEFAULT_AVATAR;
+    return image ? `${image.toString('base64')}` : DEFAULT_AVATAR;
 };
 
 export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full' | 'minimal') {
