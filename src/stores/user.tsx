@@ -21,6 +21,7 @@ export type IUserDataProps = {
     privateKey?: string;
     extension?: string;
     active: boolean;
+    loading: boolean;
 };
 
 type IUseNftProps = {

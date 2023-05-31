@@ -192,12 +192,12 @@ export const useTrade = () => {
                 try {
                     // TODO: optimize
                     const { offers }: IOrderbookProps = await module.getUserDataByPeerId(resolved);
+                    if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (orderHash && peerTrades.get(orderHash)) {
                         const { gives, gets } = peerTrades.get(orderHash) as any;
                         setTrade(await displayTradeObj({ gets, gives }));
                         return;
                     }
-                    if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
                         if (TESTING) console.log('#getTrades - Order Hash:', hash);

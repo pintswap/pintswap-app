@@ -42,6 +42,7 @@ export const EMPTY_USER_DATA: IUserDataProps = {
     privateKey: '',
     active: false,
     extension: '.drip',
+    loading: false,
 };
 
 export const DEFAULT_AVATAR = '/black.jpg';

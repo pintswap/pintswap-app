@@ -1,7 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../stores';
-import { BASE_AVATAR_URL, DEFAULT_AVATAR, getFormattedPeer, getPeerImg, truncate } from '../utils';
+import {
+    BASE_AVATAR_URL,
+    DEFAULT_AVATAR,
+    formatPeerImg,
+    getFormattedPeer,
+    getPeerImg,
+    truncate,
+} from '../utils';
 import { StatusIndicator } from './status-indicator';
 
 type IAvatarProps = {
@@ -45,6 +52,7 @@ export const Avatar = ({
         bio: pathname.includes('account') ? (userData.bio ? userData.bio : '') : '',
         name: peer && typeof peer === 'string' ? peer : truncate(userData.name),
         active: false,
+        loading: true,
     };
     const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
 
@@ -61,9 +69,10 @@ export const Avatar = ({
                             return {
                                 ...found,
                                 img: await getPeerImg(pintswap, peer),
+                                loading: false,
                             };
                         }
-                        return found;
+                        return { ...found, loading: false };
                     } else {
                         const formattedPeer = await getFormattedPeer(
                             pintswap,
@@ -72,8 +81,9 @@ export const Avatar = ({
                         );
                         if (formattedPeer) {
                             // If current user
-                            if (peer === module.peerId.toB58String()) setUserData(formattedPeer);
-                            return formattedPeer;
+                            if (peer === module.peerId.toB58String())
+                                setUserData({ ...formattedPeer, loading: false });
+                            return { ...formattedPeer, loading: false };
                         }
                     }
                 } else {
@@ -82,24 +92,23 @@ export const Avatar = ({
                         return {
                             ...peer,
                             img: await getPeerImg(pintswap, peer),
+                            loading: false,
                         };
                     }
-                    return peer;
+                    return { ...peer, loading: false };
                 }
             } else {
                 // Passed no peer / user data
                 const renderName = userData.name
                     ? userData.name
                     : truncate(module.peerId.toB58String());
-                const renderPic =
-                    userData.img?.toString('base64') !== ''
-                        ? `${userData.img?.toString('base64')}`
-                        : DEFAULT_AVATAR;
+                const renderPic = formatPeerImg(userData.img);
                 return {
                     ...userData,
                     img: renderPic,
                     bio: userData.bio,
                     name: renderName,
+                    loading: false,
                 };
             }
         }
@@ -145,9 +154,9 @@ export const Avatar = ({
         );
     } else if (type === 'profile') {
         return (
-            <div className={loading ? 'animate-pulse' : ''}>
+            <div className={loading || peerData.loading ? 'animate-pulse' : ''}>
                 <div className="float-left">
-                    {loading ? (
+                    {loading || peerData.loading ? (
                         <div
                             className={`rounded-full self-center bg-neutral-700`}
                             style={{
@@ -172,10 +181,10 @@ export const Avatar = ({
                 </div>
                 <div className="flex flex-col pl-3 sm:pl-4">
                     <div>
-                        {loading ? (
+                        {loading || peerData.loading ? (
                             <div
-                                className={`rounded-md self-center bg-neutral-700`}
-                                style={{ width: 150, height: 20 }}
+                                className={`rounded-md self-center bg-neutral-700 mt-0.5`}
+                                style={{ width: 150, height: 30 }}
                             />
                         ) : (
                             <span className={`${nameClass ? nameClass : 'text-lg lg:text-2xl'}`}>
@@ -186,10 +195,10 @@ export const Avatar = ({
                         )}
                     </div>
                     <div>
-                        {loading ? (
+                        {loading || peerData.loading ? (
                             <div
-                                className={`rounded-md bg-neutral-700`}
-                                style={{ width: 200, height: 15 }}
+                                className={`rounded-md bg-neutral-700 mt-1`}
+                                style={{ width: 200, height: 20 }}
                             />
                         ) : (
                             <span
@@ -206,12 +215,12 @@ export const Avatar = ({
         );
     } else {
         return (
-            <div className={loading ? 'animate-pulse' : ''}>
+            <div className={loading || peerData.loading ? 'animate-pulse' : ''}>
                 <div className={`flex flex-col gap-3 ${alginClass()}`}>
                     <div className={`flex flex-row gap-3 ${alginClass()} !items-center`}>
                         {withImage && (
                             <>
-                                {loading ? (
+                                {loading || peerData.loading ? (
                                     <div
                                         className={`rounded-full self-center bg-neutral-700`}
                                         style={{
@@ -237,7 +246,7 @@ export const Avatar = ({
                         )}
                         {withName && (
                             <>
-                                {loading ? (
+                                {loading || peerData.loading ? (
                                     <div
                                         className={`rounded-md self-center bg-neutral-700`}
                                         style={{ width: 150, height: 20 }}
@@ -254,7 +263,7 @@ export const Avatar = ({
                     </div>
                     {withBio && (
                         <>
-                            {loading ? (
+                            {loading || peerData.loading ? (
                                 <div
                                     className={`rounded-md bg-neutral-700`}
                                     style={{ width: 200, height: 15 }}

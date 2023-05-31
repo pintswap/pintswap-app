@@ -1,7 +1,14 @@
+import { NFTPFP } from '@pintswap/sdk';
 import { IPintswapProps, IUserDataProps } from '../stores';
-import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA } from './constants';
+import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA, TESTING } from './constants';
 import { createFromB58String } from 'peer-id';
-import { constants } from 'ethers';
+
+export const formatPeerImg = (img: string | Buffer | NFTPFP) => {
+    if (TESTING) console.log('#formatPeerImg:', img);
+    if (!img) return DEFAULT_AVATAR;
+    if (typeof img === 'string' && img.startsWith('data:image')) return img;
+    return `${BASE_AVATAR_URL}${img.toString('base64')}`;
+};
 
 export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?: boolean) => {
     const { module } = ps;
@@ -29,11 +36,11 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
 export const getPeerImg = async (ps: IPintswapProps, peer: string | IUserDataProps) => {
     if (typeof peer === 'string') {
         const { image } = await getPeerData(ps, peer);
-        return image ? `${image.toString('base64')}` : DEFAULT_AVATAR;
+        return formatPeerImg(image);
     }
     const b58peer = await formatPeerName(ps, (peer as IUserDataProps).name, true);
     const { image } = await getPeerData(ps, b58peer);
-    return image ? `${image.toString('base64')}` : DEFAULT_AVATAR;
+    return formatPeerImg(image);
 };
 
 export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full' | 'minimal') {
