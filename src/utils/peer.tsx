@@ -5,9 +5,20 @@ import { createFromB58String } from 'peer-id';
 
 export const formatPeerImg = (img: string | Buffer | NFTPFP) => {
     if (TESTING) console.log('#formatPeerImg:', img);
-    if (!img) return DEFAULT_AVATAR;
+    if (!img || img === BASE_AVATAR_URL || img.toString('base64').length === 0)
+        return DEFAULT_AVATAR;
     if (typeof img === 'string' && img.startsWith('data:image')) return img;
     return `${BASE_AVATAR_URL}${img.toString('base64')}`;
+};
+
+export const getPeerImg = async (ps: IPintswapProps, peer: string | IUserDataProps) => {
+    if (typeof peer === 'string') {
+        const { image } = await getPeerData(ps, peer);
+        return formatPeerImg(image);
+    }
+    const b58peer = await formatPeerName(ps, (peer as IUserDataProps).name, true);
+    const { image } = await getPeerData(ps, b58peer);
+    return formatPeerImg(image);
 };
 
 export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?: boolean) => {
@@ -31,16 +42,6 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
         console.warn(`#formatPeerName: no names found for multiAddr ${peer}`);
         return peer;
     }
-};
-
-export const getPeerImg = async (ps: IPintswapProps, peer: string | IUserDataProps) => {
-    if (typeof peer === 'string') {
-        const { image } = await getPeerData(ps, peer);
-        return formatPeerImg(image);
-    }
-    const b58peer = await formatPeerName(ps, (peer as IUserDataProps).name, true);
-    const { image } = await getPeerData(ps, b58peer);
-    return formatPeerImg(image);
 };
 
 export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full' | 'minimal') {
@@ -81,10 +82,7 @@ export const getFormattedPeer = async (
         const res = await getPeerData(ps, peer, type);
         const formattedName = await formatPeerName(ps, peer);
         if (res) {
-            const renderPic =
-                res.image.toString('base64') !== ''
-                    ? `${baseUrl}${res.image?.toString('base64')}`
-                    : '/black.jpg';
+            const renderPic = formatPeerImg(res.image);
             return {
                 img: renderPic,
                 bio: res.bio,
