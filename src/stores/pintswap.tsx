@@ -159,7 +159,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                         await ps.subscribeOffers();
                         resolve(ps);
                     } catch (err) {
-                        console.error('Initializing error:', err);
+                        console.warn('#initialize:', err);
                         setPintswap({ ...pintswap, loading: false });
                     }
                 })().catch(reject);

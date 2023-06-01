@@ -48,6 +48,6 @@ export async function fetchNFT(
     nft.token = token;
     if (txHash) nft.hash = txHash;
     nftCache[hash] = nft;
-    if (TESTING) console.log('NFT Props:', nft);
+    if (TESTING) console.log('#fetchNFT:', nft);
     return nft;
 }

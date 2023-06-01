@@ -1,14 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../stores';
-import {
-    BASE_AVATAR_URL,
-    DEFAULT_AVATAR,
-    formatPeerImg,
-    getFormattedPeer,
-    getPeerImg,
-    truncate,
-} from '../utils';
+import { DEFAULT_AVATAR, formatPeerName, getFormattedPeer, getPeerImg, truncate } from '../utils';
 import { StatusIndicator } from './status-indicator';
 
 type IAvatarProps = {
@@ -39,89 +32,11 @@ export const Avatar = ({
     align,
     showActive,
 }: IAvatarProps) => {
-    const { pathname } = useLocation();
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const { userData, setUserData } = useUserContext();
     const { peersData } = usePeersContext();
     const navigate = useNavigate();
-    const { multiaddr } = useParams();
-
-    const defaultUserState = {
-        img: DEFAULT_AVATAR,
-        bio: pathname.includes('account') ? (userData.bio ? userData.bio : '') : '',
-        name: peer && typeof peer === 'string' ? peer : truncate(userData.name),
-        active: false,
-        loading: true,
-    };
-    const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
-
-    const getUserData = async (): Promise<IUserDataProps | undefined> => {
-        if (module) {
-            if (peer) {
-                if (typeof peer === 'string') {
-                    // Passed peer string
-                    const found = peersData.find(
-                        (el) => el.name.toLowerCase() === peer.toLowerCase(),
-                    );
-                    if (found) {
-                        if ((found.img === '' || found.img === '/black.jpg') && multiaddr) {
-                            return {
-                                ...found,
-                                img: await getPeerImg(pintswap, peer),
-                                loading: false,
-                            };
-                        }
-                        return { ...found, loading: false };
-                    } else {
-                        const formattedPeer = await getFormattedPeer(
-                            pintswap,
-                            peer,
-                            withImage ? 'full' : 'minimal',
-                        );
-                        if (formattedPeer) {
-                            // If current user
-                            if (peer === module.peerId.toB58String())
-                                setUserData({ ...formattedPeer, loading: false });
-                            return { ...formattedPeer, loading: false };
-                        }
-                    }
-                } else {
-                    // Passed entire peer obj
-                    if ((peer.img === '' || peer.img === '/black.jpg') && multiaddr) {
-                        return {
-                            ...peer,
-                            img: await getPeerImg(pintswap, peer),
-                            loading: false,
-                        };
-                    }
-                    return { ...peer, loading: false };
-                }
-            } else {
-                // Passed no peer / user data
-                const renderName = userData.name
-                    ? userData.name
-                    : truncate(module.peerId.toB58String());
-                const renderPic = formatPeerImg(userData.img);
-                return {
-                    ...userData,
-                    img: renderPic,
-                    bio: userData.bio,
-                    name: renderName,
-                    loading: false,
-                };
-            }
-        }
-    };
-
-    useEffect(() => {
-        const getter = async () => {
-            const userData = await getUserData();
-            if (userData) setPeerData(userData);
-            else setPeerData(defaultUserState);
-        };
-        getter();
-    }, [peer, module, peerData.name, peersData.length]);
 
     const alginClass = () => {
         switch (align) {
@@ -133,6 +48,57 @@ export const Avatar = ({
                 return 'items-center justify-center text-center';
         }
     };
+
+    const defaultUserState = {
+        img: DEFAULT_AVATAR,
+        bio: '',
+        name: '',
+        active: false,
+        loading: true,
+    };
+
+    const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
+
+    const getUserData = async (): Promise<IUserDataProps> => {
+        if (module && peer) {
+            const peerName = typeof peer === 'string' ? peer : peer.name;
+            const found = peersData.find((el) => el.name === peerName);
+            if (found) {
+                const img = withImage ? await getPeerImg(pintswap, peer) : found.img;
+                const returnObj = {
+                    ...found,
+                    img,
+                    loading: false,
+                };
+                return returnObj;
+            }
+            const formattedPeer = await getFormattedPeer(
+                pintswap,
+                peerName,
+                withImage ? 'full' : 'minimal',
+            );
+            if (formattedPeer) {
+                const img = withImage ? await getPeerImg(pintswap, peer) : formattedPeer.img;
+                const returnObj = {
+                    ...formattedPeer,
+                    name: await formatPeerName(pintswap, peerName),
+                    img,
+                    loading: false,
+                };
+                if (peer === module.peerId.toB58String()) setUserData(returnObj);
+                return returnObj;
+            }
+        }
+        return defaultUserState;
+    };
+
+    useEffect(() => {
+        const getter = async () => {
+            const userData = await getUserData();
+            if (userData) setPeerData(userData);
+        };
+        if (module) getter();
+    }, [peer, module, peerData.name, peersData.length]);
 
     if (type === 'clickable') {
         return (
