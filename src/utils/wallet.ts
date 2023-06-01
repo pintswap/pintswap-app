@@ -46,7 +46,7 @@ export const walletTheme = merge(
     darkTheme({
         borderRadius: 'small',
         accentColor: '#4f46e5',
-    })
+    }),
 );
 
 export const wagmiClient = createClient({

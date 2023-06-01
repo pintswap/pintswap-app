@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card } from '../components';
 import { useOffersContext, usePintswapContext } from '../stores';
-import { getTokenAttributes } from '../utils/token';
+import { getTokenLogo } from '../utils/token';
 import { resolveName } from '../hooks/trade';
 import { useParams } from 'react-router-dom';
 import { groupBy } from 'lodash';
@@ -13,8 +13,8 @@ const bestPrices = (orders: any) => {
     const bestBid = (bid || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
     return {
         bid: bestBid?.price || 'N/A',
-        ask: bestAsk?.price || 'N/A'
-    }
+        ask: bestAsk?.price || 'N/A',
+    };
 };
 
 export const PairsTable = () => {
@@ -58,42 +58,50 @@ export const PairsTable = () => {
                           const split = pair.ticker.split('/');
                           const token1 = split[0];
                           const token2 = split[1];
-                          const icon1 = getTokenAttributes(token1, 'logoURI')?.toString();
-                          const icon2 = getTokenAttributes(token2, 'logoURI')?.toString();
+                          const icon1 = getTokenLogo(token1);
+                          const icon2 = getTokenLogo(token2);
                           return (
                               <button
                                   key={`unique-pair-${pair.ticker}`}
                                   onClick={() => navigate(`/${multiaddr}/${pair.ticker}`)}
                               >
                                   <Card className="hover:bg-gray-900" type="inner">
-                                        <div
+                                      <div
                                           className={`text-center flex items-center justify-center gap-3`}
-                                        >
-                                              <Asset icon={icon1} symbol={token1} />
-                                              <span>/</span>
-                                              <Asset icon={icon2} symbol={token2} />
-                                        </div>
-                                        <div className="flex items-center justify-around mt-1">
-                                            <small className="text-green-400">BID: {pair.price.bid}</small>
-                                            <small className="text-red-400">ASK: {pair.price.ask}</small>
-                                        </div>
+                                      >
+                                          <Asset icon={icon1} symbol={token1} />
+                                          <span>/</span>
+                                          <Asset icon={icon2} symbol={token2} />
+                                      </div>
+                                      <div className="flex items-center justify-around mt-1">
+                                          <small className="text-green-400">
+                                              BID: {pair.price.bid}
+                                          </small>
+                                          <small className="text-red-400">
+                                              ASK: {pair.price.ask}
+                                          </small>
+                                      </div>
                                   </Card>
                               </button>
                           );
                       })
                     : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                        <Card key={`loading-card-${i}`} className="justify-start" type="inner">
-                            <div className={`text-center flex items-center justify-center gap-3`}>
-                                <Asset loading />
-                                <span>/</span>
-                                <Asset loading />
-                            </div>
-                            <div className="flex items-center justify-around mt-1">
-                                <div className={`animate-pulse bg-neutral-700 h-4 w-16 rounded`} />
-                                <div className={`animate-pulse bg-neutral-700 h-4 w-16 rounded`} />
-                            </div>
-                        </Card>
-                    ))}
+                          <Card key={`loading-card-${i}`} className="justify-start" type="inner">
+                              <div className={`text-center flex items-center justify-center gap-3`}>
+                                  <Asset loading />
+                                  <span>/</span>
+                                  <Asset loading />
+                              </div>
+                              <div className="flex items-center justify-around mt-1">
+                                  <div
+                                      className={`animate-pulse bg-neutral-700 h-4 w-16 rounded`}
+                                  />
+                                  <div
+                                      className={`animate-pulse bg-neutral-700 h-4 w-16 rounded`}
+                                  />
+                              </div>
+                          </Card>
+                      ))}
             </div>
         </div>
     );

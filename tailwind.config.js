@@ -12,8 +12,8 @@ module.exports = {
                     dashboard: '#171717',
                     purple: '#4f46e5',
                     pink: '#f472b6',
-                    blue: '#0ea5e9'
-                }
+                    blue: '#0ea5e9',
+                },
             },
             maxWidth: {
                 '8xl': '1920px',
@@ -42,7 +42,7 @@ module.exports = {
             fontFamily: {
                 titillium: ['Titillium Web', 'sans-serif'],
                 'gothic-bold': ['Dela Gothic One', 'cursive'],
-                'gothic': ['Pathway Gothic One', 'sans-serif']
+                gothic: ['Pathway Gothic One', 'sans-serif'],
             },
         },
     },

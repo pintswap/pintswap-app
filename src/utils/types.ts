@@ -1,4 +1,4 @@
-import { IOffer } from "@pintswap/sdk";
+import { IOffer } from '@pintswap/sdk';
 
 export interface BaseOffer {
     token: string;
@@ -21,19 +21,18 @@ export type INFTProps = {
     tokenId: string | number;
     imageBlob: Blob | MediaSource;
     hash: string;
-  }
+};
 
-  export type IFillProps = {
+export type IFillProps = {
     offerHash: string;
     amount: string;
-}
+};
 
 export type IOrderStateProps = {
-  orderHash: string;
-  multiAddr: string | any;
+    orderHash: string;
+    multiAddr: string | any;
 };
 
 export type IOrderbookProps = {
-  offers: IOffer[];
+    offers: IOffer[];
 };
-

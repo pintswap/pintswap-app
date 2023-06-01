@@ -3,9 +3,9 @@ import { BsFillCheckCircleFill, BsFillExclamationCircleFill } from 'react-icons/
 import { truncate } from './format';
 
 type IToastStatusProps = {
-  status: 'error' | 'success' | 'pending';
-  transaction?: string;
-  message?: string;
+    status: 'error' | 'success' | 'pending';
+    transaction?: string;
+    message?: string;
 };
 
 export const defaultToastOptions = {
@@ -14,7 +14,12 @@ export const defaultToastOptions = {
     closeButton: true,
 };
 
-export const updateToast = (toastId: Id, type: 'success' | 'error', msg?: string, hash?: string) => {
+export const updateToast = (
+    toastId: Id,
+    type: 'success' | 'error',
+    msg?: string,
+    hash?: string,
+) => {
     if (type === 'success') {
         toast.update(toastId, {
             render: <ToastStatus status="success" transaction={hash} message={msg} />,
@@ -75,4 +80,3 @@ export const ToastStatus = ({ status, transaction, message }: IToastStatusProps)
         </div>
     );
 };
-

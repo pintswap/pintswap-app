@@ -36,35 +36,44 @@ function mergeUserData(a: any, b: any): typeof a {
 }
 
 export async function initializePintswapFromSigner({ signer, pintswap, setPintswap }: any) {
-  await (window as any).discoveryDeferred.promise;
-  if (pintswap.module) await pintswap.module.stopNode();
-  const metamask = getMetamask(signer);
-  if (metamask) await metamask.request({
-    method: 'wallet_requestPermissions',
-    params: [{ eth_accounts: {} }]
-  });
-  const ps = await Pintswap.fromPassword({ signer, password: await signer.getAddress() } as any) as Pintswap;
-  const newPintswap = pintswap.module ? mergeUserData(ps, pintswap.module) : ps;
-  newPintswap.logger.info(newPintswap);
-  newPintswap.on('peer:discovery', async (peer: any) => {
-    if (TESTING) console.log('Discovered peer:', peer);
-    (window as any).discoveryDeferred.resolve(peer);
-  });
-  setPintswap({
-     module: newPintswap,
-     ...pintswap,
-     loading: true
-  });
-  await newPintswap.startNode();
-  await newPintswap.subscribeOffers();
-  setPintswap({
-    module: newPintswap,
-    ...pintswap,
-    loading: false
-  });
+    await (window as any).discoveryDeferred.promise;
+    if (pintswap.module) await pintswap.module.stopNode();
+    const metamask = getMetamask(signer);
+    if (metamask)
+        await metamask.request({
+            method: 'wallet_requestPermissions',
+            params: [{ eth_accounts: {} }],
+        });
+    const ps = (await Pintswap.fromPassword({
+        signer,
+        password: await signer.getAddress(),
+    } as any)) as Pintswap;
+    const newPintswap = pintswap.module ? mergeUserData(ps, pintswap.module) : ps;
+    newPintswap.logger.info(newPintswap);
+    newPintswap.on('peer:discovery', async (peer: any) => {
+        if (TESTING) console.log('Discovered peer:', peer);
+        (window as any).discoveryDeferred.resolve(peer);
+    });
+    setPintswap({
+        module: newPintswap,
+        ...pintswap,
+        loading: true,
+    });
+    await newPintswap.startNode();
+    await newPintswap.subscribeOffers();
+    setPintswap({
+        module: newPintswap,
+        ...pintswap,
+        loading: false,
+    });
 }
-  
-const getMetamask = (signer: any) => signer && signer.provider && signer.provider.provider && signer.provider.provider.isMetaMask && signer.provider.provider;
+
+const getMetamask = (signer: any) =>
+    signer &&
+    signer.provider &&
+    signer.provider.provider &&
+    signer.provider.provider.isMetaMask &&
+    signer.provider.provider;
 
 // Wrapper
 export function PintswapStore(props: { children: ReactNode }) {
@@ -78,43 +87,48 @@ export function PintswapStore(props: { children: ReactNode }) {
         error: false,
     });
 
-    const metamask = useMemo(() => getMetamask(signer), [ signer ]);
+    const metamask = useMemo(() => getMetamask(signer), [signer]);
     useEffect(() => {
-      if (metamask) {
-        const listener = async () => {
-          await initializePintswapFromSigner({ signer, pintswap, setPintswap });
-        };
-        metamask.on('accountsChanged', listener);
-        return () => metamask.removeListener('accountsChanged', listener);
-      }
-    }, [ signer ]);
+        if (metamask) {
+            const listener = async () => {
+                await initializePintswapFromSigner({ signer, pintswap, setPintswap });
+            };
+            metamask.on('accountsChanged', listener);
+            return () => metamask.removeListener('accountsChanged', listener);
+        }
+    }, [signer]);
 
     const determinePsModule = async () => {
-        if(!signer && !address) {
-            const noWalletInitPs = await Pintswap.initialize({ 
-                awaitReceipts: false, 
-                signer: new ethers.Wallet('0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e') 
+        if (!signer && !address) {
+            const noWalletInitPs = await Pintswap.initialize({
+                awaitReceipts: false,
+                signer: new ethers.Wallet(
+                    '0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e',
+                ),
             });
-            if(TESTING) console.log("noWalletInitPs:", noWalletInitPs)
+            if (TESTING) console.log('noWalletInitPs:', noWalletInitPs);
             return noWalletInitPs;
         } else {
-            if(typeof localPsUser === 'string') {
+            if (typeof localPsUser === 'string') {
                 const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), signer);
-                if(TESTING) console.log("psFromLocal:", psFromLocal)
+                if (TESTING) console.log('psFromLocal:', psFromLocal);
                 return psFromLocal;
             } else {
-                if(signer) {
-                    const psFromPass = await Pintswap.fromPassword({ signer: signer, password: await signer.getAddress() } as any) as Pintswap;
-                    if(TESTING) console.log("psFromPass:", psFromPass);
+                if (signer) {
+                    const psFromPass = (await Pintswap.fromPassword({
+                        signer: signer,
+                        password: await signer.getAddress(),
+                    } as any)) as Pintswap;
+                    if (TESTING) console.log('psFromPass:', psFromPass);
                     return mergeUserData(psFromPass, pintswap.module);
                 } else {
                     const initPs = await Pintswap.initialize({ awaitReceipts: false, signer });
-                    if(TESTING) console.log("initPs:", initPs)
+                    if (TESTING) console.log('initPs:', initPs);
                     return initPs;
                 }
             }
         }
-    }
+    };
 
     // Initialize Pintswap
     useEffect(() => {
@@ -123,9 +137,9 @@ export function PintswapStore(props: { children: ReactNode }) {
                 (async () => {
                     try {
                         // Stop exisiting node if there is one started
-                        if(pintswap.module?.isStarted() && pintswap.module) {
+                        if (pintswap.module?.isStarted() && pintswap.module) {
                             await pintswap.module.stopNode();
-                            if(TESTING) console.log("Stopped previous node");
+                            if (TESTING) console.log('Stopped previous node');
                         }
 
                         const ps = await determinePsModule();
@@ -135,7 +149,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                         });
                         // Start node
                         await ps.startNode();
-                        if(TESTING) console.log("Starting new node");
+                        if (TESTING) console.log('Starting new node');
                         // Subscribe to peer
                         ps.on('peer:discovery', async (peer: any) => {
                             if (TESTING) console.log('Discovered peer:', peer);
@@ -160,14 +174,24 @@ export function PintswapStore(props: { children: ReactNode }) {
     }, [signer, address]);
 
     useEffect(() => {
-      if (signer && pintswap.module && pintswap.module.signer && (!pintswap.module.signer.provider || ((signer as any).address || '').toLowerCase() === '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) && signer) pintswap.module.signer = signer;
-    }, [ signer, pintswap ]);
+        if (
+            signer &&
+            pintswap.module &&
+            pintswap.module.signer &&
+            (!pintswap.module.signer.provider ||
+                ((signer as any).address || '').toLowerCase() ===
+                    '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) &&
+            signer
+        )
+            pintswap.module.signer = signer;
+    }, [signer, pintswap]);
 
     return (
         <PintswapContext.Provider
             value={{
                 pintswap,
-                initializePintswapFromSigner: async ({ signer }: any) => await initializePintswapFromSigner({ pintswap, setPintswap, signer }),
+                initializePintswapFromSigner: async ({ signer }: any) =>
+                    await initializePintswapFromSigner({ pintswap, setPintswap, signer }),
                 setPintswap,
             }}
         >
