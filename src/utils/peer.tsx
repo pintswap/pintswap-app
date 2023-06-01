@@ -4,7 +4,6 @@ import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA, TESTING } from './con
 import { createFromB58String } from 'peer-id';
 
 export const formatPeerImg = (img: string | Buffer | NFTPFP) => {
-    if (TESTING) console.log('#formatPeerImg:', img);
     if (!img || img === BASE_AVATAR_URL || img.toString('base64').length === 0)
         return DEFAULT_AVATAR;
     if (typeof img === 'string' && img.startsWith('data:image')) return img;

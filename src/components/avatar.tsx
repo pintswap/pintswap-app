@@ -5,6 +5,7 @@ import {
     BASE_AVATAR_URL,
     DEFAULT_AVATAR,
     formatPeerImg,
+    formatPeerName,
     getFormattedPeer,
     getPeerImg,
     truncate,
@@ -56,61 +57,48 @@ export const Avatar = ({
     };
     const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
 
-    const getUserData = async (): Promise<IUserDataProps | undefined> => {
-        if (module) {
-            if (peer) {
-                if (typeof peer === 'string') {
-                    // Passed peer string
-                    const found = peersData.find(
-                        (el) => el.name.toLowerCase() === peer.toLowerCase(),
-                    );
-                    if (found) {
-                        if ((found.img === '' || found.img === '/black.jpg') && multiaddr) {
-                            return {
-                                ...found,
-                                img: await getPeerImg(pintswap, peer),
-                                loading: false,
-                            };
-                        }
-                        return { ...found, loading: false };
-                    } else {
-                        const formattedPeer = await getFormattedPeer(
-                            pintswap,
-                            peer,
-                            withImage ? 'full' : 'minimal',
-                        );
-                        if (formattedPeer) {
-                            // If current user
-                            if (peer === module.peerId.toB58String())
-                                setUserData({ ...formattedPeer, loading: false });
-                            return { ...formattedPeer, loading: false };
-                        }
-                    }
-                } else {
-                    // Passed entire peer obj
-                    if ((peer.img === '' || peer.img === '/black.jpg') && multiaddr) {
-                        return {
-                            ...peer,
-                            img: await getPeerImg(pintswap, peer),
-                            loading: false,
-                        };
-                    }
-                    return { ...peer, loading: false };
+    const getUserData = async (): Promise<IUserDataProps> => {
+        if (module && peer) {
+            if (typeof peer === 'string') {
+                const found = peersData.find((el) => el.name === peer);
+                if (found) {
+                    return {
+                        ...found,
+                        img: await getPeerImg(pintswap, peer),
+                        name: await formatPeerName(pintswap, peer),
+                        loading: false,
+                    };
                 }
+                const formattedPeer = await getFormattedPeer(
+                    pintswap,
+                    peer,
+                    withImage ? 'full' : 'minimal',
+                );
+                if (formattedPeer) {
+                    if (peer === module.peerId.toB58String()) {
+                        setUserData({ ...formattedPeer, loading: false });
+                    }
+                    return {
+                        ...formattedPeer,
+                        name: await formatPeerName(pintswap, peer),
+                        img: await getPeerImg(pintswap, peer),
+                        loading: false,
+                    };
+                }
+                return defaultUserState;
             } else {
-                // Passed no peer / user data
-                const renderName = userData.name
-                    ? userData.name
-                    : truncate(module.peerId.toB58String());
-                const renderPic = formatPeerImg(userData.img);
-                return {
-                    ...userData,
-                    img: renderPic,
-                    bio: userData.bio,
-                    name: renderName,
-                    loading: false,
-                };
+                if ((peer.img === '' || peer.img === '/black.jpg') && multiaddr) {
+                    return {
+                        ...peer,
+                        name: await formatPeerName(pintswap, peer.name),
+                        img: await getPeerImg(pintswap, peer),
+                        loading: false,
+                    };
+                }
+                return { ...peer, loading: false };
             }
+        } else {
+            return defaultUserState;
         }
     };
 
@@ -120,8 +108,8 @@ export const Avatar = ({
             if (userData) setPeerData(userData);
             else setPeerData(defaultUserState);
         };
-        getter();
-    }, [peer, module, peerData.name, peersData.length]);
+        if (module) getter();
+    }, [peer, module]);
 
     const alginClass = () => {
         switch (align) {
