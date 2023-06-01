@@ -50,8 +50,8 @@ export const Avatar = ({
 
     const defaultUserState = {
         img: DEFAULT_AVATAR,
-        bio: pathname.includes('account') ? (userData.bio ? userData.bio : '') : '',
-        name: peer && typeof peer === 'string' ? peer : truncate(userData.name),
+        bio: '',
+        name: '',
         active: false,
         loading: true,
     };
@@ -59,44 +59,68 @@ export const Avatar = ({
 
     const getUserData = async (): Promise<IUserDataProps> => {
         if (module && peer) {
-            if (typeof peer === 'string') {
-                const found = peersData.find((el) => el.name === peer);
-                if (found) {
-                    return {
-                        ...found,
-                        img: await getPeerImg(pintswap, peer),
-                        name: await formatPeerName(pintswap, peer),
-                        loading: false,
-                    };
-                }
-                const formattedPeer = await getFormattedPeer(
-                    pintswap,
-                    peer,
-                    withImage ? 'full' : 'minimal',
-                );
-                if (formattedPeer) {
-                    if (peer === module.peerId.toB58String()) {
-                        setUserData({ ...formattedPeer, loading: false });
-                    }
-                    return {
-                        ...formattedPeer,
-                        name: await formatPeerName(pintswap, peer),
-                        img: await getPeerImg(pintswap, peer),
-                        loading: false,
-                    };
-                }
-                return defaultUserState;
-            } else {
-                if ((peer.img === '' || peer.img === '/black.jpg') && multiaddr) {
-                    return {
-                        ...peer,
-                        name: await formatPeerName(pintswap, peer.name),
-                        img: await getPeerImg(pintswap, peer),
-                        loading: false,
-                    };
-                }
-                return { ...peer, loading: false };
+            const peerName = typeof peer === 'string' ? peer : peer.name;
+            const found = peersData.find((el) => el.name === peerName);
+            if (found) {
+                const returnObj = {
+                    ...found,
+                    img: await getPeerImg(pintswap, peer),
+                    name: await formatPeerName(pintswap, peerName),
+                    loading: false,
+                };
+
+                return returnObj;
             }
+            const formattedPeer = await getFormattedPeer(
+                pintswap,
+                peerName,
+                withImage ? 'full' : 'minimal',
+            );
+            if (formattedPeer) {
+                const returnObj = {
+                    ...formattedPeer,
+                    name: await formatPeerName(pintswap, peerName),
+                    img: await getPeerImg(pintswap, peer),
+                    loading: false,
+                };
+                if (peer === module.peerId.toB58String()) setUserData(returnObj);
+                return returnObj;
+            }
+            return defaultUserState;
+            // if (typeof peer === 'string') {
+            //     const found = peersData.find((el) => el.name === peer);
+            //     if (found) {
+            //         return {
+            //             ...found,
+            //             img: await getPeerImg(pintswap, peer),
+            //             name: await formatPeerName(pintswap, peer),
+            //             loading: false,
+            //         };
+            //     }
+            //     const formattedPeer = await getFormattedPeer(
+            //         pintswap,
+            //         peer,
+            //         withImage ? 'full' : 'minimal',
+            //     );
+            //     if (formattedPeer) {
+            //         const returnObj = {
+            //             ...formattedPeer,
+            //             name: await formatPeerName(pintswap, peer),
+            //             img: await getPeerImg(pintswap, peer),
+            //             loading: false,
+            //         };
+            //         if (peer === module.peerId.toB58String()) setUserData(returnObj);
+            //         return returnObj;
+            //     }
+            //     return defaultUserState;
+            // } else {
+            //     return {
+            //         ...peer,
+            //         name: await formatPeerName(pintswap, peer.name),
+            //         img: await getPeerImg(pintswap, peer.name),
+            //         loading: false,
+            //     };
+            // }
         } else {
             return defaultUserState;
         }
@@ -106,7 +130,6 @@ export const Avatar = ({
         const getter = async () => {
             const userData = await getUserData();
             if (userData) setPeerData(userData);
-            else setPeerData(defaultUserState);
         };
         if (module) getter();
     }, [peer, module]);

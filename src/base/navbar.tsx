@@ -44,7 +44,7 @@ export const Navbar = () => {
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
                         <Wallet />
-                        {width < breakpoints.md ? (
+                        {/* {width < breakpoints.md ? (
                             <button onClick={() => setIsMobileOpen(!isMobileOpen)}>
                                 <AnimatedHamburger state={isMobileOpen} />
                             </button>
@@ -57,7 +57,7 @@ export const Navbar = () => {
                             />
                         ) : (
                             <></>
-                        )}
+                        )} */}
                     </div>
                 </div>
             </nav>

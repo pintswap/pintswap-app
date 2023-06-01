@@ -1,11 +1,12 @@
 import { NFTPFP } from '@pintswap/sdk';
 import { IPintswapProps, IUserDataProps } from '../stores';
-import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA, TESTING } from './constants';
+import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA } from './constants';
 import { createFromB58String } from 'peer-id';
 
+export const peerCache: any = {};
+
 export const formatPeerImg = (img: string | Buffer | NFTPFP) => {
-    if (!img || img === BASE_AVATAR_URL || img.toString('base64').length === 0)
-        return DEFAULT_AVATAR;
+    if (!img || img.toString('base64').length === 0) return DEFAULT_AVATAR;
     if (typeof img === 'string' && img.startsWith('data:image')) return img;
     return `${BASE_AVATAR_URL}${img.toString('base64')}`;
 };
@@ -24,7 +25,6 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
     const { module } = ps;
     try {
         if (inverse) {
-            // TODO: make sure this inverse works
             if (peer.includes('.drip')) {
                 const b58 = await module?.resolveName(peer);
                 return b58 ? b58 : peer;
@@ -76,21 +76,19 @@ export const getFormattedPeer = async (
     peer: string,
     type?: 'full' | 'minimal',
 ) => {
-    const baseUrl = `data:image/jpg;base64,`;
     try {
+        if (peerCache[peer]) return peerCache[peer];
         const res = await getPeerData(ps, peer, type);
-        const formattedName = await formatPeerName(ps, peer);
-        if (res) {
-            const renderPic = formatPeerImg(res.image);
-            return {
-                img: renderPic,
-                bio: res.bio,
-                name: formattedName,
-                privateKey: '',
-                active: false,
-                extension: '.drip',
-            };
-        }
+        const returnObj = {
+            img: formatPeerImg(res.image),
+            bio: res.bio,
+            name: await formatPeerName(ps, peer),
+            privateKey: '',
+            active: false,
+            extension: '.drip',
+        };
+        peerCache[peer] = returnObj;
+        return returnObj;
     } catch (err) {
         return {
             ...EMPTY_USER_DATA,
