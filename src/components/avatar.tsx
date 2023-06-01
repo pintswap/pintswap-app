@@ -134,8 +134,6 @@ export const Avatar = ({
         }
     };
 
-    console.log('peerData', peerData);
-
     if (type === 'clickable') {
         return (
             <div className={`${loading ? 'animate-pulse' : ''}`}>
