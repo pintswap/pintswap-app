@@ -7,9 +7,9 @@
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.2.0.tgz#e1a84fca468f4b337816fcb7f0964beb620ba855"
   integrity sha512-E09FiIft46CmH5Qnjb0wsW54/YQd69LsxeKUOWawmws1XWvyFGURnAChH0mlr7YPFR1ofwvUQfcL0J3lMxXqPA==
 
-"@adraffy/ens-normalize@git+https://github.com/ricmoo/ens-normalize.js.git":
+"@adraffy/ens-normalize@https://github.com/ricmoo/ens-normalize.js":
   version "1.9.0"
-  resolved "git+https://github.com/ricmoo/ens-normalize.js.git#2d040533e57e4f25f9a7cc4715e219658ad454b5"
+  resolved "https://github.com/ricmoo/ens-normalize.js#2d040533e57e4f25f9a7cc4715e219658ad454b5"
 
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
@@ -2894,10 +2894,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@pintswap/sdk@^1.4.7":
-  version "1.4.7"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.7.tgz#937a0db63119ab0e70eacc983b0e603a6de52bb8"
-  integrity sha512-HnJQxac2Uvz3FdAdTFjvHnn96cK9QTKPhvF4OgSzeWJTLOWWa3mIKsjb0YZyOrAkrZAqgjFoqlzv23CEe+u+5g==
+"@pintswap/sdk@^1.4.8":
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.8.tgz#b2218f4d0d85788906ef907ed466729a1b9cb2c6"
+  integrity sha512-ssljasvVD+12MkafY5OWGsDF5KwPb/1dvydEdaBWV/hPKU1DDgokD8fFcEWP/fRg4+mKBSBahG1uaObiVpKGFg==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
