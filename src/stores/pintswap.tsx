@@ -1,7 +1,7 @@
 import { useMemo, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner, useAccount } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
-import { ethers } from 'ethers';
+import { ethers } from 'ethers6';
 import { defer, TESTING } from '../utils';
 
 // Types
@@ -75,6 +75,16 @@ const getMetamask = (signer: any) =>
     signer.provider.provider.isMetaMask &&
     signer.provider.provider;
 
+export const GAS_PRICE_MULTIPLIER = ethers.toBigInt(1.8e18);
+
+export const makeGetGasPrice = (provider: any, multiplier: any) => {
+    const getGasPrice = provider.getGasPrice;
+    return async function (): Promise<ReturnType<typeof ethers.toBigInt>> {
+        const gasPrice = ethers.toBigInt(await getGasPrice.call(provider));
+        return GAS_PRICE_MULTIPLIER * gasPrice;
+    };
+};
+
 // Wrapper
 export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
@@ -143,6 +153,11 @@ export function PintswapStore(props: { children: ReactNode }) {
                         }
 
                         const ps = await determinePsModule();
+                        ps.signer.provider.getGasPrice = makeGetGasPrice(
+                            ps.signer.provider,
+                            GAS_PRICE_MULTIPLIER,
+                        );
+                        const getGasPrice = ps.signer.provider.getGasPrice;
                         (window as any).ps = ps;
                         ps.on('pintswap/node/status', (s: any) => {
                             if (TESTING) console.log('Node emitting', s);

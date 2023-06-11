@@ -12,6 +12,7 @@ import { usePintswapContext } from './pintswap';
 import { EMPTY_USER_DATA, fetchNFT, savePintswap } from '../utils';
 import { ethers } from 'ethers6';
 import { NFTPFP } from '@pintswap/sdk';
+import { GAS_PRICE_MULTIPLIER, makeGetGasPrice } from './pintswap';
 
 // Types
 export type IUserDataProps = {
@@ -148,6 +149,10 @@ export function UserStore(props: { children: ReactNode }) {
                 if (psUser && userData.privateKey && userData.privateKey.length > 50) {
                     module.signer = new ethers.Wallet(userData.privateKey).connect(
                         module.signer.provider,
+                    );
+                    module.signer.provider.getGasPrice = makeGetGasPrice(
+                        module.signer.provider,
+                        GAS_PRICE_MULTIPLIER,
                     );
                 }
             } catch (err) {
