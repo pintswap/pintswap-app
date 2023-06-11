@@ -1,6 +1,7 @@
 import {
     createContext,
     Dispatch,
+    EventHandler,
     ReactNode,
     SetStateAction,
     useContext,
@@ -75,7 +76,9 @@ export function UserStore(props: { children: ReactNode }) {
     const [useNft, setUseNft] = useState(DEFAULT_USE_NFT);
     const [loading, setLoading] = useState(false);
 
-    function toggleActive() {
+    console.log('publishing offers', userData.active);
+
+    function toggleActive(e?: any) {
         if (!userData.active) module?.startPublishingOffers(60000);
         else module?.startPublishingOffers(60000).stop();
         setUserData({ ...userData, active: !userData.active });

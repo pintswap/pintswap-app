@@ -38,6 +38,9 @@ export const Avatar = ({
     const { peersData } = usePeersContext();
     const navigate = useNavigate();
 
+    const peerName = typeof peer === 'string' ? peer : peer?.name;
+    const isUser = peerName === module?.peerId.toB58String();
+
     const alginClass = () => {
         switch (align) {
             case 'left':
@@ -49,24 +52,26 @@ export const Avatar = ({
         }
     };
 
-    const defaultUserState = {
-        img: DEFAULT_AVATAR,
-        bio: '',
-        name: '',
-        active: false,
-        loading: true,
-    };
+    const defaultUserState = isUser
+        ? userData
+        : {
+              img: DEFAULT_AVATAR,
+              bio: '',
+              name: '',
+              active: false,
+              loading: true,
+          };
 
     const [peerData, setPeerData] = useState<IUserDataProps>(defaultUserState);
 
     const getUserData = async (): Promise<IUserDataProps> => {
-        if (module && peer) {
-            const peerName = typeof peer === 'string' ? peer : peer.name;
+        if (module && peer && peerName) {
             const found = peersData.find((el) => el.name === peerName);
             if (found) {
                 const img = withImage ? await getPeerImg(pintswap, peer) : found.img;
                 const returnObj = {
                     ...found,
+                    active: isUser ? userData.active : found.active,
                     img,
                     loading: false,
                 };
@@ -81,6 +86,7 @@ export const Avatar = ({
                 const img = withImage ? await getPeerImg(pintswap, peer) : formattedPeer.img;
                 const returnObj = {
                     ...formattedPeer,
+                    active: isUser ? userData.active : formattedPeer.active,
                     name: await formatPeerName(pintswap, peerName),
                     img,
                     loading: false,
