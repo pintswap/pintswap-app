@@ -72,6 +72,7 @@ export const Avatar = ({
                 const returnObj = {
                     ...found,
                     active: isUser ? userData.active : found.active,
+                    privateKey: isUser ? userData.privateKey : found.privateKey,
                     img,
                     loading: false,
                 };
@@ -88,6 +89,7 @@ export const Avatar = ({
                     ...formattedPeer,
                     active: isUser ? userData.active : formattedPeer.active,
                     name: await formatPeerName(pintswap, peerName),
+                    privateKey: isUser ? userData.privateKey : formattedPeer.privateKey,
                     img,
                     loading: false,
                 };
