@@ -75,7 +75,7 @@ const getMetamask = (signer: any) =>
     signer.provider.provider.isMetaMask &&
     signer.provider.provider;
 
-export const GAS_PRICE_MULTIPLIER = ethers.toBigInt(1.8e18);
+export const GAS_PRICE_MULTIPLIER = ethers.parseEther('1.8');
 
 export const makeGetGasPrice = (provider: any, multiplier: any) => {
     const getGasPrice = provider.getGasPrice;
