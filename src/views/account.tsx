@@ -212,9 +212,7 @@ export const AccountView = () => {
                             <div className="grid grid-cols-1 gap-3 lg:gap-2">
                                 <div className="flex items-end w-full">
                                     <Input
-                                        value={
-                                            name && name.includes('.drip') ? name : truncate(name)
-                                        }
+                                        value={name}
                                         onChange={updateName}
                                         type="text"
                                         title="Username"
