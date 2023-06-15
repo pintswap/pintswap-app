@@ -39,7 +39,8 @@ export const PeerTickerOrderbookView = () => {
     const navigate = useNavigate();
     const { order } = useTrade();
     const { multiaddr, base: baseAsset, trade: tradeAsset } = useParams();
-    const { ticker, bidLimitOrders, askLimitOrders } = useLimitOrders('peer-ticker-orderbook');
+    const { ticker, bidLimitOrders, askLimitOrders, loading } =
+        useLimitOrders('peer-ticker-orderbook');
     const { state } = useLocation();
     const [matchInputs, setMatchInputs] = useState<any>({
         amount: '',
@@ -98,7 +99,7 @@ export const PeerTickerOrderbookView = () => {
                         type="bids"
                         columns={columns}
                         data={bidLimitOrders.slice(0, ordersShown)}
-                        loading={bidLimitOrders.length === 0}
+                        loading={loading}
                         toolbar={false}
                         peer={order.multiAddr}
                         pagination={false}
@@ -117,7 +118,7 @@ export const PeerTickerOrderbookView = () => {
                         type="asks"
                         columns={columns}
                         data={askLimitOrders.slice(0, ordersShown)}
-                        loading={askLimitOrders.length === 0}
+                        loading={loading}
                         toolbar={false}
                         peer={order.multiAddr}
                         pagination={false}
