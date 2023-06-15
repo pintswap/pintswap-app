@@ -28,6 +28,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
     const [bidLimitOrders, setBidLimitOrders] = useState<any[]>([]);
     const [askLimitOrders, setAskLimitOrders] = useState<any[]>([]);
+    const [loading, setLoading] = useState(false);
 
     // Utils
     const ticker = `${trade}/${base}`;
@@ -80,6 +81,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     // Subscribers
     useEffect(() => {
         (async () => {
+            setLoading(true);
             if (type === 'peer-orderbook') {
                 if (pintswap.module) {
                     const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
@@ -143,6 +145,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     setAskLimitOrders(askFilterAndSum);
                 }
             }
+            setLoading(false);
         })().catch((err) => console.error(err));
     }, [pintswap.module, peerTrades, order.multiAddr]);
 
@@ -158,5 +161,6 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
         ticker,
         bidLimitOrders,
         askLimitOrders,
+        loading,
     };
 };
