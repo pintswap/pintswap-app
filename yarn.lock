@@ -2894,10 +2894,10 @@
   resolved "https://registry.yarnpkg.com/@pedrouid/environment/-/environment-1.0.1.tgz#858f0f8a057340e0b250398b75ead77d6f4342ec"
   integrity sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==
 
-"@pintswap/sdk@^1.4.8":
-  version "1.4.8"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.8.tgz#b2218f4d0d85788906ef907ed466729a1b9cb2c6"
-  integrity sha512-ssljasvVD+12MkafY5OWGsDF5KwPb/1dvydEdaBWV/hPKU1DDgokD8fFcEWP/fRg4+mKBSBahG1uaObiVpKGFg==
+"@pintswap/sdk@^1.4.9":
+  version "1.4.9"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.9.tgz#9add0087473016f0625ad2b755df9b85ff3fdd16"
+  integrity sha512-mXOH1lIYrkSfg+ERiJaElRk4VoeI02ZK6Z8+N2QxD+fEOHKcPPJij5W/3s3eLeJadZ+gycvwK98lKzscgcMlVQ==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -16869,14 +16869,6 @@ workbox-window@6.6.1:
   dependencies:
     "@types/trusted-types" "^2.0.2"
     workbox-core "6.6.1"
-
-wrap-ansi@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/wrap-ansi/-/wrap-ansi-2.1.0.tgz#d8fc3d284dd05794fe84973caecdd1cf824fdd85"
-  integrity sha512-vAaEaDM946gbNpH5pLVNR+vX2ht6n0Bt3GXwVB1AuAqZosOvHNF3P7wDnh8KLkSqgUh0uh77le7Owgoz+Z9XBw==
-  dependencies:
-    string-width "^1.0.1"
-    strip-ansi "^3.0.1"
 
 wrap-ansi@^2.0.0:
   version "2.1.0"
