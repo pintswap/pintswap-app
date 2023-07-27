@@ -160,7 +160,6 @@ export function PintswapStore(props: { children: ReactNode }) {
                             ps.signer.provider,
                             GAS_PRICE_MULTIPLIER,
                         );
-                        const getGasPrice = ps.signer.provider.getGasPrice;
                         (window as any).ps = ps;
                         ps.on('pintswap/node/status', (s: any) => {
                             if (TESTING) console.log('Node emitting', s);
