@@ -11,7 +11,7 @@ export function toAddress(symbolOrAddress: string): string {
     if (!symbolOrAddress) return '';
     const token = TOKENS_BY_SYMBOL[symbolOrAddress];
     if (token) return ethers.getAddress(token.address);
-    if (!ethers.getAddress(symbolOrAddress) && reverseSymbolCache[symbolOrAddress])
+    if (String(symbolOrAddress).substr(0, 2) !== '0x' && reverseSymbolCache[symbolOrAddress])
         return ethers.getAddress(reverseSymbolCache[symbolOrAddress]);
     return ethers.getAddress(symbolOrAddress);
 }
