@@ -5,11 +5,14 @@ import { ethers } from 'ethers6';
 
 export const decimalsCache: any = {};
 export const symbolCache: any = {};
+export const reverseSymbolCache: any = {};
 
 export function toAddress(symbolOrAddress: string): string {
     if (!symbolOrAddress) return '';
     const token = TOKENS_BY_SYMBOL[symbolOrAddress];
     if (token) return ethers.getAddress(token.address);
+    if (!ethers.getAddress(symbolOrAddress) && reverseSymbolCache[symbolOrAddress])
+        return ethers.getAddress(reverseSymbolCache[symbolOrAddress]);
     return ethers.getAddress(symbolOrAddress);
 }
 
@@ -72,13 +75,16 @@ export async function getTokenAttributes(
     } else {
         if (ethers.isAddress(token)) {
             try {
+                const symbol = await getSymbol(token, provider);
+                const decimals = await getDecimals(token, provider);
+                reverseSymbolCache[symbol] = token;
                 const tokenAttributes = {
                     asset: '',
                     type: 'ERC20',
                     address: token,
                     name: '',
-                    symbol: await getSymbol(token, provider),
-                    decimals: await getDecimals(token, provider),
+                    symbol,
+                    decimals,
                     logoURI: '/img/generic.svg',
                 };
                 if (attribute) return tokenAttributes[attribute];

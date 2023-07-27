@@ -9,6 +9,7 @@ import { truncate } from '../utils/format';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
 import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
+import { SmartPrice } from './smart-price';
 
 type IDataTableProps = {
     title?: string;
@@ -185,9 +186,16 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
     const determineCell = (cell: string) => {
         const charsShown = width > 900 ? 3 : 5;
         if (cell) {
-            return cell?.startsWith('Q') || cell?.startsWith('0x')
-                ? truncate(cell, charsShown)
-                : formatCell(cell);
+            if (cell?.startsWith('Q') || cell?.startsWith('0x')) {
+                // Address / MultiAddr
+                return truncate(cell, charsShown);
+            } else if (!isNaN(Number(cell))) {
+                // Big Number
+                return <SmartPrice price={cell} />;
+            } else {
+                // Default
+                return formatCell(cell);
+            }
         } else {
             if (type === 'manage') {
                 return (

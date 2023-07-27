@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Pathway+Gothic+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap');
 
 /*
 ! tailwindcss v3.3.2 | MIT License | https://tailwindcss.com
@@ -381,7 +380,7 @@ html,
   body {
     padding: 0;
     margin: 0;
-    font-family: 'Dela Gothic One', cursive;
+    font-family: 'Days One', sans-serif;
     background: rgb(33, 33, 33);
     background: linear-gradient(180deg, rgba(33, 33, 33, 1) 0%, rgba(36, 35, 48, 1) 100%);
     color: #fff;

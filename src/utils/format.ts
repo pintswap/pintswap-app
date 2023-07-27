@@ -26,15 +26,6 @@ export const maybeShorten = (s: string): string => {
     return s;
 };
 
-// NUMBER
-export function round(value: string | number, decimals: number, returnType?: 'number' | 'string') {
-    if (value === '0.00') return '0.00';
-    const _value = typeof value === 'string' ? parseFloat(value) : value;
-    const factorOfTen = Math.pow(10, decimals);
-    if (returnType === 'string') return (Math.round(_value * factorOfTen) / factorOfTen).toString();
-    return Math.round(_value * factorOfTen) / factorOfTen;
-}
-
 // CSS CLASS
 export function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');

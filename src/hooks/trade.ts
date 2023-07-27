@@ -17,6 +17,8 @@ import {
     ITokenProps,
     IOrderStateProps,
     IOrderbookProps,
+    reverseSymbolCache,
+    getSymbol,
 } from '../utils';
 
 export const resolveName = async (pintswap: any, name: any) => {
@@ -185,19 +187,32 @@ export const useTrade = () => {
         if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
         const trade = hash ? userTrades.get(hash) : undefined;
         // MAKER
+        console.log('trade', trade);
         if (trade) setTrade(trade);
         // TAKER
         else {
             if (module) {
                 try {
                     // TODO: optimize
-                    const { offers }: IOrderbookProps = await module.getUserDataByPeerId(resolved);
-                    if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (orderHash && peerTrades.get(orderHash)) {
                         const { gives, gets } = peerTrades.get(orderHash) as any;
+                        console.log('gives', gives);
+                        console.log('gets', gets);
                         setTrade(await displayTradeObj({ gets, gives }));
                         return;
                     }
+
+                    const { offers }: IOrderbookProps = await module.getUserDataByPeerId(resolved);
+                    offers.map((offer) => {
+                        const tokens = [offer.gets?.token, offer.gives?.token];
+                        tokens.map(async (t) => {
+                            if (!Object.values(reverseSymbolCache).includes(t)) {
+                                const symbol = await getSymbol(t, module.signer);
+                                reverseSymbolCache[symbol] = t;
+                            }
+                        });
+                    });
+                    if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
                         if (TESTING) console.log('#getTrades - Order Hash:', hash);
@@ -206,6 +221,8 @@ export const useTrade = () => {
                         setPeerTrades(map);
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
+                        console.log('gives', gives);
+                        console.log('gets', gets);
                         setTrade(await displayTradeObj({ gets, gives }));
                     }
                 } catch (err) {

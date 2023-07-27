@@ -49,11 +49,15 @@ export const FulfillView = () => {
         (async () => {
             if (pintswap.module) {
                 const foundLimitOrder = limitOrders.find((order) => order?.hash === hash);
+                console.log('found', foundLimitOrder);
                 if (foundLimitOrder) {
                     setLimitOrder(foundLimitOrder);
                     setFillAmount(foundLimitOrder?.amount || '');
                 } else {
+                    if (!trade.gets?.token && !trade.gives?.token) return;
+                    console.log('entering', trade);
                     const raw = await fromFormatted(trade, pintswap.module.signer);
+                    console.log('raw', raw);
                     const {
                         pair: [base, tradeToken],
                     } = orderTokens(raw);
@@ -70,6 +74,7 @@ export const FulfillView = () => {
         const m = pintswap.module;
         if (m)
             (async () => {
+                if (!trade.gets?.token && !trade.gives?.token) return;
                 const raw = await fromFormatted(trade, m.signer);
                 const {
                     pair: [base, tradeToken],
@@ -77,29 +82,42 @@ export const FulfillView = () => {
                 const [baseDecimals, tradeDecimals] = await Promise.all(
                     [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
                 );
+
+                let toBeFormatted;
                 if (tradeToken.address === raw.gives.token) {
-                    setOutputAmount(
-                        Number(
-                            ethers.formatUnits(
-                                (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
-                                    ethers.toBigInt(raw.gets.amount)) /
-                                    ethers.toBigInt(raw.gives.amount),
-                                baseDecimals,
-                            ),
-                        ).toFixed(6),
-                    );
+                    toBeFormatted =
+                        (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) *
+                            ethers.toBigInt(raw.gets.amount)) /
+                        ethers.toBigInt(raw.gives.amount);
                 } else {
-                    setOutputAmount(
-                        Number(
-                            ethers.formatUnits(
-                                (ethers.toBigInt(ethers.parseUnits(fillAmount, baseDecimals)) *
-                                    ethers.toBigInt(raw.gives.amount)) /
-                                    ethers.toBigInt(raw.gets.amount),
-                                baseDecimals,
-                            ),
-                        ).toFixed(6),
-                    );
+                    toBeFormatted =
+                        (ethers.toBigInt(ethers.parseUnits(fillAmount, baseDecimals)) *
+                            ethers.toBigInt(raw.gives.amount)) /
+                        ethers.toBigInt(raw.gets.amount);
                 }
+                console.log('tobeformatted', toBeFormatted);
+                console.log(Number(ethers.formatUnits(toBeFormatted, baseDecimals)));
+                setOutputAmount(Number(ethers.formatUnits(toBeFormatted, baseDecimals)).toFixed(6));
+
+                // if (tradeToken.address === raw.gives.token) {
+                //     setOutputAmount(
+                //         Number(
+                //             ethers.formatUnits(
+                //                 (ethers.toBigInt(ethers.parseUnits(fillAmount, tradeDecimals)) * ethers.toBigInt(raw.gets.amount)) / ethers.toBigInt(raw.gives.amount),
+                //                 baseDecimals,
+                //             ),
+                //         ).toFixed(6),
+                //     );
+                // } else {
+                //     setOutputAmount(
+                //         Number(
+                //             ethers.formatUnits(
+                //                 (ethers.toBigInt(ethers.parseUnits(fillAmount, baseDecimals)) * ethers.toBigInt(raw.gives.amount)) / ethers.toBigInt(raw.gets.amount),
+                //                 baseDecimals,
+                //             ),
+                //         ).toFixed(6),
+                //     );
+                // }
             })().catch((err) => console.error(err));
     }, [pintswap.module, fillAmount, trade]);
 
@@ -178,7 +196,7 @@ export const FulfillView = () => {
                         <Input
                             title="Price"
                             placeholder="Price"
-                            value={Number(limitOrder.price).toFixed(4)}
+                            value={String(limitOrder.price)}
                             type="number"
                             disabled
                             loading={loading.trade}
