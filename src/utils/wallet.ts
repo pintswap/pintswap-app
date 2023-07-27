@@ -17,6 +17,16 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
+const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '';
+
+import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
+
+const connector = new WalletConnectConnector({
+    options: {
+        projectId,
+    },
+});
+
 export const { chains, provider } = configureChains(
     [NETWORK === 'LOCALHOST' ? hardhat : mainnet],
     [publicProvider()],
@@ -25,17 +35,16 @@ export const { chains, provider } = configureChains(
 export const connectors = connectorsForWallets([
     {
         groupName: 'Recommended',
-        wallets: [metaMaskWallet({ chains })],
+        wallets: [metaMaskWallet({ chains, projectId })],
     },
     {
         groupName: 'Popular',
         wallets: [
             coinbaseWallet({ appName: 'PintSwap', chains }),
-            rainbowWallet({ chains }),
-            trustWallet({ chains }),
-            ledgerWallet({ chains }),
-            walletConnectWallet({ chains }),
-            imTokenWallet({ chains }),
+            rainbowWallet({ chains, projectId }),
+            trustWallet({ chains, projectId }),
+            ledgerWallet({ chains, projectId }),
+            imTokenWallet({ chains, projectId }),
             braveWallet({ chains }),
             injectedWallet({ chains }),
         ],
