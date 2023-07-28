@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { fetchBalance } from '@wagmi/core';
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
-import { getTokenAttributes, round } from '../utils';
+import { getTokenAttributes } from '../utils';
 import { BiSearchAlt } from 'react-icons/bi';
 import { usePintswapContext } from '../stores';
 
@@ -126,7 +126,7 @@ export const Input = ({
                 >
                     MAX:
                     <Skeleton loading={balance.loading}>
-                        {round(balance.formatted, 6)} {balance.symbol}
+                        {balance.formatted} {balance.symbol}
                     </Skeleton>
                 </button>
             )}

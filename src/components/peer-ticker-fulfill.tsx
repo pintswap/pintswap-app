@@ -6,7 +6,7 @@ import { Button, Card, CopyClipboard, PageStatus, Input, ProgressIndicator } fro
 import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
-import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers } from '../utils';
+import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 
@@ -46,7 +46,11 @@ export const PeerTickerFulfill = ({
             amount: formattedAmount,
             list: matchInputs.list,
         };
-        console.log('newMatchInputs, matchInputs', [newMatchInputs, matchInputs]);
+        if (TESTING)
+            console.log('#handleAmountChange [newMatchInputs, matchInputs]:', [
+                newMatchInputs,
+                matchInputs,
+            ]);
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 

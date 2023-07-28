@@ -5,11 +5,14 @@ import { ethers } from 'ethers6';
 
 export const decimalsCache: any = {};
 export const symbolCache: any = {};
+export const reverseSymbolCache: any = {};
 
 export function toAddress(symbolOrAddress: string): string {
     if (!symbolOrAddress) return '';
     const token = TOKENS_BY_SYMBOL[symbolOrAddress];
     if (token) return ethers.getAddress(token.address);
+    if (String(symbolOrAddress).substr(0, 2) !== '0x' && reverseSymbolCache[symbolOrAddress])
+        return ethers.getAddress(reverseSymbolCache[symbolOrAddress]);
     return ethers.getAddress(symbolOrAddress);
 }
 
@@ -39,7 +42,9 @@ export async function getSymbol(address: any, provider: any) {
             provider,
         );
         try {
-            symbolCache[address] = await contract.symbol();
+            const symbol = await contract.symbol();
+            symbolCache[address] = symbol;
+            if (!reverseSymbolCache[symbol]) reverseSymbolCache[symbol] = address;
         } catch (e) {
             console.warn('#getSymbol: error', e);
             symbolCache[address] = address;
@@ -72,15 +77,19 @@ export async function getTokenAttributes(
     } else {
         if (ethers.isAddress(token)) {
             try {
+                const symbol = await getSymbol(token, provider);
+                const decimals = await getDecimals(token, provider);
+                if (!reverseSymbolCache[symbol]) reverseSymbolCache[symbol] = token;
                 const tokenAttributes = {
                     asset: '',
                     type: 'ERC20',
                     address: token,
                     name: '',
-                    symbol: await getSymbol(token, provider),
-                    decimals: await getDecimals(token, provider),
+                    symbol,
+                    decimals,
                     logoURI: '/img/generic.svg',
                 };
+                if (TESTING) console.log('#getTokenAttributes:', tokenAttributes);
                 if (attribute) return tokenAttributes[attribute];
                 return tokenAttributes;
             } catch (err) {

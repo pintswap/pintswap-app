@@ -4,7 +4,6 @@ import { hashOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
-import { round } from './format';
 
 function givesBase(offer: any) {
     return {
@@ -90,7 +89,7 @@ export async function formattedFromTransfer(transfer: any, provider: any) {
 
 export async function fromFormatted(trade: any, provider: any) {
     const [givesToken, getsToken] = [trade.gives, trade.gets].map((v) => toAddress(v.token));
-    return {
+    const returnObj = {
         gives: {
             token: givesToken,
             amount: ethers.toBeHex(
@@ -104,6 +103,7 @@ export async function fromFormatted(trade: any, provider: any) {
             token: getsToken,
         },
     };
+    return returnObj;
 }
 
 export async function toFormatted(transfer: any, provider: any) {
@@ -129,7 +129,7 @@ export async function toLimitOrder(offer: any, provider: any) {
         Number(ethers.formatUnits(base.amount, baseDecimals)) /
         Number(ethers.formatUnits(trade.amount, tradeDecimals));
     return {
-        price: round(price, 4, 'string'),
+        price: String(price),
         amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,
         ticker: await toTicker([base, trade], provider),
