@@ -7,13 +7,15 @@ import { resolveName } from '../hooks/trade';
 import { useParams } from 'react-router-dom';
 import { groupBy } from 'lodash';
 
+const formatPrice = (v: any) => String(v).substr(0, 10);
+
 const bestPrices = (orders: any) => {
     const { ask, bid } = groupBy(orders, 'type');
-    const bestAsk = (ask || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
-    const bestBid = (bid || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
+    const bestAsk = (ask || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
+    const bestBid = (bid || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
     return {
-        bid: bestBid?.price || 'N/A',
-        ask: bestAsk?.price || 'N/A',
+        bid: (bestBid?.price && formatPrice(bestBid.price)) || 'N/A',
+        ask: (bestAsk?.price && formatPrice(bestAsk.price)) || 'N/A',
     };
 };
 

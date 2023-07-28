@@ -29,15 +29,16 @@ export const PeerTickerFulfill = ({
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+        const input = (Number(e.target.value) < 0 ? '0' : e.target.value) || '0';
         setFill({
-            input: e.target.value,
+            input,
             ...fill,
         });
         const formattedAmount = (
             await formattedFromTransfer(
                 {
                     token: (matchInputs.list[0] || {}).token || ethers.ZeroAddress,
-                    amount: e.target.value,
+                    amount: input,
                 },
                 signer,
             )
@@ -88,6 +89,17 @@ export const PeerTickerFulfill = ({
         [options, tradeType],
     );
 
+    const inputAmount = useMemo(
+        () => (tradeType === 'bids' ? (fill || {}).input : (fill || {}).output) || '',
+        [tradeType, fill],
+    );
+    const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
+    const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
+    const outputAmount = useMemo(
+        () => (tradeType === 'bids' ? (fill || {}).output : (fill || {}).input) || '',
+        [tradeType, fill],
+    );
+
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
@@ -109,7 +121,7 @@ export const PeerTickerFulfill = ({
                         <Input
                             title="Price"
                             placeholder="Price"
-                            value={Number(limitOrder.price).toFixed(4)}
+                            value={Number(limitOrder.price).toFixed(16)}
                             type="number"
                             loading={loading.trade}
                             disabled
@@ -121,17 +133,17 @@ export const PeerTickerFulfill = ({
                             }
                         />
                         <Input
-                            title="Amount"
-                            placeholder="Amount to trade"
-                            value={(fill || {}).input || ''}
+                            title={`Input ${inputAsset}`}
+                            placeholder="Input amount"
+                            value={inputAmount}
                             type="number"
                             loading={loading.trade}
                             onChange={handleAmountChange}
                         />
                         <Input
-                            title="Output"
+                            title={`Output ${outputAsset}`}
                             placeholder="Output amount"
-                            value={(fill || {}).output || ''}
+                            value={outputAmount}
                             type="number"
                             disabled
                             loading={loading.trade}
