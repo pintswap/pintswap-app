@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { usePintswapContext } from '../stores/pintswap';
 import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
-import { hashOffer, IOffer } from '@pintswap/sdk';
+import { hashOffer, IOffer, ITransfer } from '@pintswap/sdk';
 import PeerId from 'peer-id';
 import { toast } from 'react-toastify';
 import { useOffersContext, useUserContext } from '../stores';
-import { toBeHex } from 'ethers6';
+import { toBeHex, isAddress } from 'ethers6';
 import {
     savePintswap,
     updateToast,
@@ -67,13 +67,20 @@ export const useTrade = () => {
         const foundGetsToken = (await getTokenAttributes(gets.token, module?.signer)) as
             | ITokenProps
             | undefined;
+        const getTokenAddress = (token: ITokenProps | undefined, raw: ITransfer) => {
+            if (token?.address) return token.address;
+            else if (raw?.token) {
+                if (isAddress(raw?.token)) return raw.token;
+                if (reverseSymbolCache[raw?.token]) return reverseSymbolCache[raw?.token];
+            } else return '';
+        };
         const builtObj = {
             gives: {
-                token: foundGivesToken ? foundGivesToken.address : gives.token,
+                token: getTokenAddress(foundGivesToken, gives),
                 amount: await convertAmount('hex', gives.amount, gives.token, module?.signer),
             },
             gets: {
-                token: foundGetsToken ? foundGetsToken.address : gets.token,
+                token: getTokenAddress(foundGetsToken, gets),
                 amount: await convertAmount('hex', gets.amount, gets.token, module?.signer),
             },
         };
@@ -187,7 +194,6 @@ export const useTrade = () => {
         if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
         const trade = hash ? userTrades.get(hash) : undefined;
         // MAKER
-        console.log('trade', trade);
         if (trade) setTrade(trade);
         // TAKER
         else {
@@ -196,8 +202,6 @@ export const useTrade = () => {
                     // TODO: optimize
                     if (orderHash && peerTrades.get(orderHash)) {
                         const { gives, gets } = peerTrades.get(orderHash) as any;
-                        console.log('gives', gives);
-                        console.log('gets', gets);
                         setTrade(await displayTradeObj({ gets, gives }));
                         return;
                     }
@@ -221,8 +225,6 @@ export const useTrade = () => {
                         setPeerTrades(map);
                         // Set first found trade as trade state
                         const { gives, gets } = offers[0];
-                        console.log('gives', gives);
-                        console.log('gets', gets);
                         setTrade(await displayTradeObj({ gets, gives }));
                     }
                 } catch (err) {

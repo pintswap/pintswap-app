@@ -79,7 +79,7 @@ export const GAS_PRICE_MULTIPLIER = ethers.parseEther('1.8');
 
 export const makeGetGasPrice = (provider: any, multiplier: any) => {
     const getGasPrice = provider.getGasPrice;
-    console.log('getGasPrice', getGasPrice);
+    if (TESTING) console.log('#makeGetGasPrice', getGasPrice);
     return async function (): Promise<ReturnType<typeof ethers.toBigInt>> {
         const gasPrice = ethers.toBigInt(
             ((v) => (v.toHexString ? v.toHexString() : v))(await getGasPrice.call(provider)),
