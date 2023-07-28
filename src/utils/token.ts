@@ -42,7 +42,9 @@ export async function getSymbol(address: any, provider: any) {
             provider,
         );
         try {
-            symbolCache[address] = await contract.symbol();
+            const symbol = await contract.symbol();
+            symbolCache[address] = symbol;
+            if (!reverseSymbolCache[symbol]) reverseSymbolCache[symbol] = address;
         } catch (e) {
             console.warn('#getSymbol: error', e);
             symbolCache[address] = address;
@@ -77,7 +79,7 @@ export async function getTokenAttributes(
             try {
                 const symbol = await getSymbol(token, provider);
                 const decimals = await getDecimals(token, provider);
-                reverseSymbolCache[symbol] = token;
+                if (!reverseSymbolCache[symbol]) reverseSymbolCache[symbol] = token;
                 const tokenAttributes = {
                     asset: '',
                     type: 'ERC20',
@@ -87,6 +89,7 @@ export async function getTokenAttributes(
                     decimals,
                     logoURI: '/img/generic.svg',
                 };
+                if (TESTING) console.log('#getTokenAttributes:', tokenAttributes);
                 if (attribute) return tokenAttributes[attribute];
                 return tokenAttributes;
             } catch (err) {

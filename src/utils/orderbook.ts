@@ -89,7 +89,6 @@ export async function formattedFromTransfer(transfer: any, provider: any) {
 
 export async function fromFormatted(trade: any, provider: any) {
     const [givesToken, getsToken] = [trade.gives, trade.gets].map((v) => toAddress(v.token));
-    console.log('givesToken', givesToken, 'getsToken', getsToken);
     const returnObj = {
         gives: {
             token: givesToken,
@@ -104,7 +103,6 @@ export async function fromFormatted(trade: any, provider: any) {
             token: getsToken,
         },
     };
-    console.log('returnObj', returnObj);
     return returnObj;
 }
 
