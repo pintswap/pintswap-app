@@ -60,8 +60,6 @@ export const PairListView = () => {
         }
     }, [limitOrdersArr]);
 
-    console.log('order', limitOrdersArr);
-
     return (
         <div className="flex flex-col">
             <h2 className="view-header">{pair}</h2>
