@@ -7,6 +7,7 @@ import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
 import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
+import { getDecimals } from '../utils/token';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 
@@ -29,6 +30,7 @@ export const PeerTickerFulfill = ({
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
+        console.log(e.target.value);
         const input = (Number(e.target.value) < 0 ? '0' : e.target.value) || '0';
         setFill({
             input,
@@ -47,6 +49,7 @@ export const PeerTickerFulfill = ({
             amount: formattedAmount,
             list: matchInputs.list,
         };
+        console.log(newMatchInputs);
         if (TESTING)
             console.log('#handleAmountChange [newMatchInputs, matchInputs]:', [
                 newMatchInputs,
@@ -54,10 +57,21 @@ export const PeerTickerFulfill = ({
             ]);
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
+    const inputAmount = useMemo(
+        () => (tradeType === 'bids' ? (fill || {}).input : (fill || {}).output) || '',
+        [tradeType, fill],
+    );
+    const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
+    const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
+    const outputAmount = useMemo(
+        () => (tradeType === 'bids' ? (fill || {}).output : (fill || {}).input) || '',
+        [tradeType, fill],
+    );
 
     useEffect(() => {
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
+                //                const decimals = await getDecimals(matchInputs.list[0].gives.token, signer);
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
                 const limit = (await toLimitOrder(
                     {
@@ -91,17 +105,6 @@ export const PeerTickerFulfill = ({
     const tradeTypeOption = useMemo(
         () => (tradeType === 'asks' ? options[0] : options[1]),
         [options, tradeType],
-    );
-
-    const inputAmount = useMemo(
-        () => (tradeType === 'bids' ? (fill || {}).input : (fill || {}).output) || '',
-        [tradeType, fill],
-    );
-    const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
-    const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
-    const outputAmount = useMemo(
-        () => (tradeType === 'bids' ? (fill || {}).output : (fill || {}).input) || '',
-        [tradeType, fill],
     );
 
     return (
