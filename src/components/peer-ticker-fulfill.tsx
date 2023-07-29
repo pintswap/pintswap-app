@@ -32,24 +32,24 @@ export const PeerTickerFulfill = ({
         e.preventDefault();
         console.log(e.target.value);
         const input = (Number(e.target.value) < 0 ? '0' : e.target.value) || '0';
-        setFill({
-            input,
-            ...fill,
-        });
+        let newFill = fill;
+        if (tradeType === 'bids') newFill.input = input;
+        else newFill.output = input;
+        setFill(newFill);
         const formattedAmount = (
             await formattedFromTransfer(
                 {
-                    token: (matchInputs.list[0] || {}).token || ethers.ZeroAddress,
+                    token: (matchInputs.list[0] || {}).gets.token || ethers.ZeroAddress,
                     amount: input,
                 },
                 signer,
             )
         ).amount;
+        console.log(formattedAmount);
         const newMatchInputs = {
             amount: formattedAmount,
             list: matchInputs.list,
         };
-        console.log(newMatchInputs);
         if (TESTING)
             console.log('#handleAmountChange [newMatchInputs, matchInputs]:', [
                 newMatchInputs,
@@ -59,7 +59,7 @@ export const PeerTickerFulfill = ({
     };
     const inputAmount = useMemo(
         () => (tradeType === 'bids' ? (fill || {}).input : (fill || {}).output) || '',
-        [tradeType, fill],
+        [tradeType, fill, matchInputs],
     );
     const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
     const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
@@ -67,12 +67,13 @@ export const PeerTickerFulfill = ({
         () => (tradeType === 'bids' ? (fill || {}).output : (fill || {}).input) || '',
         [tradeType, fill],
     );
-
+    console.log(inputAmount);
     useEffect(() => {
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
                 //                const decimals = await getDecimals(matchInputs.list[0].gives.token, signer);
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
+                console.log(match);
                 const limit = (await toLimitOrder(
                     {
                         gets: {
@@ -86,15 +87,30 @@ export const PeerTickerFulfill = ({
                     },
                     signer,
                 )) as any;
-                const output = (Number(limit.amount) * Number(limit.price)).toFixed(4);
-                const newFill = {
-                    ...match,
-                    input: limit.amount,
-                    output,
-                };
-                if (!isEqual(newFill, fill)) {
-                    setFill(newFill);
-                    setLimitOrder(limit);
+                console.log(tradeType);
+                console.log(limit);
+                if (tradeType === 'bids') {
+                    const output = (Number(limit.amount) * Number(limit.price)).toFixed(4);
+                    const newFill = {
+                        ...match,
+                        input: limit.amount,
+                        output,
+                    };
+                    if (!isEqual(newFill, fill)) {
+                        setFill(newFill);
+                        setLimitOrder(limit);
+                    }
+                } else {
+                    const input = (Number(limit.amount) * Number(limit.price)).toFixed(4);
+                    const newFill = {
+                        ...match,
+                        output: limit.amount,
+                        input,
+                    };
+                    if (!isEqual(newFill, fill)) {
+                        setFill(newFill);
+                        setLimitOrder(limit);
+                    }
                 }
             }
         })().catch((err) => console.error(err));
@@ -107,6 +123,7 @@ export const PeerTickerFulfill = ({
         [options, tradeType],
     );
 
+    console.log(fill);
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
