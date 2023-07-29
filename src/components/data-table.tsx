@@ -10,7 +10,6 @@ import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
 import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
-import { useParams } from 'react-router-dom';
 
 type IDataTableProps = {
     title?: string;
@@ -107,7 +106,6 @@ export const DataTable = ({
 
 const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTableProps) => {
     const { userData } = useUserContext();
-    const { pair } = useParams();
     const {
         pintswap: { module },
     } = usePintswapContext();
@@ -130,10 +128,6 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
         const firstCell = cells[0];
         const secondCell = cells[1];
         let url = '/';
-        if (pair) {
-            const [trade, base] = pair.split('-').map((v) => v.toUpperCase());
-            return navigate(`${url}${cells[0]}/${trade}/${base}`);
-        }
         switch (type) {
             case 'explore':
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`);
