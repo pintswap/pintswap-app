@@ -36,15 +36,18 @@ export const PeerTickerFulfill = ({
             input,
             ...fill,
         });
+        console.log('matchInputs.list', matchInputs.list);
+        console.log('input', input);
         const formattedAmount = (
             await formattedFromTransfer(
                 {
-                    token: (matchInputs.list[0] || {}).token || ethers.ZeroAddress,
+                    token: ((matchInputs.list[0] || {}).gets || {}).token || ethers.ZeroAddress,
                     amount: input,
                 },
                 signer,
             )
         ).amount;
+        console.log('formattedAmount', formattedAmount);
         const newMatchInputs = {
             amount: formattedAmount,
             list: matchInputs.list,

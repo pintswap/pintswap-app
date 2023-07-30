@@ -207,15 +207,17 @@ export const useTrade = () => {
                     }
 
                     const { offers }: IOrderbookProps = await module.getUserDataByPeerId(resolved);
-                    offers.map((offer) => {
-                        const tokens = [offer.gets?.token, offer.gives?.token];
-                        tokens.map(async (t) => {
-                            if (!Object.values(reverseSymbolCache).includes(t)) {
-                                const symbol = await getSymbol(t, module.signer);
-                                reverseSymbolCache[symbol] = t;
-                            }
-                        });
-                    });
+                    await Promise.all(
+                        offers.map((offer) => {
+                            const tokens = [offer.gets?.token, offer.gives?.token];
+                            return tokens.map(async (t) => {
+                                if (!Object.values(reverseSymbolCache).includes(t)) {
+                                    const symbol = await getSymbol(t, module.signer);
+                                    reverseSymbolCache[symbol] = t;
+                                }
+                            });
+                        }),
+                    );
                     if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
