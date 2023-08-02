@@ -63,7 +63,7 @@ export const Wallet = (props: IWalletProps) => {
                                     onClick={determineConnection().onClick}
                                     className={`${
                                         props.fullWidth ? 'w-full' : ''
-                                    } whitespace-nowrap text-md lg:text-lg`}
+                                    } whitespace-nowrap text-md xl:text-lg`}
                                     type={account ? 'wallet' : 'primary'}
                                 >
                                     {determineConnection().render}
