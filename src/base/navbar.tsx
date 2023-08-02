@@ -20,7 +20,7 @@ export const Navbar = () => {
     return (
         <>
             <nav
-                className={`bg-brand-dashboard py-2 lg:py-4 px-2 md:px-3 lg:px-6 w-full z-50 relative`}
+                className={`bg-brand-dashboard py-2.5 lg:py-4 px-2 md:px-3 lg:px-6 w-full z-50 relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button
@@ -33,7 +33,7 @@ export const Navbar = () => {
                             height={logoSize}
                             width={logoSize}
                         />
-                        <span className="text-xl">
+                        <span className="text-2xl">
                             <span className="text-pink-500">
                                 {width >= breakpoints.sm ? 'Pint' : 'P'}
                             </span>
@@ -45,7 +45,10 @@ export const Navbar = () => {
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
                         <Wallet />
                         {width < breakpoints.md ? (
-                            <button onClick={() => setIsMobileOpen(!isMobileOpen)}>
+                            <button
+                                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                className="px-0.5"
+                            >
                                 <AnimatedHamburger state={isMobileOpen} />
                             </button>
                         ) : address ? (
