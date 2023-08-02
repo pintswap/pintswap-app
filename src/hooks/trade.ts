@@ -19,7 +19,9 @@ import {
     IOrderbookProps,
     reverseSymbolCache,
     getSymbol,
+    getTokenAddress,
 } from '../utils';
+import { ethers } from 'ethers';
 
 export const resolveName = async (pintswap: any, name: any) => {
     while (true as any) {
@@ -58,30 +60,50 @@ export const useTrade = () => {
     const isOnActive = pathname === '/explore';
 
     const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
-        if (gives && gets && gives.tokenId) return { gets, gives };
-        if (!gets || !gives || !gets.token || !gets.amount || !gives.amount || !gives.token)
-            return EMPTY_TRADE;
+        if (!gets.token && !gives.token) return EMPTY_TRADE;
         const foundGivesToken = (await getTokenAttributes(gives.token, module?.signer)) as
             | ITokenProps
             | undefined;
         const foundGetsToken = (await getTokenAttributes(gets.token, module?.signer)) as
             | ITokenProps
             | undefined;
-        const getTokenAddress = (token: ITokenProps | undefined, raw: ITransfer) => {
-            if (token?.address) return token.address;
-            else if (raw?.token) {
-                if (isAddress(raw?.token)) return raw.token;
-                if (reverseSymbolCache[raw?.token]) return reverseSymbolCache[raw?.token];
-            } else return '';
-        };
+
+        // NFT
+        if (gives?.tokenId) {
+            const builtObj = {
+                gives: {
+                    ...gives,
+                    tokenId: ethers.utils.hexlify(Number(gives.tokenId)),
+                    amount: undefined,
+                },
+                gets: {
+                    token: getTokenAddress(foundGetsToken, gets),
+                    amount: await convertAmount(
+                        'hex',
+                        gets?.amount || '0',
+                        gets.token,
+                        module?.signer,
+                    ),
+                },
+            };
+            if (TESTING) console.log('#buildTradeObj:', builtObj);
+            return builtObj;
+        }
+        console.log('hitting');
+        // ERC20
         const builtObj = {
             gives: {
                 token: getTokenAddress(foundGivesToken, gives),
-                amount: await convertAmount('hex', gives.amount, gives.token, module?.signer),
+                amount: await convertAmount(
+                    'hex',
+                    gives?.amount || '0',
+                    gives.token,
+                    module?.signer,
+                ),
             },
             gets: {
                 token: getTokenAddress(foundGetsToken, gets),
-                amount: await convertAmount('hex', gets.amount, gets.token, module?.signer),
+                amount: await convertAmount('hex', gets?.amount || '0', gets.token, module?.signer),
             },
         };
         if (TESTING) console.log('#buildTradeObj:', builtObj);
