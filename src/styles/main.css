@@ -820,6 +820,9 @@ html,
 .min-h-\[50px\]{
   min-height: 50px;
 }
+.min-h-\[60px\]{
+  min-height: 60px;
+}
 .w-0{
   width: 0px;
 }
@@ -1889,6 +1892,10 @@ html,
     margin-bottom: 0px;
   }
 
+  .lg\:mb-3{
+    margin-bottom: 0.75rem;
+  }
+
   .lg\:mb-6{
     margin-bottom: 1.5rem;
   }
@@ -2008,6 +2015,11 @@ html,
 
   .xl\:pr-20{
     padding-right: 5rem;
+  }
+
+  .xl\:text-lg{
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 
   .xl\:text-xl{

@@ -13,7 +13,8 @@ export function toAddress(symbolOrAddress: string): string {
     if (token) return ethers.getAddress(token.address);
     if (String(symbolOrAddress).substr(0, 2) !== '0x' && reverseSymbolCache[symbolOrAddress])
         return ethers.getAddress(reverseSymbolCache[symbolOrAddress]);
-    return ethers.getAddress(symbolOrAddress);
+    if (symbolOrAddress?.startsWith('0x')) return ethers.getAddress(symbolOrAddress);
+    return '';
 }
 
 export function fromAddress(symbolOrAddress: string): string {

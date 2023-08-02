@@ -24,6 +24,7 @@ type IDataTableProps = {
     options?: any;
     getRow?: Dispatch<SetStateAction<any[]>>;
     trade?: string;
+    activeRow?: number;
 };
 
 export const DataTable = (props: IDataTableProps) => {
@@ -39,6 +40,7 @@ export const DataTable = (props: IDataTableProps) => {
         options,
         getRow,
         trade,
+        activeRow,
     } = props;
     return (
         <CacheProvider value={muiCache}>
@@ -99,6 +101,7 @@ export const DataTable = (props: IDataTableProps) => {
                                     peer={peer}
                                     getRow={getRow}
                                     trade={trade}
+                                    activeRow={activeRow}
                                 />
                             );
                         },
@@ -110,7 +113,7 @@ export const DataTable = (props: IDataTableProps) => {
 };
 
 const CustomRow = (props: IDataTableProps) => {
-    const { columns, data, loading, type, peer, getRow, trade } = props;
+    const { columns, data, loading, type, peer, getRow, activeRow } = props;
     const { userData } = useUserContext();
     const { pair } = useParams();
     const {
@@ -124,8 +127,7 @@ const CustomRow = (props: IDataTableProps) => {
     const navigate = useNavigate();
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
         loading ? '' : 'hover:bg-gray-900 hover:cursor-pointer'
-    }`;
-
+    } ${activeRow === (cells as any).index ? 'bg-gray-900' : ''}`;
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
         deleteTrade(hash);
@@ -137,17 +139,16 @@ const CustomRow = (props: IDataTableProps) => {
         let url = '/';
         if (pair) {
             const [trade, base] = pair.split('-').map((v) => v.toUpperCase());
-            return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props, cells } });
+            return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props } });
         }
         switch (type) {
             case 'explore':
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`, {
-                    state: { ...props, cells },
+                    state: { ...props },
                 });
             case 'manage':
                 return navigate(
                     `${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`,
-                    { state: { ...props, cells } },
                 );
             case 'pairs':
                 url = `${url}pairs`;

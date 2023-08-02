@@ -47,13 +47,25 @@ export const PeerTickerOrderbookView = () => {
         amount: '',
         list: [],
     });
-
-    console.log('state', state);
-
     const [tradeType, _setTradeType] = useState('');
+    const [activeIndex, setActiveIndex] = useState(-1);
 
     const setTradeType = (v: any) => {
         _setTradeType(v);
+    };
+
+    const onClickRow = (row: any) => {
+        const [tradeType, price, size, sum] = row;
+        const { index } = row;
+        setActiveIndex(index);
+        let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
+        setTradeType(tradeType);
+        setMatchInputs({
+            amount: list
+                .slice(0, index + 1)
+                .reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
+            list,
+        });
     };
 
     useEffect(() => {
@@ -64,18 +76,28 @@ export const PeerTickerOrderbookView = () => {
         });
     }, [tradeType]);
 
-    const onClickRow = (row: any) => {
-        const [tradeType, price, size, sum] = row;
-        const { index } = row;
-        let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
-        setTradeType(tradeType);
-        setMatchInputs({
-            amount: list
-                .slice(0, index + 1)
-                .reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
-            list,
-        });
-    };
+    useEffect(() => {
+        if (state?.trade && state?.data?.length) {
+            const {
+                trade,
+                data: [multiAddr, size, price],
+            } = state;
+            let list = trade.match('bids') ? bidLimitOrders : askLimitOrders;
+            if (list?.length) {
+                setTradeType(trade);
+                const index = list?.findIndex(
+                    (val) => val?.amount === size && val?.price === price,
+                );
+                setActiveIndex(index);
+                setMatchInputs({
+                    amount: list
+                        .slice(0, index + 1)
+                        .reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
+                    list,
+                });
+            }
+        }
+    }, [state, bidLimitOrders, askLimitOrders]);
 
     const peer = state?.peer ? state.peer : multiaddr;
 
@@ -96,7 +118,7 @@ export const PeerTickerOrderbookView = () => {
                 <span className="text-sm md:text-md xl:text-lg">
                     <span className="flex flex-col justify-end text-left gap-0.5">
                         <Asset symbol={ticker?.split('/')[0]} size={16} />
-                        <hr />
+                        <hr className="border opacity-25" />
                         <Asset symbol={ticker?.split('/')[1]} size={16} />
                     </span>
                 </span>
@@ -110,7 +132,7 @@ export const PeerTickerOrderbookView = () => {
                         setTradeType={setTradeType}
                     />
                 </div>
-                <Card tabs={['Buys', 'Sells']} type="tabs">
+                <Card tabs={['Bids', 'Asks']} type="tabs" defaultTab={state?.trade || ''}>
                     <Tab.Panel>
                         <DataTable
                             type="bids"
@@ -127,6 +149,7 @@ export const PeerTickerOrderbookView = () => {
                                     direction: 'asc',
                                 },
                             }}
+                            activeRow={activeIndex}
                         />
                     </Tab.Panel>
                     <Tab.Panel>
@@ -145,6 +168,7 @@ export const PeerTickerOrderbookView = () => {
                                     direction: 'desc',
                                 },
                             }}
+                            activeRow={activeIndex}
                         />
                     </Tab.Panel>
                 </Card>
