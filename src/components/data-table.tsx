@@ -24,7 +24,7 @@ type IDataTableProps = {
     options?: any;
     getRow?: Dispatch<SetStateAction<any[]>>;
     trade?: string;
-    activeRow?: number;
+    activeRow?: string;
 };
 
 export const DataTable = (props: IDataTableProps) => {
@@ -100,8 +100,8 @@ export const DataTable = (props: IDataTableProps) => {
                                     type={type}
                                     peer={peer}
                                     getRow={getRow}
-                                    trade={trade}
                                     activeRow={activeRow}
+                                    trade={trade}
                                 />
                             );
                         },
@@ -127,7 +127,7 @@ const CustomRow = (props: IDataTableProps) => {
     const navigate = useNavigate();
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
         loading ? '' : 'hover:bg-gray-900 hover:cursor-pointer'
-    } ${activeRow === (cells as any).index ? 'bg-gray-900' : ''}`;
+    } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-indigo-950' : ''}`;
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
         deleteTrade(hash);

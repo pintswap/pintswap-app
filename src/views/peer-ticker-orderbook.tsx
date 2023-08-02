@@ -48,7 +48,7 @@ export const PeerTickerOrderbookView = () => {
         list: [],
     });
     const [tradeType, _setTradeType] = useState('');
-    const [activeIndex, setActiveIndex] = useState(-1);
+    const [activeIndex, setActiveIndex] = useState('');
 
     const setTradeType = (v: any) => {
         _setTradeType(v);
@@ -57,7 +57,7 @@ export const PeerTickerOrderbookView = () => {
     const onClickRow = (row: any) => {
         const [tradeType, price, size, sum] = row;
         const { index } = row;
-        setActiveIndex(index);
+        setActiveIndex(`${tradeType}-${index}`);
         let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
         setTradeType(tradeType);
         setMatchInputs({
@@ -88,7 +88,7 @@ export const PeerTickerOrderbookView = () => {
                 const index = list?.findIndex(
                     (val) => val?.amount === size && val?.price === price,
                 );
-                setActiveIndex(index);
+                setActiveIndex(`${trade}-${index}`);
                 setMatchInputs({
                     amount: list
                         .slice(0, index + 1)
