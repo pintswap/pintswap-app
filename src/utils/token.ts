@@ -1,7 +1,8 @@
+import { ITransfer } from '@pintswap/sdk';
 import { TESTING, TOKENS_BY_ADDRESS, TOKENS_BY_SYMBOL } from './constants';
 import { maybeShorten } from './format';
 import { ITokenProps, TOKENS } from './token-list';
-import { ethers } from 'ethers6';
+import { ethers, isAddress } from 'ethers6';
 
 export const decimalsCache: any = {};
 export const symbolCache: any = {};
@@ -29,6 +30,14 @@ export async function toTicker(pair: any, provider: any) {
         )
     ).join('/');
 }
+
+export const getTokenAddress = (token: ITokenProps | undefined, raw: ITransfer) => {
+    if (token?.address) return token.address;
+    else if (raw?.token) {
+        if (isAddress(raw?.token)) return raw.token;
+        if (reverseSymbolCache[raw?.token]) return reverseSymbolCache[raw?.token];
+    } else return '';
+};
 
 export async function getSymbol(address: any, provider: any) {
     address = ethers.getAddress(address);

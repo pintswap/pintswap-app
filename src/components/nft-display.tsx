@@ -53,7 +53,7 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
             );
         } else if (show === 'img') {
             return (
-                <div>
+                <>
                     {loading ? (
                         <div
                             className={`animate-pulse bg-neutral-700 ${height || ''} ${
@@ -77,7 +77,7 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                             />
                         )
                     )}
-                </div>
+                </>
             );
         } else {
             return (
