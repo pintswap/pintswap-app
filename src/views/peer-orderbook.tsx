@@ -64,6 +64,10 @@ export const PeerOrderbookView = () => {
                     } flex flex-col gap-3 lg:gap-6`}
                 >
                     <div className="flex flex-col gap-3">
+                        <span className="text-lg">Pairs</span>
+                        <PairsTable />
+                    </div>
+                    <div className="flex flex-col gap-3">
                         <span className="text-lg">NFTs</span>
                         <NFTTable
                             data={filteredNfts.slice(0, width > breakpoints.lg ? 3 : 2)}
@@ -79,10 +83,6 @@ export const PeerOrderbookView = () => {
                                 See All NFTs
                             </Button>
                         )}
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        <span className="text-lg">Pairs</span>
-                        <PairsTable />
                     </div>
                 </div>
                 <div

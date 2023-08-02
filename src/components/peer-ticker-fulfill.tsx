@@ -30,7 +30,6 @@ export const PeerTickerFulfill = ({
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        console.log(e.target.value);
         const input = (Number(e.target.value) < 0 ? '0' : e.target.value) || '0';
         let newFill = fill;
         if (tradeType === 'bids') newFill.input = input;
@@ -45,18 +44,19 @@ export const PeerTickerFulfill = ({
                 signer,
             )
         ).amount;
-        console.log(formattedAmount);
         const newMatchInputs = {
             amount: formattedAmount,
             list: matchInputs.list,
         };
         if (TESTING)
-            console.log('#handleAmountChange [newMatchInputs, matchInputs]:', [
+            console.log('#handleAmountChange [newMatchInputs, matchInputs, formattedAmount]:', [
                 newMatchInputs,
                 matchInputs,
+                formattedAmount,
             ]);
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
+
     const inputAmount = useMemo(
         () => (tradeType === 'bids' ? (fill || {}).input : (fill || {}).output) || '',
         [tradeType, fill, matchInputs],
@@ -67,13 +67,13 @@ export const PeerTickerFulfill = ({
         () => (tradeType === 'bids' ? (fill || {}).output : (fill || {}).input) || '',
         [tradeType, fill],
     );
-    console.log(inputAmount);
+
     useEffect(() => {
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
                 //                const decimals = await getDecimals(matchInputs.list[0].gives.token, signer);
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
-                console.log(match);
+                if (TESTING) console.log('Match', match);
                 const limit = (await toLimitOrder(
                     {
                         gets: {
@@ -87,8 +87,8 @@ export const PeerTickerFulfill = ({
                     },
                     signer,
                 )) as any;
-                console.log(tradeType);
-                console.log(limit);
+                if (TESTING) console.log('tradeType', tradeType);
+                if (TESTING) console.log('limit', limit);
                 if (tradeType === 'bids') {
                     const output = (Number(limit.amount) * Number(limit.price)).toFixed(4);
                     const newFill = {
@@ -123,13 +123,12 @@ export const PeerTickerFulfill = ({
         [options, tradeType],
     );
 
-    console.log(fill);
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-4 md:gap-6">
                 <Card header={'Fullfill Trade'}>
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
+                    <div className="flex flex-wrap gap-3">
                         <DropdownInput
                             title="Type"
                             placeholder="Trade Type"
@@ -192,10 +191,6 @@ export const PeerTickerFulfill = ({
                         Fulfill Trade
                     </Button>
                 </Card>
-
-                <div className="mx-auto">
-                    <ProgressIndicator steps={steps} />
-                </div>
 
                 <Transition
                     show={!!order.orderHash && !!order.multiAddr}

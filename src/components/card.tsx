@@ -8,9 +8,18 @@ type ICardProps = {
     scroll?: boolean;
     type?: 'default' | 'skeleton' | 'tabs' | 'inner';
     tabs?: string[];
+    defaultTab?: string;
 };
 
-export const Card = ({ children, className, header, scroll, type, tabs }: ICardProps) => {
+export const Card = ({
+    children,
+    className,
+    header,
+    scroll,
+    type,
+    tabs,
+    defaultTab,
+}: ICardProps) => {
     if (type === 'skeleton') {
         return (
             <div role="status" className="w-full animate-pulse">
@@ -24,12 +33,16 @@ export const Card = ({ children, className, header, scroll, type, tabs }: ICardP
     }
     if (type === 'tabs') {
         return (
-            <Tab.Group>
+            <Tab.Group
+                defaultIndex={
+                    tabs?.findIndex((el) => el?.toLowerCase() === defaultTab?.toLowerCase()) || 0
+                }
+            >
                 <div
                     className={`flex flex-col bg-neutral-900 pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
                 >
                     {tabs && !header && (
-                        <div className="md:text-lg text-center mb-4 lg:mb-6 font-semibold">
+                        <div className="md:text-lg text-center mb-2 lg:mb-3 font-semibold">
                             <Tab.List className="grid grid-cols-2 gap-2 lg:gap-4">
                                 {tabs.map((tab, i) => (
                                     <Tab key={`tabs-${i}`} className="focus-visible:outline-none">
