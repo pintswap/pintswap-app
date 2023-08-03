@@ -280,6 +280,9 @@ export const useTrade = () => {
         setTrade(newTrade);
     };
 
+    // Clear Trade
+    const clearTrade = () => setTrade(EMPTY_TRADE);
+
     // Update progress indicator
     const updateSteps = (nextStep: 'Create' | 'Fulfill' | 'Complete') => {
         const updated: IOrderProgressProps[] = steps.map((step, i) => {
@@ -387,6 +390,7 @@ export const useTrade = () => {
                 break;
         }
     };
+
     const makerTradeListener = (trade: any) => {
         trade.on('error', (e: any) => {
             if (module) {
@@ -395,6 +399,7 @@ export const useTrade = () => {
             }
         });
     };
+
     useEffect(() => {
         if (module) {
             if (!isMaker && !isOnActive)
@@ -431,9 +436,6 @@ export const useTrade = () => {
             return () => {};
         })().catch((err) => console.error(err));
     }, [module, trade]);
-    /*
-     * TRADE EVENT MANAGER - END
-     */
 
     return {
         loading,
@@ -449,5 +451,6 @@ export const useTrade = () => {
         fill,
         setFill,
         setTrade,
+        clearTrade,
     };
 };
