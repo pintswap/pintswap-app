@@ -61,29 +61,27 @@ export const DropdownInput = ({
                 {title && <p>{title}</p>}
             </div>
             <Menu as="div" className="relative inline-block text-left">
-                <div>
-                    <Menu.Button
-                        className={`inline-flex w-full ${
-                            !disabled ? 'justify-between' : 'justify-end'
-                        } items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
-                            loading ? 'animate-pulse' : ''
-                        } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
-                        disabled={disabled}
-                    >
-                        {!disabled && (
-                            <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />
-                        )}
-                        {state ? (
-                            isToken && ethers.isAddress(query) ? (
-                                unknownToken.symbol
-                            ) : (
-                                state
-                            )
+                <Menu.Button
+                    className={`inline-flex w-full overflow-x-hidden ${
+                        !disabled ? 'justify-between' : 'justify-end'
+                    } items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
+                        loading ? 'animate-pulse' : ''
+                    } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
+                    disabled={disabled}
+                >
+                    {!disabled && (
+                        <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />
+                    )}
+                    {state ? (
+                        isToken && ethers.isAddress(query) ? (
+                            unknownToken.symbol
                         ) : (
-                            <span className="text-gray-400">{placeholder || 'Select one...'}</span>
-                        )}
-                    </Menu.Button>
-                </div>
+                            state
+                        )
+                    ) : (
+                        <span className="text-gray-400">{placeholder || 'Select one...'}</span>
+                    )}
+                </Menu.Button>
 
                 <Transition
                     as={Fragment}

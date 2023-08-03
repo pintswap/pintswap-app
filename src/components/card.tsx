@@ -9,6 +9,7 @@ type ICardProps = {
     type?: 'default' | 'skeleton' | 'tabs' | 'inner';
     tabs?: string[];
     defaultTab?: string;
+    onTabChange?: any;
 };
 
 export const Card = ({
@@ -19,6 +20,7 @@ export const Card = ({
     type,
     tabs,
     defaultTab,
+    onTabChange,
 }: ICardProps) => {
     if (type === 'skeleton') {
         return (
@@ -37,6 +39,7 @@ export const Card = ({
                 defaultIndex={
                     tabs?.findIndex((el) => el?.toLowerCase() === defaultTab?.toLowerCase()) || 0
                 }
+                onChange={onTabChange}
             >
                 <div
                     className={`flex flex-col bg-neutral-900 pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
