@@ -127,7 +127,7 @@ const CustomRow = (props: IDataTableProps) => {
     const navigate = useNavigate();
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
-    } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-indigo-950' : ''}`;
+    } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''}`;
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
         deleteTrade(hash);
@@ -231,7 +231,10 @@ const CustomRow = (props: IDataTableProps) => {
     // Desktop
     if (width >= 900) {
         return (
-            <tr className={`${baseStyle} ${determineColor()}`} onClick={(e) => route(cells)}>
+            <tr
+                className={`text-sm xl:text-base ${baseStyle} ${determineColor()}`}
+                onClick={(e) => route(cells)}
+            >
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}

@@ -55,8 +55,8 @@ export function muiTheme() {
             MuiTableCell: {
                 styleOverrides: {
                     root: {
-                        paddingTop: '8px',
-                        paddingBottom: '8px',
+                        paddingTop: '6px',
+                        paddingBottom: '6px',
                     },
                 },
             },

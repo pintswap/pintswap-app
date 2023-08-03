@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, Input } from '../components';
+import { Avatar, Card, Header, Input } from '../components';
 import { IUserDataProps, usePeersContext } from '../stores';
 import { useSearch } from '../hooks';
 
@@ -10,8 +10,19 @@ export const PeersView = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
+            {/* <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
+
                 <h2 className="view-header mb-0">Peers</h2>
+                <Input
+                    value={query}
+                    onChange={handleChange}
+                    type="search"
+                    wrapperClass="max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px]"
+                    noSpace
+                />
+            </div> */}
+            <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
+                <Header breadcrumbs={[{ text: 'Peers', link: '/peers' }]}>Active Peers</Header>
                 <Input
                     value={query}
                     onChange={handleChange}
@@ -21,7 +32,7 @@ export const PeersView = () => {
                 />
             </div>
             <div
-                className={`grid grid-cols-1 gap-2 md:gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
+                className={`grid grid-cols-1 gap-1.5 md:gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
             >
                 {!peersLoading
                     ? (list as IUserDataProps[]).map((peer, i) => {
@@ -30,7 +41,7 @@ export const PeersView = () => {
                                   key={`unique-peer-${i}`}
                                   onClick={() => navigate(`/${peer.name}`, { state: { peer } })}
                               >
-                                  <Card className="hover:outline hover:outline-2 hover:outline-neutral-700 transition duration-150 h-full">
+                                  <Card className="hover:from-neutral-900 hover:to-neutral-900 transition duration-150 h-full">
                                       <Avatar
                                           peer={peer}
                                           size={30}

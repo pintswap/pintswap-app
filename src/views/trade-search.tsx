@@ -16,7 +16,7 @@ export const TradeSearchView = () => {
 
     return (
         <div className="flex flex-col">
-            <h2 className="view-header">Search</h2>
+            <h2 className="view-header text-left">Search</h2>
             <Card>
                 <form className="grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-6">
                     <Input
