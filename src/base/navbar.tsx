@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAccount } from 'wagmi';
 import { ActiveText, AnimatedHamburger, Avatar, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
-import { dashboardHeightClass } from './dashboard';
 import { usePintswapContext } from '../stores';
 
 export const Navbar = () => {
@@ -20,19 +19,19 @@ export const Navbar = () => {
     return (
         <>
             <nav
-                className={`bg-brand-dashboard py-2.5 lg:py-4 px-2 md:px-3 lg:px-6 w-full z-50 relative`}
+                className={`bg-brand-dashboard py-2.5 lg:py-3 px-2 md:px-3 lg:px-6 w-full z-50 relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button
                         onClick={() => navigate('/')}
                         className="flex items-center gap-2 lg:gap-3"
                     >
-                        <img
+                        {/* <img
                             src="/logo/ps-logo.png"
                             alt="PintSwap Logo"
                             height={logoSize}
                             width={logoSize}
-                        />
+                        /> */}
                         <span className="text-2xl">
                             <span className="text-pink-500">
                                 {width >= breakpoints.sm ? 'Pint' : 'P'}
@@ -75,7 +74,7 @@ export const Navbar = () => {
                 leaveTo="-translate-y-[100vw]"
                 className="absolute z-20 right-0 top-[54px]"
             >
-                <ul className="flex flex-col w-screen bg-neutral-900 shadow-md p-2 items-start">
+                <ul className="flex flex-col w-screen bg-brand-dashboard shadow-md p-2 items-start">
                     {NAV_ITEMS.map((item, i) => (
                         <li key={`nav-item-${i}`} className="w-full">
                             <button
@@ -105,7 +104,7 @@ export const Navbar = () => {
                 leave="transition-opacity ease-in-out duration-400"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
-                className={`fixed bottom-0 left-0 w-screen ${dashboardHeightClass} z-10`}
+                className={`fixed bottom-0 left-0 w-screen h-full flex flex-grow z-10`}
             >
                 <div
                     className="w-screen h-full bg-[rgba(0,0,0,0.25)]"

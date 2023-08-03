@@ -50,7 +50,7 @@ export const PairsView = () => {
                                       )
                                   }
                               >
-                                  <Card className="hover:bg-gray-900">
+                                  <Card className="hover:outline hover:outline-2 hover:outline-neutral-700 transition duration-150">
                                       <div
                                           className={`text-center flex items-center justify-center gap-3`}
                                       >

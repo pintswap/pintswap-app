@@ -126,7 +126,7 @@ const CustomRow = (props: IDataTableProps) => {
     const { deleteTrade } = useOffersContext();
     const navigate = useNavigate();
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
-        loading ? '' : 'hover:bg-gray-900 hover:cursor-pointer'
+        loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
     } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-indigo-950' : ''}`;
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
