@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Asset, Card, DataTable } from '../components';
+import { Asset, Card, DataTable, Header } from '../components';
 import { useOffersContext } from '../stores';
 import { useWindowSize } from '../hooks';
 import { Tab } from '@headlessui/react';
@@ -58,11 +58,24 @@ export const PairListView = () => {
 
     return (
         <div className="flex flex-col">
-            <h2 className="view-header flex flex-row items-center gap-1">
-                <Asset symbol={pair?.split('/')[0] || ''} size={18} />
-                <span>/</span>
-                <Asset symbol={pair?.split('/')[1] || ''} size={18} />
-            </h2>
+            <div className="mb-4 md:mb-6">
+                <Header
+                    breadcrumbs={[
+                        { text: 'Markets', link: '/markets' },
+                        {
+                            text: `${pathname.split('/')[2].toUpperCase()}`,
+                            link: `/markets/${pathname.split('/')[2]}`,
+                        },
+                    ]}
+                >
+                    <span className="flex items-center gap-1">
+                        <Asset symbol={pair?.split('/')[0] || ''} size={18} />
+                        <span>/</span>
+                        <Asset symbol={pair?.split('/')[1] || ''} size={18} />
+                    </span>
+                </Header>
+            </div>
+
             {width > breakpoints.lg ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
                     <Card>

@@ -80,7 +80,7 @@ export const Input = ({
     if (type === 'search') {
         return (
             <div
-                className={`flex items-center gap-1 pl-2 bg-brand-dashboard outline outline-2 outline-neutral-800 hover:outline-neutral-700 transition duration-150 ${
+                className={`flex items-center gap-1 pl-2 bg-brand-dashboard border-2 border-neutral-800 hover:border-neutral-700 transition duration-150 ${
                     enableStateCss ? 'disabled:bg-neutral-900' : ''
                 } rounded ${wrapperClass} ${loading ? 'animate-pulse' : ''}`}
             >

@@ -120,6 +120,7 @@ export const Avatar = ({
                         src={peerData.img as string}
                         height={size}
                         width={size}
+                        style={{ minHeight: size, minWidth: size }}
                         className="rounded-full bg-brand-dashboard self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray"
                         alt="Avatar"
                     />

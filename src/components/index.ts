@@ -22,3 +22,4 @@ export * from './text-display';
 export * from './status-indicator';
 export * from './tx-details';
 export * from './smart-price';
+export * from './header';
