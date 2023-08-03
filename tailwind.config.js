@@ -9,7 +9,7 @@ module.exports = {
             },
             colors: {
                 brand: {
-                    dashboard: '#171717',
+                    dashboard: '#111111',
                     purple: '#4f46e5',
                     pink: '#f472b6',
                     blue: '#0ea5e9',

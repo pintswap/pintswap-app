@@ -30,7 +30,7 @@ export const PeersView = () => {
                                   key={`unique-peer-${i}`}
                                   onClick={() => navigate(`/${peer.name}`, { state: { peer } })}
                               >
-                                  <Card className="hover:bg-gray-950 h-full">
+                                  <Card className="hover:outline hover:outline-2 hover:outline-neutral-700 transition duration-150 h-full">
                                       <Avatar
                                           peer={peer}
                                           size={30}

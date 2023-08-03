@@ -15,7 +15,7 @@ export function muiTheme() {
         palette: {
             mode: 'dark',
             background: {
-                paper: '#171717',
+                paper: '#111111',
             },
             primary: {
                 main: '#fff',
@@ -49,6 +49,14 @@ export function muiTheme() {
                 styleOverrides: {
                     clearIcon: {
                         display: 'none',
+                    },
+                },
+            },
+            MuiTableCell: {
+                styleOverrides: {
+                    root: {
+                        paddingTop: '8px',
+                        paddingBottom: '8px',
                     },
                 },
             },

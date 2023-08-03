@@ -58,7 +58,7 @@ export const PairListView = () => {
 
     return (
         <div className="flex flex-col">
-            <h2 className="view-header flex flex-row items-center justify-center gap-2">
+            <h2 className="view-header flex flex-row items-center gap-1">
                 <Asset symbol={pair?.split('/')[0] || ''} size={18} />
                 <span>/</span>
                 <Asset symbol={pair?.split('/')[1] || ''} size={18} />

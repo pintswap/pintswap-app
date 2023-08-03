@@ -80,7 +80,7 @@ export const Input = ({
     if (type === 'search') {
         return (
             <div
-                className={`flex items-center gap-1 p-2 bg-neutral-600 ${
+                className={`flex items-center gap-1 pl-2 bg-brand-dashboard outline outline-2 outline-neutral-800 hover:outline-neutral-700 transition duration-150 ${
                     enableStateCss ? 'disabled:bg-neutral-900' : ''
                 } rounded ${wrapperClass} ${loading ? 'animate-pulse' : ''}`}
             >
@@ -88,7 +88,7 @@ export const Input = ({
                     <MdSearch size="18px" className="text-neutral-200" />
                 </div>
                 <input
-                    className={`bg-transparent outline-none ring-none ${className} min-w-0`}
+                    className={`bg-transparent outline-none ring-none p-2 ${className} min-w-0 group `}
                     value={value}
                     onChange={onChange}
                     placeholder={!placeholder ? 'Search here' : placeholder}
