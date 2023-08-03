@@ -10,7 +10,7 @@ type IDashboardProps = {
     children: ReactNode;
 };
 
-const backgroundClass = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-[#242d49] via-black to-[#242d49]`;
+const backgroundClass = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-gray-800 via-black to-gray-800`;
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
     const { address } = useAccount();

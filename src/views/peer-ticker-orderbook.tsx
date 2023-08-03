@@ -115,26 +115,16 @@ export const PeerTickerOrderbookView = () => {
                             text: `${ticker.replace('/', '-').toUpperCase()}`,
                             link: `/markets/${ticker.replace('/', '-')}`,
                         },
-                        { text: `${multiaddr}`, link: `${pathname}` },
+                        { text: `${peer}`, link: `/${peer}` },
                     ]}
                 >
-                    <button onClick={() => navigate(`/${peer}`)} className="w-fit text-left">
-                        {/* <Avatar
-                        peer={multiaddr}
-                        withBio
-                        withName
-                        nameClass="text-xl"
-                        type="profile"
-                        size={60}
-                    /> */}
-                        {multiaddr}
-                    </button>
+                    Peer Orderbook
                 </Header>
 
                 {width > breakpoints.lg && (
-                    <div className="justify-self-center">
+                    <a className="justify-self-center" href={`/${peer}`}>
                         <Avatar peer={multiaddr} nameClass="text-xl" type="clickable" />
-                    </div>
+                    </a>
                 )}
 
                 <div className="justify-self-end hidden sm:block">

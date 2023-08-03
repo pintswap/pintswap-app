@@ -14,7 +14,7 @@ export const Navbar = () => {
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-    const logoSize = width < 768 ? '36' : '52';
+    const logoSize = width < 768 ? '180' : '200';
 
     return (
         <>
@@ -26,20 +26,20 @@ export const Navbar = () => {
                         onClick={() => navigate('/')}
                         className="flex items-center gap-2 lg:gap-3"
                     >
-                        {/* <img
-                            src="/logo/ps-logo.png"
+                        <img
+                            src="/logo/ps-logo-drip.png"
                             alt="PintSwap Logo"
                             height={logoSize}
                             width={logoSize}
-                        /> */}
-                        <span className="text-2xl">
+                        />
+                        {/* <span className="text-2xl">
                             <span className="text-pink-500">
                                 {width >= breakpoints.sm ? 'Pint' : 'P'}
                             </span>
                             <span className="text-sky-400">
                                 {width >= breakpoints.sm ? 'Swap' : 'S'}
                             </span>
-                        </span>
+                        </span> */}
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
                         <Wallet />
