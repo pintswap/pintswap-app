@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Asset, Card } from '../components';
+import { Asset, Card, SmartPrice } from '../components';
 import { useOffersContext, usePintswapContext } from '../stores';
 import { getTokenLogo } from '../utils/token';
 import { resolveName } from '../hooks/trade';
@@ -67,7 +67,7 @@ export const PairsTable = () => {
                                   key={`unique-pair-${pair.ticker}`}
                                   onClick={() => navigate(`/${multiaddr}/${pair.ticker}`)}
                               >
-                                  <Card className="hover:bg-gray-900" type="inner">
+                                  <Card className="hover:from-neutral-900 hover:to-neutral-900">
                                       <div
                                           className={`text-center flex items-center justify-center gap-3`}
                                       >
@@ -77,10 +77,10 @@ export const PairsTable = () => {
                                       </div>
                                       <div className="flex items-center justify-around mt-1">
                                           <small className="text-green-400">
-                                              BID: {pair.price.bid}
+                                              BID <SmartPrice price={pair.price.bid} />
                                           </small>
                                           <small className="text-red-400">
-                                              ASK: {pair.price.ask}
+                                              ASK <SmartPrice price={pair.price.ask} />
                                           </small>
                                       </div>
                                   </Card>
@@ -88,7 +88,7 @@ export const PairsTable = () => {
                           );
                       })
                     : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                          <Card key={`loading-card-${i}`} className="justify-start" type="inner">
+                          <Card key={`loading-card-${i}`} className="justify-start">
                               <div className={`text-center flex items-center justify-center gap-3`}>
                                   <Asset loading />
                                   <span>/</span>

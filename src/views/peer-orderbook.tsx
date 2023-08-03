@@ -6,6 +6,7 @@ import {
     TransitionModal,
     DropdownMenu,
     Button,
+    Header,
 } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useParams } from 'react-router-dom';
@@ -30,8 +31,8 @@ export const PeerOrderbookView = () => {
     const peer = state?.peer ? state.peer : multiaddr ? multiaddr : order.multiAddr;
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center">
+        <div className="flex flex-col">
+            {/* <div className="flex justify-between items-center">
                 <TransitionModal
                     button={
                         <Avatar
@@ -55,9 +56,37 @@ export const PeerOrderbookView = () => {
                     items={items}
                     onClick={handleCurrentClick}
                 />
+            </div> */}
+
+            <div className="grid grid-cols-2 lg:grid-cols-3 items-center justify-between mb-4 md:mb-6">
+                <Header
+                    breadcrumbs={[
+                        { text: 'Peers', link: '/peers' },
+                        { text: `${multiaddr}`, link: `/${multiaddr}` },
+                    ]}
+                >
+                    Peer Overview
+                </Header>
+
+                {width > breakpoints.lg && (
+                    <a className="justify-self-center" href={`/${peer}`}>
+                        <Avatar peer={multiaddr} nameClass="text-xl" type="clickable" />
+                    </a>
+                )}
+                <div className="justify-self-end">
+                    <DropdownMenu
+                        customIcon={
+                            <span className="flex items-center gap-1 md:gap-2 py-2 text-md">
+                                {items[currentIndex].text} <FaChevronDown />
+                            </span>
+                        }
+                        items={items}
+                        onClick={handleCurrentClick}
+                    />
+                </div>
             </div>
 
-            <Card>
+            <div className="flex flex-col">
                 <div
                     className={`${
                         currentIndex === 0 ? 'block' : 'hidden'
@@ -120,7 +149,7 @@ export const PeerOrderbookView = () => {
                         Back to All
                     </Button>
                 </div>
-            </Card>
+            </div>
         </div>
     );
 };
