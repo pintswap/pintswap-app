@@ -117,7 +117,7 @@ export const Avatar = ({
             <div className={`${loading ? 'animate-pulse' : ''}`}>
                 <button
                     onClick={() => navigate(`/account`)}
-                    className={`bg-gradient-to-r from-indigo-600 to-sky-400 p-[2.5px] hover:to-sky-500 rounded-full`}
+                    className={`bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500 rounded-full`}
                 >
                     {showActive && <StatusIndicator active={userData.active} />}
                     <img
@@ -129,6 +129,11 @@ export const Avatar = ({
                         alt="Avatar"
                     />
                 </button>
+                {withName && (
+                    <span className={`${nameClass ? nameClass : 'text-lg lg:text-xl'}`}>
+                        {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
+                    </span>
+                )}
             </div>
         );
     } else if (type === 'profile') {
