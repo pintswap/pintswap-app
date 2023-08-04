@@ -103,7 +103,6 @@ export function UserStore(props: { children: ReactNode }) {
 
     function updateBio(e: any) {
         if (module) {
-            module.setBio(e.target.value);
             setUserData({ ...userData, bio: e.target.value });
         }
     }
@@ -124,6 +123,7 @@ export function UserStore(props: { children: ReactNode }) {
     async function handleSave() {
         setLoading(true);
         if (module) {
+            module.setBio(userData.bio);
             savePintswap(module);
             // Save name with extension
             let nameWExt = `${userData.name}`;

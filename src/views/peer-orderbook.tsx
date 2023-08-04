@@ -1,4 +1,13 @@
-import { Avatar, Card, DataTable, DropdownMenu, Button, Header, NFTTable } from '../components';
+import {
+    Avatar,
+    Card,
+    DataTable,
+    DropdownMenu,
+    Button,
+    Header,
+    NFTTable,
+    TransitionModal,
+} from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useParams } from 'react-router-dom';
 import { useWindowSize } from '../hooks/window-size';
@@ -96,7 +105,11 @@ export const PeerOrderbookView = () => {
                 </Header>
 
                 <div className="justify-self-end hidden sm:block">
-                    <Avatar peer={multiaddr} nameClass="text-xl" type="profile" />
+                    <TransitionModal
+                        button={<Avatar peer={multiaddr} nameClass="text-xl" type="profile" />}
+                    >
+                        <Avatar peer={multiaddr} size={300} />
+                    </TransitionModal>
                 </div>
             </div>
 
