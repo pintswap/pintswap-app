@@ -49,10 +49,11 @@ function App() {
                     {/* <Route path="/markets/:pair/:multiaddr" element={<PeerTickerOrderbookView />} /> */}
 
                     <Route path="/peers" element={<PeersView />} />
-                    {/* <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} /> */}
+                    <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
+                    <Route path="/peers/:multiaddr/:view" element={<PeerOrderbookView />} />
 
-                    <Route path="/:multiaddr" element={<PeerOrderbookView />} />
-                    <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} />
+                    {/* <Route path="/:multiaddr" element={<PeerOrderbookView />} />
+                    <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} /> */}
                     <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
                     <Route path="/fulfill" element={<TradeSearchView />} />
