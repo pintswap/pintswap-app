@@ -1,3 +1,7 @@
+/**
+ * @deprecated
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card, SmartPrice } from '../components';
@@ -14,8 +18,8 @@ const bestPrices = (orders: any) => {
     const bestAsk = (ask || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
     const bestBid = (bid || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
     return {
-        bid: (bestBid?.price && formatPrice(bestBid.price)) || 'N/A',
-        ask: (bestAsk?.price && formatPrice(bestAsk.price)) || 'N/A',
+        bid: (bestBid?.price && formatPrice(bestBid.price)) || '-',
+        ask: (bestAsk?.price && formatPrice(bestAsk.price)) || '-',
     };
 };
 
@@ -44,13 +48,15 @@ export const PairsTable = () => {
         );
         setUniquePairs(
             Object.entries(byTicker).map(([ticker, group]) => ({
-                price: bestPrices(group),
+                ...bestPrices(group),
                 ticker: ticker,
             })),
         );
     }, [limitOrdersArr, resolved, multiaddr]);
 
     const isLoading = uniquePairs.length === 0;
+
+    console.log(uniquePairs);
 
     return (
         <div className="flex flex-col">
@@ -77,10 +83,10 @@ export const PairsTable = () => {
                                       </div>
                                       <div className="flex items-center justify-around mt-1">
                                           <small className="text-green-400">
-                                              BID <SmartPrice price={pair.price.bid} />
+                                              BID <SmartPrice price={pair.bid} />
                                           </small>
                                           <small className="text-red-400">
-                                              ASK <SmartPrice price={pair.price.ask} />
+                                              ASK <SmartPrice price={pair.ask} />
                                           </small>
                                       </div>
                                   </Card>

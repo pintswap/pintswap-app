@@ -1,20 +1,46 @@
-import {
-    Avatar,
-    Card,
-    NFTTable,
-    DataTable,
-    TransitionModal,
-    DropdownMenu,
-    Button,
-    Header,
-} from '../components';
+import { Avatar, Card, DataTable, DropdownMenu, Button, Header, NFTTable } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useParams } from 'react-router-dom';
 import { useWindowSize } from '../hooks/window-size';
 import { FaChevronDown } from 'react-icons/fa';
 import { useDropdown } from '../hooks/dropdown';
 import { useLimitOrders } from '../hooks';
-import { PairsTable } from '../components/pairs-table';
+import { useEffect, useState } from 'react';
+import { useOffersContext, usePintswapContext } from '../stores';
+import { groupBy } from 'lodash';
+import { resolveName } from '../hooks/trade';
+import { bestPrices } from '../utils';
+import { Tab } from '@headlessui/react';
+
+const columns = [
+    {
+        name: 'ticker',
+        label: 'Ticker',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'bid',
+        label: 'Bid',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'ask',
+        label: 'Ask',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+];
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
@@ -27,38 +53,39 @@ export const PeerOrderbookView = () => {
     const { filteredNfts } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
     const { multiaddr } = useParams();
+    const { limitOrdersArr } = useOffersContext();
+    const [uniquePairs, setUniquePairs] = useState<any[]>([]);
+    const { pintswap } = usePintswapContext();
+    const [resolved, setResolved] = useState<any>(null);
+
+    useEffect(() => {
+        (async () => {
+            if (multiaddr && pintswap && pintswap.module) {
+                if (multiaddr.match('.drip'))
+                    setResolved(await resolveName(pintswap.module, multiaddr));
+                else setResolved(multiaddr);
+            }
+        })().catch((err) => console.error(err));
+    }, [multiaddr, pintswap.module]);
+
+    useEffect(() => {
+        const byTicker = groupBy(
+            limitOrdersArr.filter((v) => [multiaddr, resolved].includes(v.peer)),
+            'ticker',
+        );
+        setUniquePairs(
+            Object.entries(byTicker).map(([ticker, group]) => ({
+                ...bestPrices(group),
+                ticker: ticker,
+            })),
+        );
+    }, [limitOrdersArr, resolved, multiaddr]);
 
     const peer = state?.peer ? state.peer : multiaddr ? multiaddr : order.multiAddr;
 
     return (
         <div className="flex flex-col">
-            {/* <div className="flex justify-between items-center">
-                <TransitionModal
-                    button={
-                        <Avatar
-                            peer={peer}
-                            withBio
-                            withName
-                            align="left"
-                            size={60}
-                            type="profile"
-                        />
-                    }
-                >
-                    <Avatar peer={peer} size={300} />
-                </TransitionModal>
-                <DropdownMenu
-                    customIcon={
-                        <span className="flex items-center gap-1 md:gap-2 py-2 text-md">
-                            {items[currentIndex].text} <FaChevronDown />
-                        </span>
-                    }
-                    items={items}
-                    onClick={handleCurrentClick}
-                />
-            </div> */}
-
-            <div className="grid grid-cols-2 lg:grid-cols-3 items-center justify-between mb-4 md:mb-6">
+            <div className="grid grid-cols-2 items-center justify-between mb-4 md:mb-6">
                 <Header
                     breadcrumbs={[
                         { text: 'Peers', link: '/peers' },
@@ -68,25 +95,35 @@ export const PeerOrderbookView = () => {
                     Peer Overview
                 </Header>
 
-                {width > breakpoints.lg && (
-                    <a className="justify-self-center" href={`/${peer}`}>
-                        <Avatar peer={multiaddr} nameClass="text-xl" type="clickable" />
-                    </a>
-                )}
-                <div className="justify-self-end">
-                    <DropdownMenu
-                        customIcon={
-                            <span className="flex items-center gap-1 md:gap-2 py-2 text-md">
-                                {items[currentIndex].text} <FaChevronDown />
-                            </span>
-                        }
-                        items={items}
-                        onClick={handleCurrentClick}
-                    />
+                <div className="justify-self-end hidden sm:block">
+                    <Avatar peer={multiaddr} nameClass="text-xl" type="profile" />
                 </div>
             </div>
 
-            <div className="flex flex-col">
+            <Card
+                tabs={['ERC20', 'NFT']}
+                type="tabs"
+                defaultTab={uniquePairs.length === 0 && filteredNfts.length ? 'nft' : 'erc20'}
+            >
+                <Tab.Panel>
+                    <DataTable
+                        type="peer-orderbook"
+                        data={uniquePairs}
+                        columns={columns}
+                        loading={false}
+                        peer={multiaddr}
+                    />
+                </Tab.Panel>
+                <Tab.Panel>
+                    <NFTTable
+                        data={filteredNfts}
+                        peer={order.multiAddr}
+                        loading={loading.allTrades}
+                    />
+                </Tab.Panel>
+            </Card>
+
+            {/* <div className="flex flex-col">
                 <div
                     className={`${
                         currentIndex === 0 ? 'block' : 'hidden'
@@ -149,7 +186,7 @@ export const PeerOrderbookView = () => {
                         Back to All
                     </Button>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };

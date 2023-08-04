@@ -11,13 +11,22 @@ import { Button } from './button';
 import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
+import { Asset } from './asset';
 
 type IDataTableProps = {
     title?: string;
     data: (object | number[] | string[])[];
     columns: MUIDataTableColumnDef[];
     loading?: boolean;
-    type: 'explore' | 'pairs' | 'peers' | 'orderbook' | 'asks' | 'bids' | 'manage';
+    type:
+        | 'explore'
+        | 'pairs'
+        | 'peers'
+        | 'orderbook'
+        | 'asks'
+        | 'bids'
+        | 'manage'
+        | 'peer-orderbook';
     peer?: string;
     toolbar?: boolean;
     pagination?: boolean;
@@ -150,6 +159,8 @@ const CustomRow = (props: IDataTableProps) => {
                 return navigate(
                     `${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`,
                 );
+            case 'peer-orderbook':
+                return navigate(`/${peer}/${firstCell}`);
             case 'pairs':
                 url = `${url}pairs`;
                 break;
@@ -208,6 +219,14 @@ const CustomRow = (props: IDataTableProps) => {
             } else if (!isNaN(Number(cell))) {
                 // Big Number
                 return <SmartPrice price={cell} />;
+            } else if (type === 'peer-orderbook' && cell.includes('/')) {
+                return (
+                    <span className="flex items-center gap-1">
+                        <Asset symbol={cell.split('/')[0]} size={20} />
+                        <span>/</span>
+                        <Asset symbol={cell.split('/')[1]} size={20} />
+                    </span>
+                );
             } else {
                 // Default
                 return formatCell(cell);

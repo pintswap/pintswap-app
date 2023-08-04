@@ -22,7 +22,7 @@ export const useDropdown = (
             const formatted = e.currentTarget.innerText.toLowerCase();
             setCurrent(formatted);
             setCurrentIndex(items.findIndex((item) => item.text === e.currentTarget.innerText));
-            if (changeUrl && multiaddr) navigate(`/${multiaddr}/${formatted}`);
+            if (changeUrl && multiaddr) navigate(`/peers/${multiaddr}/${formatted}`);
         }
     };
 

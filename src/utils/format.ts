@@ -26,6 +26,12 @@ export const maybeShorten = (s: string): string => {
     return s;
 };
 
+export const maybeFormatMultiAddr = (s: string): string => {
+    if (!s) return '';
+    if (s.startsWith('Q') && s.length > 30) return shorten(s);
+    return s;
+};
+
 // CSS CLASS
 export function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
