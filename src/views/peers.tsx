@@ -21,16 +21,18 @@ export const PeersView = () => {
                 />
             </div>
             <div
-                className={`grid grid-cols-1 gap-1.5 md:gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
+                className={`grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
             >
                 {!peersLoading
                     ? (list as IUserDataProps[]).map((peer, i) => {
                           return (
                               <button
                                   key={`unique-peer-${i}`}
-                                  onClick={() => navigate(`/${peer.name}`, { state: { peer } })}
+                                  onClick={() =>
+                                      navigate(`/peers/${peer.name}`, { state: { peer } })
+                                  }
                               >
-                                  <GradientBorder className="rounded-lg from-transparent to-transparent">
+                                  <GradientBorder className="rounded-lg from-transparent to-transparent h-full">
                                       <Card className="h-full">
                                           <Avatar
                                               peer={peer}

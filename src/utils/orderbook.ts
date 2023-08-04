@@ -219,3 +219,13 @@ export function matchOffers(offers: any[], amount: BigNumberish) {
         effective,
     };
 }
+
+export const bestPrices = (orders: any) => {
+    const { ask, bid } = groupBy(orders, 'type');
+    const bestAsk = (ask || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
+    const bestBid = (bid || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
+    return {
+        bid: (bestBid?.price && bestBid.price) || '-',
+        ask: (bestAsk?.price && bestAsk.price) || '-',
+    };
+};

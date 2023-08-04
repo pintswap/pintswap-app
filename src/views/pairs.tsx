@@ -32,7 +32,7 @@ export const PairsView = () => {
                 />
             </div>
             <div
-                className={`grid grid-cols-1 gap-1.5 md:gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
+                className={`grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
             >
                 {!isLoading
                     ? (list as string[]).map((pair) => {
@@ -55,9 +55,9 @@ export const PairsView = () => {
                                           <div
                                               className={`text-center flex items-center justify-center gap-3`}
                                           >
-                                              <Asset icon={icon1} symbol={token1} />
+                                              <Asset icon={icon1} symbol={token1} size={20} />
                                               <span>/</span>
-                                              <Asset icon={icon2} symbol={token2} />
+                                              <Asset icon={icon2} symbol={token2} size={20} />
                                           </div>
                                       </Card>
                                   </GradientBorder>

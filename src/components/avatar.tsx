@@ -152,7 +152,7 @@ export const Avatar = ({
                                 src={peerData.img as string}
                                 height={size}
                                 width={size}
-                                className="rounded-full self-center bg-neutral-100 min-h-[60px]"
+                                className="rounded-full self-center bg-neutral-100 min-h-[60px] min-w-[60px]"
                                 alt="Avatar"
                             />
                         </>

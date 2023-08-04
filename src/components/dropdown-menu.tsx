@@ -44,14 +44,14 @@ export const DropdownMenu = ({ items, customIcon, buttonClass, onClick }: IDropd
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                     >
-                        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-gray-950 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-brand-dashboard shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             {items.map((item, i) => (
                                 <Menu.Item key={`dropdown-menu-item-${i}`}>
                                     {({ active }) =>
                                         item.route ? (
                                             <button
                                                 className={classNames(
-                                                    active ? 'bg-gray-900 text-neutral-100' : '',
+                                                    active ? 'bg-neutral-900 text-neutral-100' : '',
                                                     'px-4 py-3 text-sm w-full text-left flex gap-2 items-center justify-start rounded-md disabled:text-neutral-400',
                                                 )}
                                                 onClick={() => navigate(item.route || '/')}
@@ -70,7 +70,7 @@ export const DropdownMenu = ({ items, customIcon, buttonClass, onClick }: IDropd
                                         ) : (
                                             <button
                                                 className={classNames(
-                                                    active ? 'bg-gray-900 text-neutral-100' : '',
+                                                    active ? 'bg-neutral-900 text-neutral-100' : '',
                                                     'px-4 py-3 text-sm w-full text-left flex gap-2 items-center justify-start rounded-md disabled:text-neutral-400',
                                                 )}
                                                 onClick={onClick ? onClick : item.onClick}

@@ -10,7 +10,7 @@ type IDashboardProps = {
     children: ReactNode;
 };
 
-const backgroundClass = `bg-gradient-to-b from-gray-900 to-gray-800 md:bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] md:from-neutral-800 md:via-black md:to-neutral-800`;
+const backgroundClass = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-neutral-800 via-black to-neutral-800`;
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
     const { address } = useAccount();
@@ -28,7 +28,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         return (
             <div className={`3xl:max-w-8xl 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 flex-grow`}>
                 <div className="flex flex-col justify-between bg-brand-dashboard p-4 py-6 pl-0 gap-2">
-                    <ul className={`flex flex-col gap-2`}>
+                    <ul className={`flex flex-col gap-1.5`}>
                         {NAV_ITEMS.map((el, i) => {
                             return (
                                 <li key={`sidebar-nav-${i}`}>
@@ -62,7 +62,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </div>
                 </div>
                 <div
-                    className={`overflow-y-auto w-full p-6 lg:p-8 mb-2 ${backgroundClass} relative z-50 shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] 3xl:px-6 h-full rounded-tl-3xl`}
+                    className={`overflow-y-auto w-full p-6 lg:p-8 ${backgroundClass} relative z-50 shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] 3xl:px-6 h-full rounded-tl-3xl`}
                 >
                     <main className="mx-auto">{children}</main>
                 </div>
@@ -73,9 +73,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         return (
             <>
                 <div className="flex flex-grow justify-center">
-                    <main
-                        className={`w-full py-4 px-2 mb-8 ${backgroundClass} shadow-inner shadow-neutral-900 h-full`}
-                    >
+                    <main className={`w-full py-4 px-2 pb-6 ${backgroundClass} h-full`}>
                         {children}
                     </main>
                 </div>
