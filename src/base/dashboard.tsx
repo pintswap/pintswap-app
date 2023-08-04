@@ -1,21 +1,25 @@
 import { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ActiveText } from '../components';
+import { ActiveText, StatusIndicator } from '../components';
 import { Avatar } from '../components';
 import { useAccount } from 'wagmi';
 import { useDashNav, useWindowSize } from '../hooks';
-import { usePintswapContext } from '../stores';
+import { usePintswapContext, useUserContext } from '../stores';
 
 type IDashboardProps = {
     children: ReactNode;
 };
 
-const backgroundClass = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-gray-800 via-black to-gray-800`;
+const backgroundClass = `bg-gradient-to-b from-gray-900 to-gray-800 md:bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] md:from-neutral-800 md:via-black md:to-neutral-800`;
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
     const { address } = useAccount();
     const { width, breakpoints } = useWindowSize();
     const { NAV_ITEMS } = useDashNav();
+    const {
+        toggleActive,
+        userData: { active },
+    } = useUserContext();
     const { pintswap } = usePintswapContext();
     const navigate = useNavigate();
 
@@ -23,27 +27,42 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         // Desktop
         return (
             <div className={`3xl:max-w-8xl 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 flex-grow`}>
-                <ul
-                    className={`bg-brand-dashboard p-4 py-6 pl-0 flex flex-col gap-2 3xl:h-full 3xl:my-auto 3xl:rounded-md`}
-                >
-                    {NAV_ITEMS.map((el, i) => {
-                        return (
-                            <li key={`sidebar-nav-${i}`}>
-                                <button
-                                    onClick={() => navigate(el.route || '/')}
-                                    className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-400`}
-                                >
-                                    <ActiveText route={el.route} className="text-indigo-500">
-                                        {el.icon}
-                                    </ActiveText>
-                                    <ActiveText route={el.route}>{el.text}</ActiveText>
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
+                <div className="flex flex-col justify-between bg-brand-dashboard p-4 py-6 pl-0 gap-2">
+                    <ul className={`flex flex-col gap-2`}>
+                        {NAV_ITEMS.map((el, i) => {
+                            return (
+                                <li key={`sidebar-nav-${i}`}>
+                                    <button
+                                        onClick={() => navigate(el.route || '/')}
+                                        className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-400`}
+                                    >
+                                        <ActiveText route={el.route} className="text-sky-400">
+                                            {el.icon}
+                                        </ActiveText>
+                                        <ActiveText route={el.route}>{el.text}</ActiveText>
+                                    </button>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                    <div className="flex flex-col gap-2 pl-4 lg:pl-6">
+                        <Avatar
+                            peer={pintswap?.module?.peerId.toB58String()}
+                            withName
+                            direction="vertical"
+                            align="left"
+                            ring
+                        />
+                        <button onClick={toggleActive}>
+                            <StatusIndicator
+                                active={active}
+                                message={active ? 'Stop Publish' : 'Start Publish'}
+                            />
+                        </button>
+                    </div>
+                </div>
                 <div
-                    className={`overflow-y-auto w-full p-6 lg:p-8 mb-2 ${backgroundClass} shadow-[rgba(0,_0,_0,_0.5)_0px_9px_20px] 3xl:px-6 h-full rounded-tl-3xl`}
+                    className={`overflow-y-auto w-full p-6 lg:p-8 mb-2 ${backgroundClass} relative z-50 shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] 3xl:px-6 h-full rounded-tl-3xl`}
                 >
                     <main className="mx-auto">{children}</main>
                 </div>
@@ -55,7 +74,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
             <>
                 <div className="flex flex-grow justify-center">
                     <main
-                        className={`w-full py-4 px-2 mb-6 ${backgroundClass} shadow-inner shadow-neutral-900 h-full`}
+                        className={`w-full py-4 px-2 mb-8 ${backgroundClass} shadow-inner shadow-neutral-900 h-full`}
                     >
                         {children}
                     </main>

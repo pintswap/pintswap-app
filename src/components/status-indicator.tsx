@@ -2,10 +2,10 @@ type IStatusIndicatorProps = {
     active: boolean;
     className?: string;
     size?: `sm` | 'md' | 'lg';
-    clickable?: boolean;
+    message?: string;
 };
 
-export const StatusIndicator = ({ active, className, size }: IStatusIndicatorProps) => {
+export const StatusIndicator = ({ active, className, size, message }: IStatusIndicatorProps) => {
     const renderSize = () => {
         switch (size) {
             case 'sm':
@@ -22,8 +22,13 @@ export const StatusIndicator = ({ active, className, size }: IStatusIndicatorPro
     };
 
     return (
-        <div className={`${className ? className : ''} absolute z-50`}>
+        <div
+            className={`${className || ''} ${
+                message ? 'flex items-center gap-1.5' : 'absolute z-50'
+            }`}
+        >
             <span className={`${renderSize()} ${renderColor()} rounded-full block`} />
+            {message && <span className="text-xs">{message}</span>}
         </div>
     );
 };

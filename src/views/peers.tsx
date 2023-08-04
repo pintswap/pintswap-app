@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, Header, Input } from '../components';
+import { Avatar, Card, GradientBorder, Header, Input } from '../components';
 import { IUserDataProps, usePeersContext } from '../stores';
 import { useSearch } from '../hooks';
 
@@ -30,16 +30,18 @@ export const PeersView = () => {
                                   key={`unique-peer-${i}`}
                                   onClick={() => navigate(`/${peer.name}`, { state: { peer } })}
                               >
-                                  <Card className="hover:from-neutral-900 hover:to-neutral-900 transition duration-150 h-full">
-                                      <Avatar
-                                          peer={peer}
-                                          size={30}
-                                          withName
-                                          withBio
-                                          withImage={false}
-                                          align="left"
-                                      />
-                                  </Card>
+                                  <GradientBorder className="rounded-lg from-transparent to-transparent">
+                                      <Card className="h-full">
+                                          <Avatar
+                                              peer={peer}
+                                              size={30}
+                                              withName
+                                              withBio
+                                              withImage={false}
+                                              align="left"
+                                          />
+                                      </Card>
+                                  </GradientBorder>
                               </button>
                           );
                       })
