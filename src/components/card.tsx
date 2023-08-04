@@ -30,7 +30,7 @@ export const Card = ({
                 <div
                     className={`${
                         className ? className : ''
-                    } bg-neutral-700 h-[5rem] rounded-lg shadow w-full`}
+                    } bg-neutral-800 h-[5rem] rounded-lg shadow w-full`}
                 ></div>
             </div>
         );
