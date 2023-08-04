@@ -89,7 +89,7 @@ export const DataTable = (props: IDataTableProps) => {
                                 noMatch: loading ? (
                                     <SpinnerLoader className={'justify-start lg:justify-center'} />
                                 ) : (
-                                    'No data available'
+                                    <div className="py-4">No data available</div>
                                 ),
                             },
                         },
