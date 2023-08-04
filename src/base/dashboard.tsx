@@ -21,6 +21,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         userData: { active },
     } = useUserContext();
     const { pintswap } = usePintswapContext();
+    const { userData } = useUserContext();
     const navigate = useNavigate();
 
     if (width >= breakpoints.md) {
@@ -48,12 +49,15 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     <div className="flex flex-col gap-2 pl-4 lg:pl-6">
                         <Avatar
                             peer={pintswap?.module?.peerId.toB58String()}
-                            withName
+                            type="clickable"
                             direction="vertical"
                             align="left"
-                            ring
+                            withName
                         />
-                        <button onClick={toggleActive}>
+                        <button
+                            onClick={toggleActive}
+                            className="transition duration-150 hover:text-neutral-300 py-0.5"
+                        >
                             <StatusIndicator
                                 active={active}
                                 message={active ? 'Stop Publish' : 'Start Publish'}
