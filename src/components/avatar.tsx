@@ -19,6 +19,7 @@ type IAvatarProps = {
     type?: 'clickable' | 'default' | 'profile';
     direction?: 'horizontal' | 'vertical';
     ring?: boolean;
+    imgShape?: 'square' | 'circle';
 };
 
 export const Avatar = ({
@@ -35,6 +36,7 @@ export const Avatar = ({
     showActive,
     direction = 'horizontal',
     ring,
+    imgShape = 'circle',
 }: IAvatarProps) => {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
@@ -117,15 +119,24 @@ export const Avatar = ({
             <div className={`${loading ? 'animate-pulse' : ''}`}>
                 <button
                     onClick={() => navigate(`/account`)}
-                    className={`bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500 rounded-full`}
+                    className={`bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500 ${
+                        imgShape === 'square' ? 'rounded' : 'rounded-full'
+                    }`}
                 >
                     {showActive && <StatusIndicator active={userData.active} />}
                     <img
                         src={peerData.img as string}
                         height={size}
                         width={size}
-                        style={{ minHeight: size, minWidth: size }}
-                        className="rounded-full bg-brand-dashboard self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray"
+                        style={{
+                            minWidth: size,
+                            minHeight: size,
+                            maxHeight: size,
+                            maxWidth: size,
+                        }}
+                        className={` ${
+                            imgShape === 'square' ? 'rounded' : 'rounded-full'
+                        } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
                         alt="Avatar"
                     />
                 </button>
@@ -142,7 +153,9 @@ export const Avatar = ({
                 <div className="float-left">
                     {loading || peerData.loading ? (
                         <div
-                            className={`rounded-full self-center bg-neutral-800`}
+                            className={` ${
+                                imgShape === 'square' ? 'rounded' : 'rounded-full'
+                            } self-center bg-neutral-800`}
                             style={{
                                 minWidth: size,
                                 minHeight: size,
@@ -157,7 +170,15 @@ export const Avatar = ({
                                 src={peerData.img as string}
                                 height={size}
                                 width={size}
-                                className="rounded-full self-center bg-neutral-100 min-h-[60px] min-w-[60px]"
+                                style={{
+                                    minWidth: size,
+                                    minHeight: size,
+                                    maxHeight: size,
+                                    maxWidth: size,
+                                }}
+                                className={`${
+                                    imgShape === 'square' ? 'rounded' : 'rounded-full'
+                                } self-center object-cover bg-neutral-100 min-h-[60px] min-w-[60px]`}
                                 alt="Avatar"
                             />
                         </>
@@ -210,7 +231,9 @@ export const Avatar = ({
                             <>
                                 {loading || peerData.loading ? (
                                     <div
-                                        className={`rounded-full self-center bg-neutral-800`}
+                                        className={` ${
+                                            imgShape === 'square' ? 'rounded' : 'rounded-full'
+                                        } self-center bg-neutral-800`}
                                         style={{
                                             minWidth: size,
                                             minHeight: size,
@@ -225,11 +248,19 @@ export const Avatar = ({
                                             src={peerData.img as string}
                                             height={size}
                                             width={size}
-                                            className={`rounded-full ${
+                                            style={{
+                                                minHeight: size,
+                                                maxHeight: size,
+                                                minWidth: size,
+                                                maxWidth: size,
+                                            }}
+                                            className={`${
+                                                imgShape === 'square' ? 'rounded' : 'rounded-full'
+                                            } ${
                                                 align === 'left' ? 'self-start' : 'self-center'
                                             } bg-neutral-100 ${
                                                 ring ? 'border-2 border-white' : ''
-                                            }`}
+                                            } object-cover`}
                                             alt="Avatar"
                                         />
                                     </>

@@ -17,6 +17,7 @@ type IDropdownProps = {
     search?: boolean;
     disabled?: boolean;
     loading?: boolean;
+    wrapperClass?: string;
 };
 
 export const DropdownInput = ({
@@ -29,6 +30,7 @@ export const DropdownInput = ({
     search,
     disabled,
     loading,
+    wrapperClass,
 }: IDropdownProps) => {
     const isToken = type === 'gives.token' || type === 'gets.token';
     const { query, list, handleChange } = useSearch(isToken ? TOKENS : options || []);
@@ -56,7 +58,9 @@ export const DropdownInput = ({
     }, [query, module?.signer]);
 
     return (
-        <div className="flex flex-col gap-1 justify-end w-full">
+        <div
+            className={`flex flex-col gap-1 justify-end w-full ${wrapperClass ? wrapperClass : ''}`}
+        >
             <div className="flex justify-between items-center text-xs md:text-sm">
                 {title && <p>{title}</p>}
             </div>

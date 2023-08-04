@@ -17,7 +17,7 @@ import { usePintswapContext } from '../stores/pintswap';
 import { convertAmount } from '../utils/token';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { truncate } from '../utils';
+import { formatPeerImg, truncate } from '../utils';
 
 const columns = [
     {
@@ -65,7 +65,7 @@ export const AccountView = () => {
     const handleUpdate = async (e: any) => {
         e.preventDefault();
         await handleSave();
-        setShallowForm({ bio, name });
+        setShallowForm({ bio: userData.bio, name: userData.name });
         setIsEditing(false);
     };
 
@@ -176,10 +176,11 @@ export const AccountView = () => {
                                                     name="profile-image"
                                                     accept=".jpg, .jpeg, .png"
                                                     onChange={updateImg}
-                                                    className="absolute bg-transparent rounded-full h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
+                                                    className="absolute bg-transparent rounded h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
+                                                    src={formatPeerImg(img)}
                                                 />
                                                 <span className="absolute h-[154px] w-[154px] -translate-x-0.5 translate-y-0.5">
-                                                    <span className="flex justify-center items-center h-full w-full -top-1 relative rounded-full bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
+                                                    <span className="flex justify-center items-center h-full w-full -top-1 relative rounded bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
                                                         Click to
                                                         <br />
                                                         Upload
@@ -188,14 +189,15 @@ export const AccountView = () => {
                                                 <Avatar
                                                     size={150}
                                                     peer={pintswap?.module?.peerId.toB58String()}
+                                                    imgShape="square"
                                                 />
                                             </div>
                                         )}
                                         <Button
-                                            className={`text-sm text-center ${
+                                            className={`text-sm text-center lg:absolute lg:mt-48 ${
                                                 useNft.using ? 'mt-5' : ''
                                             }`}
-                                            type="outline"
+                                            type="transparent"
                                             onClick={toggleUseNft}
                                             disabled={loading}
                                         >
@@ -206,11 +208,12 @@ export const AccountView = () => {
                                     <Avatar
                                         size={150}
                                         peer={pintswap?.module?.peerId.toB58String()}
+                                        imgShape="square"
                                     />
                                 )}
                             </div>
                             <div className="grid grid-cols-1 gap-3 lg:gap-2">
-                                <div className="flex items-end w-full">
+                                <div className="flex items-end w-full flex-grow">
                                     <Input
                                         value={
                                             isEditing
@@ -231,7 +234,11 @@ export const AccountView = () => {
                                         className={`!rounded-r-none`}
                                     />
                                     {isEditing && (
-                                        <DropdownInput state={extension} type="input-ext" />
+                                        <DropdownInput
+                                            state={extension}
+                                            type="input-ext"
+                                            wrapperClass="!w-fit"
+                                        />
                                     )}
                                 </div>
                                 <Input
