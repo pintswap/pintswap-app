@@ -1,25 +1,21 @@
 import { Transition } from '@headlessui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAccount } from 'wagmi';
-import { ActiveText, AnimatedHamburger, Avatar, Wallet } from '../components';
+import { ActiveText, AnimatedHamburger, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
-import { usePintswapContext } from '../stores';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useDashNav();
     const { width, breakpoints } = useWindowSize();
-    const { address } = useAccount();
-    const { pintswap } = usePintswapContext();
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-    const logoSize = width < 768 ? '180' : '200';
+    const logoSize = width < breakpoints.lg ? '180' : '200';
 
     return (
         <>
             <nav
-                className={`bg-brand-dashboard py-2.5 lg:py-3 px-2 md:px-3 lg:px-6 w-full z-50 relative`}
+                className={`bg-brand-dashboard py-2.5 lg:py-4 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button
@@ -32,33 +28,16 @@ export const Navbar = () => {
                             height={logoSize}
                             width={logoSize}
                         />
-                        {/* <span className="text-2xl">
-                            <span className="text-pink-500">
-                                {width >= breakpoints.sm ? 'Pint' : 'P'}
-                            </span>
-                            <span className="text-sky-400">
-                                {width >= breakpoints.sm ? 'Swap' : 'S'}
-                            </span>
-                        </span> */}
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
                         <Wallet />
-                        {width < breakpoints.md ? (
+                        {width < breakpoints.md && (
                             <button
                                 onClick={() => setIsMobileOpen(!isMobileOpen)}
                                 className="px-0.5"
                             >
                                 <AnimatedHamburger state={isMobileOpen} />
                             </button>
-                        ) : address ? (
-                            <Avatar
-                                type="clickable"
-                                size={width >= 1024 ? 42 : 32}
-                                showActive
-                                peer={pintswap?.module?.peerId.toB58String()}
-                            />
-                        ) : (
-                            <></>
                         )}
                     </div>
                 </div>

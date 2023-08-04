@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Asset, Card, Header, Input } from '../components';
+import { Asset, Card, GradientBorder, Header, Input } from '../components';
 import { useOffersContext } from '../stores';
 import { getTokenLogo } from '../utils/token';
 import { useSearch } from '../hooks';
@@ -50,15 +50,17 @@ export const PairsView = () => {
                                       )
                                   }
                               >
-                                  <Card className="hover:from-neutral-900 hover:to-neutral-900 transition duration-150">
-                                      <div
-                                          className={`text-center flex items-center justify-center gap-3`}
-                                      >
-                                          <Asset icon={icon1} symbol={token1} />
-                                          <span>/</span>
-                                          <Asset icon={icon2} symbol={token2} />
-                                      </div>
-                                  </Card>
+                                  <GradientBorder className="rounded-lg from-transparent to-transparent">
+                                      <Card>
+                                          <div
+                                              className={`text-center flex items-center justify-center gap-3`}
+                                          >
+                                              <Asset icon={icon1} symbol={token1} />
+                                              <span>/</span>
+                                              <Asset icon={icon2} symbol={token2} />
+                                          </div>
+                                      </Card>
+                                  </GradientBorder>
                               </button>
                           );
                       })
