@@ -21,7 +21,6 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         userData: { active },
     } = useUserContext();
     const { pintswap } = usePintswapContext();
-    const { userData } = useUserContext();
     const navigate = useNavigate();
 
     if (width >= breakpoints.md) {
