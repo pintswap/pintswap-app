@@ -17,6 +17,8 @@ type IAvatarProps = {
     align?: 'left' | 'center' | 'right';
     loading?: boolean;
     type?: 'clickable' | 'default' | 'profile';
+    direction?: 'horizontal' | 'vertical';
+    ring?: boolean;
 };
 
 export const Avatar = ({
@@ -31,6 +33,8 @@ export const Avatar = ({
     loading,
     align,
     showActive,
+    direction = 'horizontal',
+    ring,
 }: IAvatarProps) => {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
@@ -120,7 +124,8 @@ export const Avatar = ({
                         src={peerData.img as string}
                         height={size}
                         width={size}
-                        className="rounded-full bg-neutral-900 self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray"
+                        style={{ minHeight: size, minWidth: size }}
+                        className="rounded-full bg-brand-dashboard self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray"
                         alt="Avatar"
                     />
                 </button>
@@ -191,7 +196,11 @@ export const Avatar = ({
         return (
             <div className={loading || peerData.loading ? 'animate-pulse' : ''}>
                 <div className={`flex flex-col gap-3 ${alginClass()}`}>
-                    <div className={`flex flex-row gap-3 ${alginClass()} !items-center`}>
+                    <div
+                        className={`flex ${
+                            direction === 'horizontal' ? 'flex-row' : 'flex-col'
+                        } gap-3 ${alginClass()} !items-center`}
+                    >
                         {withImage && (
                             <>
                                 {loading || peerData.loading ? (
@@ -211,7 +220,11 @@ export const Avatar = ({
                                             src={peerData.img as string}
                                             height={size}
                                             width={size}
-                                            className="rounded-full self-center bg-neutral-100"
+                                            className={`rounded-full ${
+                                                align === 'left' ? 'self-start' : 'self-center'
+                                            } bg-neutral-100 ${
+                                                ring ? 'border-2 border-white' : ''
+                                            }`}
                                             alt="Avatar"
                                         />
                                     </>

@@ -1,7 +1,7 @@
-import { Avatar, DataTable, PeerTickerFulfill, Card, Asset } from '../components';
+import { Avatar, DataTable, PeerTickerFulfill, Card, Asset, Header } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useLimitOrders } from '../hooks';
+import { useLimitOrders, useWindowSize } from '../hooks';
 import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
@@ -38,6 +38,8 @@ const columns = [
 
 export const PeerTickerOrderbookView = () => {
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const { width, breakpoints } = useWindowSize();
     const { order } = useTrade();
     const { multiaddr, base: baseAsset, trade: tradeAsset } = useParams();
     const { ticker, bidLimitOrders, askLimitOrders, loading } =
@@ -102,26 +104,38 @@ export const PeerTickerOrderbookView = () => {
     const peer = state?.peer ? state.peer : multiaddr;
 
     const ordersShown = 10;
+
     return (
-        <div className="flex flex-col gap-2 md:gap-3 lg:gap-4">
-            <div className="flex items-center justify-between">
-                <button onClick={() => navigate(`/${peer}`)} className="w-fit text-left">
-                    <Avatar
-                        peer={multiaddr}
-                        withBio
-                        withName
-                        nameClass="text-xl"
-                        type="profile"
-                        size={60}
-                    />
-                </button>
-                <span className="text-sm md:text-md xl:text-lg">
-                    <span className="flex flex-col justify-end text-left gap-0.5">
-                        <Asset symbol={ticker?.split('/')[0]} size={16} />
-                        <hr className="border opacity-25" />
-                        <Asset symbol={ticker?.split('/')[1]} size={16} />
+        <div className="flex flex-col">
+            <div className="grid grid-cols-2 lg:grid-cols-3 items-center justify-between mb-4 md:mb-6">
+                <Header
+                    breadcrumbs={[
+                        { text: 'Markets', link: '/markets' },
+                        {
+                            text: `${ticker.replace('/', '-').toUpperCase()}`,
+                            link: `/markets/${ticker.replace('/', '-')}`,
+                        },
+                        { text: `${peer}`, link: `/${peer}` },
+                    ]}
+                >
+                    Peer Orderbook
+                </Header>
+
+                {width > breakpoints.lg && (
+                    <a className="justify-self-center" href={`/${peer}`}>
+                        <Avatar peer={multiaddr} nameClass="text-xl" type="clickable" />
+                    </a>
+                )}
+
+                <div className="justify-self-end hidden sm:block">
+                    <span className="text-sm md:text-md xl:text-lg">
+                        <span className="flex sm:flex-col sm:justify-end text-left gap-0.5 xl:gap-0">
+                            <Asset symbol={ticker?.split('/')[0]} size={16} />
+                            <hr className="border opacity-25" />
+                            <Asset symbol={ticker?.split('/')[1]} size={16} />
+                        </span>
                     </span>
-                </span>
+                </div>
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
                 <div>

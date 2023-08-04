@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Asset, Card, Input } from '../components';
+import { Asset, Card, GradientBorder, Header, Input } from '../components';
 import { useOffersContext } from '../stores';
 import { getTokenLogo } from '../utils/token';
 import { useSearch } from '../hooks';
@@ -22,7 +22,7 @@ export const PairsView = () => {
     return (
         <div className="flex flex-col">
             <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
-                <h2 className="view-header mb-0">Explore</h2>
+                <Header breadcrumbs={[{ text: 'Markets', link: '/markets' }]}>Explore</Header>
                 <Input
                     value={query}
                     onChange={handleChange}
@@ -32,7 +32,7 @@ export const PairsView = () => {
                 />
             </div>
             <div
-                className={`grid grid-cols-1 gap-2 md:gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
+                className={`grid grid-cols-1 gap-1.5 md:gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
             >
                 {!isLoading
                     ? (list as string[]).map((pair) => {
@@ -50,15 +50,17 @@ export const PairsView = () => {
                                       )
                                   }
                               >
-                                  <Card className="hover:bg-gray-900">
-                                      <div
-                                          className={`text-center flex items-center justify-center gap-3`}
-                                      >
-                                          <Asset icon={icon1} symbol={token1} />
-                                          <span>/</span>
-                                          <Asset icon={icon2} symbol={token2} />
-                                      </div>
-                                  </Card>
+                                  <GradientBorder className="rounded-lg from-transparent to-transparent">
+                                      <Card>
+                                          <div
+                                              className={`text-center flex items-center justify-center gap-3`}
+                                          >
+                                              <Asset icon={icon1} symbol={token1} />
+                                              <span>/</span>
+                                              <Asset icon={icon2} symbol={token2} />
+                                          </div>
+                                      </Card>
+                                  </GradientBorder>
                               </button>
                           );
                       })

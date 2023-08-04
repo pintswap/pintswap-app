@@ -46,8 +46,10 @@ function App() {
                     <Route path="/account" element={<AccountView />} />
 
                     <Route path="/markets/:pair" element={<PairListView />} />
+                    {/* <Route path="/markets/:pair/:multiaddr" element={<PeerTickerOrderbookView />} /> */}
 
                     <Route path="/peers" element={<PeersView />} />
+                    {/* <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} /> */}
 
                     <Route path="/:multiaddr" element={<PeerOrderbookView />} />
                     <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} />
@@ -70,7 +72,7 @@ function App() {
                 draggable
                 pauseOnHover
                 theme="dark"
-                toastClassName="!bg-neutral-900"
+                toastClassName="!bg-brand-dashboard"
             />
         </>
     );

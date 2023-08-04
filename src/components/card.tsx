@@ -12,6 +12,8 @@ type ICardProps = {
     onTabChange?: any;
 };
 
+const backgroundColor = `bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-950 via-brand-dashboard to-brand-dashboard`;
+
 export const Card = ({
     children,
     className,
@@ -42,7 +44,7 @@ export const Card = ({
                 onChange={onTabChange}
             >
                 <div
-                    className={`flex flex-col bg-neutral-900 pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
+                    className={`flex flex-col ${backgroundColor} pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
                 >
                     {tabs && !header && (
                         <div className="md:text-lg text-center mb-2 lg:mb-3 font-semibold">
@@ -90,7 +92,7 @@ export const Card = ({
     }
     return (
         <div
-            className={`flex flex-col bg-neutral-900 pt-3 p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
+            className={`flex flex-col ${backgroundColor} pt-3 p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
         >
             {header && !tabs && (
                 <h3 className="md:text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">
