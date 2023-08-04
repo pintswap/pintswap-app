@@ -164,7 +164,12 @@ export function OffersStore(props: { children: ReactNode }) {
     useEffect(() => {
         (async () => {
             if (pintswap.module) {
-                const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+                let signer: any;
+                if (pintswap?.module?.signer?.provider) {
+                    signer = pintswap.module.signer;
+                } else {
+                    signer = new ethers.InfuraProvider('mainnet');
+                }
                 const flattened = toFlattened(tokenTrades);
                 const mapped = (
                     await Promise.all(
