@@ -1,9 +1,10 @@
-import { Avatar, DataTable, PeerTickerFulfill, Card } from '../components';
+import { Avatar, DataTable, PeerTickerFulfill, Card, Asset } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useLimitOrders } from '../hooks';
 import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
+import { Tab } from '@headlessui/react';
 
 const columns = [
     {
@@ -46,6 +47,8 @@ export const PeerTickerOrderbookView = () => {
         amount: '',
         list: [],
     });
+
+    console.log('state', state);
 
     const [tradeType, _setTradeType] = useState('');
 
@@ -90,54 +93,62 @@ export const PeerTickerOrderbookView = () => {
                         size={60}
                     />
                 </button>
-                <span className="text-lg">{ticker}</span>
+                <span className="text-sm md:text-md xl:text-lg">
+                    <span className="flex flex-col justify-end text-left gap-0.5">
+                        <Asset symbol={ticker?.split('/')[0]} size={16} />
+                        <hr />
+                        <Asset symbol={ticker?.split('/')[1]} size={16} />
+                    </span>
+                </span>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
-                <Card>
-                    <h3 className="mb-2 lg:mb-0 text-center">Buys</h3>
-                    <DataTable
-                        type="bids"
-                        columns={columns}
-                        data={bidLimitOrders.slice(0, ordersShown)}
-                        loading={loading}
-                        toolbar={false}
-                        peer={order.multiAddr}
-                        pagination={false}
-                        getRow={onClickRow}
-                        options={{
-                            sortOrder: {
-                                name: 'price',
-                                direction: 'asc',
-                            },
-                        }}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
+                <div>
+                    <PeerTickerFulfill
+                        matchInputs={matchInputs}
+                        setMatchInputs={setMatchInputs}
+                        tradeType={tradeType}
+                        setTradeType={setTradeType}
                     />
-                </Card>
-                <Card>
-                    <h3 className="mb-2 lg:mb-0 text-center">Sells</h3>
-                    <DataTable
-                        type="asks"
-                        columns={columns}
-                        data={askLimitOrders.slice(0, ordersShown)}
-                        loading={loading}
-                        toolbar={false}
-                        peer={order.multiAddr}
-                        pagination={false}
-                        getRow={onClickRow}
-                        options={{
-                            sortOrder: {
-                                name: 'price',
-                                direction: 'desc',
-                            },
-                        }}
-                    />
+                </div>
+                <Card tabs={['Buys', 'Sells']} type="tabs">
+                    <Tab.Panel>
+                        <DataTable
+                            type="bids"
+                            columns={columns}
+                            data={bidLimitOrders.slice(0, ordersShown)}
+                            loading={loading}
+                            toolbar={false}
+                            peer={order.multiAddr}
+                            pagination={false}
+                            getRow={onClickRow}
+                            options={{
+                                sortOrder: {
+                                    name: 'price',
+                                    direction: 'asc',
+                                },
+                            }}
+                        />
+                    </Tab.Panel>
+                    <Tab.Panel>
+                        <DataTable
+                            type="asks"
+                            columns={columns}
+                            data={askLimitOrders.slice(0, ordersShown)}
+                            loading={loading}
+                            toolbar={false}
+                            peer={order.multiAddr}
+                            pagination={false}
+                            getRow={onClickRow}
+                            options={{
+                                sortOrder: {
+                                    name: 'price',
+                                    direction: 'desc',
+                                },
+                            }}
+                        />
+                    </Tab.Panel>
                 </Card>
             </div>
-            <PeerTickerFulfill
-                matchInputs={matchInputs}
-                setMatchInputs={setMatchInputs}
-                tradeType={tradeType}
-                setTradeType={setTradeType}
-            />
         </div>
     );
 };

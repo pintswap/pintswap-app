@@ -23,20 +23,23 @@ type IDataTableProps = {
     pagination?: boolean;
     options?: any;
     getRow?: Dispatch<SetStateAction<any[]>>;
+    trade?: string;
 };
 
-export const DataTable = ({
-    title,
-    data,
-    columns,
-    loading,
-    type,
-    peer,
-    toolbar = true,
-    pagination = true,
-    options,
-    getRow,
-}: IDataTableProps) => {
+export const DataTable = (props: IDataTableProps) => {
+    const {
+        data,
+        columns,
+        title,
+        loading,
+        type,
+        peer,
+        toolbar,
+        pagination,
+        options,
+        getRow,
+        trade,
+    } = props;
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
@@ -89,12 +92,13 @@ export const DataTable = ({
                             return (
                                 <CustomRow
                                     key={`data-table-row-${rowIndex}`}
-                                    data={data}
                                     columns={columns.map((col: any) => col.label)}
+                                    data={data}
                                     loading={loading}
                                     type={type}
                                     peer={peer}
                                     getRow={getRow}
+                                    trade={trade}
                                 />
                             );
                         },
@@ -105,7 +109,8 @@ export const DataTable = ({
     );
 };
 
-const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTableProps) => {
+const CustomRow = (props: IDataTableProps) => {
+    const { columns, data, loading, type, peer, getRow, trade } = props;
     const { userData } = useUserContext();
     const { pair } = useParams();
     const {
@@ -132,14 +137,17 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
         let url = '/';
         if (pair) {
             const [trade, base] = pair.split('-').map((v) => v.toUpperCase());
-            return navigate(`${url}${cells[0]}/${trade}/${base}`);
+            return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props, cells } });
         }
         switch (type) {
             case 'explore':
-                return navigate(`${url}fulfill/${firstCell}/${secondCell}`);
+                return navigate(`${url}fulfill/${firstCell}/${secondCell}`, {
+                    state: { ...props, cells },
+                });
             case 'manage':
                 return navigate(
                     `${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`,
+                    { state: { ...props, cells } },
                 );
             case 'pairs':
                 url = `${url}pairs`;
@@ -190,9 +198,10 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
     };
 
     const determineCell = (cell: string) => {
+        if (!cell) return <></>;
         const charsShown = width > 900 ? 3 : 5;
         if (cell) {
-            if (cell?.startsWith('Q') || cell?.startsWith('0x')) {
+            if (typeof cell === 'string' && (cell?.startsWith('Q') || cell?.startsWith('0x'))) {
                 // Address / MultiAddr
                 return truncate(cell, charsShown);
             } else if (!isNaN(Number(cell))) {
