@@ -41,11 +41,11 @@ function App() {
         <>
             <Base loading={pintswap.loading}>
                 <Routes>
-                    <Route path="/explore" element={<PairsView />} />
+                    <Route path="/markets" element={<PairsView />} />
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
 
-                    <Route path="/pairs/:pair" element={<PairListView />} />
+                    <Route path="/markets/:pair" element={<PairListView />} />
 
                     <Route path="/peers" element={<PeersView />} />
 
@@ -57,7 +57,7 @@ function App() {
                     <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
                     <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
 
-                    <Route path="*" element={<Navigate to="/explore" />} />
+                    <Route path="*" element={<Navigate to="/markets" />} />
                 </Routes>
             </Base>
 

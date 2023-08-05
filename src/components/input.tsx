@@ -3,7 +3,7 @@ import { fetchBalance } from '@wagmi/core';
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
 import { getTokenAttributes } from '../utils';
-import { BiSearchAlt } from 'react-icons/bi';
+import { MdSearch } from 'react-icons/md';
 import { usePintswapContext } from '../stores';
 
 type IInputProps = {
@@ -85,7 +85,7 @@ export const Input = ({
                 } rounded ${wrapperClass} ${loading ? 'animate-pulse' : ''}`}
             >
                 <div className="w-[20px] h-[20px] flex justify-center items-center">
-                    <BiSearchAlt size="18px" className="text-neutral-200" />
+                    <MdSearch size="18px" className="text-neutral-200" />
                 </div>
                 <input
                     className={`bg-transparent outline-none ring-none ${className} min-w-0`}

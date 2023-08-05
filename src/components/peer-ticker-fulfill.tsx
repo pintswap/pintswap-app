@@ -47,12 +47,6 @@ export const PeerTickerFulfill = ({
             amount: formattedAmount,
             list: matchInputs.list,
         };
-        if (TESTING)
-            console.log('#handleAmountChange [newMatchInputs, matchInputs, formattedAmount]:', [
-                newMatchInputs,
-                matchInputs,
-                formattedAmount,
-            ]);
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 
@@ -72,7 +66,6 @@ export const PeerTickerFulfill = ({
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
                 //                const decimals = await getDecimals(matchInputs.list[0].gives.token, signer);
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
-                if (TESTING) console.log('Match', match);
                 const limit = (await toLimitOrder(
                     {
                         gets: {
@@ -86,8 +79,8 @@ export const PeerTickerFulfill = ({
                     },
                     signer,
                 )) as any;
-                if (TESTING) console.log('tradeType', tradeType);
-                if (TESTING) console.log('limit', limit);
+                if (TESTING)
+                    console.log('tradeType:', tradeType, '\nmatch:', match, '\nlimit:', limit);
                 if (tradeType === 'bids') {
                     const output = (Number(limit.amount) * Number(limit.price)).toFixed(4);
                     const newFill = {

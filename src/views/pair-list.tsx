@@ -79,7 +79,8 @@ export const PairListView = () => {
                                     direction: 'desc',
                                 },
                             }}
-                            trade="buy"
+                            trade="asks"
+                            pagination
                         />
                     </Card>
                     <Card>
@@ -98,7 +99,8 @@ export const PairListView = () => {
                                     direction: 'asc',
                                 },
                             }}
-                            trade="sell"
+                            trade="bids"
+                            pagination
                         />
                     </Card>
                 </div>
@@ -117,7 +119,8 @@ export const PairListView = () => {
                                     direction: 'desc',
                                 },
                             }}
-                            trade="buy"
+                            trade="asks"
+                            pagination
                         />
                     </Tab.Panel>
                     <Tab.Panel>
@@ -133,7 +136,8 @@ export const PairListView = () => {
                                     direction: 'asc',
                                 },
                             }}
-                            trade="sell"
+                            trade="bids"
+                            pagination
                         />
                     </Tab.Panel>
                 </Card>

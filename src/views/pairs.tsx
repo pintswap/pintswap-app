@@ -46,7 +46,7 @@ export const PairsView = () => {
                                   key={`unique-pair-${pair}`}
                                   onClick={() =>
                                       navigate(
-                                          `/pairs/${token1.toLowerCase()}-${token2.toLowerCase()}`,
+                                          `/markets/${token1.toLowerCase()}-${token2.toLowerCase()}`,
                                       )
                                   }
                               >
