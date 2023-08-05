@@ -1,13 +1,5 @@
 import { useAccount } from 'wagmi';
-import {
-    BiDrink,
-    BiHappyAlt,
-    BiDonateBlood,
-    BiRun,
-    BiShapeCircle,
-    BiWind,
-    BiUserPlus,
-} from 'react-icons/bi';
+import { MdGroup, MdLineAxis, MdCreate, MdSearch, MdTagFaces } from 'react-icons/md';
 
 export const useDashNav = () => {
     const { address } = useAccount();
@@ -16,50 +8,50 @@ export const useDashNav = () => {
     const NAV_ITEMS = address
         ? [
               {
-                  text: 'Explore',
-                  route: '/explore',
+                  text: 'Markets',
+                  route: '/markets',
                   disabled: false,
-                  icon: <BiDrink size={ICON_SIZE} />,
+                  icon: <MdLineAxis size={ICON_SIZE} />,
               },
               // { text: 'Pairs', route: '/pairs', disabled: false, icon: <BiDonateBlood size={ICON_SIZE} /> },
               {
                   text: 'Peers',
                   route: '/peers',
                   disabled: false,
-                  icon: <BiShapeCircle size={ICON_SIZE} />,
+                  icon: <MdGroup size={ICON_SIZE} />,
               },
               {
                   text: 'Create',
                   route: '/create',
                   disabled: false,
-                  icon: <BiRun size={ICON_SIZE} />,
+                  icon: <MdCreate size={ICON_SIZE} />,
               },
               {
                   text: 'Fulfill',
                   route: '/fulfill',
                   disabled: false,
-                  icon: <BiWind size={ICON_SIZE} />,
+                  icon: <MdSearch size={ICON_SIZE} />,
               },
               {
                   text: 'Account',
                   route: '/account',
                   disabled: false,
-                  icon: <BiHappyAlt size={ICON_SIZE} />,
+                  icon: <MdTagFaces size={ICON_SIZE} />,
               },
           ]
         : [
               {
-                  text: 'Explore',
-                  route: '/explore',
+                  text: 'Markets',
+                  route: '/markets',
                   disabled: false,
-                  icon: <BiDrink size={ICON_SIZE} />,
+                  icon: <MdLineAxis size={ICON_SIZE} />,
               },
               // { text: 'Pairs', route: '/pairs', disabled: false, icon: <BiDonateBlood size={ICON_SIZE} /> },
               {
                   text: 'Peers',
                   route: '/peers',
                   disabled: false,
-                  icon: <BiShapeCircle size={ICON_SIZE} />,
+                  icon: <MdGroup size={ICON_SIZE} />,
               },
           ];
 

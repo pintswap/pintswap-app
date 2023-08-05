@@ -50,7 +50,12 @@ export const CopyClipboard = ({ icon, value, lg, truncate, children }: ICopyClip
                     </Button>
                 </CopyToClipboard>
             )}
-            <Tooltip id="clipboard-copy-click" content="Copied!" isOpen={tooltipOpen} />
+            <Tooltip
+                className="!z-[999999999]"
+                id="clipboard-copy-click"
+                content="Copied!"
+                isOpen={tooltipOpen}
+            />
         </>
     );
 };

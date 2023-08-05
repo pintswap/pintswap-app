@@ -33,7 +33,7 @@ export const Button = ({
     const renderType = () => {
         switch (type) {
             case 'wallet':
-                return `bg-gradient-to-r from-indigo-600 to-sky-400 !border-0`;
+                return `bg-gradient-to-tr from-sky-400 to-indigo-500 !border-0`;
             case 'outline':
                 return 'bg-gray-900 disabled:border-indigo-900';
             case 'transparent':

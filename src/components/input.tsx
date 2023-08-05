@@ -3,7 +3,7 @@ import { fetchBalance } from '@wagmi/core';
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
 import { getTokenAttributes } from '../utils';
-import { BiSearchAlt } from 'react-icons/bi';
+import { MdSearch } from 'react-icons/md';
 import { usePintswapContext } from '../stores';
 
 type IInputProps = {
@@ -80,15 +80,15 @@ export const Input = ({
     if (type === 'search') {
         return (
             <div
-                className={`flex items-center gap-1 p-2 bg-neutral-600 ${
+                className={`flex items-center gap-1 pl-2 bg-brand-dashboard border-2 border-neutral-600 hover:border-neutral-400 transition duration-150 ${
                     enableStateCss ? 'disabled:bg-neutral-900' : ''
                 } rounded ${wrapperClass} ${loading ? 'animate-pulse' : ''}`}
             >
                 <div className="w-[20px] h-[20px] flex justify-center items-center">
-                    <BiSearchAlt size="18px" className="text-neutral-200" />
+                    <MdSearch size="18px" className="text-neutral-200" />
                 </div>
                 <input
-                    className={`bg-transparent outline-none ring-none ${className} min-w-0`}
+                    className={`bg-transparent outline-none ring-none p-2 ${className} min-w-0 group `}
                     value={value}
                     onChange={onChange}
                     placeholder={!placeholder ? 'Search here' : placeholder}

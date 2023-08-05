@@ -172,7 +172,14 @@ export function matchOffers(offers: any[], amount: BigNumberish) {
                 const remaining = toFill - filled;
                 if (remaining <= 0) return r;
                 filled += getsAmount;
-                if (TESTING) console.log('remaining, getsAmount', [remaining, getsAmount]);
+                if (TESTING)
+                    console.log(
+                        '#matchOffers',
+                        '\nRemaining:',
+                        remaining,
+                        '\ngetsAmount:',
+                        getsAmount,
+                    );
                 if (remaining >= getsAmount) {
                     r.push({
                         amount: getsAmount,
@@ -199,7 +206,6 @@ export function matchOffers(offers: any[], amount: BigNumberish) {
         })(),
         [],
     );
-    if (TESTING) console.log('fill', fill);
     const effective = fill.reduce(
         (r: any, v: any) => ({
             gets: v.effective.gets + r.gets,
@@ -207,9 +213,19 @@ export function matchOffers(offers: any[], amount: BigNumberish) {
         }),
         { gets: ethers.toBigInt(0), gives: ethers.toBigInt(0) },
     );
-    if (TESTING) console.log('effective', effective);
+    if (TESTING) console.log('#matchOffers', '\nfill:', fill, '\neffective', effective);
     return {
         fill,
         effective,
     };
 }
+
+export const bestPrices = (orders: any) => {
+    const { ask, bid } = groupBy(orders, 'type');
+    const bestAsk = (ask || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
+    const bestBid = (bid || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
+    return {
+        bid: (bestBid?.price && bestBid.price) || '-',
+        ask: (bestAsk?.price && bestAsk.price) || '-',
+    };
+};

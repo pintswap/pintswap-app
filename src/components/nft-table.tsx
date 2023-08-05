@@ -70,7 +70,7 @@ export const NFTTable = ({
                 <ImageList cols={renderCols()} className="!gap-3">
                     {nfts.length > 0 ? (
                         renderData().map((nft: any, i) => {
-                            const hash = nft.hash ? nft.hash : (data[i] as any).hash;
+                            const hash = nft?.hash ? nft?.hash : (data[i] as any)?.hash;
                             return (
                                 <ImageListItem
                                     key={hashNftIdentifier(nft)}

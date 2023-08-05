@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, Input } from '../components';
+import { Avatar, Card, GradientBorder, Header, Input } from '../components';
 import { IUserDataProps, usePeersContext } from '../stores';
 import { useSearch } from '../hooks';
 
@@ -11,7 +11,7 @@ export const PeersView = () => {
     return (
         <div className="flex flex-col">
             <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
-                <h2 className="view-header mb-0">Peers</h2>
+                <Header breadcrumbs={[{ text: 'Peers', link: '/peers' }]}>Active Peers</Header>
                 <Input
                     value={query}
                     onChange={handleChange}
@@ -21,25 +21,29 @@ export const PeersView = () => {
                 />
             </div>
             <div
-                className={`grid grid-cols-1 gap-2 md:gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
+                className={`grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
             >
                 {!peersLoading
                     ? (list as IUserDataProps[]).map((peer, i) => {
                           return (
                               <button
                                   key={`unique-peer-${i}`}
-                                  onClick={() => navigate(`/${peer.name}`, { state: { peer } })}
+                                  onClick={() =>
+                                      navigate(`/peers/${peer.name}`, { state: { peer } })
+                                  }
                               >
-                                  <Card className="hover:bg-gray-950 h-full">
-                                      <Avatar
-                                          peer={peer}
-                                          size={30}
-                                          withName
-                                          withBio
-                                          withImage={false}
-                                          align="left"
-                                      />
-                                  </Card>
+                                  <GradientBorder className="rounded-lg from-transparent to-transparent h-full">
+                                      <Card className="h-full">
+                                          <Avatar
+                                              peer={peer}
+                                              size={30}
+                                              withName
+                                              withBio
+                                              withImage={false}
+                                              align="left"
+                                          />
+                                      </Card>
+                                  </GradientBorder>
                               </button>
                           );
                       })

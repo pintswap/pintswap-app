@@ -2,12 +2,11 @@ import { Transition } from '@headlessui/react';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
-import { Button, Card, CopyClipboard, PageStatus, Input, ProgressIndicator } from '.';
+import { Button, Card, CopyClipboard, PageStatus, Input } from '.';
 import { DropdownInput } from './dropdown-input';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
 import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
-import { getDecimals } from '../utils/token';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 
@@ -30,14 +29,11 @@ export const PeerTickerFulfill = ({
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        console.log(e.target.value);
         const input = (Number(e.target.value) < 0 ? '0' : e.target.value) || '0';
         setFill({
             input,
             ...fill,
         });
-        console.log('matchInputs.list', matchInputs.list);
-        console.log('input', input);
         const formattedAmount = (
             await formattedFromTransfer(
                 {
@@ -47,19 +43,13 @@ export const PeerTickerFulfill = ({
                 signer,
             )
         ).amount;
-        console.log('formattedAmount', formattedAmount);
         const newMatchInputs = {
             amount: formattedAmount,
             list: matchInputs.list,
         };
-        console.log(newMatchInputs);
-        if (TESTING)
-            console.log('#handleAmountChange [newMatchInputs, matchInputs]:', [
-                newMatchInputs,
-                matchInputs,
-            ]);
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
+
     const inputAmount = useMemo(
         () => (tradeType === 'bids' ? (fill || {}).input : (fill || {}).output) || '',
         [tradeType, fill],
@@ -89,15 +79,30 @@ export const PeerTickerFulfill = ({
                     },
                     signer,
                 )) as any;
-                const output = (Number(limit.amount) * Number(limit.price)).toFixed(4);
-                const newFill = {
-                    ...match,
-                    input: limit.amount,
-                    output,
-                };
-                if (!isEqual(newFill, fill)) {
-                    setFill(newFill);
-                    setLimitOrder(limit);
+                if (TESTING)
+                    console.log('tradeType:', tradeType, '\nmatch:', match, '\nlimit:', limit);
+                if (tradeType === 'bids') {
+                    const output = (Number(limit.amount) * Number(limit.price)).toFixed(4);
+                    const newFill = {
+                        ...match,
+                        input: limit.amount,
+                        output,
+                    };
+                    if (!isEqual(newFill, fill)) {
+                        setFill(newFill);
+                        setLimitOrder(limit);
+                    }
+                } else {
+                    const input = (Number(limit.amount) * Number(limit.price)).toFixed(4);
+                    const newFill = {
+                        ...match,
+                        output: limit.amount,
+                        input,
+                    };
+                    if (!isEqual(newFill, fill)) {
+                        setFill(newFill);
+                        setLimitOrder(limit);
+                    }
                 }
             }
         })().catch((err) => console.error(err));
@@ -115,7 +120,7 @@ export const PeerTickerFulfill = ({
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-4 md:gap-6">
                 <Card header={'Fullfill Trade'}>
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:gap-4">
+                    <div className="flex flex-wrap gap-3">
                         <DropdownInput
                             title="Type"
                             placeholder="Trade Type"
@@ -178,10 +183,6 @@ export const PeerTickerFulfill = ({
                         Fulfill Trade
                     </Button>
                 </Card>
-
-                <div className="mx-auto">
-                    <ProgressIndicator steps={steps} />
-                </div>
 
                 <Transition
                     show={!!order.orderHash && !!order.multiAddr}

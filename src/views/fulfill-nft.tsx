@@ -43,6 +43,8 @@ export const FulfillNFTView = () => {
         })().catch((err) => console.error(err));
     }, [offer]);
 
+    console.log('offer', offer);
+
     const peer = state?.peer ? state.peer : multiaddr;
 
     return (
@@ -68,10 +70,6 @@ export const FulfillNFTView = () => {
                         Fulfill Trade
                     </Button>
                 </Card>
-
-                <div className="mx-auto">
-                    <ProgressIndicator steps={steps} />
-                </div>
             </div>
 
             <Transition

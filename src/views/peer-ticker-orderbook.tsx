@@ -1,9 +1,10 @@
-import { Avatar, DataTable, PeerTickerFulfill, Card } from '../components';
+import { Avatar, DataTable, PeerTickerFulfill, Card, Asset, Header } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useLimitOrders } from '../hooks';
+import { useLimitOrders, useWindowSize } from '../hooks';
 import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
+import { Tab } from '@headlessui/react';
 
 const columns = [
     {
@@ -37,6 +38,8 @@ const columns = [
 
 export const PeerTickerOrderbookView = () => {
     const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const { width, breakpoints } = useWindowSize();
     const { order } = useTrade();
     const { multiaddr, base: baseAsset, trade: tradeAsset } = useParams();
     const { ticker, bidLimitOrders, askLimitOrders, loading } =
@@ -46,24 +49,17 @@ export const PeerTickerOrderbookView = () => {
         amount: '',
         list: [],
     });
-
     const [tradeType, _setTradeType] = useState('');
+    const [activeIndex, setActiveIndex] = useState('');
 
     const setTradeType = (v: any) => {
         _setTradeType(v);
     };
 
-    useEffect(() => {
-        let list = tradeType === 'bids' ? bidLimitOrders : askLimitOrders;
-        setMatchInputs({
-            amount: matchInputs.amount || '0',
-            list,
-        });
-    }, [tradeType]);
-
     const onClickRow = (row: any) => {
         const [tradeType, price, size, sum] = row;
         const { index } = row;
+        setActiveIndex(`${tradeType}-${index}`);
         let list = tradeType.match('bids') ? bidLimitOrders : askLimitOrders;
         setTradeType(tradeType);
         setMatchInputs({
@@ -74,70 +70,123 @@ export const PeerTickerOrderbookView = () => {
         });
     };
 
+    useEffect(() => {
+        let list = tradeType === 'bids' ? bidLimitOrders : askLimitOrders;
+        setMatchInputs({
+            amount: matchInputs.amount || '0',
+            list,
+        });
+    }, [tradeType]);
+
+    useEffect(() => {
+        if (state?.trade && state?.data?.length) {
+            const {
+                trade,
+                data: [multiAddr, size, price],
+            } = state;
+            let list = trade.match('bids') ? bidLimitOrders : askLimitOrders;
+            if (list?.length) {
+                setTradeType(trade);
+                const index = list?.findIndex(
+                    (val) => val?.amount === size && val?.price === price,
+                );
+                setActiveIndex(`${trade}-${index}`);
+                setMatchInputs({
+                    amount: list
+                        .slice(0, index + 1)
+                        .reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
+                    list,
+                });
+            }
+        }
+    }, [state, bidLimitOrders, askLimitOrders]);
+
     const peer = state?.peer ? state.peer : multiaddr;
 
     const ordersShown = 10;
+
     return (
-        <div className="flex flex-col gap-2 md:gap-3 lg:gap-4">
-            <div className="flex items-center justify-between">
-                <button onClick={() => navigate(`/${peer}`)} className="w-fit text-left">
-                    <Avatar
-                        peer={multiaddr}
-                        withBio
-                        withName
-                        nameClass="text-xl"
-                        type="profile"
-                        size={60}
-                    />
-                </button>
-                <span className="text-lg">{ticker}</span>
+        <div className="flex flex-col">
+            <div className="grid grid-cols-2 lg:grid-cols-3 items-center justify-between mb-4 md:mb-6">
+                <Header
+                    breadcrumbs={[
+                        { text: 'Markets', link: '/markets' },
+                        {
+                            text: `${ticker.replace('/', '-').toUpperCase()}`,
+                            link: `/markets/${ticker.replace('/', '-')}`,
+                        },
+                        { text: `${peer}`, link: `/${peer}` },
+                    ]}
+                >
+                    Peer Orderbook
+                </Header>
+
+                {width > breakpoints.lg && (
+                    <a className="justify-self-center" href={`/${peer}`}>
+                        <Avatar peer={multiaddr} nameClass="text-xl" type="clickable" />
+                    </a>
+                )}
+
+                <div className="justify-self-end hidden sm:block">
+                    <span className="text-sm md:text-md xl:text-lg">
+                        <span className="flex sm:flex-col sm:justify-end text-left gap-0.5 xl:gap-0">
+                            <Asset symbol={ticker?.split('/')[0]} size={16} />
+                            <hr className="border opacity-25" />
+                            <Asset symbol={ticker?.split('/')[1]} size={16} />
+                        </span>
+                    </span>
+                </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
-                <Card>
-                    <h3 className="mb-2 lg:mb-0 text-center">Buys</h3>
-                    <DataTable
-                        type="bids"
-                        columns={columns}
-                        data={bidLimitOrders.slice(0, ordersShown)}
-                        loading={loading}
-                        toolbar={false}
-                        peer={order.multiAddr}
-                        pagination={false}
-                        getRow={onClickRow}
-                        options={{
-                            sortOrder: {
-                                name: 'price',
-                                direction: 'asc',
-                            },
-                        }}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
+                <div>
+                    <PeerTickerFulfill
+                        matchInputs={matchInputs}
+                        setMatchInputs={setMatchInputs}
+                        tradeType={tradeType}
+                        setTradeType={setTradeType}
                     />
-                </Card>
-                <Card>
-                    <h3 className="mb-2 lg:mb-0 text-center">Sells</h3>
-                    <DataTable
-                        type="asks"
-                        columns={columns}
-                        data={askLimitOrders.slice(0, ordersShown)}
-                        loading={loading}
-                        toolbar={false}
-                        peer={order.multiAddr}
-                        pagination={false}
-                        getRow={onClickRow}
-                        options={{
-                            sortOrder: {
-                                name: 'price',
-                                direction: 'desc',
-                            },
-                        }}
-                    />
+                </div>
+                <Card tabs={['Bids', 'Asks']} type="tabs" defaultTab={state?.trade || ''}>
+                    <Tab.Panel>
+                        <DataTable
+                            type="bids"
+                            columns={columns}
+                            data={bidLimitOrders.slice(0, ordersShown)}
+                            loading={loading}
+                            toolbar={false}
+                            peer={order.multiAddr}
+                            pagination={false}
+                            getRow={onClickRow}
+                            options={{
+                                sortOrder: {
+                                    name: 'price',
+                                    direction: 'asc',
+                                },
+                            }}
+                            activeRow={activeIndex}
+                        />
+                    </Tab.Panel>
+                    <Tab.Panel>
+                        <DataTable
+                            type="asks"
+                            columns={columns}
+                            data={askLimitOrders.slice(0, ordersShown)}
+                            loading={loading}
+                            toolbar={false}
+                            peer={order.multiAddr}
+                            pagination={false}
+                            getRow={onClickRow}
+                            options={{
+                                sortOrder: {
+                                    name: 'price',
+                                    direction: 'desc',
+                                },
+                            }}
+                            activeRow={activeIndex}
+                        />
+                    </Tab.Panel>
                 </Card>
             </div>
-            <PeerTickerFulfill
-                matchInputs={matchInputs}
-                setMatchInputs={setMatchInputs}
-                tradeType={tradeType}
-                setTradeType={setTradeType}
-            />
         </div>
     );
 };

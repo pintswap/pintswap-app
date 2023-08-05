@@ -41,23 +41,26 @@ function App() {
         <>
             <Base loading={pintswap.loading}>
                 <Routes>
-                    <Route path="/explore" element={<PairsView />} />
+                    <Route path="/markets" element={<PairsView />} />
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
 
-                    <Route path="/pairs/:pair" element={<PairListView />} />
+                    <Route path="/markets/:pair" element={<PairListView />} />
+                    {/* <Route path="/markets/:pair/:multiaddr" element={<PeerTickerOrderbookView />} /> */}
 
                     <Route path="/peers" element={<PeersView />} />
+                    <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
+                    <Route path="/peers/:multiaddr/:view" element={<PeerOrderbookView />} />
 
-                    <Route path="/:multiaddr" element={<PeerOrderbookView />} />
-                    <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} />
+                    {/* <Route path="/:multiaddr" element={<PeerOrderbookView />} />
+                    <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} /> */}
                     <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
                     <Route path="/fulfill" element={<TradeSearchView />} />
                     <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
                     <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
 
-                    <Route path="*" element={<Navigate to="/explore" />} />
+                    <Route path="*" element={<Navigate to="/markets" />} />
                 </Routes>
             </Base>
 
@@ -70,7 +73,7 @@ function App() {
                 draggable
                 pauseOnHover
                 theme="dark"
-                toastClassName="!bg-neutral-900"
+                toastClassName="!bg-brand-dashboard"
             />
         </>
     );

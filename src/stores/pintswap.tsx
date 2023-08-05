@@ -156,11 +156,12 @@ export function PintswapStore(props: { children: ReactNode }) {
                         }
 
                         const ps = await determinePsModule();
-                        ps.signer.provider.getGasPrice = makeGetGasPrice(
-                            ps.signer.provider,
-                            GAS_PRICE_MULTIPLIER,
-                        );
-                        const getGasPrice = ps.signer.provider.getGasPrice;
+                        if (ps?.signer?.provider) {
+                            ps.signer.provider.getGasPrice = makeGetGasPrice(
+                                ps.signer.provider,
+                                GAS_PRICE_MULTIPLIER,
+                            );
+                        }
                         (window as any).ps = ps;
                         ps.on('pintswap/node/status', (s: any) => {
                             if (TESTING) console.log('Node emitting', s);

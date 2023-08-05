@@ -1,6 +1,10 @@
+/**
+ * @deprecated
+ */
+
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Asset, Card } from '../components';
+import { Asset, Card, SmartPrice } from '../components';
 import { useOffersContext, usePintswapContext } from '../stores';
 import { getTokenLogo } from '../utils/token';
 import { resolveName } from '../hooks/trade';
@@ -14,8 +18,8 @@ const bestPrices = (orders: any) => {
     const bestAsk = (ask || []).slice().sort((a, b) => Number(a.price) - Number(b.price))[0];
     const bestBid = (bid || []).slice().sort((a, b) => Number(b.price) - Number(a.price))[0];
     return {
-        bid: (bestBid?.price && formatPrice(bestBid.price)) || 'N/A',
-        ask: (bestAsk?.price && formatPrice(bestAsk.price)) || 'N/A',
+        bid: (bestBid?.price && formatPrice(bestBid.price)) || '-',
+        ask: (bestAsk?.price && formatPrice(bestAsk.price)) || '-',
     };
 };
 
@@ -44,13 +48,15 @@ export const PairsTable = () => {
         );
         setUniquePairs(
             Object.entries(byTicker).map(([ticker, group]) => ({
-                price: bestPrices(group),
+                ...bestPrices(group),
                 ticker: ticker,
             })),
         );
     }, [limitOrdersArr, resolved, multiaddr]);
 
     const isLoading = uniquePairs.length === 0;
+
+    console.log(uniquePairs);
 
     return (
         <div className="flex flex-col">
@@ -67,7 +73,7 @@ export const PairsTable = () => {
                                   key={`unique-pair-${pair.ticker}`}
                                   onClick={() => navigate(`/${multiaddr}/${pair.ticker}`)}
                               >
-                                  <Card className="hover:bg-gray-900" type="inner">
+                                  <Card className="hover:from-neutral-900 hover:to-neutral-900">
                                       <div
                                           className={`text-center flex items-center justify-center gap-3`}
                                       >
@@ -77,10 +83,10 @@ export const PairsTable = () => {
                                       </div>
                                       <div className="flex items-center justify-around mt-1">
                                           <small className="text-green-400">
-                                              BID: {pair.price.bid}
+                                              BID <SmartPrice price={pair.bid} />
                                           </small>
                                           <small className="text-red-400">
-                                              ASK: {pair.price.ask}
+                                              ASK <SmartPrice price={pair.ask} />
                                           </small>
                                       </div>
                                   </Card>
@@ -88,7 +94,7 @@ export const PairsTable = () => {
                           );
                       })
                     : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                          <Card key={`loading-card-${i}`} className="justify-start" type="inner">
+                          <Card key={`loading-card-${i}`} className="justify-start">
                               <div className={`text-center flex items-center justify-center gap-3`}>
                                   <Asset loading />
                                   <span>/</span>

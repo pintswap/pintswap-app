@@ -4,7 +4,7 @@ import { toNumber, toBigInt } from 'ethers6';
 
 type INFTDisplayProps = {
     nft: INFTProps | null;
-    show?: 'full' | 'minimal';
+    show?: 'full' | 'minimal' | 'img';
     loading?: boolean;
     height?: `h-${string}` | `max-h-${string}`;
     width?: `w-${string}` | `max-w-${string}`;
@@ -50,6 +50,34 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                         )}
                     </div>
                 </div>
+            );
+        } else if (show === 'img') {
+            return (
+                <>
+                    {loading ? (
+                        <div
+                            className={`animate-pulse bg-neutral-700 ${height || ''} ${
+                                width || 'w-full'
+                            }`}
+                        />
+                    ) : (
+                        _nft?.imageBlob && (
+                            <img
+                                src={URL.createObjectURL(_nft?.imageBlob)}
+                                alt={_nft.name}
+                                style={{
+                                    backgroundColor: _nft?.background_color
+                                        ? `#${_nft?.background_color}`
+                                        : undefined,
+                                }}
+                                loading="lazy"
+                                className={`rounded-sm object-cover w-full ${height || ''} ${
+                                    width || ''
+                                }`}
+                            />
+                        )
+                    )}
+                </>
             );
         } else {
             return (

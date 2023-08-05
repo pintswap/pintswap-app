@@ -22,3 +22,6 @@ export * from './text-display';
 export * from './status-indicator';
 export * from './tx-details';
 export * from './smart-price';
+export * from './header';
+export * from './gradient-border';
+export * from './breadcrumbs';

@@ -36,7 +36,7 @@ const columns = [
 ];
 
 export const CreateView = () => {
-    const { broadcastTrade, loading, trade, order, updateTrade, steps } = useTrade();
+    const { broadcastTrade, loading, trade, order, updateTrade, steps, clearTrade } = useTrade();
     const { pintswap } = usePintswapContext();
     const { userData, toggleActive } = useUserContext();
     const { userTrades } = useOffersContext();
@@ -125,7 +125,7 @@ export const CreateView = () => {
                             </CopyClipboard>
                         </Transition>
                     </div>
-                    <Card type="tabs" tabs={TABS}>
+                    <Card type="tabs" tabs={TABS} onTabChange={clearTrade}>
                         <Tab.Panel>
                             <div className="grid grid-cols-1 gap-4 md:gap-6 lg:gap-y-2 items-start">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 items-start">
@@ -179,7 +179,11 @@ export const CreateView = () => {
                         </Tab.Panel>
                         <Tab.Panel>
                             <div className="grid grid-cols-1 gap-6 items-start">
-                                <NFTDisplay nft={nft} />
+                                {nft && (
+                                    <div className="max-h-[180px] max-w-[180px] mx-auto overflow-hidden flex justify-center items-center">
+                                        <NFTDisplay nft={nft} show="img" />
+                                    </div>
+                                )}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 md:gap-3 items-start">
                                     <Input
                                         title="Send Details"
@@ -238,7 +242,7 @@ export const CreateView = () => {
                             onClick={broadcastTrade}
                             disabled={
                                 !trade.gives.token ||
-                                !trade.gives.amount ||
+                                (!trade.gives.amount && !trade.gives.tokenId) ||
                                 !trade.gets.token ||
                                 !trade.gets.amount ||
                                 !!order.orderHash

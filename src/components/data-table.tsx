@@ -11,32 +11,46 @@ import { Button } from './button';
 import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
+import { Asset } from './asset';
 
 type IDataTableProps = {
     title?: string;
     data: (object | number[] | string[])[];
     columns: MUIDataTableColumnDef[];
     loading?: boolean;
-    type: 'explore' | 'pairs' | 'peers' | 'orderbook' | 'asks' | 'bids' | 'manage';
+    type:
+        | 'explore'
+        | 'pairs'
+        | 'peers'
+        | 'orderbook'
+        | 'asks'
+        | 'bids'
+        | 'manage'
+        | 'peer-orderbook';
     peer?: string;
     toolbar?: boolean;
     pagination?: boolean;
     options?: any;
     getRow?: Dispatch<SetStateAction<any[]>>;
+    trade?: string;
+    activeRow?: string;
 };
 
-export const DataTable = ({
-    title,
-    data,
-    columns,
-    loading,
-    type,
-    peer,
-    toolbar = true,
-    pagination = true,
-    options,
-    getRow,
-}: IDataTableProps) => {
+export const DataTable = (props: IDataTableProps) => {
+    const {
+        data,
+        columns,
+        title,
+        loading,
+        type,
+        peer,
+        toolbar,
+        pagination,
+        options,
+        getRow,
+        trade,
+        activeRow,
+    } = props;
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
@@ -75,7 +89,7 @@ export const DataTable = ({
                                 noMatch: loading ? (
                                     <SpinnerLoader className={'justify-start lg:justify-center'} />
                                 ) : (
-                                    'No data available'
+                                    <div className="py-4">No data available</div>
                                 ),
                             },
                         },
@@ -89,12 +103,14 @@ export const DataTable = ({
                             return (
                                 <CustomRow
                                     key={`data-table-row-${rowIndex}`}
-                                    data={data}
                                     columns={columns.map((col: any) => col.label)}
+                                    data={data}
                                     loading={loading}
                                     type={type}
                                     peer={peer}
                                     getRow={getRow}
+                                    activeRow={activeRow}
+                                    trade={trade}
                                 />
                             );
                         },
@@ -105,7 +121,8 @@ export const DataTable = ({
     );
 };
 
-const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTableProps) => {
+const CustomRow = (props: IDataTableProps) => {
+    const { columns, data, loading, type, peer, getRow, activeRow } = props;
     const { userData } = useUserContext();
     const { pair } = useParams();
     const {
@@ -118,9 +135,8 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
     const { deleteTrade } = useOffersContext();
     const navigate = useNavigate();
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
-        loading ? '' : 'hover:bg-gray-900 hover:cursor-pointer'
-    }`;
-
+        loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
+    } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''}`;
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
         deleteTrade(hash);
@@ -132,15 +148,19 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
         let url = '/';
         if (pair) {
             const [trade, base] = pair.split('-').map((v) => v.toUpperCase());
-            return navigate(`${url}${cells[0]}/${trade}/${base}`);
+            return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props } });
         }
         switch (type) {
             case 'explore':
-                return navigate(`${url}fulfill/${firstCell}/${secondCell}`);
+                return navigate(`${url}fulfill/${firstCell}/${secondCell}`, {
+                    state: { ...props },
+                });
             case 'manage':
                 return navigate(
                     `${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`,
                 );
+            case 'peer-orderbook':
+                return navigate(`/${peer}/${firstCell}`);
             case 'pairs':
                 url = `${url}pairs`;
                 break;
@@ -190,14 +210,23 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
     };
 
     const determineCell = (cell: string) => {
+        if (!cell) return <></>;
         const charsShown = width > 900 ? 3 : 5;
         if (cell) {
-            if (cell?.startsWith('Q') || cell?.startsWith('0x')) {
+            if (typeof cell === 'string' && (cell?.startsWith('Q') || cell?.startsWith('0x'))) {
                 // Address / MultiAddr
                 return truncate(cell, charsShown);
             } else if (!isNaN(Number(cell))) {
                 // Big Number
                 return <SmartPrice price={cell} />;
+            } else if (type === 'peer-orderbook' && cell.includes('/')) {
+                return (
+                    <span className="flex items-center gap-1">
+                        <Asset symbol={cell.split('/')[0]} size={20} />
+                        <span>/</span>
+                        <Asset symbol={cell.split('/')[1]} size={20} />
+                    </span>
+                );
             } else {
                 // Default
                 return formatCell(cell);
@@ -221,7 +250,10 @@ const CustomRow = ({ columns, data, loading, type, peer, getRow }: IDataTablePro
     // Desktop
     if (width >= 900) {
         return (
-            <tr className={`${baseStyle} ${determineColor()}`} onClick={(e) => route(cells)}>
+            <tr
+                className={`text-sm xl:text-base ${baseStyle} ${determineColor()}`}
+                onClick={(e) => route(cells)}
+            >
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}

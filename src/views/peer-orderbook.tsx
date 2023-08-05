@@ -1,11 +1,12 @@
 import {
     Avatar,
     Card,
-    NFTTable,
     DataTable,
-    TransitionModal,
     DropdownMenu,
     Button,
+    Header,
+    NFTTable,
+    TransitionModal,
 } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useLocation, useParams } from 'react-router-dom';
@@ -13,7 +14,42 @@ import { useWindowSize } from '../hooks/window-size';
 import { FaChevronDown } from 'react-icons/fa';
 import { useDropdown } from '../hooks/dropdown';
 import { useLimitOrders } from '../hooks';
-import { PairsTable } from '../components/pairs-table';
+import { useEffect, useState } from 'react';
+import { useOffersContext, usePintswapContext } from '../stores';
+import { groupBy } from 'lodash';
+import { resolveName } from '../hooks/trade';
+import { bestPrices } from '../utils';
+import { Tab } from '@headlessui/react';
+
+const columns = [
+    {
+        name: 'ticker',
+        label: 'Ticker',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'bid',
+        label: 'Bid',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'ask',
+        label: 'Ask',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+];
 
 export const PeerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
@@ -26,43 +62,90 @@ export const PeerOrderbookView = () => {
     const { filteredNfts } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
     const { multiaddr } = useParams();
+    const { limitOrdersArr } = useOffersContext();
+    const [uniquePairs, setUniquePairs] = useState<any[]>([]);
+    const { pintswap } = usePintswapContext();
+    const [resolved, setResolved] = useState<any>(null);
+
+    useEffect(() => {
+        (async () => {
+            if (multiaddr && pintswap && pintswap.module) {
+                if (multiaddr.match('.drip'))
+                    setResolved(await resolveName(pintswap.module, multiaddr));
+                else setResolved(multiaddr);
+            }
+        })().catch((err) => console.error(err));
+    }, [multiaddr, pintswap.module]);
+
+    useEffect(() => {
+        const byTicker = groupBy(
+            limitOrdersArr.filter((v) => [multiaddr, resolved].includes(v.peer)),
+            'ticker',
+        );
+        setUniquePairs(
+            Object.entries(byTicker).map(([ticker, group]) => ({
+                ...bestPrices(group),
+                ticker: ticker,
+            })),
+        );
+    }, [limitOrdersArr, resolved, multiaddr]);
 
     const peer = state?.peer ? state.peer : multiaddr ? multiaddr : order.multiAddr;
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center">
-                <TransitionModal
-                    button={
-                        <Avatar
-                            peer={peer}
-                            withBio
-                            withName
-                            align="left"
-                            size={60}
-                            type="profile"
-                        />
-                    }
+        <div className="flex flex-col">
+            <div className="grid grid-cols-2 items-center justify-between mb-4 md:mb-6">
+                <Header
+                    breadcrumbs={[
+                        { text: 'Peers', link: '/peers' },
+                        { text: `${multiaddr}`, link: `/${multiaddr}` },
+                    ]}
                 >
-                    <Avatar peer={peer} size={300} />
-                </TransitionModal>
-                <DropdownMenu
-                    customIcon={
-                        <span className="flex items-center gap-1 md:gap-2 py-2 text-md">
-                            {items[currentIndex].text} <FaChevronDown />
-                        </span>
-                    }
-                    items={items}
-                    onClick={handleCurrentClick}
-                />
+                    Peer Overview
+                </Header>
+
+                <div className="justify-self-end hidden sm:block">
+                    <TransitionModal
+                        button={<Avatar peer={multiaddr} nameClass="text-xl" type="profile" />}
+                    >
+                        <Avatar peer={multiaddr} size={300} />
+                    </TransitionModal>
+                </div>
             </div>
 
-            <Card>
+            <Card
+                tabs={['ERC20', 'NFT']}
+                type="tabs"
+                defaultTab={uniquePairs.length === 0 && filteredNfts.length ? 'nft' : 'erc20'}
+            >
+                <Tab.Panel>
+                    <DataTable
+                        type="peer-orderbook"
+                        data={uniquePairs}
+                        columns={columns}
+                        loading={false}
+                        peer={multiaddr}
+                    />
+                </Tab.Panel>
+                <Tab.Panel>
+                    <NFTTable
+                        data={filteredNfts}
+                        peer={order.multiAddr}
+                        loading={loading.allTrades}
+                    />
+                </Tab.Panel>
+            </Card>
+
+            {/* <div className="flex flex-col">
                 <div
                     className={`${
                         currentIndex === 0 ? 'block' : 'hidden'
                     } flex flex-col gap-3 lg:gap-6`}
                 >
+                    <div className="flex flex-col gap-3">
+                        <span className="text-lg">Pairs</span>
+                        <PairsTable />
+                    </div>
                     <div className="flex flex-col gap-3">
                         <span className="text-lg">NFTs</span>
                         <NFTTable
@@ -79,10 +162,6 @@ export const PeerOrderbookView = () => {
                                 See All NFTs
                             </Button>
                         )}
-                    </div>
-                    <div className="flex flex-col gap-3">
-                        <span className="text-lg">Pairs</span>
-                        <PairsTable />
                     </div>
                 </div>
                 <div
@@ -120,7 +199,7 @@ export const PeerOrderbookView = () => {
                         Back to All
                     </Button>
                 </div>
-            </Card>
+            </div> */}
         </div>
     );
 };

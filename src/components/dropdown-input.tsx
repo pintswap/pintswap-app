@@ -17,6 +17,7 @@ type IDropdownProps = {
     search?: boolean;
     disabled?: boolean;
     loading?: boolean;
+    wrapperClass?: string;
 };
 
 export const DropdownInput = ({
@@ -29,6 +30,7 @@ export const DropdownInput = ({
     search,
     disabled,
     loading,
+    wrapperClass,
 }: IDropdownProps) => {
     const isToken = type === 'gives.token' || type === 'gets.token';
     const { query, list, handleChange } = useSearch(isToken ? TOKENS : options || []);
@@ -40,7 +42,7 @@ export const DropdownInput = ({
 
     const dropdownItemClass = (active: boolean) =>
         classNames(
-            active ? 'bg-gray-900 text-neutral-200' : 'text-neutral-300',
+            active ? 'bg-neutral-900 text-neutral-200' : 'text-neutral-300',
             'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full',
         );
 
@@ -56,34 +58,34 @@ export const DropdownInput = ({
     }, [query, module?.signer]);
 
     return (
-        <div className="flex flex-col gap-1 justify-end">
+        <div
+            className={`flex flex-col gap-1 justify-end w-full ${wrapperClass ? wrapperClass : ''}`}
+        >
             <div className="flex justify-between items-center text-xs md:text-sm">
                 {title && <p>{title}</p>}
             </div>
             <Menu as="div" className="relative inline-block text-left">
-                <div>
-                    <Menu.Button
-                        className={`inline-flex w-full ${
-                            !disabled ? 'justify-between' : 'justify-end'
-                        } items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
-                            loading ? 'animate-pulse' : ''
-                        } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
-                        disabled={disabled}
-                    >
-                        {!disabled && (
-                            <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />
-                        )}
-                        {state ? (
-                            isToken && ethers.isAddress(query) ? (
-                                unknownToken.symbol
-                            ) : (
-                                state
-                            )
+                <Menu.Button
+                    className={`inline-flex w-full overflow-x-hidden ${
+                        !disabled ? 'justify-between' : 'justify-end'
+                    } items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
+                        loading ? 'animate-pulse' : ''
+                    } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
+                    disabled={disabled}
+                >
+                    {!disabled && (
+                        <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />
+                    )}
+                    {state ? (
+                        isToken && ethers.isAddress(query) ? (
+                            unknownToken.symbol
                         ) : (
-                            <span className="text-gray-400">{placeholder || 'Select one...'}</span>
-                        )}
-                    </Menu.Button>
-                </div>
+                            state
+                        )
+                    ) : (
+                        <span className="text-gray-400">{placeholder || 'Select one...'}</span>
+                    )}
+                </Menu.Button>
 
                 <Transition
                     as={Fragment}
@@ -94,12 +96,12 @@ export const DropdownInput = ({
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                 >
-                    <Menu.Items className="absolute right-0 z-10 mt-2 origin-top rounded-md bg-gray-950 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full max-h-60 overflow-y-auto overflow-x-hidden">
+                    <Menu.Items className="absolute right-0 z-10 mt-2 origin-top rounded-md bg-brand-dashboard shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none w-full max-h-60 overflow-y-auto overflow-x-hidden">
                         {search && (
                             <input
                                 value={query}
                                 onChange={handleChange}
-                                className="bg-gray-700 text-neutral-200 px-4 py-2 text-sm ring-2 ring-gray-600 w-full"
+                                className="bg-neutral-700 text-neutral-200 px-4 py-2 text-sm ring-2 ring-neutral-400 w-full"
                                 placeholder="Search name or paste address"
                             />
                         )}
