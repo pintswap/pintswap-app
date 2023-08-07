@@ -9,8 +9,7 @@ import { useAccount, useSigner } from 'wagmi';
 import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
-
-let lastFill: any;
+import { Switch } from '@headlessui/react';
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -26,6 +25,7 @@ export const PeerTickerFulfill = ({
         price: '',
         output: '',
     });
+    const [enabled, setEnabled] = useState(false);
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -50,16 +50,10 @@ export const PeerTickerFulfill = ({
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 
-    const inputAmount = useMemo(
-        () => (tradeType === 'bids' ? (fill || {}).input : (fill || {}).output) || '',
-        [tradeType, fill],
-    );
     const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
     const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
-    const outputAmount = useMemo(
-        () => (tradeType === 'bids' ? (fill || {}).output : (fill || {}).input) || '',
-        [tradeType, fill],
-    );
+
+    console.log('tradeType', tradeType, fill);
 
     useEffect(() => {
         (async () => {
@@ -107,9 +101,11 @@ export const PeerTickerFulfill = ({
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);
+
     const options = useMemo(() => {
         return [`Buy ${tradeAsset ? tradeAsset : ''}`, `Sell ${tradeAsset ? tradeAsset : ''}`];
     }, [tradeAsset]);
+
     const tradeTypeOption = useMemo(
         () => (tradeType === 'asks' ? options[0] : options[1]),
         [options, tradeType],
@@ -133,6 +129,7 @@ export const PeerTickerFulfill = ({
                                 setTradeType(e.match('Buy') ? 'asks' : 'bids');
                             }}
                         />
+
                         <Input
                             title="Price"
                             placeholder="Price"
@@ -148,17 +145,18 @@ export const PeerTickerFulfill = ({
                             }
                         />
                         <Input
-                            title={`Input ${inputAsset}`}
+                            title={`Sending ${inputAsset}`}
                             placeholder="Input amount"
-                            value={inputAmount}
+                            value={fill?.input}
                             type="number"
                             loading={loading.trade}
+                            disabled
                             onChange={handleAmountChange}
                         />
                         <Input
-                            title={`Output ${outputAsset}`}
+                            title={`Receiving ${outputAsset}`}
                             placeholder="Output amount"
-                            value={outputAmount}
+                            value={fill?.output}
                             type="number"
                             disabled
                             loading={loading.trade}
