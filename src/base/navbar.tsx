@@ -15,7 +15,7 @@ export const Navbar = () => {
     return (
         <>
             <nav
-                className={`bg-brand-dashboard py-2.5 lg:py-4 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
+                className={`bg-brand-dashboard py-3 lg:py-4 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button
