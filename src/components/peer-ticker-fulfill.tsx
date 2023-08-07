@@ -2,14 +2,12 @@ import { Transition } from '@headlessui/react';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
-import { Button, Card, CopyClipboard, PageStatus, Input } from '.';
-import { DropdownInput } from './dropdown-input';
+import { Button, Card, CopyClipboard, PageStatus, Input, SwitchToggle } from '.';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
 import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
-import { Switch } from '@headlessui/react';
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -25,7 +23,6 @@ export const PeerTickerFulfill = ({
         price: '',
         output: '',
     });
-    const [enabled, setEnabled] = useState(false);
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -52,8 +49,6 @@ export const PeerTickerFulfill = ({
 
     const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
     const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
-
-    console.log('tradeType', tradeType, fill);
 
     useEffect(() => {
         (async () => {
@@ -102,34 +97,23 @@ export const PeerTickerFulfill = ({
         })().catch((err) => console.error(err));
     }, [matchInputs]);
 
-    const options = useMemo(() => {
-        return [`Buy ${tradeAsset ? tradeAsset : ''}`, `Sell ${tradeAsset ? tradeAsset : ''}`];
-    }, [tradeAsset]);
-
-    const tradeTypeOption = useMemo(
-        () => (tradeType === 'asks' ? options[0] : options[1]),
-        [options, tradeType],
-    );
-
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-4 md:gap-6">
                 <Card header={'Fullfill Trade'}>
                     <div className="flex flex-wrap gap-3">
-                        <DropdownInput
-                            title="Type"
-                            placeholder="Trade Type"
-                            state={tradeTypeOption}
-                            type="string"
-                            loading={loading.trade}
-                            disabled={loading.allTrades}
-                            options={options}
-                            setState={(e: any) => {
-                                setTradeType(e.match('Buy') ? 'asks' : 'bids');
+                        <SwitchToggle
+                            label="Trade Type"
+                            labelOff="Sell"
+                            labelOn="Buy"
+                            state={tradeType === 'asks' ? false : true}
+                            setState={() => {
+                                if (tradeType === 'asks') setTradeType('bids');
+                                else setTradeType('asks');
                             }}
+                            disabled={loading.allTrades}
                         />
-
                         <Input
                             title="Price"
                             placeholder="Price"

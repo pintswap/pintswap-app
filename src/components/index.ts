@@ -25,3 +25,4 @@ export * from './smart-price';
 export * from './header';
 export * from './gradient-border';
 export * from './breadcrumbs';
+export * from './switch-toggle';
