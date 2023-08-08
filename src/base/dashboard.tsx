@@ -52,6 +52,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                             direction="vertical"
                             align="left"
                             withName
+                            truncated
                         />
                         <button
                             onClick={toggleActive}
@@ -65,9 +66,9 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </div>
                 </div>
                 <div
-                    className={`overflow-y-auto w-full p-6 lg:p-8 ${backgroundClass} relative z-50 shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] 3xl:px-6 h-full rounded-tl-3xl`}
+                    className={`max-h-[calc(100vh-60px)] lg:max-h-[calc(100vh-72px)] overflow-y-auto w-full p-6 lg:p-8 ${backgroundClass} relative z-50 shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] 3xl:px-6 h-full rounded-tl-3xl`}
                 >
-                    <main className="mx-auto">{children}</main>
+                    <main className="mx-auto pb-2">{children}</main>
                 </div>
             </div>
         );
@@ -76,7 +77,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         return (
             <>
                 <div className="flex flex-grow justify-center">
-                    <main className={`w-full py-4 px-2 pb-6 ${backgroundClass} h-full`}>
+                    <main className={`w-full py-4 px-2 pb-16 ${backgroundClass} h-full`}>
                         {children}
                     </main>
                 </div>

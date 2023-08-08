@@ -179,7 +179,7 @@ export const AccountView = () => {
                                                     className="absolute bg-transparent rounded h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
                                                     src={formatPeerImg(img)}
                                                 />
-                                                <span className="absolute h-[154px] w-[154px] -translate-x-0.5 translate-y-0.5">
+                                                <span className="absolute h-[204px] w-[204px] -translate-x-0.5 translate-y-0.5">
                                                     <span className="flex justify-center items-center h-full w-full -top-1 relative rounded bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
                                                         Click to
                                                         <br />
@@ -187,14 +187,14 @@ export const AccountView = () => {
                                                     </span>
                                                 </span>
                                                 <Avatar
-                                                    size={150}
+                                                    size={200}
                                                     peer={pintswap?.module?.peerId.toB58String()}
                                                     imgShape="square"
                                                 />
                                             </div>
                                         )}
                                         <Button
-                                            className={`text-sm text-center lg:absolute lg:mt-48 ${
+                                            className={`text-sm text-center lg:absolute lg:mt-60 ${
                                                 useNft.using ? 'mt-5' : ''
                                             }`}
                                             type="transparent"
@@ -206,7 +206,7 @@ export const AccountView = () => {
                                     </div>
                                 ) : (
                                     <Avatar
-                                        size={150}
+                                        size={200}
                                         peer={pintswap?.module?.peerId.toB58String()}
                                         imgShape="square"
                                     />
