@@ -52,6 +52,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                             direction="vertical"
                             align="left"
                             withName
+                            truncated
                         />
                         <button
                             onClick={toggleActive}

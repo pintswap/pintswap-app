@@ -20,6 +20,7 @@ type IAvatarProps = {
     direction?: 'horizontal' | 'vertical';
     ring?: boolean;
     imgShape?: 'square' | 'circle';
+    truncated?: boolean;
 };
 
 export const Avatar = ({
@@ -37,6 +38,7 @@ export const Avatar = ({
     direction = 'horizontal',
     ring,
     imgShape = 'circle',
+    truncated,
 }: IAvatarProps) => {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
@@ -141,9 +143,17 @@ export const Avatar = ({
                     />
                 </button>
                 {withName && (
-                    <span className={`${nameClass ? nameClass : 'text-lg lg:text-xl'}`}>
-                        {peerData.name?.includes('.drip') ? peerData.name : truncate(peerData.name)}
-                    </span>
+                    <div className={`${truncated ? 'max-w-[160px] truncate' : ''}`}>
+                        <span
+                            className={`${nameClass ? nameClass : 'text-lg lg:text-xl'} ${
+                                truncated ? 'text-ellipsis' : ''
+                            }`}
+                        >
+                            {peerData.name?.includes('.drip')
+                                ? peerData.name
+                                : truncate(peerData.name)}
+                        </span>
+                    </div>
                 )}
             </div>
         );
