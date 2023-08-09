@@ -797,8 +797,8 @@ html,
 .h-96{
   height: 24rem;
 }
-.h-\[150px\]{
-  height: 150px;
+.h-\[200px\]{
+  height: 200px;
 }
 .h-\[204px\]{
   height: 204px;
@@ -873,8 +873,8 @@ html,
 .w-8{
   width: 2rem;
 }
-.w-\[150px\]{
-  width: 150px;
+.w-\[200px\]{
+  width: 200px;
 }
 .w-\[204px\]{
   width: 204px;

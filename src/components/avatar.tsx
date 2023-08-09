@@ -127,31 +127,38 @@ export const Avatar = ({
     if (type === 'clickable') {
         return (
             <div className={`${loading ? 'animate-pulse' : ''}`}>
-                <button
-                    onClick={() => navigate(`/account`)}
-                    className={`${
-                        ringColor
-                            ? ringColor
-                            : 'bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500'
-                    } ${imgShape === 'square' ? 'rounded' : 'rounded-full'}`}
+                <a
+                    href={
+                        peerData.name === module?.address || peer === module?.address
+                            ? `/#/account`
+                            : `/#/peers/${peerData.name}`
+                    }
                 >
-                    {showActive && <StatusIndicator active={userData.active} />}
-                    <img
-                        src={(peerData.img as string) || DEFAULT_AVATAR}
-                        height={size}
-                        width={size}
-                        style={{
-                            minWidth: size,
-                            minHeight: size,
-                            maxHeight: size,
-                            maxWidth: size,
-                        }}
-                        className={` ${
-                            imgShape === 'square' ? 'rounded' : 'rounded-full'
-                        } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
-                        alt="Avatar"
-                    />
-                </button>
+                    <button
+                        className={`${
+                            ringColor
+                                ? ringColor
+                                : 'bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500'
+                        } ${imgShape === 'square' ? 'rounded' : 'rounded-full'}`}
+                    >
+                        {showActive && <StatusIndicator active={userData.active} />}
+                        <img
+                            src={(peerData.img as string) || DEFAULT_AVATAR}
+                            height={size}
+                            width={size}
+                            style={{
+                                minWidth: size,
+                                minHeight: size,
+                                maxHeight: size,
+                                maxWidth: size,
+                            }}
+                            className={` ${
+                                imgShape === 'square' ? 'rounded' : 'rounded-full'
+                            } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
+                            alt="Avatar"
+                        />
+                    </button>
+                </a>
                 {withName && (
                     <div className={`${truncated ? 'max-w-[160px] truncate' : ''}`}>
                         <span
