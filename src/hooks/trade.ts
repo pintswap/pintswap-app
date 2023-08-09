@@ -425,10 +425,7 @@ export const useTrade = () => {
                 const broadcastListener = async (hash: string) => {
                     if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
                     setOrder({
-                        multiAddr:
-                            module &&
-                            module.peerId &&
-                            (module.constructor as any).toAddress(module?.peerId.toB58String()),
+                        multiAddr: module && module.peerId && module.address,
                         orderHash: hash,
                     });
                     addTrade(hash, await buildTradeObj(trade));
