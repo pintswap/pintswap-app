@@ -156,9 +156,7 @@ const CustomRow = (props: IDataTableProps) => {
                     state: { ...props },
                 });
             case 'manage':
-                return navigate(
-                    `${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`,
-                );
+                return navigate(`${url}fulfill/${userData.name || module?.address}/${firstCell}`);
             case 'peer-orderbook':
                 return navigate(`/${peer}/${firstCell}`);
             case 'pairs':

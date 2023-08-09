@@ -169,7 +169,7 @@ export function UserStore(props: { children: ReactNode }) {
                     name = await module.resolveName(module.address);
                 } catch (err) {
                     console.warn(
-                        `#setUserData useEffect: no names found for multiAddr ${module.peerId.toB58String()}`,
+                        `#setUserData useEffect: no names found for multiAddr ${module?.address}`,
                     );
                 }
                 setUserData({
@@ -180,7 +180,7 @@ export function UserStore(props: { children: ReactNode }) {
                 });
             }
         })().catch((err) => console.error(err));
-    }, [module?.peerId.toB58String(), module?.userData]);
+    }, [module?.address, module?.userData]);
 
     return (
         <UserContext.Provider

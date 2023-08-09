@@ -48,7 +48,7 @@ export const Avatar = ({
     const navigate = useNavigate();
 
     const peerName = typeof peer === 'string' ? peer : peer?.name;
-    const isUser = peerName === module?.peerId.toB58String();
+    const isUser = peerName === module?.address;
 
     const alginClass = () => {
         switch (align) {
@@ -102,7 +102,7 @@ export const Avatar = ({
                     img,
                     loading: false,
                 };
-                if (peer === module.peerId.toB58String()) {
+                if (peer === module?.address) {
                     setUserData({
                         ...returnObj,
                         ...module.userData,

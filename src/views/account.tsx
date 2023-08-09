@@ -57,7 +57,7 @@ export const AccountView = () => {
         loading,
     } = useUserContext();
     const { name, bio, img, privateKey, extension } = userData;
-
+    console.log('userData', userData);
     const [shallowForm, setShallowForm] = useState({ bio, name });
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
@@ -106,20 +106,20 @@ export const AccountView = () => {
                 <TransitionModal
                     button={
                         <Avatar
-                            peer={pintswap?.module?.peerId.toB58String()}
+                            peer={pintswap?.module?.address}
                             align="left"
                             size={60}
                             type="profile"
                         />
                     }
                 >
-                    <Avatar peer={pintswap?.module?.peerId.toB58String()} size={300} />
+                    <Avatar peer={pintswap?.module?.address} size={300} />
                 </TransitionModal>
                 <div className="text-right hidden md:block">
                     <p className="text-sm">Your Multi Address</p>
                     <Skeleton loading={pintswap.loading}>
                         <CopyClipboard
-                            value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress}
+                            value={pintswap?.module?.address || ethers.ZeroAddress}
                             truncate={5}
                             icon
                             lg={width > 768}
@@ -188,7 +188,7 @@ export const AccountView = () => {
                                                 </span>
                                                 <Avatar
                                                     size={200}
-                                                    peer={pintswap?.module?.peerId.toB58String()}
+                                                    peer={pintswap?.module?.address}
                                                     imgShape="square"
                                                 />
                                             </div>
@@ -207,7 +207,7 @@ export const AccountView = () => {
                                 ) : (
                                     <Avatar
                                         size={200}
-                                        peer={pintswap?.module?.peerId.toB58String()}
+                                        peer={pintswap?.module?.address}
                                         imgShape="square"
                                     />
                                 )}
