@@ -51,7 +51,6 @@ export async function initializePintswapFromSigner({ signer, pintswap, setPintsw
     const newPintswap = pintswap.module ? mergeUserData(ps, pintswap.module) : ps;
     newPintswap.logger.info(newPintswap);
     newPintswap.on('peer:discovery', async (peer: any) => {
-        if (TESTING) console.log('Discovered peer:', peer);
         (window as any).discoveryDeferred.resolve(peer);
     });
     setPintswap({
@@ -171,7 +170,6 @@ export function PintswapStore(props: { children: ReactNode }) {
                         if (TESTING) console.log('Starting new node');
                         // Subscribe to peer
                         ps.on('peer:discovery', async (peer: any) => {
-                            if (TESTING) console.log('Discovered peer:', peer);
                             (window as any).discoveryDeferred.resolve(peer);
                         });
                         // Subscribe to pubsub

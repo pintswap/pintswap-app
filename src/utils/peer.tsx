@@ -38,7 +38,6 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
             else return peer;
         }
     } catch (err) {
-        console.warn(`#formatPeerName: no names found for multiAddr ${peer}`, err);
         return peer;
     }
 };

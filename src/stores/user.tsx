@@ -107,11 +107,8 @@ export function UserStore(props: { children: ReactNode }) {
         }
     }
 
-    // TODO
     function updatePrivateKey(e: any) {
         if (module) {
-            setUserData({ ...userData, privateKey: e.target.value });
-        } else {
             setUserData({ ...userData, privateKey: e.target.value });
         }
     }
@@ -183,7 +180,7 @@ export function UserStore(props: { children: ReactNode }) {
                 });
             }
         })().catch((err) => console.error(err));
-    }, [module?.userData, module?.peerId, module?.peerId.toB58String()]);
+    }, [module?.peerId.toB58String(), module?.userData]);
 
     return (
         <UserContext.Provider

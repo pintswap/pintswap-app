@@ -101,7 +101,12 @@ export const Avatar = ({
                     img,
                     loading: false,
                 };
-                if (peer === module.peerId.toB58String()) setUserData(returnObj);
+                if (peer === module.peerId.toB58String()) {
+                    setUserData({
+                        ...returnObj,
+                        ...module.userData,
+                    });
+                }
                 return returnObj;
             }
         }
