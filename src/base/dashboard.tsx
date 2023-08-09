@@ -6,7 +6,6 @@ import { useAccount } from 'wagmi';
 import { useDashNav, useWindowSize } from '../hooks';
 import { usePintswapContext, useUserContext } from '../stores';
 import { APP_VERSION } from '../utils';
-import { Tooltip } from 'react-tooltip';
 
 type IDashboardProps = {
     children: ReactNode;
@@ -55,7 +54,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </ul>
                     <div className="flex flex-col gap-2 pl-4 lg:pl-6">
                         <Avatar
-                            peer={pintswap?.module?.peerId.toB58String()}
+                            peer={pintswap.module?.address}
                             type="clickable"
                             direction="vertical"
                             align="left"
@@ -99,11 +98,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
 
                 {address && (
                     <div className="fixed left-2 bottom-2">
-                        <Avatar
-                            type="clickable"
-                            showActive
-                            peer={pintswap?.module?.peerId.toB58String()}
-                        />
+                        <Avatar type="clickable" showActive peer={pintswap?.module?.address} />
                     </div>
                 )}
             </>

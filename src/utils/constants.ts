@@ -46,6 +46,6 @@ export const EMPTY_USER_DATA: IUserDataProps = {
     loading: false,
 };
 
-export const DEFAULT_AVATAR = '/black.jpg';
+export const DEFAULT_AVATAR = '/img/generic-avatar.jpg';
 
 export const BASE_AVATAR_URL = `data:image/jpg;base64,`;

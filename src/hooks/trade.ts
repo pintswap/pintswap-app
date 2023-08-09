@@ -182,7 +182,7 @@ export const useTrade = () => {
                 let multiAddr = order.multiAddr;
                 if (multiAddr.match(/\.drip$/))
                     multiAddr = await resolveName(module, order.multiAddr);
-                const peeredUp = PeerId.createFromB58String(multiAddr);
+                const peeredUp = multiAddr;
                 // If NFT swap
                 if (window.location.hash.match('nft') && hash) {
                     const nftTrade = userTrades.get(hash) || peerTrades.get(hash);
@@ -228,7 +228,7 @@ export const useTrade = () => {
                         return;
                     }
 
-                    const { offers }: IOrderbookProps = await module.getUserDataByPeerId(resolved);
+                    const { offers }: IOrderbookProps = await module.getUserData(resolved);
                     await Promise.all(
                         offers.map((offer) => {
                             const tokens = [offer.gets?.token, offer.gives?.token];
@@ -424,7 +424,10 @@ export const useTrade = () => {
             if (module) {
                 const broadcastListener = async (hash: string) => {
                     if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
-                    setOrder({ multiAddr: module?.peerId.toB58String(), orderHash: hash });
+                    setOrder({
+                        multiAddr: module && module.peerId && module.address,
+                        orderHash: hash,
+                    });
                     addTrade(hash, await buildTradeObj(trade));
                     updateSteps('Fulfill');
                 };

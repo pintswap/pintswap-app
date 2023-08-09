@@ -61,6 +61,7 @@ export const AccountView = () => {
     const [shallowForm, setShallowForm] = useState({ bio, name });
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
+    const [imgFile, setImgFile] = useState('');
 
     const handleUpdate = async (e: any) => {
         e.preventDefault();
@@ -106,20 +107,20 @@ export const AccountView = () => {
                 <TransitionModal
                     button={
                         <Avatar
-                            peer={pintswap?.module?.peerId.toB58String()}
+                            peer={pintswap?.module?.address}
                             align="left"
                             size={60}
                             type="profile"
                         />
                     }
                 >
-                    <Avatar peer={pintswap?.module?.peerId.toB58String()} size={300} />
+                    <Avatar peer={pintswap?.module?.address} size={300} />
                 </TransitionModal>
                 <div className="text-right hidden md:block">
                     <p className="text-sm">Your Multi Address</p>
                     <Skeleton loading={pintswap.loading}>
                         <CopyClipboard
-                            value={pintswap?.module?.peerId.toB58String() || ethers.ZeroAddress}
+                            value={pintswap?.module?.address || ethers.ZeroAddress}
                             truncate={5}
                             icon
                             lg={width > 768}
@@ -175,20 +176,33 @@ export const AccountView = () => {
                                                     type="file"
                                                     name="profile-image"
                                                     accept=".jpg, .jpeg, .png"
-                                                    onChange={updateImg}
-                                                    className="absolute bg-transparent rounded h-[150px] w-[150px] text-transparent z-50 hover:cursor-pointer"
+                                                    onChange={(e) => {
+                                                        if (
+                                                            e.target.files?.length &&
+                                                            e.target.files[0].name
+                                                        )
+                                                            setImgFile(e.target.files[0].name);
+                                                        updateImg(e);
+                                                    }}
+                                                    className="absolute bg-transparent rounded h-[200px] w-[200px] text-transparent z-50 hover:cursor-pointer text-center"
                                                     src={formatPeerImg(img)}
                                                 />
                                                 <span className="absolute h-[204px] w-[204px] -translate-x-0.5 translate-y-0.5">
                                                     <span className="flex justify-center items-center h-full w-full -top-1 relative rounded bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
-                                                        Click to
-                                                        <br />
-                                                        Upload
+                                                        {imgFile ? (
+                                                            imgFile
+                                                        ) : (
+                                                            <>
+                                                                Click to
+                                                                <br />
+                                                                Upload
+                                                            </>
+                                                        )}
                                                     </span>
                                                 </span>
                                                 <Avatar
                                                     size={200}
-                                                    peer={pintswap?.module?.peerId.toB58String()}
+                                                    peer={pintswap?.module?.address}
                                                     imgShape="square"
                                                 />
                                             </div>
@@ -207,7 +221,7 @@ export const AccountView = () => {
                                 ) : (
                                     <Avatar
                                         size={200}
-                                        peer={pintswap?.module?.peerId.toB58String()}
+                                        peer={pintswap?.module?.address}
                                         imgShape="square"
                                     />
                                 )}

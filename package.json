@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "start": "yarn build:css && react-app-rewired start",
+        "start": "REACT_APP_DEV=1 REACT_APP_NETWORK=ETHEREUM GENERATE_SOURCEMAP=false yarn build:css && react-app-rewired start",
         "start:dev": "REACT_APP_TESTING=1 REACT_APP_DEV=1 REACT_APP_NETWORK=LOCALHOST GENERATE_SOURCEMAP=false BROWSER=none yarn start",
         "start:dev:eth": "REACT_APP_DEV=1 REACT_APP_NETWORK=ETHEREUM GENERATE_SOURCEMAP=false BROWSER=none yarn start",
         "build": "yarn build:css && react-app-rewired build",
