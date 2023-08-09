@@ -20,6 +20,7 @@ type IAvatarProps = {
     type?: 'clickable' | 'default' | 'profile';
     direction?: 'horizontal' | 'vertical';
     ring?: boolean;
+    ringColor?: `bg-${string}`;
     imgShape?: 'square' | 'circle';
     truncated?: boolean;
 };
@@ -40,6 +41,7 @@ export const Avatar = ({
     ring,
     imgShape = 'circle',
     truncated,
+    ringColor,
 }: IAvatarProps) => {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
@@ -127,13 +129,15 @@ export const Avatar = ({
             <div className={`${loading ? 'animate-pulse' : ''}`}>
                 <button
                     onClick={() => navigate(`/account`)}
-                    className={`bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500 ${
-                        imgShape === 'square' ? 'rounded' : 'rounded-full'
-                    }`}
+                    className={`${
+                        ringColor
+                            ? ringColor
+                            : 'bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500'
+                    } ${imgShape === 'square' ? 'rounded' : 'rounded-full'}`}
                 >
                     {showActive && <StatusIndicator active={userData.active} />}
                     <img
-                        src={peerData.img as string}
+                        src={(peerData.img as string) || DEFAULT_AVATAR}
                         height={size}
                         width={size}
                         style={{
@@ -183,7 +187,7 @@ export const Avatar = ({
                         <>
                             {showActive && <StatusIndicator active={userData.active} />}
                             <img
-                                src={peerData.img as string}
+                                src={(peerData.img as string) || DEFAULT_AVATAR}
                                 height={size}
                                 width={size}
                                 style={{
@@ -261,7 +265,7 @@ export const Avatar = ({
                                     <>
                                         {showActive && <StatusIndicator active={userData.active} />}
                                         <img
-                                            src={peerData.img as string}
+                                            src={(peerData.img as string) || DEFAULT_AVATAR}
                                             height={size}
                                             width={size}
                                             style={{
