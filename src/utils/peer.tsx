@@ -44,11 +44,12 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
 
 export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full' | 'minimal') {
     const { module } = ps;
+    if (!module) return { offers: [], bio: '', image: '' };
     try {
         const formattedPeerAddress = await formatPeerName(ps, peer, true);
 
         let res;
-        if (formattedPeerAddress === module?.peerId.toB58String()) {
+        if (formattedPeerAddress === module.address) {
             res = module?.userData;
         } else {
             if (type === 'minimal') {
