@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../stores';
 import { DEFAULT_AVATAR, formatPeerName, getFormattedPeer, getPeerImg, truncate } from '../utils';
 import { StatusIndicator } from './status-indicator';
+import { PintP2P } from '@pintswap/sdk/lib/p2p';
 
 type IAvatarProps = {
     size?: number | `${string}px` | 'full';
@@ -19,6 +20,7 @@ type IAvatarProps = {
     type?: 'clickable' | 'default' | 'profile';
     direction?: 'horizontal' | 'vertical';
     ring?: boolean;
+    ringColor?: `bg-${string}`;
     imgShape?: 'square' | 'circle';
     truncated?: boolean;
 };
@@ -39,6 +41,7 @@ export const Avatar = ({
     ring,
     imgShape = 'circle',
     truncated,
+    ringColor,
 }: IAvatarProps) => {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
@@ -47,7 +50,7 @@ export const Avatar = ({
     const navigate = useNavigate();
 
     const peerName = typeof peer === 'string' ? peer : peer?.name;
-    const isUser = peerName === module?.peerId.toB58String();
+    const isUser = peerName === module?.address;
 
     const alginClass = () => {
         switch (align) {
@@ -101,7 +104,12 @@ export const Avatar = ({
                     img,
                     loading: false,
                 };
-                if (peer === module.peerId.toB58String()) setUserData(returnObj);
+                if (peer === module?.address) {
+                    setUserData({
+                        ...returnObj,
+                        ...module.userData,
+                    });
+                }
                 return returnObj;
             }
         }
@@ -119,29 +127,38 @@ export const Avatar = ({
     if (type === 'clickable') {
         return (
             <div className={`${loading ? 'animate-pulse' : ''}`}>
-                <button
-                    onClick={() => navigate(`/account`)}
-                    className={`bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500 ${
-                        imgShape === 'square' ? 'rounded' : 'rounded-full'
-                    }`}
+                <a
+                    href={
+                        peerData.name === module?.address || peer === module?.address
+                            ? `/#/account`
+                            : `/#/peers/${peerData.name}`
+                    }
                 >
-                    {showActive && <StatusIndicator active={userData.active} />}
-                    <img
-                        src={peerData.img as string}
-                        height={size}
-                        width={size}
-                        style={{
-                            minWidth: size,
-                            minHeight: size,
-                            maxHeight: size,
-                            maxWidth: size,
-                        }}
-                        className={` ${
-                            imgShape === 'square' ? 'rounded' : 'rounded-full'
-                        } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
-                        alt="Avatar"
-                    />
-                </button>
+                    <button
+                        className={`${
+                            ringColor
+                                ? ringColor
+                                : 'bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500'
+                        } ${imgShape === 'square' ? 'rounded' : 'rounded-full'}`}
+                    >
+                        {showActive && <StatusIndicator active={userData.active} />}
+                        <img
+                            src={(peerData.img as string) || DEFAULT_AVATAR}
+                            height={size}
+                            width={size}
+                            style={{
+                                minWidth: size,
+                                minHeight: size,
+                                maxHeight: size,
+                                maxWidth: size,
+                            }}
+                            className={` ${
+                                imgShape === 'square' ? 'rounded' : 'rounded-full'
+                            } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
+                            alt="Avatar"
+                        />
+                    </button>
+                </a>
                 {withName && (
                     <div className={`${truncated ? 'max-w-[160px] truncate' : ''}`}>
                         <span
@@ -151,7 +168,7 @@ export const Avatar = ({
                         >
                             {peerData.name?.includes('.drip')
                                 ? peerData.name
-                                : truncate(peerData.name)}
+                                : truncate(PintP2P.toAddress(peerData.name))}
                         </span>
                     </div>
                 )}
@@ -177,7 +194,7 @@ export const Avatar = ({
                         <>
                             {showActive && <StatusIndicator active={userData.active} />}
                             <img
-                                src={peerData.img as string}
+                                src={(peerData.img as string) || DEFAULT_AVATAR}
                                 height={size}
                                 width={size}
                                 style={{
@@ -205,7 +222,7 @@ export const Avatar = ({
                             <span className={`${nameClass ? nameClass : 'text-lg lg:text-2xl'}`}>
                                 {peerData.name?.includes('.drip')
                                     ? peerData.name
-                                    : truncate(peerData.name)}
+                                    : truncate(PintP2P.toAddress(peerData.name))}
                             </span>
                         )}
                     </div>
@@ -255,7 +272,7 @@ export const Avatar = ({
                                     <>
                                         {showActive && <StatusIndicator active={userData.active} />}
                                         <img
-                                            src={peerData.img as string}
+                                            src={(peerData.img as string) || DEFAULT_AVATAR}
                                             height={size}
                                             width={size}
                                             style={{
@@ -288,7 +305,7 @@ export const Avatar = ({
                                     <span className={`${nameClass ? nameClass : 'text-lg'}`}>
                                         {peerData.name?.includes('.drip')
                                             ? peerData.name
-                                            : truncate(peerData.name)}
+                                            : truncate(PintP2P.toAddress(peerData.name))}
                                     </span>
                                 )}
                             </>

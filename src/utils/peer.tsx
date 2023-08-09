@@ -38,29 +38,28 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
             else return peer;
         }
     } catch (err) {
-        console.warn(`#formatPeerName: no names found for multiAddr ${peer}`, err);
         return peer;
     }
 };
 
 export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full' | 'minimal') {
     const { module } = ps;
+    if (!module) return { offers: [], bio: '', image: '' };
     try {
         const formattedPeerAddress = await formatPeerName(ps, peer, true);
-        const b58peer = createFromB58String(formattedPeerAddress).toB58String();
 
         let res;
-        if (formattedPeerAddress === module?.peerId.toB58String()) {
+        if (formattedPeerAddress === module.address) {
             res = module?.userData;
         } else {
             if (type === 'minimal') {
                 return {
                     offers: [],
-                    bio: module?.peers.get(`${b58peer}::bio`),
+                    bio: module?.peers.get(`${formattedPeerAddress}::bio`),
                     image: '',
                 };
             } else {
-                res = await module?.getUserDataByPeerId(b58peer);
+                res = await module?.getUserData(formattedPeerAddress);
             }
         }
         if (res) return res;

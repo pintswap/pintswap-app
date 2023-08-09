@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "start": "yarn build:css && react-app-rewired start",
+        "start": "REACT_APP_DEV=1 REACT_APP_NETWORK=ETHEREUM GENERATE_SOURCEMAP=false yarn build:css && react-app-rewired start",
         "start:dev": "REACT_APP_TESTING=1 REACT_APP_DEV=1 REACT_APP_NETWORK=LOCALHOST GENERATE_SOURCEMAP=false BROWSER=none yarn start",
         "start:dev:eth": "REACT_APP_DEV=1 REACT_APP_NETWORK=ETHEREUM GENERATE_SOURCEMAP=false BROWSER=none yarn start",
         "build": "yarn build:css && react-app-rewired build",
@@ -18,7 +18,7 @@
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
         "@headlessui/react": "^1.7.13",
-        "@pintswap/sdk": "^1.4.13",
+        "@pintswap/sdk": "^1.4.14",
         "@rainbow-me/rainbowkit": "^0.12.2",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
@@ -42,13 +42,14 @@
         "react-router-dom": "^6.9.0",
         "react-scripts": "5.0.1",
         "react-toastify": "^9.1.2",
-        "react-tooltip": "^5.13.1",
+        "react-tooltip": "^5.20.0",
         "react-use-websocket": "^4.3.1",
         "typescript": "^5.0.2",
         "wagmi": "^0.12.6",
         "web-vitals": "^2.1.4"
     },
     "devDependencies": {
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@babel/preset-env": "^7.20.2",
         "@babel/preset-react": "^7.18.6",
         "@mui/icons-material": "^5.11.16",

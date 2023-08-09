@@ -1,10 +1,12 @@
 import ReactDOM from 'react-dom/client';
-import './styles/tailwind.css';
 import App from './App';
 import { WagmiConfig } from 'wagmi';
 import { chains, RainbowKitProvider, wagmiClient, walletTheme } from './utils/wallet';
 import { HashRouter } from 'react-router-dom';
 import { PintswapStore, OffersStore, ThemeStore, UserStore, PeersStore } from './stores';
+
+import './styles/tailwind.css';
+import 'react-tooltip/dist/react-tooltip.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(

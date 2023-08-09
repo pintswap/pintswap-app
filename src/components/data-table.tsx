@@ -156,9 +156,7 @@ const CustomRow = (props: IDataTableProps) => {
                     state: { ...props },
                 });
             case 'manage':
-                return navigate(
-                    `${url}fulfill/${userData.name || module?.peerId.toB58String()}/${firstCell}`,
-                );
+                return navigate(`${url}fulfill/${userData.name || module?.address}/${firstCell}`);
             case 'peer-orderbook':
                 return navigate(`/${peer}/${firstCell}`);
             case 'pairs':
@@ -213,7 +211,12 @@ const CustomRow = (props: IDataTableProps) => {
         if (!cell) return <></>;
         const charsShown = width > 900 ? 3 : 5;
         if (cell) {
-            if (typeof cell === 'string' && (cell?.startsWith('Q') || cell?.startsWith('0x'))) {
+            if (
+                typeof cell === 'string' &&
+                cell.startsWith('pint') &&
+                cell.length > 30 &&
+                (cell?.startsWith('Q') || cell?.startsWith('0x'))
+            ) {
                 // Address / MultiAddr
                 return truncate(cell, charsShown);
             } else if (!isNaN(Number(cell))) {

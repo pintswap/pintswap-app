@@ -6,6 +6,7 @@ import { ethers } from 'ethers6';
 import { TOKENS } from './token-list';
 
 // COMMON
+export const APP_VERSION = 'v1.0 BETA';
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
 export const BASE_URL: string = window.location.origin;
@@ -45,6 +46,6 @@ export const EMPTY_USER_DATA: IUserDataProps = {
     loading: false,
 };
 
-export const DEFAULT_AVATAR = '/black.jpg';
+export const DEFAULT_AVATAR = '/img/generic-avatar.jpg';
 
 export const BASE_AVATAR_URL = `data:image/jpg;base64,`;
