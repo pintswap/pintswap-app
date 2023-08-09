@@ -5,6 +5,7 @@ import { Avatar } from '../components';
 import { useAccount } from 'wagmi';
 import { useDashNav, useWindowSize } from '../hooks';
 import { usePintswapContext, useUserContext } from '../stores';
+import { APP_VERSION } from '../utils';
 
 type IDashboardProps = {
     children: ReactNode;
@@ -63,6 +64,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                 message={active ? 'Stop Publish' : 'Start Publish'}
                             />
                         </button>
+                        <span className="text-sm text-neutral-500">{APP_VERSION}</span>
                     </div>
                 </div>
                 <div

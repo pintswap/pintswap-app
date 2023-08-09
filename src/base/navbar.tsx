@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ActiveText, AnimatedHamburger, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
+import { APP_VERSION } from '../utils';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useDashNav();
@@ -18,10 +19,7 @@ export const Navbar = () => {
                 className={`bg-brand-dashboard py-3 lg:py-4 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
-                    <button
-                        onClick={() => navigate('/')}
-                        className="flex items-center gap-2 lg:gap-3"
-                    >
+                    <button onClick={() => navigate('/')} className="flex gap-1">
                         <img
                             src="/logo/ps-logo-drip.png"
                             alt="PintSwap Logo"
@@ -57,18 +55,28 @@ export const Navbar = () => {
                     {NAV_ITEMS.map((item, i) => (
                         <li key={`nav-item-${i}`} className="w-full">
                             <button
-                                className="w-full flex gap-2 items-center justify-end px-4 py-2"
+                                className={`w-full flex gap-2 items-center ${
+                                    i === 0 ? 'justify-between' : 'justify-end'
+                                } px-4 py-2`}
                                 onClick={() => {
                                     navigate(`${item.route}`);
                                     setIsMobileOpen(false);
                                 }}
                             >
-                                <ActiveText route={item.route || ''}>
-                                    {item.text.toUpperCase()}
-                                </ActiveText>
-                                <ActiveText route={item.route || ''} className="text-indigo-500">
-                                    {item.icon}
-                                </ActiveText>
+                                {i === 0 && (
+                                    <span className="text-sm text-neutral-500">{APP_VERSION}</span>
+                                )}
+                                <span className="flex items-center gap-2">
+                                    <ActiveText route={item.route || ''}>
+                                        {item.text.toUpperCase()}
+                                    </ActiveText>
+                                    <ActiveText
+                                        route={item.route || ''}
+                                        className="text-indigo-500"
+                                    >
+                                        {item.icon}
+                                    </ActiveText>
+                                </span>
                             </button>
                         </li>
                     ))}
