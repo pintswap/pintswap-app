@@ -2868,9 +2868,9 @@
     fastq "^1.6.0"
 
 "@pintswap/sdk@^1.4.13":
-  version "1.4.13"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.13.tgz#1b1e2f99e97a354f57ddb6d373c78747a65ecc3c"
-  integrity sha512-Z/Y0DgjV/aXFh1ev6XTIdslx/U2Azsr/VdHpuw5Pt95udB0Zky2HRZCGfCB7nhx80DmnWyRbhSJ3LSuMfLRvgQ==
+  version "1.4.14"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.14.tgz#3876ea79d80d3ac93b759722854a5a4814e20ff7"
+  integrity sha512-AZnackFuBcpk0xJIjf9uuiEB2EpZcCPwF/I1KQz1H9d8DLR28TU8AL2KJaRE3GZeVqPsKC2rmMTlQJTHSdeBSw==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -2879,6 +2879,7 @@
     aes-js "^3.1.2"
     assert "^2.0.0"
     base64url "^3.0.1"
+    bech32 "^2.0.0"
     bn.js "^5.2.1"
     buffer "^6.0.3"
     canonical-weth "^1.4.0"
@@ -3771,9 +3772,9 @@
     "@types/lodash" "*"
 
 "@types/lodash@*":
-  version "4.14.196"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.196.tgz#a7c3d6fc52d8d71328b764e28e080b4169ec7a95"
-  integrity sha512-22y3o88f4a94mKljsZcanlNWPzO0uBsBdzLAngf2tp533LzZcQzb6+eZPJ+vCTt+bqF2XnvT9gejTLsAcJAJyQ==
+  version "4.14.197"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.197.tgz#e95c5ddcc814ec3e84c891910a01e0c8a378c54b"
+  integrity sha512-BMVOiWs0uNxHVlHBgzTIqJYmj+PgCo4euloGF+5m4okL3rEYzM2EEv78mw8zWSMM57dM7kVIgJ2QDvwHSoCI5g==
 
 "@types/long@^4.0.1":
   version "4.0.2"
@@ -3907,9 +3908,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^18.0.28":
-  version "18.2.19"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.19.tgz#f77cb2c8307368e624d464a25b9675fa35f95a8b"
-  integrity sha512-e2S8wmY1ePfM517PqCG80CcE48Xs5k0pwJzuDZsfE8IZRRBfOMCF+XqnFxu6mWtyivum1MQm4aco+WIt6Coimw==
+  version "18.2.20"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.20.tgz#1605557a83df5c8a2cc4eeb743b3dfc0eb6aaeb2"
+  integrity sha512-WKNtmsLWJM/3D5mG4U84cysVY31ivmyw85dE84fOCk5Hx78wezB/XEjVPWl2JTZ5FkEeaTJf+VgUAUn3PE7Isw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -5441,6 +5442,11 @@ bech32@1.1.4:
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-1.1.4.tgz#e38c9f37bf179b8eb16ae3a772b40c356d4832e9"
   integrity sha512-s0IrSOzLlbvX7yp4WBfPITzpAU8sqQcpsmwXDiKwrG4r491vwCO/XpejasRNl0piBMe/DvP4Tz0mIS/X1DPJBQ==
+
+bech32@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/bech32/-/bech32-2.0.0.tgz#078d3686535075c8c79709f054b1b226a133b355"
+  integrity sha512-LcknSilhIGatDAsY1ak2I8VtGaHNhgMSYVxFrGLXv+xLHytaKZKcaUJJUE7qmBr7h33o5YQwP55pMI0xmkpJwg==
 
 bfj@^7.0.2:
   version "7.0.2"
