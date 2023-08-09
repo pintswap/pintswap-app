@@ -36,6 +36,7 @@ module.exports = {
                 tty: require.resolve('tty-browserify'),
                 util: require.resolve('util'),
                 vm: require.resolve('vm-browserify'),
+                'utf-8-validate': require.resolve('utf-8-validate'),
                 async_hooks: false,
                 fs: false,
             },

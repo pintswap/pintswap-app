@@ -1,11 +1,12 @@
 import { ReactNode } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ActiveText, StatusIndicator } from '../components';
+import { ActiveText, StatusIndicator, TooltipWrapper } from '../components';
 import { Avatar } from '../components';
 import { useAccount } from 'wagmi';
 import { useDashNav, useWindowSize } from '../hooks';
 import { usePintswapContext, useUserContext } from '../stores';
 import { APP_VERSION } from '../utils';
+import { Tooltip } from 'react-tooltip';
 
 type IDashboardProps = {
     children: ReactNode;
@@ -33,15 +34,21 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                         {NAV_ITEMS.map((el, i) => {
                             return (
                                 <li key={`sidebar-nav-${i}`}>
-                                    <button
-                                        onClick={() => navigate(el.route || '/')}
-                                        className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-400`}
+                                    <TooltipWrapper
+                                        id={`sidebar-nav-${i}`}
+                                        text={el.tooltip}
+                                        position="right"
                                     >
-                                        <ActiveText route={el.route} className="text-sky-400">
-                                            {el.icon}
-                                        </ActiveText>
-                                        <ActiveText route={el.route}>{el.text}</ActiveText>
-                                    </button>
+                                        <button
+                                            onClick={() => navigate(el.route || '/')}
+                                            className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-400`}
+                                        >
+                                            <ActiveText route={el.route} className="text-sky-400">
+                                                {el.icon}
+                                            </ActiveText>
+                                            <ActiveText route={el.route}>{el.text}</ActiveText>
+                                        </button>
+                                    </TooltipWrapper>
                                 </li>
                             );
                         })}
@@ -55,20 +62,26 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                             withName
                             truncated
                         />
-                        <button
-                            onClick={toggleActive}
-                            className="transition duration-150 hover:text-neutral-300 py-0.5"
+                        <TooltipWrapper
+                            id="publish-offers"
+                            text="Let others see your offers"
+                            position="right"
                         >
-                            <StatusIndicator
-                                active={active}
-                                message={active ? 'Stop Publish' : 'Start Publish'}
-                            />
-                        </button>
+                            <button
+                                onClick={toggleActive}
+                                className="transition duration-150 hover:text-neutral-300 py-0.5"
+                            >
+                                <StatusIndicator
+                                    active={active}
+                                    message={active ? 'Stop Publish' : 'Start Publish'}
+                                />
+                            </button>
+                        </TooltipWrapper>
                         <span className="text-sm text-neutral-500">{APP_VERSION}</span>
                     </div>
                 </div>
                 <div
-                    className={`max-h-[calc(100vh-60px)] lg:max-h-[calc(100vh-72px)] overflow-y-auto w-full p-6 lg:p-8 ${backgroundClass} relative z-50 shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] 3xl:px-6 h-full rounded-tl-3xl`}
+                    className={`max-h-[calc(100vh-60px)] lg:max-h-[calc(100vh-72px)] overflow-y-auto w-full p-6 lg:p-8 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] 3xl:px-6 h-full rounded-tl-3xl`}
                 >
                     <main className="mx-auto pb-2">{children}</main>
                 </div>
