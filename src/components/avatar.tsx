@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../stores';
 import { DEFAULT_AVATAR, formatPeerName, getFormattedPeer, getPeerImg, truncate } from '../utils';
 import { StatusIndicator } from './status-indicator';
+import { PintP2P } from '@pintswap/sdk/lib/p2p';
 
 type IAvatarProps = {
     size?: number | `${string}px` | 'full';
@@ -156,7 +157,7 @@ export const Avatar = ({
                         >
                             {peerData.name?.includes('.drip')
                                 ? peerData.name
-                                : truncate(peerData.name)}
+                                : truncate(PintP2P.toAddress(peerData.name))}
                         </span>
                     </div>
                 )}
@@ -210,7 +211,7 @@ export const Avatar = ({
                             <span className={`${nameClass ? nameClass : 'text-lg lg:text-2xl'}`}>
                                 {peerData.name?.includes('.drip')
                                     ? peerData.name
-                                    : truncate(peerData.name)}
+                                    : truncate(PintP2P.toAddress(peerData.name))}
                             </span>
                         )}
                     </div>
@@ -293,7 +294,7 @@ export const Avatar = ({
                                     <span className={`${nameClass ? nameClass : 'text-lg'}`}>
                                         {peerData.name?.includes('.drip')
                                             ? peerData.name
-                                            : truncate(peerData.name)}
+                                            : truncate(PintP2P.toAddress(peerData.name))}
                                     </span>
                                 )}
                             </>

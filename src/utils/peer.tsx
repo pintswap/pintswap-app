@@ -46,7 +46,6 @@ export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full
     const { module } = ps;
     try {
         const formattedPeerAddress = await formatPeerName(ps, peer, true);
-        const b58peer = createFromB58String(formattedPeerAddress).toB58String();
 
         let res;
         if (formattedPeerAddress === module?.peerId.toB58String()) {
@@ -55,11 +54,11 @@ export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full
             if (type === 'minimal') {
                 return {
                     offers: [],
-                    bio: module?.peers.get(`${b58peer}::bio`),
+                    bio: module?.peers.get(`${formattedPeerAddress}::bio`),
                     image: '',
                 };
             } else {
-                res = await module?.getUserDataByPeerId(b58peer);
+                res = await module?.getUserData(formattedPeerAddress);
             }
         }
         if (res) return res;

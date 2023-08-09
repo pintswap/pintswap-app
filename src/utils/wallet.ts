@@ -17,7 +17,7 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
-const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '';
+const projectId = '78ccad0d08b9ec965f59df86cc3e6a3c';
 
 import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
 

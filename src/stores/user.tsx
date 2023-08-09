@@ -166,7 +166,9 @@ export function UserStore(props: { children: ReactNode }) {
             if (module) {
                 let name = '';
                 try {
-                    name = await module.resolveName(module.peerId.toB58String());
+                    name = await module.resolveName(
+                        (module.constructor as any).toAddress(module.peerId.toB58String()),
+                    );
                 } catch (err) {
                     console.warn(
                         `#setUserData useEffect: no names found for multiAddr ${module.peerId.toB58String()}`,

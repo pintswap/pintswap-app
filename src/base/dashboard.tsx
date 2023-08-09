@@ -55,7 +55,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </ul>
                     <div className="flex flex-col gap-2 pl-4 lg:pl-6">
                         <Avatar
-                            peer={pintswap?.module?.peerId.toB58String()}
+                            peer={pintswap.module?.peerId?.toB58String()}
                             type="clickable"
                             direction="vertical"
                             align="left"
