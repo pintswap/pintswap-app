@@ -13,6 +13,7 @@ import { useLimitOrders, useWindowSize } from '../hooks';
 import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
+import { EXPLORER_URLS } from '../utils';
 
 const columns = [
     {
@@ -160,7 +161,16 @@ export const PeerTickerOrderbookView = () => {
                                 text={determineTokenAddresses()?.quote}
                                 position="left"
                             >
-                                <Asset symbol={ticker?.split('/')[0]} size={16} />
+                                <a
+                                    href={`${EXPLORER_URLS['ETH']}/token/${
+                                        determineTokenAddresses()?.quote
+                                    }`}
+                                    rel="noreferrer"
+                                    className="transition duration-150 hover:underline"
+                                    target="_blank"
+                                >
+                                    <Asset symbol={ticker?.split('/')[0]} size={16} />
+                                </a>
                             </TooltipWrapper>
                             <hr className="border opacity-25" />
                             <TooltipWrapper
@@ -168,7 +178,16 @@ export const PeerTickerOrderbookView = () => {
                                 text={determineTokenAddresses()?.base}
                                 position="left"
                             >
-                                <Asset symbol={ticker?.split('/')[1]} size={16} />
+                                <a
+                                    href={`${EXPLORER_URLS['ETH']}/token/${
+                                        determineTokenAddresses()?.base
+                                    }`}
+                                    rel="noreferrer"
+                                    className="transition duration-150 hover:underline"
+                                    target="_blank"
+                                >
+                                    <Asset symbol={ticker?.split('/')[1]} size={16} />
+                                </a>
                             </TooltipWrapper>
                         </span>
                     </span>
