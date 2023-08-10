@@ -134,7 +134,7 @@ export const PeerTickerFulfill = ({
                             value={fill?.input}
                             type="number"
                             loading={loading.trade}
-                            disabled
+                            disabled={false}
                             onChange={handleAmountChange}
                         />
                         <Input
