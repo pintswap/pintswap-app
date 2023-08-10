@@ -14,6 +14,7 @@ import {
     Skeleton,
     TxDetails,
     DropdownInput,
+    TooltipWrapper,
 } from '../components';
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from '../stores';
@@ -24,12 +25,14 @@ import {
     toLimitOrder,
     BASE_URL,
     parseTickerAsset,
+    truncate,
 } from '../utils';
 import { useAccount } from 'wagmi';
-import { useLimitOrders } from '../hooks';
+import { useLimitOrders, useWindowSize } from '../hooks';
 import { useParams } from 'react-router-dom';
 
 export const FulfillView = () => {
+    const { width, breakpoints } = useWindowSize();
     const { address } = useAccount();
     const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
     const { pintswap } = usePintswapContext();
@@ -44,6 +47,7 @@ export const FulfillView = () => {
     });
     const [outputAmount, setOutputAmount] = useState('');
     const [fillAmount, setFillAmount] = useState('');
+    const [tickerAddresses, setTickerAddresses] = useState('');
 
     useEffect(() => {
         (async () => {
@@ -58,6 +62,9 @@ export const FulfillView = () => {
                     const {
                         pair: [base, tradeToken],
                     } = orderTokens(raw);
+                    setTickerAddresses(
+                        `${truncate(tradeToken.address, 6)} / ${truncate(base.address, 6)}`,
+                    );
                     const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
                     setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
                     const limitOrderRes = await toLimitOrder(raw as any, pintswap.module.signer);
@@ -76,6 +83,9 @@ export const FulfillView = () => {
                 const {
                     pair: [base, tradeToken],
                 } = orderTokens(raw);
+                setTickerAddresses(
+                    `${truncate(tradeToken.address, 6)} / ${truncate(base.address, 6)}`,
+                );
                 const [baseDecimals, tradeDecimals] = await Promise.all(
                     [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
                 );
@@ -95,6 +105,8 @@ export const FulfillView = () => {
                 setOutputAmount(Number(ethers.formatUnits(toBeFormatted, baseDecimals)).toFixed(6));
             })().catch((err) => console.error(err));
     }, [pintswap.module, fillAmount, trade]);
+
+    console.log('trade', trade);
 
     return (
         <>
@@ -159,9 +171,23 @@ export const FulfillView = () => {
                         </div>
                     }
                 >
+                    <>{console.log('addresses', tickerAddresses)}</>
                     <div className="grid grid-cols-1 gap-1.5 md:gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
-                            title={`Pair`}
+                            title={
+                                <>
+                                    <span>Pair</span>
+                                    <TooltipWrapper
+                                        id={`${limitOrder.ticker}-verify`}
+                                        text={tickerAddresses}
+                                        position={width > breakpoints.md ? 'top' : 'left'}
+                                    >
+                                        <span className="text-xs text-indigo-600 hover:text-indigo-500 transition duration-150 cursor-pointer">
+                                            Verify Tokens
+                                        </span>
+                                    </TooltipWrapper>
+                                </>
+                            }
                             placeholder="Pair"
                             state={limitOrder.ticker}
                             type="gives.token"

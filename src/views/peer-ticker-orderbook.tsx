@@ -1,10 +1,19 @@
-import { Avatar, DataTable, PeerTickerFulfill, Card, Asset, Header } from '../components';
+import {
+    Avatar,
+    DataTable,
+    PeerTickerFulfill,
+    Card,
+    Asset,
+    Header,
+    TooltipWrapper,
+} from '../components';
 import { useTrade } from '../hooks/trade';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useLimitOrders, useWindowSize } from '../hooks';
 import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
+import { EXPLORER_URLS } from '../utils';
 
 const columns = [
     {
@@ -37,8 +46,6 @@ const columns = [
 ];
 
 export const PeerTickerOrderbookView = () => {
-    const navigate = useNavigate();
-    const { pathname } = useLocation();
     const { width, breakpoints } = useWindowSize();
     const { order } = useTrade();
     const { multiaddr, base: baseAsset, trade: tradeAsset } = useParams();
@@ -68,6 +75,25 @@ export const PeerTickerOrderbookView = () => {
                 .reduce((r, v) => ethers.toBigInt(v.gets.amount) + r, ethers.toBigInt(0)),
             list,
         });
+    };
+
+    const determineTokenAddresses = () => {
+        if (matchInputs?.list?.length) {
+            const anyTrade = matchInputs.list[0];
+            if (tradeType === 'asks') {
+                // Buy
+                return {
+                    quote: anyTrade?.gives?.token || '',
+                    base: anyTrade?.gets?.token || '',
+                };
+            } else {
+                // Sell
+                return {
+                    quote: anyTrade?.gets?.token || '',
+                    base: anyTrade?.gives?.token || '',
+                };
+            }
+        }
     };
 
     useEffect(() => {
@@ -130,9 +156,39 @@ export const PeerTickerOrderbookView = () => {
                 <div className="justify-self-end hidden sm:block">
                     <span className="text-sm md:text-md xl:text-lg">
                         <span className="flex sm:flex-col sm:justify-end text-left gap-0.5 xl:gap-0">
-                            <Asset symbol={ticker?.split('/')[0]} size={16} />
+                            <TooltipWrapper
+                                id={`${ticker?.split('/')[0]}-address`}
+                                text={determineTokenAddresses()?.quote}
+                                position="left"
+                            >
+                                <a
+                                    href={`${EXPLORER_URLS['ETH']}/token/${
+                                        determineTokenAddresses()?.quote
+                                    }`}
+                                    rel="noreferrer"
+                                    className="transition duration-150 hover:underline"
+                                    target="_blank"
+                                >
+                                    <Asset symbol={ticker?.split('/')[0]} size={16} />
+                                </a>
+                            </TooltipWrapper>
                             <hr className="border opacity-25" />
-                            <Asset symbol={ticker?.split('/')[1]} size={16} />
+                            <TooltipWrapper
+                                id={`${ticker?.split('/')[1]}-address`}
+                                text={determineTokenAddresses()?.base}
+                                position="left"
+                            >
+                                <a
+                                    href={`${EXPLORER_URLS['ETH']}/token/${
+                                        determineTokenAddresses()?.base
+                                    }`}
+                                    rel="noreferrer"
+                                    className="transition duration-150 hover:underline"
+                                    target="_blank"
+                                >
+                                    <Asset symbol={ticker?.split('/')[1]} size={16} />
+                                </a>
+                            </TooltipWrapper>
                         </span>
                     </span>
                 </div>

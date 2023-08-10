@@ -1,4 +1,4 @@
-import { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { MdChevronRight } from 'react-icons/md';
 import { alphaTokenSort, classNames, getSymbol, ITokenProps, TOKENS } from '../utils';
@@ -13,7 +13,7 @@ type IDropdownProps = {
     options?: string[];
     placeholder?: string;
     type?: 'gives.token' | 'gets.token' | 'string' | 'input-ext';
-    title?: string;
+    title?: string | ReactNode;
     search?: boolean;
     disabled?: boolean;
     loading?: boolean;
@@ -62,7 +62,7 @@ export const DropdownInput = ({
             className={`flex flex-col gap-1 justify-end w-full ${wrapperClass ? wrapperClass : ''}`}
         >
             <div className="flex justify-between items-center text-xs md:text-sm">
-                {title && <p>{title}</p>}
+                {title && <p className="flex justify-between items-baseline w-full">{title}</p>}
             </div>
             <Menu as="div" className="relative inline-block text-left">
                 <Menu.Button
