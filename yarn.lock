@@ -2867,10 +2867,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@pintswap/sdk@^1.4.15":
-  version "1.4.15"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.15.tgz#58ad0899ea3622b1a5744ee5daf18a9259d119a9"
-  integrity sha512-0vjrHCPaj/nOvgBX7/HRIABmAfE+F7QgEaN/QNZGVJp87aZgvEhLAd2YKt8E3iGeG+f6/+1YPNa/5NYXz61XEQ==
+"@pintswap/sdk@^1.4.16":
+  version "1.4.16"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.16.tgz#0a516ed9d292e0c6189d3f1432f1133e04ca2344"
+  integrity sha512-T+lpNROa6mprJY654t6Flem6uZZxmU60cH57V2qJgssBxfRVEbk70voQtw/tH+puNmqaztoFDJAjxi1SZfK87Q==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
