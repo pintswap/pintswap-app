@@ -72,6 +72,15 @@ export const TOKENS: ITokenProps[] = [
             'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7/logo.png',
     },
     {
+        asset: 'c60_t0xf819d9Cb1c2A819Fd991781A822dE3ca8607c3C9',
+        type: 'ERC20',
+        address: '0xf819d9Cb1c2A819Fd991781A822dE3ca8607c3C9',
+        name: 'Unibot',
+        symbol: 'UNIBOT',
+        decimals: 18,
+        logoURI: 'https://assets.coingecko.com/coins/images/30462/large/logonoline_%281%29.png',
+    },
+    {
         asset: 'c60_t0x0202Be363B8a4820f3F4DE7FaF5224fF05943AB1',
         type: 'ERC20',
         address: '0x0202Be363B8a4820f3F4DE7FaF5224fF05943AB1',
@@ -2787,6 +2796,24 @@ export const TOKENS: ITokenProps[] = [
         decimals: 9,
         logoURI:
             'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xfAd45E47083e4607302aa43c65fB3106F1cd7607/logo.png',
+    },
+    {
+        asset: 'c60_t0xFa4bAa6951B6Ee382e9ff9AF2D523278b99ca6D0',
+        type: 'ERC20',
+        address: '0xFa4bAa6951B6Ee382e9ff9AF2D523278b99ca6D0',
+        name: 'House',
+        symbol: 'HOUSE',
+        decimals: 18,
+        logoURI: 'https://assets.coingecko.com/coins/images/31202/large/hm_icon_200x200.png',
+    },
+    {
+        asset: 'c60_t0x8d008CAC1a5CB08aC962b1e34E977B79ABEee88D',
+        type: 'ERC20',
+        address: '0x8d008CAC1a5CB08aC962b1e34E977B79ABEee88D',
+        name: 'Pepe Analytics',
+        symbol: 'PEPEAI',
+        decimals: 18,
+        logoURI: 'https://assets.coingecko.com/coins/images/30248/large/pepeai-200.png',
     },
     {
         asset: 'c60_t0xFbEEa1C75E4c4465CB2FCCc9c6d6afe984558E20',
