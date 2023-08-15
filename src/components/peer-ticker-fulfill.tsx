@@ -162,7 +162,7 @@ export const PeerTickerFulfill = ({
                             !address
                         }
                     >
-                        Fulfill Trade
+                        Swap
                     </Button>
                 </Card>
 

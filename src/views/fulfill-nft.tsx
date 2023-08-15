@@ -67,7 +67,7 @@ export const FulfillNFTView = () => {
                         onClick={fulfillTrade}
                         disabled={!nft || loading}
                     >
-                        Fulfill Trade
+                        Swap
                     </Button>
                 </Card>
             </div>

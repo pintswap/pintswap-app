@@ -11,10 +11,10 @@ type ITooltipWrapper = {
 export const TooltipWrapper = ({ text, position = 'top', children, id }: ITooltipWrapper) => {
     return (
         <>
-            <span data-tooltip-id={id} data-tooltip-content={text}>
+            <span data-tooltip-id={id} data-tooltip-content={text} className="z-[999999]">
                 {children}
             </span>
-            <Tooltip id={id} place={position} />
+            <Tooltip id={id} place={position} className="z-[999999]" />
         </>
     );
 };
