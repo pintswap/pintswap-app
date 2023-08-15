@@ -2813,7 +2813,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'Pepe Analytics',
         symbol: 'PEPEAI',
         decimals: 18,
-        logoURI: 'https://assets.coingecko.com/coins/images/30248/large/pepeai-200.png',
+        logoURI: 'https://assets.coingecko.com/coins/images/31085/small/cg.jpeg?1690426151',
     },
     {
         asset: 'c60_t0xFbEEa1C75E4c4465CB2FCCc9c6d6afe984558E20',
