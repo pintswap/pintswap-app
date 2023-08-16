@@ -1,6 +1,8 @@
-# pintswap-app
+# PintSwap App
 
-Frontend for pintswap, the ERC20 swap protocol, brought to you by dripDAO.
+Frontend for PintSwap, the ERC20 swap protocol.
+
+[Take a look for yourself.](https://pintswap.eth.limo)
 
 ## Installation
 

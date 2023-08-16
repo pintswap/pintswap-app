@@ -248,7 +248,7 @@ export const Avatar = ({
     } else {
         return (
             <div className={loading || peerData.loading ? 'animate-pulse' : ''}>
-                <div className={`flex flex-col gap-3 ${alginClass()}`}>
+                <div className={`flex flex-col gap-1 ${alginClass()}`}>
                     <div
                         className={`flex ${
                             direction === 'horizontal' ? 'flex-row' : 'flex-col'

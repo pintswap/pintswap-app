@@ -106,6 +106,7 @@ export const CreateView = () => {
     const TABS = ['ERC20', 'NFT'];
     return (
         <>
+            {' '}
             <div className="flex flex-col gap-4 md:gap-6">
                 <div className="flex flex-col">
                     <div className="flex items-center justify-between mb-4 md:mb-6">
@@ -281,7 +282,6 @@ export const CreateView = () => {
                     </Button>
                 </Transition>
             </div>
-
             <Transition
                 show={steps[2].status === 'current'}
                 enter="transition-opacity duration-300"
