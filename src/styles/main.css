@@ -707,6 +707,9 @@ body {
 .z-50 {
   z-index: 50;
 }
+.z-\[999999\] {
+  z-index: 999999;
+}
 .float-left {
   float: left;
 }
