@@ -6,11 +6,11 @@ module.exports = {
         extend: {
             backgroundSize: {
                 'size-200': '200% 200%',
-              },
-              backgroundPosition: {
+            },
+            backgroundPosition: {
                 'pos-0': '0% 0%',
                 'pos-100': '100% 100%',
-              },
+            },
             screens: {
                 '3xl': '1920px',
             },
