@@ -243,7 +243,7 @@ export const FulfillView = () => {
                             !address
                         }
                     >
-                        Fulfill Trade
+                        Swap
                     </Button>
                 </Card>
 

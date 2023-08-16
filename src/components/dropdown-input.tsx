@@ -38,7 +38,7 @@ export const DropdownInput = ({
         pintswap: { module },
     } = usePintswapContext();
 
-    const [unknownToken, setUnknownToken] = useState({ symbol: 'Unkown Token', loading: false });
+    const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
 
     const dropdownItemClass = (active: boolean) =>
         classNames(

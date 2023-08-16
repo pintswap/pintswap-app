@@ -209,13 +209,13 @@ const CustomRow = (props: IDataTableProps) => {
 
     const determineCell = (cell: string) => {
         if (!cell) return <></>;
-        const charsShown = width > 900 ? 3 : 5;
+        const charsShown = width > 900 ? 4 : 5;
         if (cell) {
             if (
                 typeof cell === 'string' &&
                 cell.startsWith('pint') &&
                 cell.length > 30 &&
-                (cell?.startsWith('Q') || cell?.startsWith('0x'))
+                (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
             ) {
                 // Address / MultiAddr
                 return truncate(cell, charsShown);
