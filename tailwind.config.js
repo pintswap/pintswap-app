@@ -24,7 +24,7 @@ module.exports = {
             },
             maxWidth: {
                 '8xl': '1920px',
-                'card': '813.67px'
+                card: '813.67px',
             },
             width: {
                 '8xl': '1920px',
