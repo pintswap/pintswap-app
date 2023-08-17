@@ -100,14 +100,14 @@ export const Input = ({
         );
     }
     return (
-        <div className={`flex flex-col gap-1 justify-end w-full ${wrapperClass}`}>
+        <div className={`flex flex-col gap-1 justify-end w-full box-border ${wrapperClass}`}>
             {title ? (
                 <p className="text-xs md:text-sm">{title}</p>
             ) : (
                 !noSpace && <div className="w-full md:h-5" />
             )}
             <input
-                className={`flex items-center gap-1 p-2 bg-neutral-600 ${
+                className={`flex items-center gap-1 p-2 bg-neutral-600 box-border ${
                     enableStateCss ? 'disabled:bg-neutral-900' : ''
                 } rounded ${className} ${type === 'number' ? 'text-right' : ''} ${
                     loading ? 'animate-pulse' : ''

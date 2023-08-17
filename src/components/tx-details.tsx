@@ -43,34 +43,32 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
     return (
         <Disclosure>
             {({ open, close }) => (
-                <>
+                <div>
                     <Disclosure.Button
-                        className={`w-full flex items-center justify-between bg-neutral-800 p-2 ${
-                            open ? 'rounded-t' : 'rounded'
-                        } text-neutral-300 hover:text-white transition duration-200`}
+                        className={`w-full flex items-center justify-between bg-neutral-900 p-3 ${
+                            open ? 'rounded-t-lg' : 'rounded-lg'
+                        } text-neutral-400 hover:text-neutral-100 transition-all duration-200`}
                         disabled={loading}
                     >
                         <span className="text-sm lg:text-md font-extralight">
                             Transaction Details
                         </span>
                         <BiChevronUp
-                            className={`transition duration-150 transform ${
-                                open ? 'rotate-180 transform' : ''
-                            }`}
+                            className={`${open ? 'rotate-180 transform' : ''}`}
                             size="20"
                         />
                     </Disclosure.Button>
 
                     <Transition
                         enter="transition duration-100 ease-out"
-                        enterFrom="transform h-0 scale-95 opacity-0"
-                        enterTo="transform h-full scale-100 opacity-100"
+                        enterFrom="transform scale-95 opacity-0"
+                        enterTo="transform scale-100 opacity-100"
                         leave="transition duration-100 ease-out"
-                        leaveFrom="transform h-full scale-100 opacity-100"
-                        leaveTo="transform h-0 scale-95 opacity-0"
+                        leaveFrom="transform scale-100 opacity-100"
+                        leaveTo="transform scale-95 opacity-0"
                     >
                         <Disclosure.Panel
-                            className="p-2 pt-1 rounded-b bg-neutral-800 text-xs lg:text-sm font-extralight space-y-1 cursor-pointer"
+                            className="p-3 pt-1 rounded-b-lg bg-neutral-900 text-xs lg:text-sm font-extralight space-y-1 cursor-pointer"
                             as="ul"
                             onClick={() => close()}
                         >
@@ -84,7 +82,7 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                             </li>
                         </Disclosure.Panel>
                     </Transition>
-                </>
+                </div>
             )}
         </Disclosure>
     );

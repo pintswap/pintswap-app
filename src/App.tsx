@@ -22,6 +22,7 @@ import { detectPermit } from '@pintswap/sdk/lib/detect-permit';
 import { useSigner } from 'wagmi';
 import 'react-toastify/dist/ReactToastify.css';
 import { cryptoFromSeed } from '@pintswap/sdk/lib/p2p';
+import { SwapView } from './views/swap';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -41,6 +42,7 @@ function App() {
         <>
             <Base loading={pintswap.loading}>
                 <Routes>
+                    <Route path="/swap" element={<SwapView />} />
                     <Route path="/markets" element={<PairsView />} />
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
@@ -60,7 +62,7 @@ function App() {
                     <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
                     <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
 
-                    <Route path="*" element={<Navigate to="/markets" />} />
+                    <Route path="*" element={<Navigate to="/swap" />} />
                 </Routes>
             </Base>
 
