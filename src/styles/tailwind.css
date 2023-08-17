@@ -27,13 +27,13 @@
 
   /* Remove arrows */
   .remove-arrow::-webkit-inner-spin-button,
-.remove-arrow::-webkit-outer-spin-button {
+  .remove-arrow::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
-.remove-arrow {
+  }
+  .remove-arrow {
     -moz-appearance: textfield;
-}
+  }
 
   /* For full screen success animation */
   .drip-wrapper {
