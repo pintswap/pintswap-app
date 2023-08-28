@@ -43,7 +43,7 @@ export const SwapView = () => {
                             label="Price"
                             value={`$1545.75`}
                             size="lg"
-                            className="w-full col-span-2"
+                            className="w-full sm:col-span-2"
                             change={-8.2}
                         />
                         <Statistic
