@@ -11,7 +11,7 @@ export const SwapView = () => {
                 <Card className="!py-4">
                     <div className="flex items-center justify-between mb-6 px-0.5">
                         <span>Swap</span>
-                        <button>
+                        <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-150">
                             <MdSettings size={20} />
                         </button>
                     </div>

@@ -16,7 +16,7 @@ export const SelectCoin = () => {
         <>
             <TransitionModal
                 button={
-                    <span className="flex items-center gap-1 flex-none rounded-full bg-neutral-600 p-1">
+                    <span className="transition duration-150 flex items-center gap-1 flex-none rounded-full bg-neutral-600 hover:bg-neutral-500 p-1 min-w-max">
                         <Asset symbol="ETH" />
                         <MdExpandMore />
                     </span>
