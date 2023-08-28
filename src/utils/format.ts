@@ -37,3 +37,9 @@ export const maybeFormatMultiAddr = (s: string): string => {
 export function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ');
 }
+
+export const dropdownItemClass = (active: boolean) =>
+    classNames(
+        active ? 'bg-neutral-900 text-neutral-200' : 'text-neutral-300',
+        'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full',
+    );

@@ -1,5 +1,5 @@
 import { MdArrowDownward, MdExpandMore, MdSettings } from 'react-icons/md';
-import { Asset, Button, Card, Statistic, TxDetails } from '../components';
+import { Asset, Button, Card, CoinInput, SelectCoin, Statistic, TxDetails } from '../components';
 import { useTrade } from '../hooks';
 
 export const SwapView = () => {
@@ -17,41 +17,16 @@ export const SwapView = () => {
                     </div>
 
                     <div className="flex flex-col justify-center items-center gap-2">
-                        <div className="w-full bg-neutral-800 px-2 lg:px-3 pb-4 pt-1 rounded-lg">
-                            <span className="text-xs text-gray-400">You pay</span>
-                            <div className="flex justify-between items-center gap-0.5">
-                                <input
-                                    className="py-3 text-2xl outline-none ring-0 bg-neutral-800 remove-arrow min-w-0"
-                                    placeholder="0"
-                                    type="number"
-                                />
-                                <button className="flex items-center gap-1 flex-none rounded-full bg-neutral-600 p-1">
-                                    <Asset symbol="ETH" />
-                                    <MdExpandMore />
-                                </button>
-                            </div>
-                        </div>
+                        {/* TODO */}
+                        <CoinInput label="You give" />
 
                         <button className="absolute p-1.5 bg-brand-dashboard rounded-lg">
                             <div className="bg-neutral-800 p-1 rounded-md">
                                 <MdArrowDownward />
                             </div>
                         </button>
-
-                        <div className="w-full bg-neutral-800 px-2 lg:px-3 pb-4 pt-1 rounded-lg">
-                            <span className="text-xs text-gray-400">You get</span>
-                            <div className="flex justify-between items-center gap-0.5">
-                                <input
-                                    className="py-3 text-2xl outline-none ring-0 bg-neutral-800 remove-arrow box-content min-w-0"
-                                    placeholder="0"
-                                    type="number"
-                                />
-                                <button className="flex items-center gap-1 flex-none rounded-full bg-neutral-600 p-1">
-                                    <Asset symbol="USDC" />
-                                    <MdExpandMore />
-                                </button>
-                            </div>
-                        </div>
+                        {/* TODO */}
+                        <CoinInput label="You get" />
                     </div>
 
                     <div className="flex flex-col gap-2 mt-2">
@@ -59,10 +34,9 @@ export const SwapView = () => {
                         <Button className="w-full rounded-lg !py-3">Swap</Button>
                     </div>
                 </Card>
-                <Card className="!py-4">
+                <Card className="!py-4 h-fit">
                     <div className="flex items-center justify-between mb-6 px-0.5">
                         <span>Statistics</span>
-                        <button></button>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <Statistic

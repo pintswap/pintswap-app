@@ -8,36 +8,51 @@ type IModalProps = {
     children: React.ReactElement;
     button: React.ReactNode;
     title?: string;
+    modalClass?: string;
+    state?: boolean;
+    setState?: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function TransitionModal({ children, button, title }: IModalProps) {
+export function TransitionModal({
+    children,
+    button,
+    title,
+    modalClass,
+    state,
+    setState,
+}: IModalProps) {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+    const handleOpen = () => (setState ? setState(true) : setOpen(true));
+    const handleClose = () => (setState ? setState(false) : setOpen(false));
 
     return (
         <>
             {typeof button === 'string' ? (
                 <Button onClick={handleOpen}>{button}</Button>
             ) : (
-                <div onClick={handleOpen} className="cursor-pointer w-fit">
+                <button onClick={handleOpen} className="cursor-pointer w-fit">
                     {button}
-                </div>
+                </button>
             )}
             <Modal
                 aria-labelledby={title || 'Modal'}
-                open={open}
+                open={state || open}
                 onClose={handleClose}
                 closeAfterTransition
                 slots={{ backdrop: Backdrop }}
                 slotProps={{
                     backdrop: {
-                        timeout: 500,
+                        timeout: 200,
+                        className: '!bg-[rgba(0,0,0,0.3)]',
                     },
                 }}
             >
-                <Fade in={open}>
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[400px] p-4 focus-visible:outline-none">
+                <Fade in={state || open}>
+                    <div
+                        className={`${
+                            modalClass || ''
+                        } absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[400px] p-4 focus-visible:outline-none`}
+                    >
                         {children}
                     </div>
                 </Fade>

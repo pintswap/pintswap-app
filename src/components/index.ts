@@ -28,3 +28,5 @@ export * from './breadcrumbs';
 export * from './switch-toggle';
 export * from './tooltip';
 export * from './statistic';
+export * from './select-coin';
+export * from './coin-input';

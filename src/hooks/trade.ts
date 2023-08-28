@@ -57,7 +57,7 @@ export const useTrade = () => {
     const [fill, setFill] = useState<any>(null);
 
     const isMaker = pathname === '/create';
-    const isOnActive = pathname === '/explore';
+    const isOnActive = pathname === '/explore' || pathname === '/swap';
 
     const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
         if (!gets.token && !gives.token) return EMPTY_TRADE;

@@ -7,9 +7,17 @@ type IAssetProps = {
     size?: number;
     alt?: string;
     loading?: boolean;
+    fontSize?: 'text-sm' | 'text-md' | 'text-lg';
 };
 
-export const Asset = ({ icon, symbol, alt, loading, size = 25 }: IAssetProps) => {
+export const Asset = ({
+    icon,
+    symbol,
+    alt,
+    loading,
+    size = 25,
+    fontSize = 'text-md',
+}: IAssetProps) => {
     const [assetData, setAssetData] = useState<any>({
         symbol: symbol || '',
         icon: icon || '',
@@ -46,7 +54,7 @@ export const Asset = ({ icon, symbol, alt, loading, size = 25 }: IAssetProps) =>
                         height={size}
                         className="rounded-full"
                     />
-                    <span>{assetData?.symbol}</span>
+                    <span className={fontSize}>{assetData?.symbol}</span>
                 </>
             )}
         </div>
