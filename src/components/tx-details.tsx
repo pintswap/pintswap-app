@@ -46,8 +46,10 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                 <div>
                     <Disclosure.Button
                         className={`w-full flex items-center justify-between bg-neutral-900 p-3 ${
-                            open ? 'rounded-t-lg' : 'rounded-lg'
-                        } text-neutral-400 hover:text-neutral-100 transition-all duration-200`}
+                            open
+                                ? 'rounded-t-lg text-neutral-100'
+                                : 'rounded-lg text-neutral-400 hover:text-neutral-300'
+                        } transition-all duration-100`}
                         disabled={loading}
                     >
                         <span className="text-sm lg:text-md font-extralight">

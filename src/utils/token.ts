@@ -159,7 +159,7 @@ export async function convertAmount(
     }
     if (TESTING) console.log('#convertAmount:', { amount, token, output });
     return to === 'readable'
-        ? `${output}  ${(await getTokenAttributes(token, provider, 'symbol')) || 'N/A'}`
+        ? `${output}  ${(await getTokenAttributes(token, provider, 'symbol')) || ''}`
         : output;
 }
 

@@ -7,9 +7,10 @@ type IStatistic = {
     align?: 'center' | 'left' | 'right';
     className?: string;
     change?: number | string;
+    hover?: boolean;
 };
 
-export const Statistic = ({ label, value, size, align, className, change }: IStatistic) => {
+export const Statistic = ({ label, value, size, align, className, change, hover }: IStatistic) => {
     const sizeClass = () => {
         switch (size) {
             case 'xl':
@@ -42,9 +43,9 @@ export const Statistic = ({ label, value, size, align, className, change }: ISta
 
     return (
         <div
-            className={`transition duration-150 rounded-lg py-3 px-4 border-2 bg-neutral-900 border-neutral-700 hover:border-indigo-600 flex flex-col ${
+            className={`transition duration-100 rounded-lg py-3 px-4 border-2 bg-neutral-900 border-neutral-700 flex flex-col ${
                 sizeClass().gap
-            } ${alignClass()} ${className || ''}`}
+            } ${alignClass()} ${className || ''} ${hover ? 'hover:border-indigo-600' : ''}`}
         >
             <div className="flex justify-between items-center w-full">
                 <span className={`${sizeClass().label} text-gray-400`}>{label}</span>

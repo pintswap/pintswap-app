@@ -68,7 +68,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                         >
                             <button
                                 onClick={toggleActive}
-                                className="transition duration-150 hover:text-neutral-300 py-0.5"
+                                className="transition duration-100 hover:text-neutral-300 py-0.5"
                             >
                                 <StatusIndicator
                                     active={active}

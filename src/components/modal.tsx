@@ -42,8 +42,8 @@ export function TransitionModal({
                 slots={{ backdrop: Backdrop }}
                 slotProps={{
                     backdrop: {
-                        timeout: 200,
-                        className: '!bg-[rgba(0,0,0,0.3)]',
+                        timeout: 150,
+                        className: '!bg-[rgba(0,0,0,0.25)]',
                     },
                 }}
             >

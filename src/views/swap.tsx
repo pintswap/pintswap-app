@@ -11,14 +11,14 @@ export const SwapView = () => {
                 <Card className="!py-4">
                     <div className="flex items-center justify-between mb-6 px-0.5">
                         <span>Swap</span>
-                        <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-150">
+                        <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-100">
                             <MdSettings size={20} />
                         </button>
                     </div>
 
                     <div className="flex flex-col justify-center items-center gap-2">
                         {/* TODO */}
-                        <CoinInput label="You give" />
+                        <CoinInput label="You give" value={''} onChange={() => {}} />
 
                         <button className="absolute p-1.5 bg-brand-dashboard rounded-lg">
                             <div className="bg-neutral-800 p-1 rounded-md">
@@ -26,17 +26,20 @@ export const SwapView = () => {
                             </div>
                         </button>
                         {/* TODO */}
-                        <CoinInput label="You get" />
+                        <CoinInput label="You get" value={''} onChange={() => {}} />
                     </div>
 
                     <div className="flex flex-col gap-2 mt-2">
                         <TxDetails trade={trade} loading={loading.trade} type="fulfill" />
-                        <Button className="w-full rounded-lg !py-3">Swap</Button>
+                        <Button className="w-full rounded-lg !py-3" disabled>
+                            Swap
+                        </Button>
                     </div>
                 </Card>
                 <Card className="!py-4 h-fit">
                     <div className="flex items-center justify-between mb-6 px-0.5">
                         <span>Statistics</span>
+                        <span>24 hr</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <Statistic
