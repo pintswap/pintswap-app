@@ -1,7 +1,7 @@
 import { Transition } from '@headlessui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ActiveText, AnimatedHamburger, Wallet } from '../components';
+import { ActiveText, AnimatedHamburger, Gas, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
 import { APP_VERSION } from '../utils';
 
@@ -28,6 +28,7 @@ export const Navbar = () => {
                         />
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
+                        {breakpoints.md <= width && <Gas className="mr-2" />}
                         <Wallet />
                         {width < breakpoints.md && (
                             <button
