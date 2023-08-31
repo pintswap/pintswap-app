@@ -1,10 +1,11 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { fetchBalance } from '@wagmi/core';
 import { useAccount } from 'wagmi';
 import { Skeleton } from './skeleton';
 import { getTokenAttributes } from '../utils';
 import { MdSearch } from 'react-icons/md';
 import { usePintswapContext } from '../stores';
+import { SmartPrice } from './smart-price';
 
 type IInputProps = {
     placeholder?: string;
@@ -12,8 +13,8 @@ type IInputProps = {
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     className?: string;
     max?: number;
-    type?: 'text' | 'number' | 'password' | 'search';
-    title?: string;
+    type?: 'text' | 'number' | 'password' | 'search' | 'smartDisplay';
+    title?: string | ReactNode;
     disabled?: boolean;
     loading?: boolean;
     token?: string | any;
@@ -80,7 +81,7 @@ export const Input = ({
     if (type === 'search') {
         return (
             <div
-                className={`flex items-center gap-1 pl-2 bg-brand-dashboard border-2 border-neutral-600 hover:border-neutral-400 transition duration-150 ${
+                className={`flex items-center gap-1 pl-2 bg-brand-dashboard border-2 border-neutral-600 hover:border-neutral-500 transition duration-100 ${
                     enableStateCss ? 'disabled:bg-neutral-900' : ''
                 } rounded ${wrapperClass} ${loading ? 'animate-pulse' : ''}`}
             >
@@ -98,16 +99,34 @@ export const Input = ({
                 />
             </div>
         );
+    } else if (type === 'smartDisplay') {
+        return (
+            <div className={`flex flex-col gap-1 justify-end w-full box-border ${wrapperClass}`}>
+                {title ? (
+                    <p className="text-xs md:text-sm">{title}</p>
+                ) : (
+                    !noSpace && <div className="w-full md:h-5" />
+                )}
+
+                <div
+                    className={`flex items-center justify-end gap-1 p-2 bg-neutral-600 box-border text-right`}
+                >
+                    <span>$</span>
+                    <SmartPrice price={value} />
+                </div>
+            </div>
+        );
     }
     return (
-        <div className={`flex flex-col gap-1 justify-end w-full ${wrapperClass}`}>
+        <div className={`flex flex-col gap-1 justify-end w-full box-border ${wrapperClass}`}>
             {title ? (
                 <p className="text-xs md:text-sm">{title}</p>
             ) : (
                 !noSpace && <div className="w-full md:h-5" />
             )}
+
             <input
-                className={`flex items-center gap-1 p-2 bg-neutral-600 ${
+                className={`flex items-center gap-1 p-2 bg-neutral-600 box-border ${
                     enableStateCss ? 'disabled:bg-neutral-900' : ''
                 } rounded ${className} ${type === 'number' ? 'text-right' : ''} ${
                     loading ? 'animate-pulse' : ''

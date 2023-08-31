@@ -72,7 +72,7 @@ export const ToastStatus = ({ status, transaction, message }: IToastStatusProps)
                     href={`https://etherscan.io/tx/${transaction}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="underline text-brand-blue hover:text-brand-purple transition duration-150"
+                    className="underline text-brand-blue hover:text-brand-purple transition duration-100"
                 >
                     {truncate(transaction)}
                 </a>

@@ -15,7 +15,7 @@ export const Breadcrumbs = ({ crumbs }: IBreakcrumbs) => {
                     {i !== 0 && <MdChevronRight size="14px" />}
                     <a
                         href={`/#${crumb.link}`}
-                        className={`text-xs transition duration-150 ${
+                        className={`text-xs transition duration-100 ${
                             `/#${pathname}` === crumb.link ? '' : 'hover:underline'
                         }`}
                     >

@@ -166,7 +166,7 @@ export const PeerTickerOrderbookView = () => {
                                         determineTokenAddresses()?.quote
                                     }`}
                                     rel="noreferrer"
-                                    className="transition duration-150 hover:underline"
+                                    className="transition duration-100 hover:underline"
                                     target="_blank"
                                 >
                                     <Asset symbol={ticker?.split('/')[0]} size={16} />
@@ -183,7 +183,7 @@ export const PeerTickerOrderbookView = () => {
                                         determineTokenAddresses()?.base
                                     }`}
                                     rel="noreferrer"
-                                    className="transition duration-150 hover:underline"
+                                    className="transition duration-100 hover:underline"
                                     target="_blank"
                                 >
                                     <Asset symbol={ticker?.split('/')[1]} size={16} />

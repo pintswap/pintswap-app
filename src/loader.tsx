@@ -3,7 +3,14 @@ import App from './App';
 import { WagmiConfig } from 'wagmi';
 import { chains, RainbowKitProvider, wagmiClient, walletTheme } from './utils/wallet';
 import { HashRouter } from 'react-router-dom';
-import { PintswapStore, OffersStore, ThemeStore, UserStore, PeersStore } from './stores';
+import {
+    PintswapStore,
+    OffersStore,
+    ThemeStore,
+    UserStore,
+    PeersStore,
+    PricesStore,
+} from './stores';
 
 import './styles/tailwind.css';
 import 'react-tooltip/dist/react-tooltip.css';
@@ -15,15 +22,17 @@ root.render(
             <WagmiConfig client={wagmiClient}>
                 <RainbowKitProvider chains={chains} theme={walletTheme}>
                     <PintswapStore>
-                        <OffersStore>
-                            <UserStore>
-                                <PeersStore>
-                                    <HashRouter>
-                                        <App />
-                                    </HashRouter>
-                                </PeersStore>
-                            </UserStore>
-                        </OffersStore>
+                        <PricesStore>
+                            <OffersStore>
+                                <UserStore>
+                                    <PeersStore>
+                                        <HashRouter>
+                                            <App />
+                                        </HashRouter>
+                                    </PeersStore>
+                                </UserStore>
+                            </OffersStore>
+                        </PricesStore>
                     </PintswapStore>
                 </RainbowKitProvider>
             </WagmiConfig>

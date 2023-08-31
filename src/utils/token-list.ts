@@ -58,8 +58,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'AllianceBlock',
         symbol: 'ALBT',
         decimals: 18,
-        logoURI:
-            'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x00a8b738E453fFd858a7edf03bcCfe20412f0Eb0/logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6957.png',
     },
     {
         asset: 'c60_t0x00c83aeCC790e8a4453e5dD3B0B4b3680501a7A7',
@@ -737,8 +736,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'FEG Token',
         symbol: 'FEGeth',
         decimals: 9,
-        logoURI:
-            'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x389999216860AB8E0175387A0c90E5c52522C945/logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/24227.png',
     },
     {
         asset: 'c60_t0x38e4adB44ef08F22F5B5b76A8f0c2d0dCbE7DcA1',
@@ -2057,8 +2055,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'MahaDAO',
         symbol: 'MAHA',
         decimals: 18,
-        logoURI:
-            'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xB4d930279552397bbA2ee473229f89Ec245bc365/logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8043.png',
     },
     {
         asset: 'c60_t0xB62132e35a6c13ee1EE0f84dC5d40bad8d815206',
@@ -2187,8 +2184,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'StormX',
         symbol: 'STMX',
         decimals: 18,
-        logoURI:
-            'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xbE9375C6a420D2eEB258962efB95551A5b722803/logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2297.png',
     },
     {
         asset: 'c60_t0xbEa98c05eEAe2f3bC8c3565Db7551Eb738c8CCAb',
@@ -2227,7 +2223,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'Synthetix',
         symbol: 'SNX',
         decimals: 18,
-        logoURI: 'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets//logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/2586.png',
     },
     {
         asset: 'c60_t0xC0bA369c8Db6eB3924965e5c4FD0b4C1B91e305F',
@@ -2386,7 +2382,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'OMG Network',
         symbol: 'OMG',
         decimals: 18,
-        logoURI: 'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets//logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1808.png',
     },
     {
         asset: 'c60_t0xd2877702675e6cEb975b4A1dFf9fb7BAF4C91ea9',
@@ -2415,7 +2411,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'Ampleforth',
         symbol: 'AMPL',
         decimals: 9,
-        logoURI: 'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets//logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4056.png',
     },
     {
         asset: 'c60_t0xD478161C952357F05f0292B56012Cd8457F1cfbF',
@@ -2912,8 +2908,7 @@ export const TOKENS: ITokenProps[] = [
         name: 'Gala',
         symbol: 'GALA',
         decimals: 8,
-        logoURI:
-            'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0x15D4c048F83bd7e37d49eA4C83a07267Ec4203dA/logo.png',
+        logoURI: 'https://s2.coinmarketcap.com/static/img/coins/64x64/7080.png',
     },
     {
         asset: 'c60_t0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B',

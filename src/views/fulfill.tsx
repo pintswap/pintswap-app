@@ -132,7 +132,7 @@ export const FulfillView = () => {
                         enter="transition-opacity duration-75"
                         enterFrom="opacity-0"
                         enterTo="opacity-100"
-                        leave="transition-opacity duration-150"
+                        leave="transition-opacity duration-100"
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                         className="flex flex-col justify-center items-center text-center"
@@ -182,7 +182,7 @@ export const FulfillView = () => {
                                         text={tickerAddresses}
                                         position={width > breakpoints.md ? 'top' : 'left'}
                                     >
-                                        <span className="text-xs text-indigo-600 hover:text-indigo-500 transition duration-150 cursor-pointer">
+                                        <span className="text-xs text-indigo-600 hover:text-indigo-500 transition duration-100 cursor-pointer">
                                             Verify Tokens
                                         </span>
                                     </TooltipWrapper>
@@ -256,7 +256,7 @@ export const FulfillView = () => {
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="transition-opacity duration-150"
+                leave="transition-opacity duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
                 className="flex flex-col justify-center items-center text-center"

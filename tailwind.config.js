@@ -21,6 +21,9 @@ module.exports = {
                     pink: '#f472b6',
                     blue: '#0ea5e9',
                 },
+                indigo: {
+                    hover: '#5055e0',
+                },
             },
             maxWidth: {
                 '8xl': '1920px',

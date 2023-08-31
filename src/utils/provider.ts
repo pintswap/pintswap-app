@@ -1,5 +1,6 @@
 import { ethers } from 'ethers6';
 
+// TODO: move this to .env
 const INFURA_PROJECT_ID = '2f1de898efb74331bf933d3ac469b98d';
 
 export function providerFromChainId(chainId: number | string) {
