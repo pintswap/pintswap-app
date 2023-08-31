@@ -99,7 +99,29 @@ export const PeerTickerFulfill = ({
         })().catch((err) => console.error(err));
     }, [matchInputs]);
 
-    console.log(prices);
+    const determinePrice = () => {
+        switch (baseAsset?.toLowerCase()) {
+            case 'eth':
+            case 'weth':
+                return {
+                    usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
+                    eth: Number(limitOrder.price).toString(),
+                };
+            case 'usdc':
+            case 'usdt':
+            case 'dai':
+                return {
+                    usd: Number(limitOrder.price).toString(),
+                    eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
+                };
+            default:
+                // TODO
+                return {
+                    usd: '0',
+                    eth: '0',
+                };
+        }
+    };
 
     return (
         <>
@@ -123,13 +145,12 @@ export const PeerTickerFulfill = ({
                                 <span className="flex justify-between items-end">
                                     <span>Price</span>
                                     <span className="text-indigo-600 opacity-80 text-xs">
-                                        <SmartPrice price={Number(limitOrder.price).toString()} />{' '}
-                                        ETH
+                                        <SmartPrice price={determinePrice().eth} /> ETH
                                     </span>
                                 </span>
                             }
                             placeholder="Price"
-                            value={(Number(limitOrder.price) * Number(prices.eth)).toString()}
+                            value={determinePrice().usd}
                             type="smartDisplay"
                             loading={loading.trade}
                             disabled
