@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card, GradientBorder, Header, Input } from '../components';
 import { useOffersContext } from '../stores';
@@ -10,6 +10,8 @@ export const PairsView = () => {
     const { limitOrdersArr } = useOffersContext();
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
+
+    const memoizedList = useMemo(() => list, [list]);
 
     useEffect(() => {
         if (limitOrdersArr) {
@@ -35,7 +37,7 @@ export const PairsView = () => {
                 className={`grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
             >
                 {!isLoading
-                    ? (list as string[]).map((pair) => {
+                    ? (memoizedList as string[]).map((pair) => {
                           const split = pair.split('/');
                           const token1 = split[0];
                           const token2 = split[1];

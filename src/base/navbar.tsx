@@ -28,7 +28,7 @@ export const Navbar = () => {
                         />
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
-                        {breakpoints.md <= width && <Gas className="mr-2" />}
+                        {breakpoints.md <= width && <Gas className="mr-2" units="gwei" />}
                         <Wallet />
                         {width < breakpoints.md && (
                             <button

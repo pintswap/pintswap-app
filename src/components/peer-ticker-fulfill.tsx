@@ -2,12 +2,13 @@ import { Transition } from '@headlessui/react';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
-import { Button, Card, CopyClipboard, PageStatus, Input, SwitchToggle } from '.';
+import { Button, Card, CopyClipboard, PageStatus, Input, SwitchToggle, SmartPrice } from '.';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
 import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
+import { usePricesContext } from '../stores';
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -15,6 +16,7 @@ export const PeerTickerFulfill = ({
     matchInputs,
     setMatchInputs,
 }: any) => {
+    const prices = usePricesContext();
     const { base: baseAsset, trade: tradeAsset } = useParams();
     const { address } = useAccount();
     const { data: signer } = useSigner();
@@ -97,6 +99,8 @@ export const PeerTickerFulfill = ({
         })().catch((err) => console.error(err));
     }, [matchInputs]);
 
+    console.log(prices);
+
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
@@ -115,10 +119,18 @@ export const PeerTickerFulfill = ({
                             disabled={loading.allTrades}
                         />
                         <Input
-                            title="Price"
+                            title={
+                                <span className="flex justify-between items-end">
+                                    <span>Price</span>
+                                    <span className="text-indigo-600 opacity-80 text-xs">
+                                        <SmartPrice price={Number(limitOrder.price).toString()} />{' '}
+                                        ETH
+                                    </span>
+                                </span>
+                            }
                             placeholder="Price"
-                            value={Number(limitOrder.price).toFixed(16)}
-                            type="number"
+                            value={(Number(limitOrder.price) * Number(prices.eth)).toString()}
+                            type="smartDisplay"
                             loading={loading.trade}
                             disabled
                             onChange={(e) =>

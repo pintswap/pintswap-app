@@ -23,6 +23,7 @@ import { useSigner } from 'wagmi';
 import 'react-toastify/dist/ReactToastify.css';
 import { cryptoFromSeed } from '@pintswap/sdk/lib/p2p';
 import { SwapView } from './views/swap';
+import { useEffect } from 'react';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -38,6 +39,7 @@ function App() {
         (window as any).pintswap = pintswap.module;
         (window as any).pintswap.logger.info = () => {};
     }
+
     return (
         <>
             <Base loading={pintswap.loading}>
