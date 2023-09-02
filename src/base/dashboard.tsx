@@ -40,7 +40,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                     >
                                         <button
                                             onClick={() => navigate(el.route || '/')}
-                                            className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-400`}
+                                            className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300`}
                                         >
                                             <ActiveText route={el.route} className="text-sky-400">
                                                 {el.icon}
@@ -68,7 +68,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                         >
                             <button
                                 onClick={toggleActive}
-                                className="transition duration-150 hover:text-neutral-300 py-0.5"
+                                className="transition duration-100 hover:text-neutral-300 py-0.5"
                             >
                                 <StatusIndicator
                                     active={active}
@@ -80,7 +80,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </div>
                 </div>
                 <div
-                    className={`max-h-[calc(100vh-60px)] lg:max-h-[calc(100vh-72px)] overflow-y-auto w-full p-6 lg:p-8 xl:px-24 2xl:px-36 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-3xl 3xl:rounded-t-3xl`}
+                    className={`max-h-[calc(100vh-60px)] lg:max-h-[calc(100vh-72px)] overflow-y-auto w-full p-6 lg:p-8 xl:px-12 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-3xl 3xl:rounded-t-3xl`}
                 >
                     <main className="mx-auto pb-2">{children}</main>
                 </div>

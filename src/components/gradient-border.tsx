@@ -12,7 +12,7 @@ export const GradientBorder = (props: IGradiantBorder) => {
         <div
             className={`${props.width || 'p-0.5'} ${
                 props.className ? props.className : ''
-            } transition duration-150 bg-gradient-to-tr to-indigo-500 from-sky-400 hover:bg-gradient-to-tr hover:to-indigo-500 hover:from-sky-400`}
+            } transition duration-100 bg-gradient-to-tr to-indigo-500 from-sky-400 hover:bg-gradient-to-tr hover:to-indigo-500 hover:from-sky-400`}
         >
             {props.children}
         </div>

@@ -2,12 +2,13 @@ import { Transition } from '@headlessui/react';
 import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers6';
-import { Button, Card, CopyClipboard, PageStatus, Input, SwitchToggle } from '.';
+import { Button, Card, CopyClipboard, PageStatus, Input, SwitchToggle, SmartPrice } from '.';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
 import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
+import { usePricesContext } from '../stores';
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -15,6 +16,7 @@ export const PeerTickerFulfill = ({
     matchInputs,
     setMatchInputs,
 }: any) => {
+    const prices = usePricesContext();
     const { base: baseAsset, trade: tradeAsset } = useParams();
     const { address } = useAccount();
     const { data: signer } = useSigner();
@@ -97,6 +99,30 @@ export const PeerTickerFulfill = ({
         })().catch((err) => console.error(err));
     }, [matchInputs]);
 
+    const determinePrice = () => {
+        switch (baseAsset?.toLowerCase()) {
+            case 'eth':
+            case 'weth':
+                return {
+                    usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
+                    eth: Number(limitOrder.price).toString(),
+                };
+            case 'usdc':
+            case 'usdt':
+            case 'dai':
+                return {
+                    usd: Number(limitOrder.price).toString(),
+                    eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
+                };
+            default:
+                // TODO
+                return {
+                    usd: '0',
+                    eth: '0',
+                };
+        }
+    };
+
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
@@ -115,10 +141,17 @@ export const PeerTickerFulfill = ({
                             disabled={loading.allTrades}
                         />
                         <Input
-                            title="Price"
+                            title={
+                                <span className="flex justify-between items-end">
+                                    <span>Price</span>
+                                    <span className="text-indigo-600 opacity-80 text-xs">
+                                        <SmartPrice price={determinePrice().eth} /> ETH
+                                    </span>
+                                </span>
+                            }
                             placeholder="Price"
-                            value={Number(limitOrder.price).toFixed(16)}
-                            type="number"
+                            value={determinePrice().usd}
+                            type="smartDisplay"
                             loading={loading.trade}
                             disabled
                             onChange={(e) =>
@@ -171,7 +204,7 @@ export const PeerTickerFulfill = ({
                     enter="transition-opacity duration-75"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
-                    leave="transition-opacity duration-150"
+                    leave="transition-opacity duration-100"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                     className="flex flex-col justify-center items-center text-center"
@@ -191,7 +224,7 @@ export const PeerTickerFulfill = ({
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="transition-opacity duration-150"
+                leave="transition-opacity duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
                 className="flex flex-col justify-center items-center text-center"

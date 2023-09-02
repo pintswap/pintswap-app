@@ -2,11 +2,14 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar, Card, GradientBorder, Header, Input } from '../components';
 import { IUserDataProps, usePeersContext } from '../stores';
 import { useSearch } from '../hooks';
+import { useMemo } from 'react';
 
 export const PeersView = () => {
     const navigate = useNavigate();
     const { peersData, peersLoading, peersError } = usePeersContext();
     const { query, list, handleChange } = useSearch(peersData);
+
+    const memoizedList = useMemo(() => list, [list]);
 
     return (
         <div className="flex flex-col">
@@ -24,7 +27,7 @@ export const PeersView = () => {
                 className={`grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
             >
                 {!peersLoading
-                    ? (list as IUserDataProps[]).map((peer, i) => {
+                    ? (memoizedList as IUserDataProps[]).map((peer, i) => {
                           return (
                               <button
                                   key={`unique-peer-${i}`}

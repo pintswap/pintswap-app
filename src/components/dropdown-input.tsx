@@ -1,7 +1,7 @@
 import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { MdChevronRight } from 'react-icons/md';
-import { alphaTokenSort, classNames, getSymbol, ITokenProps, TOKENS } from '../utils';
+import { alphaTokenSort, dropdownItemClass, getSymbol, ITokenProps, TOKENS } from '../utils';
 import { Asset } from './asset';
 import { ethers } from 'ethers6';
 import { useSearch } from '../hooks';
@@ -40,12 +40,6 @@ export const DropdownInput = ({
 
     const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
 
-    const dropdownItemClass = (active: boolean) =>
-        classNames(
-            active ? 'bg-neutral-900 text-neutral-200' : 'text-neutral-300',
-            'flex items-center gap-2 px-4 py-2 text-sm transition duration-150 w-full',
-        );
-
     useEffect(() => {
         if (isToken && ethers.isAddress(query)) {
             (async () => {
@@ -68,7 +62,7 @@ export const DropdownInput = ({
                 <Menu.Button
                     className={`inline-flex w-full overflow-x-hidden ${
                         !disabled ? 'justify-between' : 'justify-end'
-                    } items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-150 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
+                    } items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-100 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
                         loading ? 'animate-pulse' : ''
                     } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
                     disabled={disabled}

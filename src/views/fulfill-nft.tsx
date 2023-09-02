@@ -77,7 +77,7 @@ export const FulfillNFTView = () => {
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="transition-opacity duration-150"
+                leave="transition-opacity duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
                 className="flex flex-col justify-center items-center text-center"

@@ -10,9 +10,8 @@ type ICardProps = {
     tabs?: string[];
     defaultTab?: string;
     onTabChange?: any;
+    bg?: string;
 };
-
-const backgroundColor = `bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-950 via-brand-dashboard to-brand-dashboard`;
 
 export const Card = ({
     children,
@@ -23,7 +22,12 @@ export const Card = ({
     tabs,
     defaultTab,
     onTabChange,
+    bg,
 }: ICardProps) => {
+    const backgroundColor = bg
+        ? bg
+        : `bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-950 via-brand-dashboard to-brand-dashboard`;
+
     if (type === 'skeleton') {
         return (
             <div role="status" className="w-full animate-pulse">

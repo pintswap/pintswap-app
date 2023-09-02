@@ -1,5 +1,5 @@
 import { useAccount } from 'wagmi';
-import { MdGroup, MdLineAxis, MdCreate, MdSearch, MdTagFaces } from 'react-icons/md';
+import { MdGroup, MdLineAxis, MdCreate, MdSearch, MdTagFaces, MdSwapHoriz } from 'react-icons/md';
 
 export const useDashNav = () => {
     const { address } = useAccount();
@@ -7,6 +7,13 @@ export const useDashNav = () => {
     const ICON_SIZE = '20px';
     const NAV_ITEMS = address
         ? [
+              // {
+              //     text: 'Swap',
+              //     route: '/swap',
+              //     disabled: false,
+              //     icon: <MdSwapHoriz size={ICON_SIZE} />,
+              //     tooltip: '',
+              // },
               {
                   text: 'Markets',
                   route: '/markets',
