@@ -25,6 +25,7 @@ export const PeerTickerFulfill = ({
         price: '',
         output: '',
     });
+    const [tradePrices, setTradePrices] = useState({ usd: '0', eth: '0' });
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -49,8 +50,39 @@ export const PeerTickerFulfill = ({
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 
-    const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
-    const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
+    const inputAsset = tradeType === 'bids' ? tradeAsset : baseAsset;
+    const outputAsset = tradeType === 'bids' ? baseAsset : tradeAsset;
+
+    const determinePrice = () => {
+        if (prices.eth) {
+            switch (baseAsset?.toLowerCase()) {
+                case 'eth':
+                case 'weth':
+                    return {
+                        usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
+                        eth: Number(limitOrder.price).toString(),
+                    };
+                case 'usdc':
+                case 'usdt':
+                case 'dai':
+                    return {
+                        usd: Number(limitOrder.price).toString(),
+                        eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
+                    };
+                default:
+                    // TODO
+                    return {
+                        usd: '0',
+                        eth: '0',
+                    };
+            }
+        } else {
+            return {
+                usd: '0',
+                eth: '0',
+            };
+        }
+    };
 
     useEffect(() => {
         (async () => {
@@ -95,33 +127,10 @@ export const PeerTickerFulfill = ({
                         setLimitOrder(limit);
                     }
                 }
+                setTradePrices(determinePrice());
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);
-
-    const determinePrice = () => {
-        switch (baseAsset?.toLowerCase()) {
-            case 'eth':
-            case 'weth':
-                return {
-                    usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
-                    eth: Number(limitOrder.price).toString(),
-                };
-            case 'usdc':
-            case 'usdt':
-            case 'dai':
-                return {
-                    usd: Number(limitOrder.price).toString(),
-                    eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
-                };
-            default:
-                // TODO
-                return {
-                    usd: '0',
-                    eth: '0',
-                };
-        }
-    };
 
     return (
         <>
@@ -145,12 +154,12 @@ export const PeerTickerFulfill = ({
                                 <span className="flex justify-between items-end">
                                     <span>Price</span>
                                     <span className="text-indigo-600 opacity-80 text-xs">
-                                        <SmartPrice price={determinePrice().eth} /> ETH
+                                        <SmartPrice price={tradePrices.eth} /> ETH
                                     </span>
                                 </span>
                             }
                             placeholder="Price"
-                            value={determinePrice().usd}
+                            value={tradePrices.usd}
                             type="smartDisplay"
                             loading={loading.trade}
                             disabled

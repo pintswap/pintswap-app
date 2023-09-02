@@ -1,9 +1,11 @@
 import { MdArrowDownward, MdExpandMore, MdSettings } from 'react-icons/md';
 import { Asset, Button, Card, CoinInput, SelectCoin, Statistic, TxDetails } from '../components';
 import { useTrade } from '../hooks';
+import { useEffect } from 'react';
 
 export const SwapView = () => {
-    const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
+    const { fulfillTrade, loading, trade, steps, order, error, setTrade } = useTrade();
+
     return (
         <div className="flex flex-col">
             <h2 className="view-header text-left">Swap</h2>
@@ -44,23 +46,32 @@ export const SwapView = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <Statistic
                             label="Price"
-                            value={`$1545.75`}
+                            value={`1545.75`}
                             size="lg"
                             className="w-full sm:col-span-2"
                             change={-8.2}
+                            type="usd"
                         />
                         <Statistic
                             label="Liquidity"
-                            value={`$29.3M`}
+                            value={`29.3M`}
                             className="w-full"
                             change={-1.1}
+                            type="usd"
                         />
-                        <Statistic label="Volume" value={`$8.5M`} className="w-full" change={2.9} />
+                        <Statistic
+                            label="Volume"
+                            value={`8.5M`}
+                            className="w-full"
+                            change={2.9}
+                            type="usd"
+                        />
                         <Statistic
                             label="Market Cap"
-                            value={`$221.9B`}
+                            value={`221.9B`}
                             className="w-full"
                             change={-6.4}
+                            type="usd"
                         />
                         <Statistic label="Supply" value={`120.1M`} className="w-full" />
                     </div>

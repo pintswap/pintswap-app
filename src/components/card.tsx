@@ -81,7 +81,7 @@ export const Card = ({
     if (type === 'inner') {
         return (
             <div
-                className={`flex flex-col bg-neutral-800 pt-3 p-4 lg:px-6 rounded-lg shadow-inner shadow-neutral-700 w-full transition duration-200 ${className}`}
+                className={`flex flex-col bg-neutral-900 pt-3 p-4 lg:px-6 rounded-lg shadow-inner shadow-neutral-600 w-full transition duration-150 ${className}`}
             >
                 {header && !tabs && (
                     <h3 className="md:text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">

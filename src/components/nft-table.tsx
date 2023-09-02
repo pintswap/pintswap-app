@@ -77,7 +77,7 @@ export const NFTTable = ({
                                     className="hover:cursor-pointer"
                                     onClick={() => navigate(`/fulfill/${peer}/nft/${hash}`)}
                                 >
-                                    <Card type="inner" className="hover:bg-gray-900">
+                                    <Card type="inner" className="hover:bg-neutral-800">
                                         <NFTDisplay nft={nft} height={'h-60'} />
                                     </Card>
                                 </ImageListItem>
