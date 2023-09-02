@@ -11,7 +11,10 @@ export const Navbar = () => {
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-    const logoSize = width < breakpoints.lg ? '180' : '200';
+    const logoSize =
+        width < breakpoints.lg
+            ? { width: '180', height: '22.63' }
+            : { width: '200', height: '25.14' };
 
     return (
         <>
@@ -23,8 +26,8 @@ export const Navbar = () => {
                         <img
                             src="/logo/ps-logo-drip.png"
                             alt="PintSwap Logo"
-                            height={logoSize}
-                            width={logoSize}
+                            height={logoSize.height}
+                            width={logoSize.width}
                         />
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>

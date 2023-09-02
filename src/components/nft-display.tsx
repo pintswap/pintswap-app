@@ -47,6 +47,7 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                         <TextDisplay label="ID" value={toNumber(_nft?.tokenId || toBigInt(0))} />
                         {_nft?.token && _nft?.amount && (
                             <TextDisplay label="Price" value={`${_nft?.amount} ${_nft?.token}`} />
+                            // TODO: get USD price
                         )}
                     </div>
                 </div>

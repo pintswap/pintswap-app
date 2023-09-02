@@ -5,16 +5,18 @@ import { Card } from './card';
 import { Input } from './input';
 import { useSearch } from '../hooks';
 import { ITokenProps, TOKENS, alphaTokenSort, dropdownItemClass } from '../utils';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 
 type ISelectCoin = {
     asset?: string;
+    onAssetClick?: any;
+    modalOpen: boolean;
+    setModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const SelectCoin = ({ asset }: ISelectCoin) => {
+export const SelectCoin = ({ asset, onAssetClick, modalOpen, setModalOpen }: ISelectCoin) => {
     const { query, list, handleChange } = useSearch(TOKENS);
-    const [modalOpen, setModalOpen] = useState(false);
 
     return (
         <>
@@ -73,7 +75,7 @@ export const SelectCoin = ({ asset }: ISelectCoin) => {
                                             className={`${dropdownItemClass(
                                                 false,
                                             )} transition duration-100 hover:bg-neutral-900`}
-                                            onClick={() => console.log(el.symbol)}
+                                            onClick={onAssetClick}
                                         >
                                             <Asset
                                                 icon={el.logoURI}

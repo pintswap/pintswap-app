@@ -1,4 +1,5 @@
 import { BiTrendingUp, BiTrendingDown } from 'react-icons/bi';
+import { SmartPrice } from './smart-price';
 
 type IStatistic = {
     label: string;
@@ -8,9 +9,19 @@ type IStatistic = {
     className?: string;
     change?: number | string;
     hover?: boolean;
+    type?: 'usd' | 'default';
 };
 
-export const Statistic = ({ label, value, size, align, className, change, hover }: IStatistic) => {
+export const Statistic = ({
+    label,
+    value,
+    size,
+    align,
+    className,
+    change,
+    hover,
+    type,
+}: IStatistic) => {
     const sizeClass = () => {
         switch (size) {
             case 'xl':
@@ -56,7 +67,10 @@ export const Statistic = ({ label, value, size, align, className, change, hover 
                     </span>
                 )}
             </div>
-            <span className={`${sizeClass().value}`}>{value}</span>
+            <span className={`${sizeClass().value}`}>
+                {type === 'usd' && `$${' '}`}
+                <SmartPrice price={String(value)} />
+            </span>
         </div>
     );
 };

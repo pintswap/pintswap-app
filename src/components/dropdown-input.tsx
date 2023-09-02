@@ -62,7 +62,7 @@ export const DropdownInput = ({
                 <Menu.Button
                     className={`inline-flex w-full overflow-x-hidden ${
                         !disabled ? 'justify-between' : 'justify-end'
-                    } items-center gap-x-1.5 bg-neutral-600 p-2 hover:bg-neutral-500 transition duration-100 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
+                    } items-center gap-x-1.5 bg-neutral-800 p-2 hover:bg-neutral-700 transition duration-100 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
                         loading ? 'animate-pulse' : ''
                     } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
                     disabled={disabled}

@@ -159,7 +159,10 @@ export async function getV2Token({
 export async function tryBoth(props: { address: string; history?: 'day' | 'hour' }) {
     if (!props) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
     const v2Token = await getV2Token(props);
-    const v3Token = getV3Token(props);
+    if (v2Token?.token) return v2Token;
+    const v3Token = await getV3Token(props);
+    if (v3Token?.token) return v3Token;
+    return { token: null };
 }
 
 export async function getEthPrice(): Promise<string> {

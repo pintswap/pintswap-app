@@ -8,12 +8,14 @@ export type IPricesStoreProps = {
     eth: string;
     pricesLoading: boolean;
     pricesError: boolean;
+    formatToUsd: any; // TODO
 };
 
 const DEFAULT_PRICES: IPricesStoreProps = {
     eth: '0',
     pricesLoading: false,
     pricesError: false,
+    formatToUsd: () => {},
 };
 
 // Context
@@ -27,6 +29,13 @@ export function PricesStore(props: { children: ReactNode }) {
         setPrices({ ...prices, [asset]: usdValue });
     }
 
+    function formatToUsd(derivedEth?: string) {
+        if (prices.eth && Number(prices.eth) > 0) {
+            return (Number(prices.eth) * Number(derivedEth)).toString();
+        }
+        return '0';
+    }
+
     useEffect(() => {
         const interval = setInterval(async () => {
             const promises = await Promise.all([getEthPrice()]);
@@ -37,7 +46,11 @@ export function PricesStore(props: { children: ReactNode }) {
         return () => clearInterval(interval);
     }, []);
 
-    return <PricesContext.Provider value={prices}>{props.children}</PricesContext.Provider>;
+    return (
+        <PricesContext.Provider value={{ ...prices, formatToUsd }}>
+            {props.children}
+        </PricesContext.Provider>
+    );
 }
 
 // Independent
