@@ -4,7 +4,21 @@ import { useTrade } from '../hooks';
 import { useEffect } from 'react';
 
 export const SwapView = () => {
-    const { fulfillTrade, loading, trade, steps, order, error, setTrade } = useTrade();
+    const {
+        fulfillTrade,
+        loading,
+        trade,
+        steps,
+        order,
+        error,
+        setTrade,
+        updateTrade,
+        isButtonDisabled,
+    } = useTrade();
+
+    useEffect(() => {
+        if (!trade.gives.token) updateTrade('gives.token', 'ETH');
+    }, [trade]);
 
     return (
         <div className="flex flex-col">
@@ -18,22 +32,38 @@ export const SwapView = () => {
                         </button>
                     </div>
 
-                    <div className="flex flex-col justify-center items-center gap-2">
-                        {/* TODO */}
-                        <CoinInput label="You give" value={''} onChange={() => {}} asset="ETH" />
+                    <div className="flex flex-col justify-center items-center gap-1.5">
+                        <CoinInput
+                            label="You give"
+                            value={trade.gives.amount}
+                            onAssetClick={(e: any) =>
+                                updateTrade('gives.token', e.target.innerText)
+                            }
+                            onAmountChange={({ currentTarget }) =>
+                                updateTrade('gives.amount', currentTarget.value)
+                            }
+                            asset={trade.gives.token}
+                        />
 
                         <button className="absolute p-1.5 bg-brand-dashboard rounded-lg">
                             <div className="bg-neutral-800 p-1 rounded-md">
                                 <MdArrowDownward />
                             </div>
                         </button>
-                        {/* TODO */}
-                        <CoinInput label="You get" value={''} onChange={() => {}} asset="USDC" />
+                        <CoinInput
+                            label="You get"
+                            value={trade.gets.amount || ''}
+                            onAssetClick={(e: any) => updateTrade('gets.token', e.target.innerText)}
+                            onAmountChange={({ currentTarget }) =>
+                                updateTrade('gets.amount', currentTarget.value)
+                            }
+                            asset={trade.gets.token}
+                        />
                     </div>
 
                     <div className="flex flex-col gap-2 mt-2">
                         <TxDetails trade={trade} loading={loading.trade} type="fulfill" />
-                        <Button className="w-full rounded-lg !py-3" disabled>
+                        <Button className="w-full rounded-lg !py-3" disabled={isButtonDisabled()}>
                             Swap
                         </Button>
                     </div>

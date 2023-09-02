@@ -280,6 +280,16 @@ export const useTrade = () => {
         setTrade(newTrade);
     };
 
+    const isButtonDisabled = () => {
+        return (
+            !trade.gives.token ||
+            (!trade.gives.amount && !trade.gives.tokenId) ||
+            !trade.gets.token ||
+            !trade.gets.amount ||
+            !!order.orderHash
+        );
+    };
+
     // Clear Trade
     const clearTrade = () => setTrade(EMPTY_TRADE);
 
@@ -455,5 +465,6 @@ export const useTrade = () => {
         setFill,
         setTrade,
         clearTrade,
+        isButtonDisabled,
     };
 };
