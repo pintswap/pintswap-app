@@ -1,20 +1,18 @@
-import { MdArrowDownward, MdExpandMore, MdSettings } from 'react-icons/md';
-import { Asset, Button, Card, CoinInput, SelectCoin, Statistic, TxDetails } from '../components';
-import { useTrade } from '../hooks';
+import { MdArrowDownward, MdSettings } from 'react-icons/md';
+import { Button, Card, CoinInput, Statistic, TxDetails } from '../components';
+import { useSubgraph, useTrade } from '../hooks';
 import { useEffect } from 'react';
+import { TOKENS_BY_SYMBOL } from '../utils';
+import { usePricesContext } from '../stores';
 
 export const SwapView = () => {
-    const {
-        fulfillTrade,
-        loading,
-        trade,
-        steps,
-        order,
-        error,
-        setTrade,
-        updateTrade,
-        isButtonDisabled,
-    } = useTrade();
+    const { loading, trade, broadcastTrade, updateTrade, isButtonDisabled } = useTrade();
+    const { formatToUsd } = usePricesContext();
+    const { data } = useSubgraph({
+        address: TOKENS_BY_SYMBOL[trade.gets.token]
+            ? TOKENS_BY_SYMBOL[trade.gets.token]?.address
+            : trade.gets.token,
+    });
 
     useEffect(() => {
         if (!trade.gives.token) updateTrade('gives.token', 'ETH');
@@ -63,7 +61,14 @@ export const SwapView = () => {
 
                     <div className="flex flex-col gap-2 mt-2">
                         <TxDetails trade={trade} loading={loading.trade} type="fulfill" />
-                        <Button className="w-full rounded-lg !py-3" disabled={isButtonDisabled()}>
+                        <Button
+                            className="w-full rounded-lg !py-3"
+                            disabled={isButtonDisabled()}
+                            loadingText="Broadcasting"
+                            loading={loading.broadcast}
+                            onClick={broadcastTrade}
+                            checkNetwork
+                        >
                             Swap
                         </Button>
                     </div>
@@ -76,34 +81,45 @@ export const SwapView = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <Statistic
                             label="Price"
-                            value={`1545.75`}
+                            value={data?.token ? formatToUsd(data?.token?.derivedETH) : '-'}
                             size="lg"
                             className="w-full sm:col-span-2"
-                            change={-8.2}
+                            // change={-8.2}
                             type="usd"
                         />
                         <Statistic
                             label="Liquidity"
-                            value={`29.3M`}
+                            value={
+                                data?.token
+                                    ? (
+                                          Number(data?.token?.totalLiquidity) *
+                                          Number(formatToUsd(data?.token?.derivedETH))
+                                      ).toString()
+                                    : '-'
+                            }
                             className="w-full"
-                            change={-1.1}
+                            // change={-1.1}
                             type="usd"
                         />
                         <Statistic
-                            label="Volume"
-                            value={`8.5M`}
+                            label="Total Volume"
+                            value={data?.token ? data?.token?.tradeVolumeUSD : `-`}
                             className="w-full"
-                            change={2.9}
+                            // change={2.9}
                             type="usd"
                         />
                         <Statistic
                             label="Market Cap"
-                            value={`221.9B`}
+                            value={`-`}
                             className="w-full"
-                            change={-6.4}
+                            // change={-6.4}
                             type="usd"
                         />
-                        <Statistic label="Supply" value={`120.1M`} className="w-full" />
+                        <Statistic
+                            label="Supply"
+                            value={data?.token ? data?.token?.totalSupply : `-`}
+                            className="w-full"
+                        />
                     </div>
                 </Card>
             </div>
