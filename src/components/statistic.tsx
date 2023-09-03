@@ -54,7 +54,7 @@ export const Statistic = ({
 
     return (
         <div
-            className={`transition duration-100 rounded-lg py-3 px-4 border-2 bg-neutral-900 border-neutral-700 flex flex-col ${
+            className={`transition duration-100 rounded-lg py-3 px-4 outline outline-2 bg-neutral-900 outline-neutral-700 flex flex-col ${
                 sizeClass().gap
             } ${alignClass()} ${className || ''} ${hover ? 'hover:border-indigo-600' : ''}`}
         >

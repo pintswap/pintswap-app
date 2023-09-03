@@ -22,7 +22,7 @@ export const CoinInput = ({ label, value, onAmountChange, onAssetClick, asset }:
             {label && <span className="text-xs text-gray-400">{label}</span>}
             <div className="flex justify-between items-center gap-0.5">
                 <input
-                    className="py-3 text-2xl outline-none ring-0 bg-neutral-900 remove-arrow box-content min-w-0"
+                    className="py-3 text-2xl outline-none ring-0 bg-neutral-900 remove-arrow min-w-0 w-fit"
                     placeholder="0"
                     type="number"
                     onChange={onAmountChange}

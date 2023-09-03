@@ -1,12 +1,13 @@
 import { MdArrowDownward, MdSettings } from 'react-icons/md';
-import { Button, Card, CoinInput, Statistic, TxDetails } from '../components';
+import { Button, Card, CoinInput, Statistic, TooltipWrapper, TxDetails } from '../components';
 import { useSubgraph, useTrade } from '../hooks';
 import { useEffect } from 'react';
 import { TOKENS_BY_SYMBOL } from '../utils';
 import { usePricesContext } from '../stores';
 
 export const SwapView = () => {
-    const { loading, trade, broadcastTrade, updateTrade, isButtonDisabled } = useTrade();
+    const { loading, trade, broadcastTrade, updateTrade, isButtonDisabled, clearTrade } =
+        useTrade();
     const { formatToUsd } = usePricesContext();
     const { data } = useSubgraph({
         address: TOKENS_BY_SYMBOL[trade.gets.token]
@@ -23,11 +24,13 @@ export const SwapView = () => {
             <h2 className="view-header text-left">Swap</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-3 lg:gap-4">
                 <Card className="!py-4">
-                    <div className="flex items-center justify-between mb-6 px-0.5">
+                    <div className="flex items-center justify-between mb-2 md:mb-3 lg:mb-4 px-0.5">
                         <span></span>
-                        <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-100">
-                            <MdSettings size={20} />
-                        </button>
+                        <TooltipWrapper text="Working on it" id="working-on-it-swap-settings">
+                            <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-100">
+                                <MdSettings size={20} />
+                            </button>
+                        </TooltipWrapper>
                     </div>
 
                     <div className="flex flex-col justify-center items-center gap-1.5">
@@ -74,11 +77,11 @@ export const SwapView = () => {
                     </div>
                 </Card>
                 <Card className="!py-4 h-fit">
-                    <div className="flex items-center justify-between mb-6 px-0.5">
+                    <div className="flex items-center justify-between mb-2 md:mb-3 lg:mb-4 px-0.5">
                         <span>Statistics</span>
                         <span className="text-sm">24 hr</span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Statistic
                             label="Price"
                             value={data?.token ? formatToUsd(data?.token?.derivedETH) : '-'}

@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { getEthPrice } from '../api';
 
-const ETH_INTERVAL = 1000 * 60;
+const ETH_INTERVAL = 1000 * 30;
 
 // Types
 export type IPricesStoreProps = {
@@ -30,20 +30,24 @@ export function PricesStore(props: { children: ReactNode }) {
     }
 
     function formatToUsd(derivedEth?: string) {
-        if (prices.eth && Number(prices.eth) > 0) {
+        if (Number(prices?.eth) > 0) {
             return (Number(prices.eth) * Number(derivedEth)).toString();
         }
         return '0';
     }
 
     useEffect(() => {
-        const interval = setInterval(async () => {
-            const promises = await Promise.all([getEthPrice()]);
-            if (promises) updatePrice('eth', promises[0]);
-            else setPrices({ ...prices, pricesError: true });
-        }, ETH_INTERVAL);
+        (async () => {
+            const firstRun = await getEthPrice();
+            updatePrice('eth', firstRun);
+            const interval = setInterval(async () => {
+                const promises = await Promise.all([getEthPrice()]);
+                if (promises.length) updatePrice('eth', promises[0]);
+                else setPrices({ ...prices, pricesError: true });
+            }, ETH_INTERVAL);
 
-        return () => clearInterval(interval);
+            return () => clearInterval(interval);
+        })().catch((err) => console.error(err));
     }, []);
 
     return (
