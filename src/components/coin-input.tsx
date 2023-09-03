@@ -1,5 +1,9 @@
 import { ChangeEventHandler, useState } from 'react';
 import { SelectCoin } from './select-coin';
+import { useAccount, useBalance } from 'wagmi';
+import { toAddress } from '../utils';
+import { ethers } from 'ethers6';
+import { SmartPrice } from './smart-price';
 
 type ICoinInput = {
     label?: string;
@@ -7,22 +11,34 @@ type ICoinInput = {
     onAmountChange: ChangeEventHandler<HTMLInputElement>;
     onAssetClick?: any;
     asset?: string;
+    max?: boolean;
 };
 
-export const CoinInput = ({ label, value, onAmountChange, onAssetClick, asset }: ICoinInput) => {
+export const CoinInput = ({
+    label,
+    value,
+    onAmountChange,
+    onAssetClick,
+    asset,
+    max,
+}: ICoinInput) => {
     const [open, setOpen] = useState(false);
-
+    const { address } = useAccount();
+    const balance = useBalance(
+        asset === 'ETH' ? { address } : { token: toAddress(asset || '') as any, address },
+    );
+    console.log('balance', balance);
     function clickAndClose(e: any) {
         onAssetClick(e);
         setOpen(false);
     }
 
     return (
-        <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-4 pt-1 rounded-lg shadow-inner shadow-black">
+        <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-3 pt-1 rounded-lg shadow-inner shadow-black">
             {label && <span className="text-xs text-gray-400">{label}</span>}
-            <div className="flex justify-between items-center gap-0.5">
+            <div className="flex justify-between items-center gap-0.5 pt-4 pb-1">
                 <input
-                    className="py-3 text-2xl outline-none ring-0 bg-neutral-900 remove-arrow min-w-0 w-fit"
+                    className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow min-w-0 w-fit"
                     placeholder="0"
                     type="number"
                     onChange={onAmountChange}
@@ -35,6 +51,30 @@ export const CoinInput = ({ label, value, onAmountChange, onAssetClick, asset }:
                     setModalOpen={setOpen}
                 />
             </div>
+            {max ? (
+                <div className="w-full flex justify-end">
+                    <small>
+                        <button
+                            className="pt-1 pr-0.5 text-indigo-600 hover:text-indigo-500 transition duration-100"
+                            onClick={() => {
+                                const amount = {
+                                    currentTarget: {
+                                        value:
+                                            value === balance?.data?.formatted
+                                                ? '0'
+                                                : balance?.data?.formatted,
+                                    },
+                                };
+                                onAmountChange(amount as any);
+                            }}
+                        >
+                            MAX: <SmartPrice price={balance?.data?.formatted || '0'} />
+                        </button>
+                    </small>
+                </div>
+            ) : (
+                <div className="h-[23px]" />
+            )}
         </div>
     );
 };

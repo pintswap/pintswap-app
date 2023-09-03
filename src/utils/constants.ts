@@ -6,7 +6,7 @@ import { ethers } from 'ethers6';
 import { TOKENS } from './token-list';
 
 // COMMON
-export const APP_VERSION = 'v1.1 BETA';
+export const APP_VERSION = 'v1.2 BETA';
 export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
 export const BASE_URL: string = window.location.origin;

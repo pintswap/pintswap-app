@@ -2,7 +2,7 @@ import { MdArrowDownward, MdSettings } from 'react-icons/md';
 import { Button, Card, CoinInput, Statistic, TooltipWrapper, TxDetails } from '../components';
 import { useSubgraph, useTrade } from '../hooks';
 import { useEffect } from 'react';
-import { TOKENS_BY_SYMBOL, percentChange } from '../utils';
+import { TOKENS_BY_SYMBOL, percentChange, toAddress } from '../utils';
 import { usePricesContext } from '../stores';
 
 export const SwapView = () => {
@@ -10,9 +10,7 @@ export const SwapView = () => {
         useTrade();
     const { formatToUsd } = usePricesContext();
     const { data } = useSubgraph({
-        address: TOKENS_BY_SYMBOL[trade.gets.token]
-            ? TOKENS_BY_SYMBOL[trade.gets.token]?.address
-            : trade.gets.token,
+        address: toAddress(trade.gets.token),
         history: 'day',
     });
 
@@ -63,6 +61,7 @@ export const SwapView = () => {
                                 updateTrade('gives.amount', currentTarget.value)
                             }
                             asset={trade.gives.token}
+                            max
                         />
 
                         <button className="absolute p-1.5 bg-brand-dashboard rounded-lg">
@@ -97,8 +96,8 @@ export const SwapView = () => {
                 </Card>
                 <Card className="!py-4 h-fit">
                     <div className="flex items-center justify-between mb-2 md:mb-3 lg:mb-4 px-0.5">
-                        <span>Statistics</span>
-                        <span className="text-sm">24 hr</span>
+                        <span>Uniswap Stats</span>
+                        {/* <span className="text-sm">24 hr</span> */}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <Statistic
