@@ -108,15 +108,9 @@ export async function getV2Token({
     const buildOptionalQuery = () => {
         if (!history || history === 'hour') return '';
         return `
-        tokenDayDatas (where: { token: "${formattedAddress}" }) {
-          id
-          date
-          dailyVolumeToken
-          dailyVolumeETH
+        tokenDayDatas (orderBy: date, orderDirection: desc, first: 3, where: { token: "${formattedAddress}" }) {
           dailyVolumeUSD
           dailyTxns
-          totalLiquidityToken
-          totalLiquidityETH
           totalLiquidityUSD
           priceUSD
         }`;

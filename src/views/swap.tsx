@@ -2,7 +2,7 @@ import { MdArrowDownward, MdSettings } from 'react-icons/md';
 import { Button, Card, CoinInput, Statistic, TooltipWrapper, TxDetails } from '../components';
 import { useSubgraph, useTrade } from '../hooks';
 import { useEffect } from 'react';
-import { TOKENS_BY_SYMBOL } from '../utils';
+import { TOKENS_BY_SYMBOL, percentChange } from '../utils';
 import { usePricesContext } from '../stores';
 
 export const SwapView = () => {
@@ -13,7 +13,26 @@ export const SwapView = () => {
         address: TOKENS_BY_SYMBOL[trade.gets.token]
             ? TOKENS_BY_SYMBOL[trade.gets.token]?.address
             : trade.gets.token,
+        history: 'day',
     });
+
+    const calculateChanges = () => {
+        if (data?.token && data?.tokenDayDatas?.length) {
+            return {
+                price: percentChange(
+                    formatToUsd(data?.token?.derivedETH),
+                    data?.tokenDayDatas[1]?.priceUSD,
+                ),
+                liq: '',
+                vol: '',
+            };
+        }
+        return {
+            price: undefined,
+            liq: undefined,
+            vol: undefined,
+        };
+    };
 
     useEffect(() => {
         if (!trade.gives.token) updateTrade('gives.token', 'ETH');
@@ -87,7 +106,7 @@ export const SwapView = () => {
                             value={data?.token ? formatToUsd(data?.token?.derivedETH) : '-'}
                             size="lg"
                             className="w-full sm:col-span-2"
-                            // change={-8.2}
+                            // change={}
                             type="usd"
                         />
                         <Statistic
@@ -105,22 +124,25 @@ export const SwapView = () => {
                             type="usd"
                         />
                         <Statistic
-                            label="Total Volume"
-                            value={data?.token ? data?.token?.tradeVolumeUSD : `-`}
+                            label="Daily Volume"
+                            value={
+                                data?.tokenDayDatas?.length
+                                    ? data?.tokenDayDatas[0]?.dailyVolumeUSD
+                                    : `-`
+                            }
                             className="w-full"
                             // change={2.9}
                             type="usd"
                         />
                         <Statistic
-                            label="Market Cap"
-                            value={`-`}
+                            label="Total Volume"
+                            value={data?.token ? data?.token?.tradeVolumeUSD : `-`}
                             className="w-full"
-                            // change={-6.4}
                             type="usd"
                         />
                         <Statistic
-                            label="Supply"
-                            value={data?.token ? data?.token?.totalSupply : `-`}
+                            label="TX Count"
+                            value={data?.token ? data?.token?.txCount : `-`}
                             className="w-full"
                         />
                     </div>

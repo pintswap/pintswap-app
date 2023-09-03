@@ -11,6 +11,7 @@ export * from './token-list';
 export * from './types';
 export * from './wallet';
 export * from './format';
+export * from './math';
 
 export function defer() {
     let resolve,
