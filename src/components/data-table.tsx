@@ -126,7 +126,7 @@ export const DataTable = (props: IDataTableProps) => {
 const CustomRow = (props: IDataTableProps) => {
     const { columns, data, loading, type, peer, getRow, activeRow, column } = props;
     const { userData } = useUserContext();
-    const { pair } = useParams();
+    const { pair, base: baseAsset } = useParams();
     const {
         pintswap: { module },
     } = usePintswapContext();
@@ -213,71 +213,80 @@ const CustomRow = (props: IDataTableProps) => {
     const determineCell = (cell: string, index: number) => {
         if (!cell) return <></>;
         const charsShown = width > 900 ? 4 : 5;
-        if (cell) {
-            if (
-                typeof cell === 'string' &&
-                cell.startsWith('pint') &&
-                cell.length > 30 &&
-                (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
-            ) {
-                // Address / MultiAddr
-                return truncate(cell, charsShown);
-            } else if (!isNaN(Number(cell))) {
-                let _cell: string;
-                if (pair) {
-                    const [quote, base] = pair.split('-');
-                    if (
-                        cols[cols.length - 1] === 'Price' &&
-                        index === 2 &&
-                        (base.includes('eth') ||
-                            base === 'usdc' ||
-                            base === 'usdt' ||
-                            base === 'dai')
-                    ) {
-                        // Display USD value if possible
-                        if (base.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
-                        else _cell = cell;
-                        console.log(cells);
-                        return (
-                            <span className="flex items-center gap-1">
-                                <small>$</small>
-                                <SmartPrice price={_cell} />
-                            </span>
-                        );
-                    }
-                    _cell = cell;
-                    return <SmartPrice price={_cell} />;
-                } else {
-                    // Display Big Number
-                    _cell = cell;
-                    return <SmartPrice price={_cell} />;
+        if (type === 'manage') {
+            return (
+                <Button
+                    className="text-red-400 hover:text-red-500 w-full text-right"
+                    type="transparent"
+                    onClick={(e) => handleDelete(e, cells[0])}
+                >
+                    Cancel
+                </Button>
+            );
+        }
+        if (
+            typeof cell === 'string' &&
+            cell.startsWith('pint') &&
+            cell.length > 30 &&
+            (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
+        ) {
+            // Address / MultiAddr
+            return truncate(cell, charsShown);
+        } else if (!isNaN(Number(cell))) {
+            let _cell: string;
+            if (pair) {
+                const [quote, base] = pair.split('-');
+                if (
+                    index === 2 &&
+                    (base.includes('eth') || base === 'usdc' || base === 'usdt' || base === 'dai')
+                ) {
+                    // Display USD value if possible
+                    if (base.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
+                    else _cell = cell;
+                    return (
+                        <span className="flex items-center gap-1">
+                            <small>$</small>
+                            <SmartPrice price={_cell} />
+                        </span>
+                    );
                 }
-            } else if (type === 'peer-orderbook' && cell.includes('/')) {
-                return (
-                    <span className="flex items-center gap-1">
-                        <Asset symbol={cell.split('/')[0]} size={20} />
-                        <span>/</span>
-                        <Asset symbol={cell.split('/')[1]} size={20} />
-                    </span>
-                );
+                _cell = cell;
+                return <SmartPrice price={_cell} />;
             } else {
-                // Default
-                return formatCell(cell);
+                // Display USD value if possible
+                const _baseAsset = baseAsset?.toLowerCase();
+                if (
+                    (_baseAsset?.includes('eth') ||
+                        _baseAsset === 'usdc' ||
+                        _baseAsset === 'usdt' ||
+                        _baseAsset === 'dai') &&
+                    index === 0
+                ) {
+                    // Display USD value if possible
+                    if (_baseAsset.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
+                    else _cell = cell;
+                    return (
+                        <span className="flex items-center gap-1">
+                            <small>$</small>
+                            <SmartPrice price={_cell} />
+                        </span>
+                    );
+                }
+                // Display Big Number
+                _cell = cell;
+                return <SmartPrice price={_cell} />;
             }
+        } else if (type === 'peer-orderbook' && cell.includes('/')) {
+            return (
+                <span className="flex items-center gap-1">
+                    <Asset symbol={cell.split('/')[0]} size={20} />
+                    <span>/</span>
+                    <Asset symbol={cell.split('/')[1]} size={20} />
+                </span>
+            );
         } else {
-            if (type === 'manage') {
-                return (
-                    <Button
-                        className="text-red-400 hover:text-red-500 w-full text-right"
-                        type="transparent"
-                        onClick={(e) => handleDelete(e, cells[0])}
-                    >
-                        Cancel
-                    </Button>
-                );
-            } else {
-                return <></>;
-            }
+            // Default
+            return formatCell(cell);
         }
     };
     // Desktop
