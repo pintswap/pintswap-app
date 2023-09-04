@@ -39,7 +39,8 @@ export const getTokenAddress = (token: ITokenProps | undefined, raw: ITransfer) 
     } else return '';
 };
 
-export async function getSymbol(address: any, provider: any) {
+export async function getSymbol(address?: string, provider?: any) {
+    if (!address || !provider) return '';
     address = ethers.getAddress(address);
     const match = TOKENS.find((v) => ethers.getAddress(v.address) === address);
     if (match) return match.symbol;
