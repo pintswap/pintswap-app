@@ -5,7 +5,14 @@ import { ethers } from 'ethers6';
 import { Button, Card, CopyClipboard, PageStatus, Input, SwitchToggle, SmartPrice } from '.';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
-import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
+import {
+    BASE_URL,
+    toLimitOrder,
+    formattedFromTransfer,
+    matchOffers,
+    TESTING,
+    calculatePrices,
+} from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 import { usePricesContext } from '../stores';
@@ -53,41 +60,35 @@ export const PeerTickerFulfill = ({
     const inputAsset = tradeType === 'bids' ? tradeAsset : baseAsset;
     const outputAsset = tradeType === 'bids' ? baseAsset : tradeAsset;
 
-    const determinePrice = () => {
-        if (prices.eth) {
-            switch (baseAsset?.toLowerCase()) {
-                case 'eth':
-                case 'weth':
-                    return {
-                        usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
-                        eth: Number(limitOrder.price).toString(),
-                    };
-                case 'usdc':
-                case 'usdt':
-                case 'dai':
-                    return {
-                        usd: Number(limitOrder.price).toString(),
-                        eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
-                    };
-                default:
-                    // TODO
-                    return {
-                        usd: '0',
-                        eth: '0',
-                    };
-            }
-        } else {
-            return {
-                usd: '0',
-                eth: '0',
-            };
+    const determinePrice = async () => {
+        switch (baseAsset?.toLowerCase()) {
+            case 'eth':
+            case 'weth':
+                return {
+                    usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
+                    eth: Number(limitOrder.price).toString(),
+                };
+            case 'usdc':
+            case 'usdt':
+            case 'dai':
+                return {
+                    usd: Number(limitOrder.price).toString(),
+                    eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
+                };
+            default:
+                return await calculatePrices({
+                    tokenA: trade?.gives?.token,
+                    amountA: trade?.gives?.amount,
+                    tokenB: trade?.gets?.token,
+                    amountB: trade?.gets?.amount,
+                    eth: prices.eth,
+                });
         }
     };
 
     useEffect(() => {
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
-                //                const decimals = await getDecimals(matchInputs.list[0].gives.token, signer);
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
                 const limit = (await toLimitOrder(
                     {
@@ -127,7 +128,7 @@ export const PeerTickerFulfill = ({
                         setLimitOrder(limit);
                     }
                 }
-                setTradePrices(determinePrice());
+                setTradePrices(await determinePrice());
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);

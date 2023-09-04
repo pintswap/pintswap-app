@@ -2,7 +2,7 @@ import { MdArrowDownward, MdSettings } from 'react-icons/md';
 import { Button, Card, CoinInput, Statistic, TooltipWrapper, TxDetails } from '../components';
 import { useSubgraph, useTrade } from '../hooks';
 import { useEffect } from 'react';
-import { TOKENS_BY_SYMBOL, percentChange, toAddress } from '../utils';
+import { percentChange, toAddress } from '../utils';
 import { usePricesContext } from '../stores';
 
 export const SwapView = () => {

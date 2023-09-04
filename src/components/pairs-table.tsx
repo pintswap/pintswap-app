@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { Asset, Card, SmartPrice } from '../components';
 import { useOffersContext, usePintswapContext } from '../stores';
 import { getTokenLogo } from '../utils/token';
-import { resolveName } from '../hooks/trade';
 import { useParams } from 'react-router-dom';
 import { groupBy } from 'lodash';
 
@@ -35,7 +34,7 @@ export const PairsTable = () => {
         (async () => {
             if (multiaddr && pintswap && pintswap.module) {
                 if (multiaddr.match('.drip'))
-                    setResolved(await resolveName(pintswap.module, multiaddr));
+                    setResolved(await pintswap.module.resolveName(multiaddr));
                 else setResolved(multiaddr);
             }
         })().catch((err) => console.error(err));

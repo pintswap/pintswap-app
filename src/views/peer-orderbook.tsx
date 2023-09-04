@@ -5,7 +5,6 @@ import { useLimitOrders } from '../hooks';
 import { useEffect, useState } from 'react';
 import { useOffersContext, usePintswapContext } from '../stores';
 import { groupBy } from 'lodash';
-import { resolveName } from '../hooks/trade';
 import { bestPrices } from '../utils';
 import { Tab } from '@headlessui/react';
 
@@ -53,7 +52,7 @@ export const PeerOrderbookView = () => {
         (async () => {
             if (multiaddr && pintswap && pintswap.module) {
                 if (multiaddr.match('.drip'))
-                    setResolved(await resolveName(pintswap.module, multiaddr));
+                    setResolved(await pintswap.module.resolveName(multiaddr));
                 else setResolved(multiaddr);
             }
         })().catch((err) => console.error(err));

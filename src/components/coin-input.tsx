@@ -12,6 +12,7 @@ type ICoinInput = {
     onAssetClick?: any;
     asset?: string;
     max?: boolean;
+    fairValue?: string;
 };
 
 export const CoinInput = ({
@@ -21,20 +22,21 @@ export const CoinInput = ({
     onAssetClick,
     asset,
     max,
+    fairValue,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const { address } = useAccount();
     const balance = useBalance(
         asset === 'ETH' ? { address } : { token: toAddress(asset || '') as any, address },
     );
-    console.log('balance', balance);
+
     function clickAndClose(e: any) {
         onAssetClick(e);
         setOpen(false);
     }
 
     return (
-        <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-3 pt-1 rounded-lg shadow-inner shadow-black">
+        <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black">
             {label && <span className="text-xs text-gray-400">{label}</span>}
             <div className="flex justify-between items-center gap-0.5 pt-4 pb-1">
                 <input
@@ -69,6 +71,18 @@ export const CoinInput = ({
                             }}
                         >
                             MAX: <SmartPrice price={balance?.data?.formatted || '0'} />
+                        </button>
+                    </small>
+                </div>
+            ) : fairValue ? (
+                // TODO
+                <div className="w-full flex justify-end">
+                    <small>
+                        <button
+                            className="pt-1 pr-0.5 text-indigo-600 hover:text-indigo-500 transition duration-100"
+                            onClick={() => {}}
+                        >
+                            FAIR VALUE: <SmartPrice price={'0'} />
                         </button>
                     </small>
                 </div>
