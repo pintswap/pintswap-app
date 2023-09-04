@@ -5,18 +5,11 @@ import { ethers } from 'ethers6';
 import { Button, Card, CopyClipboard, PageStatus, Input, SwitchToggle, SmartPrice } from '.';
 import { useTrade } from '../hooks/trade';
 import { useAccount, useSigner } from 'wagmi';
-import {
-    BASE_URL,
-    toLimitOrder,
-    formattedFromTransfer,
-    matchOffers,
-    TESTING,
-    calculatePrices,
-    renderPrices,
-} from '../utils';
+import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 import { usePricesContext } from '../stores';
+import { usePrices } from '../hooks';
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -33,7 +26,12 @@ export const PeerTickerFulfill = ({
         price: '',
         output: '',
     });
-    const [tradePrices, setTradePrices] = useState({ usd: '0', eth: '0' });
+    const { data: renderPrices } = usePrices({
+        baseAsset,
+        quotePrice: limitOrder.price,
+        gets: trade.gets,
+        gives: trade.gives,
+    });
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
@@ -103,14 +101,6 @@ export const PeerTickerFulfill = ({
                         setLimitOrder(limit);
                     }
                 }
-                setTradePrices(
-                    await renderPrices({
-                        base: baseAsset,
-                        quote: limitOrder.price,
-                        trade,
-                        prices,
-                    }),
-                );
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);
@@ -137,12 +127,12 @@ export const PeerTickerFulfill = ({
                                 <span className="flex justify-between items-end">
                                     <span>Price</span>
                                     <span className="text-indigo-600 opacity-80 text-xs">
-                                        <SmartPrice price={tradePrices.eth} /> ETH
+                                        <SmartPrice price={renderPrices.eth} /> ETH
                                     </span>
                                 </span>
                             }
                             placeholder="Price"
-                            value={tradePrices.usd}
+                            value={renderPrices.usd}
                             type="smartDisplay"
                             loading={loading.trade}
                             disabled

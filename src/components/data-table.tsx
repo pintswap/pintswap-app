@@ -5,13 +5,14 @@ import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables
 import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
-import { renderPrices, truncate } from '../utils/format';
+import { truncate } from '../utils/format';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
 import { useOffersContext, usePintswapContext, usePricesContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
+import { usePrices } from '../hooks';
 
 type IDataTableProps = {
     title?: string;
@@ -125,21 +126,24 @@ export const DataTable = (props: IDataTableProps) => {
 
 const CustomRow = (props: IDataTableProps) => {
     const { columns, data, loading, type, peer, getRow, activeRow, column } = props;
+    const cells = Object.values(data as object);
+    (cells as any).index = (data as any).index;
+
     const { userData } = useUserContext();
     const { pair, base: baseAsset } = useParams();
     const {
         pintswap: { module },
     } = usePintswapContext();
     const { eth } = usePricesContext();
-    const cells = Object.values(data as object);
-    (cells as any).index = (data as any).index;
     const cols = columns as string[];
     const { width } = useWindowSize();
     const { deleteTrade } = useOffersContext();
     const navigate = useNavigate();
+
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
     } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''}`;
+
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
         deleteTrade(hash);
@@ -233,6 +237,8 @@ const CustomRow = (props: IDataTableProps) => {
             // Address / MultiAddr
             return truncate(cell, charsShown);
         } else if (!isNaN(Number(cell))) {
+            console.log('ahhh', cells, type);
+            // TODO: optimize and enable for all pairs, not just eth and stables
             let _cell: string;
             if (pair) {
                 const [quote, base] = pair.split('-');
@@ -254,13 +260,17 @@ const CustomRow = (props: IDataTableProps) => {
                 return <SmartPrice price={_cell} />;
             } else {
                 // Display USD value if possible
-                const _baseAsset = baseAsset?.toLowerCase();
+                const _baseAsset = (
+                    type === 'peer-orderbook' && cells[0].includes('/')
+                        ? cells[0].split('/')[1]
+                        : baseAsset
+                )?.toLowerCase();
                 if (
                     (_baseAsset?.includes('eth') ||
                         _baseAsset === 'usdc' ||
                         _baseAsset === 'usdt' ||
                         _baseAsset === 'dai') &&
-                    index === 0
+                    (index === 0 || type === 'peer-orderbook')
                 ) {
                     // Display USD value if possible
                     if (_baseAsset.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();

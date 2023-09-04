@@ -6,3 +6,4 @@ export * from './dashboard-navigation';
 export * from './pagination';
 export * from './search';
 export * from './subgraph';
+export * from './prices';
