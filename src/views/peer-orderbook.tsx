@@ -87,7 +87,14 @@ export const PeerOrderbookView = () => {
 
                 <div className="justify-self-end hidden sm:block">
                     <TransitionModal
-                        button={<Avatar peer={multiaddr} nameClass="text-xl" type="profile" />}
+                        button={
+                            <Avatar
+                                peer={multiaddr}
+                                nameClass="text-xl"
+                                type="profile"
+                                align="left"
+                            />
+                        }
                     >
                         <Avatar peer={multiaddr} size={300} />
                     </TransitionModal>
