@@ -12,6 +12,7 @@ import {
     matchOffers,
     TESTING,
     calculatePrices,
+    renderPrices,
 } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
@@ -60,32 +61,6 @@ export const PeerTickerFulfill = ({
     const inputAsset = tradeType === 'bids' ? tradeAsset : baseAsset;
     const outputAsset = tradeType === 'bids' ? baseAsset : tradeAsset;
 
-    const determinePrice = async () => {
-        switch (baseAsset?.toLowerCase()) {
-            case 'eth':
-            case 'weth':
-                return {
-                    usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
-                    eth: Number(limitOrder.price).toString(),
-                };
-            case 'usdc':
-            case 'usdt':
-            case 'dai':
-                return {
-                    usd: Number(limitOrder.price).toString(),
-                    eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
-                };
-            default:
-                return await calculatePrices({
-                    tokenA: trade?.gives?.token,
-                    amountA: trade?.gives?.amount,
-                    tokenB: trade?.gets?.token,
-                    amountB: trade?.gets?.amount,
-                    eth: prices.eth,
-                });
-        }
-    };
-
     useEffect(() => {
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
@@ -128,7 +103,14 @@ export const PeerTickerFulfill = ({
                         setLimitOrder(limit);
                     }
                 }
-                setTradePrices(await determinePrice());
+                setTradePrices(
+                    await renderPrices({
+                        base: baseAsset,
+                        quote: limitOrder.price,
+                        trade,
+                        prices,
+                    }),
+                );
             }
         })().catch((err) => console.error(err));
     }, [matchInputs]);

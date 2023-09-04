@@ -5,10 +5,10 @@ import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables
 import { SpinnerLoader } from './spinner-loader';
 import { useWindowSize } from '../hooks/window-size';
 import { useNavigate } from 'react-router-dom';
-import { truncate } from '../utils/format';
+import { renderPrices, truncate } from '../utils/format';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
-import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
+import { useOffersContext, usePintswapContext, usePricesContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
@@ -34,6 +34,7 @@ type IDataTableProps = {
     getRow?: Dispatch<SetStateAction<any[]>>;
     trade?: string;
     activeRow?: string;
+    column?: number;
 };
 
 export const DataTable = (props: IDataTableProps) => {
@@ -111,6 +112,7 @@ export const DataTable = (props: IDataTableProps) => {
                                     getRow={getRow}
                                     activeRow={activeRow}
                                     trade={trade}
+                                    column={rowIndex}
                                 />
                             );
                         },
@@ -122,12 +124,13 @@ export const DataTable = (props: IDataTableProps) => {
 };
 
 const CustomRow = (props: IDataTableProps) => {
-    const { columns, data, loading, type, peer, getRow, activeRow } = props;
+    const { columns, data, loading, type, peer, getRow, activeRow, column } = props;
     const { userData } = useUserContext();
     const { pair } = useParams();
     const {
         pintswap: { module },
     } = usePintswapContext();
+    const { eth } = usePricesContext();
     const cells = Object.values(data as object);
     (cells as any).index = (data as any).index;
     const cols = columns as string[];
@@ -207,7 +210,7 @@ const CustomRow = (props: IDataTableProps) => {
         }
     };
 
-    const determineCell = (cell: string) => {
+    const determineCell = (cell: string, index: number) => {
         if (!cell) return <></>;
         const charsShown = width > 900 ? 4 : 5;
         if (cell) {
@@ -220,8 +223,35 @@ const CustomRow = (props: IDataTableProps) => {
                 // Address / MultiAddr
                 return truncate(cell, charsShown);
             } else if (!isNaN(Number(cell))) {
-                // Big Number
-                return <SmartPrice price={cell} />;
+                let _cell: string;
+                if (pair) {
+                    const [quote, base] = pair.split('-');
+                    if (
+                        cols[cols.length - 1] === 'Price' &&
+                        index === 2 &&
+                        (base.includes('eth') ||
+                            base === 'usdc' ||
+                            base === 'usdt' ||
+                            base === 'dai')
+                    ) {
+                        // Display USD value if possible
+                        if (base.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
+                        else _cell = cell;
+                        console.log(cells);
+                        return (
+                            <span className="flex items-center gap-1">
+                                <small>$</small>
+                                <SmartPrice price={_cell} />
+                            </span>
+                        );
+                    }
+                    _cell = cell;
+                    return <SmartPrice price={_cell} />;
+                } else {
+                    // Display Big Number
+                    _cell = cell;
+                    return <SmartPrice price={_cell} />;
+                }
             } else if (type === 'peer-orderbook' && cell.includes('/')) {
                 return (
                     <span className="flex items-center gap-1">
@@ -262,7 +292,7 @@ const CustomRow = (props: IDataTableProps) => {
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
                         className={`py-2 pl-4`}
                     >
-                        {determineCell(cell)}
+                        {determineCell(cell, i)}
                     </td>
                 ))}
             </tr>
@@ -280,7 +310,7 @@ const CustomRow = (props: IDataTableProps) => {
                         className={`py-[1px] flex justify-between items-center text-sm`}
                     >
                         <span className="text-gray-300 font-thin">{cols[i]}</span>
-                        <span className={`${!cell ? 'w-full' : ''}`}>{determineCell(cell)}</span>
+                        <span className={`${!cell ? 'w-full' : ''}`}>{determineCell(cell, i)}</span>
                     </td>
                 ))}
             </tr>

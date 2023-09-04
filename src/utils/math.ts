@@ -1,6 +1,8 @@
 import { tryBoth } from '../api';
 import { isAddress } from 'ethers6';
 import { TOKENS_BY_SYMBOL } from './constants';
+import { IPricesStoreProps } from '../stores';
+import { IOffer } from '@pintswap/sdk';
 
 export const percentChange = (oldVal: string | number, newVal: string | number) => {
     return (((Number(oldVal) - Number(newVal)) / Number(newVal)) * 100).toFixed(2);

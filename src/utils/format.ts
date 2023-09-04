@@ -1,3 +1,45 @@
+import { IOffer } from '@pintswap/sdk';
+import { IPricesStoreProps } from '../stores';
+import { calculatePrices } from './math';
+
+// PRICES
+export const renderPrices = async ({
+    base,
+    quote,
+    prices,
+    trade,
+}: {
+    base?: string;
+    quote?: string;
+    prices?: IPricesStoreProps;
+    trade?: IOffer;
+}) => {
+    if (!base || !quote || !trade || !prices) return { usd: '0', eth: '0' };
+    switch (base?.toLowerCase()) {
+        case 'eth':
+        case 'weth':
+            return {
+                usd: (Number(quote) * Number(prices.eth)).toString(),
+                eth: Number(quote).toString(),
+            };
+        case 'usdc':
+        case 'usdt':
+        case 'dai':
+            return {
+                usd: Number(quote).toString(),
+                eth: (Number(quote) / Number(prices.eth)).toString(),
+            };
+        default:
+            return await calculatePrices({
+                tokenA: trade?.gives?.token,
+                amountA: trade?.gives?.amount,
+                tokenB: trade?.gets?.token,
+                amountB: trade?.gets?.amount,
+                eth: prices.eth,
+            });
+    }
+};
+
 // STRING
 export function truncate(s: string, amount?: number) {
     if (!s) return s;
