@@ -7,13 +7,13 @@ export const useDashNav = () => {
     const ICON_SIZE = '20px';
     const NAV_ITEMS = address
         ? [
-              // {
-              //     text: 'Swap',
-              //     route: '/swap',
-              //     disabled: false,
-              //     icon: <MdSwapHoriz size={ICON_SIZE} />,
-              //     tooltip: '',
-              // },
+              //   {
+              //       text: 'Swap',
+              //       route: '/swap',
+              //       disabled: false,
+              //       icon: <MdSwapHoriz size={ICON_SIZE} />,
+              //       tooltip: 'Automatically swap tokens',
+              //   },
               {
                   text: 'Markets',
                   route: '/markets',

@@ -8,10 +8,11 @@ import { useNavigate } from 'react-router-dom';
 import { truncate } from '../utils/format';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
-import { useOffersContext, usePintswapContext, useUserContext } from '../stores';
+import { useOffersContext, usePintswapContext, usePricesContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
+import { usePrices } from '../hooks';
 
 type IDataTableProps = {
     title?: string;
@@ -34,6 +35,7 @@ type IDataTableProps = {
     getRow?: Dispatch<SetStateAction<any[]>>;
     trade?: string;
     activeRow?: string;
+    column?: number;
 };
 
 export const DataTable = (props: IDataTableProps) => {
@@ -111,6 +113,7 @@ export const DataTable = (props: IDataTableProps) => {
                                     getRow={getRow}
                                     activeRow={activeRow}
                                     trade={trade}
+                                    column={rowIndex}
                                 />
                             );
                         },
@@ -122,21 +125,25 @@ export const DataTable = (props: IDataTableProps) => {
 };
 
 const CustomRow = (props: IDataTableProps) => {
-    const { columns, data, loading, type, peer, getRow, activeRow } = props;
+    const { columns, data, loading, type, peer, getRow, activeRow, column } = props;
+    const cells = Object.values(data as object);
+    (cells as any).index = (data as any).index;
+
     const { userData } = useUserContext();
-    const { pair } = useParams();
+    const { pair, base: baseAsset } = useParams();
     const {
         pintswap: { module },
     } = usePintswapContext();
-    const cells = Object.values(data as object);
-    (cells as any).index = (data as any).index;
+    const { eth } = usePricesContext();
     const cols = columns as string[];
     const { width } = useWindowSize();
     const { deleteTrade } = useOffersContext();
     const navigate = useNavigate();
+
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
     } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''}`;
+
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
         deleteTrade(hash);
@@ -207,47 +214,89 @@ const CustomRow = (props: IDataTableProps) => {
         }
     };
 
-    const determineCell = (cell: string) => {
+    const determineCell = (cell: string, index: number) => {
         if (!cell) return <></>;
         const charsShown = width > 900 ? 4 : 5;
-        if (cell) {
-            if (
-                typeof cell === 'string' &&
-                cell.startsWith('pint') &&
-                cell.length > 30 &&
-                (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
-            ) {
-                // Address / MultiAddr
-                return truncate(cell, charsShown);
-            } else if (!isNaN(Number(cell))) {
-                // Big Number
-                return <SmartPrice price={cell} />;
-            } else if (type === 'peer-orderbook' && cell.includes('/')) {
-                return (
-                    <span className="flex items-center gap-1">
-                        <Asset symbol={cell.split('/')[0]} size={20} />
-                        <span>/</span>
-                        <Asset symbol={cell.split('/')[1]} size={20} />
-                    </span>
-                );
+        if (type === 'manage') {
+            return (
+                <Button
+                    className="text-red-400 hover:text-red-500 w-full text-right"
+                    type="transparent"
+                    onClick={(e) => handleDelete(e, cells[0])}
+                >
+                    Cancel
+                </Button>
+            );
+        }
+        if (
+            typeof cell === 'string' &&
+            cell.startsWith('pint') &&
+            cell.length > 30 &&
+            (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
+        ) {
+            // Address / MultiAddr
+            return truncate(cell, charsShown);
+        } else if (!isNaN(Number(cell))) {
+            console.log('ahhh', cells, type);
+            // TODO: optimize and enable for all pairs, not just eth and stables
+            let _cell: string;
+            if (pair) {
+                const [quote, base] = pair.split('-');
+                if (
+                    index === 2 &&
+                    (base.includes('eth') || base === 'usdc' || base === 'usdt' || base === 'dai')
+                ) {
+                    // Display USD value if possible
+                    if (base.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
+                    else _cell = cell;
+                    return (
+                        <span className="flex items-center gap-1">
+                            <small>$</small>
+                            <SmartPrice price={_cell} />
+                        </span>
+                    );
+                }
+                _cell = cell;
+                return <SmartPrice price={_cell} />;
             } else {
-                // Default
-                return formatCell(cell);
+                // Display USD value if possible
+                const _baseAsset = (
+                    type === 'peer-orderbook' && cells[0].includes('/')
+                        ? cells[0].split('/')[1]
+                        : baseAsset
+                )?.toLowerCase();
+                if (
+                    (_baseAsset?.includes('eth') ||
+                        _baseAsset === 'usdc' ||
+                        _baseAsset === 'usdt' ||
+                        _baseAsset === 'dai') &&
+                    (index === 0 || type === 'peer-orderbook')
+                ) {
+                    // Display USD value if possible
+                    if (_baseAsset.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
+                    else _cell = cell;
+                    return (
+                        <span className="flex items-center gap-1">
+                            <small>$</small>
+                            <SmartPrice price={_cell} />
+                        </span>
+                    );
+                }
+                // Display Big Number
+                _cell = cell;
+                return <SmartPrice price={_cell} />;
             }
+        } else if (type === 'peer-orderbook' && cell.includes('/')) {
+            return (
+                <span className="flex items-center gap-1">
+                    <Asset symbol={cell.split('/')[0]} size={20} />
+                    <span>/</span>
+                    <Asset symbol={cell.split('/')[1]} size={20} />
+                </span>
+            );
         } else {
-            if (type === 'manage') {
-                return (
-                    <Button
-                        className="text-red-400 hover:text-red-500 w-full text-right"
-                        type="transparent"
-                        onClick={(e) => handleDelete(e, cells[0])}
-                    >
-                        Cancel
-                    </Button>
-                );
-            } else {
-                return <></>;
-            }
+            // Default
+            return formatCell(cell);
         }
     };
     // Desktop
@@ -262,7 +311,7 @@ const CustomRow = (props: IDataTableProps) => {
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
                         className={`py-2 pl-4`}
                     >
-                        {determineCell(cell)}
+                        {determineCell(cell, i)}
                     </td>
                 ))}
             </tr>
@@ -280,7 +329,7 @@ const CustomRow = (props: IDataTableProps) => {
                         className={`py-[1px] flex justify-between items-center text-sm`}
                     >
                         <span className="text-gray-300 font-thin">{cols[i]}</span>
-                        <span className={`${!cell ? 'w-full' : ''}`}>{determineCell(cell)}</span>
+                        <span className={`${!cell ? 'w-full' : ''}`}>{determineCell(cell, i)}</span>
                     </td>
                 ))}
             </tr>

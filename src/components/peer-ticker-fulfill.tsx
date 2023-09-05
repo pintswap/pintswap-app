@@ -9,6 +9,7 @@ import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } f
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 import { usePricesContext } from '../stores';
+import { usePrices } from '../hooks';
 
 export const PeerTickerFulfill = ({
     tradeType,
@@ -24,6 +25,12 @@ export const PeerTickerFulfill = ({
     const [limitOrder, setLimitOrder] = useState<any>({
         price: '',
         output: '',
+    });
+    const { data: renderPrices } = usePrices({
+        baseAsset,
+        quotePrice: limitOrder.price,
+        gets: trade.gets,
+        gives: trade.gives,
     });
 
     const handleAmountChange = async (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,13 +56,12 @@ export const PeerTickerFulfill = ({
         if (!isEqual(newMatchInputs, matchInputs)) setMatchInputs(newMatchInputs);
     };
 
-    const inputAsset = useMemo(() => (tradeType === 'bids' ? tradeAsset : baseAsset), [tradeType]);
-    const outputAsset = useMemo(() => (tradeType === 'bids' ? baseAsset : tradeAsset), [tradeType]);
+    const inputAsset = tradeType === 'bids' ? tradeAsset : baseAsset;
+    const outputAsset = tradeType === 'bids' ? baseAsset : tradeAsset;
 
     useEffect(() => {
         (async () => {
             if (!isNaN(Number(matchInputs.amount)) && matchInputs.list.length) {
-                //                const decimals = await getDecimals(matchInputs.list[0].gives.token, signer);
                 const match = matchOffers(matchInputs.list, matchInputs.amount);
                 const limit = (await toLimitOrder(
                     {
@@ -99,30 +105,6 @@ export const PeerTickerFulfill = ({
         })().catch((err) => console.error(err));
     }, [matchInputs]);
 
-    const determinePrice = () => {
-        switch (baseAsset?.toLowerCase()) {
-            case 'eth':
-            case 'weth':
-                return {
-                    usd: (Number(limitOrder.price) * Number(prices.eth)).toString(),
-                    eth: Number(limitOrder.price).toString(),
-                };
-            case 'usdc':
-            case 'usdt':
-            case 'dai':
-                return {
-                    usd: Number(limitOrder.price).toString(),
-                    eth: (Number(limitOrder.price) / Number(prices.eth)).toString(),
-                };
-            default:
-                // TODO
-                return {
-                    usd: '0',
-                    eth: '0',
-                };
-        }
-    };
-
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
@@ -145,12 +127,12 @@ export const PeerTickerFulfill = ({
                                 <span className="flex justify-between items-end">
                                     <span>Price</span>
                                     <span className="text-indigo-600 opacity-80 text-xs">
-                                        <SmartPrice price={determinePrice().eth} /> ETH
+                                        <SmartPrice price={renderPrices.eth} /> ETH
                                     </span>
                                 </span>
                             }
                             placeholder="Price"
-                            value={determinePrice().usd}
+                            value={renderPrices.usd}
                             type="smartDisplay"
                             loading={loading.trade}
                             disabled

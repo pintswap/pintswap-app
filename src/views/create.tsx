@@ -36,7 +36,16 @@ const columns = [
 ];
 
 export const CreateView = () => {
-    const { broadcastTrade, loading, trade, order, updateTrade, steps, clearTrade } = useTrade();
+    const {
+        broadcastTrade,
+        loading,
+        trade,
+        order,
+        updateTrade,
+        steps,
+        clearTrade,
+        isButtonDisabled,
+    } = useTrade();
     const { pintswap } = usePintswapContext();
     const { userData, toggleActive } = useUserContext();
     const { userTrades } = useOffersContext();
@@ -241,13 +250,7 @@ export const CreateView = () => {
                             loadingText="Broadcasting"
                             loading={loading.broadcast}
                             onClick={broadcastTrade}
-                            disabled={
-                                !trade.gives.token ||
-                                (!trade.gives.amount && !trade.gives.tokenId) ||
-                                !trade.gets.token ||
-                                !trade.gets.amount ||
-                                !!order.orderHash
-                            }
+                            disabled={isButtonDisabled()}
                         >
                             Create Trade
                         </Button>

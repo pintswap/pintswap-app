@@ -23,17 +23,6 @@ import {
 } from '../utils';
 import { ethers } from 'ethers';
 
-export const resolveName = async (pintswap: any, name: any) => {
-    while (true as any) {
-        try {
-            return await pintswap.resolveName(name);
-        } catch (e) {
-            if (!(e as any).message.match('no valid addresses')) throw e;
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-        }
-    }
-};
-
 export const useTrade = () => {
     const params = useParams();
     const { pathname } = useLocation();
@@ -170,7 +159,7 @@ export const useTrade = () => {
                 console.error(err);
             }
         }
-        toast.loading('Connecting to peer...', { toastId: 'findPeer' });
+        // toast.loading('Connecting to peer...', { toastId: 'findPeer' });
     };
 
     // Fulfill trade
@@ -181,7 +170,7 @@ export const useTrade = () => {
             try {
                 let multiAddr = order.multiAddr;
                 if (multiAddr.match(/\.drip$/))
-                    multiAddr = await resolveName(module, order.multiAddr);
+                    multiAddr = await module.resolveName(order.multiAddr);
                 const peeredUp = multiAddr;
                 // If NFT swap
                 if (window.location.hash.match('nft') && hash) {
@@ -212,7 +201,7 @@ export const useTrade = () => {
     // Get single trade or all peer trades
     const getTrades = async (multiAddr: string, orderHash?: string) => {
         let resolved = multiAddr;
-        if (multiAddr.match(/\.drip$/) && module) resolved = await resolveName(module, multiAddr);
+        if (multiAddr.match(/\.drip$/) && module) resolved = await module.resolveName(multiAddr);
         if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
         const trade = hash ? userTrades.get(hash) : undefined;
         // MAKER
@@ -278,6 +267,16 @@ export const useTrade = () => {
         parts.slice(0, -1).reduce((r: any, v: any) => r[v], newTrade)[parts[parts.length - 1]] =
             val;
         setTrade(newTrade);
+    };
+
+    const isButtonDisabled = () => {
+        return (
+            !trade.gives.token ||
+            (!trade.gives.amount && !trade.gives.tokenId) ||
+            !trade.gets.token ||
+            !trade.gets.amount ||
+            !!order.orderHash
+        );
     };
 
     // Clear Trade
@@ -455,5 +454,6 @@ export const useTrade = () => {
         setFill,
         setTrade,
         clearTrade,
+        isButtonDisabled,
     };
 };

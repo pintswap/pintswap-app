@@ -4,17 +4,37 @@ import { TransitionModal } from './modal';
 import { Card } from './card';
 import { Input } from './input';
 import { useSearch } from '../hooks';
-import { ITokenProps, TOKENS, alphaTokenSort, dropdownItemClass } from '../utils';
-import { useState } from 'react';
+import { ITokenProps, TOKENS, alphaTokenSort, dropdownItemClass, getSymbol } from '../utils';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
+import { ethers } from 'ethers6';
+import { usePintswapContext } from '../stores';
 
 type ISelectCoin = {
     asset?: string;
+    onAssetClick?: any;
+    modalOpen: boolean;
+    setModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export const SelectCoin = ({ asset }: ISelectCoin) => {
+export const SelectCoin = ({ asset, onAssetClick, modalOpen, setModalOpen }: ISelectCoin) => {
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
     const { query, list, handleChange } = useSearch(TOKENS);
-    const [modalOpen, setModalOpen] = useState(false);
+
+    const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
+
+    useEffect(() => {
+        if (ethers.isAddress(query)) {
+            (async () => {
+                setUnknownToken({ ...unknownToken, loading: true });
+                const symbol = await getSymbol(query, module?.signer);
+                if (symbol) setUnknownToken({ symbol, loading: false });
+                else setUnknownToken({ ...unknownToken, loading: false });
+            })().catch((err) => console.error(err));
+        }
+    }, [query, module?.signer]);
 
     return (
         <>
@@ -58,22 +78,33 @@ export const SelectCoin = ({ asset }: ISelectCoin) => {
 
                         <Input
                             value={query}
-                            onChange={handleChange}
+                            onChange={(e) => {
+                                handleChange(e);
+                                const {
+                                    target: { value },
+                                } = e;
+                                if (value?.startsWith('0x') && value?.length === 42) {
+                                    setTimeout(
+                                        () => onAssetClick({ target: { innerText: value } }),
+                                        200,
+                                    );
+                                }
+                            }}
                             placeholder="Search name or paste address"
                             type="search"
                             className="w-full"
                         />
 
-                        <div className="h-80 overflow-y-scroll">
+                        <ul className="h-80 overflow-y-scroll">
                             {(list as ITokenProps[])
                                 .sort(alphaTokenSort)
                                 .map((el: ITokenProps, i) => (
-                                    <div key={`dropdown-item-${el.symbol}-${i}`}>
+                                    <li key={`dropdown-item-${el.symbol}-${i}`}>
                                         <button
                                             className={`${dropdownItemClass(
                                                 false,
                                             )} transition duration-100 hover:bg-neutral-900`}
-                                            onClick={() => console.log(el.symbol)}
+                                            onClick={onAssetClick}
                                         >
                                             <Asset
                                                 icon={el.logoURI}
@@ -83,9 +114,25 @@ export const SelectCoin = ({ asset }: ISelectCoin) => {
                                                 size={30}
                                             />
                                         </button>
-                                    </div>
+                                    </li>
                                 ))}
-                        </div>
+                            {ethers.isAddress(query) && (
+                                <li>
+                                    <button
+                                        className={`${dropdownItemClass(false)} ${
+                                            unknownToken.loading ? 'animate-pulse' : ''
+                                        }`}
+                                        onClick={onAssetClick}
+                                    >
+                                        <Asset
+                                            symbol={unknownToken.symbol}
+                                            icon="/img/generic.svg"
+                                            alt="Unknown Token"
+                                        />
+                                    </button>
+                                </li>
+                            )}
+                        </ul>
                     </div>
                 </Card>
             </TransitionModal>

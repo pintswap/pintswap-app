@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../stores';
 import { DEFAULT_AVATAR, formatPeerName, getFormattedPeer, getPeerImg, truncate } from '../utils';
 import { StatusIndicator } from './status-indicator';
@@ -47,12 +46,11 @@ export const Avatar = ({
     const { module } = pintswap;
     const { userData, setUserData } = useUserContext();
     const { peersData } = usePeersContext();
-    const navigate = useNavigate();
 
     const peerName = typeof peer === 'string' ? peer : peer?.name;
     const isUser = peerName === module?.address;
 
-    const alginClass = () => {
+    const alignClass = () => {
         switch (align) {
             case 'left':
                 return 'items-start justify-start text-left';
@@ -211,7 +209,7 @@ export const Avatar = ({
                         </>
                     )}
                 </div>
-                <div className="flex flex-col pl-3 sm:pl-4">
+                <div className={`flex flex-col pl-3 sm:pl-4 ${alignClass()}`}>
                     <div>
                         {loading || peerData.loading ? (
                             <div
@@ -248,11 +246,11 @@ export const Avatar = ({
     } else {
         return (
             <div className={loading || peerData.loading ? 'animate-pulse' : ''}>
-                <div className={`flex flex-col gap-1 ${alginClass()}`}>
+                <div className={`flex flex-col gap-1 ${alignClass()}`}>
                     <div
                         className={`flex ${
                             direction === 'horizontal' ? 'flex-row' : 'flex-col'
-                        } gap-3 ${alginClass()} !items-center`}
+                        } gap-3 ${alignClass()} !items-center`}
                     >
                         {withImage && (
                             <>

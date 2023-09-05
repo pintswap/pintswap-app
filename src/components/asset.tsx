@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ITokenProps, TOKENS } from '../utils';
+import { ITokenProps, TOKENS, getSymbol } from '../utils';
+import { usePintswapContext } from '../stores';
 
 type IAssetProps = {
     icon?: string;
@@ -18,6 +19,9 @@ export const Asset = ({
     size = 25,
     fontSize = 'text-md',
 }: IAssetProps) => {
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
     const [assetData, setAssetData] = useState<any>({
         symbol: symbol || '',
         icon: icon || '',
@@ -25,11 +29,19 @@ export const Asset = ({
     });
 
     useEffect(() => {
-        const found = TOKENS.find(
-            (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
-        );
-        if (found) setAssetData({ ...found, icon: found.logoURI, alt: alt || found.symbol });
-        else setAssetData({ ...assetData, icon: '/img/generic.svg' });
+        (async () => {
+            const found = TOKENS.find(
+                (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
+            );
+            if (found) setAssetData({ ...found, icon: found.logoURI, alt: alt || found.symbol });
+            else {
+                setAssetData({
+                    ...assetData,
+                    icon: '/img/generic.svg',
+                    symbol: await getSymbol(symbol, module?.signer),
+                });
+            }
+        })().catch((err) => console.error(err));
     }, [symbol]);
 
     return (

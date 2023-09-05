@@ -25,6 +25,7 @@ type IInputProps = {
     noSpace?: boolean;
     enableStateCss?: boolean;
     wrapperClass?: string;
+    inputClass?: string;
 };
 
 export const Input = ({
@@ -42,6 +43,7 @@ export const Input = ({
     noSpace,
     enableStateCss,
     wrapperClass,
+    inputClass,
 }: IInputProps) => {
     const { address } = useAccount();
     const {
@@ -109,7 +111,9 @@ export const Input = ({
                 )}
 
                 <div
-                    className={`flex items-center justify-end gap-1 p-2 bg-neutral-600 box-border text-right`}
+                    className={`flex items-center justify-end gap-1 p-2 bg-neutral-800 box-border text-right rounded ${
+                        inputClass || ''
+                    }`}
                 >
                     <span>$</span>
                     <SmartPrice price={value} />
@@ -126,7 +130,7 @@ export const Input = ({
             )}
 
             <input
-                className={`flex items-center gap-1 p-2 bg-neutral-600 box-border ${
+                className={`flex items-center gap-1 p-2 bg-neutral-800 box-border ${
                     enableStateCss ? 'disabled:bg-neutral-900' : ''
                 } rounded ${className} ${type === 'number' ? 'text-right' : ''} ${
                     loading ? 'animate-pulse' : ''
