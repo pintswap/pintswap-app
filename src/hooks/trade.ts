@@ -159,7 +159,7 @@ export const useTrade = () => {
                 console.error(err);
             }
         }
-        toast.loading('Connecting to peer...', { toastId: 'findPeer' });
+        // toast.loading('Connecting to peer...', { toastId: 'findPeer' });
     };
 
     // Fulfill trade

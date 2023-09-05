@@ -63,7 +63,7 @@ function App() {
                     <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
                     <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
 
-                    <Route path="*" element={<Navigate to="/swap" />} />
+                    <Route path="*" element={<Navigate to="/markets" />} />
                 </Routes>
             </Base>
 
