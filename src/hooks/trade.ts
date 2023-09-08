@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { usePintswapContext } from '../stores/pintswap';
 import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
-import { hashOffer, IOffer, ITransfer } from '@pintswap/sdk';
-import PeerId from 'peer-id';
+import { hashOffer, IOffer } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
-import { useOffersContext, useUserContext } from '../stores';
-import { toBeHex, isAddress } from 'ethers6';
+import { useOffersContext, usePeersContext, useUserContext } from '../stores';
+import { toBeHex } from 'ethers6';
 import {
     savePintswap,
     updateToast,
@@ -44,6 +43,7 @@ export const useTrade = () => {
     const [error, setError] = useState(false);
     const { multiaddr, hash } = useParams();
     const [fill, setFill] = useState<any>(null);
+    const { peersData } = usePeersContext();
 
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/explore' || pathname === '/swap';
@@ -78,7 +78,6 @@ export const useTrade = () => {
             if (TESTING) console.log('#buildTradeObj:', builtObj);
             return builtObj;
         }
-        console.log('hitting');
         // ERC20
         const builtObj = {
             gives: {
@@ -159,7 +158,6 @@ export const useTrade = () => {
                 console.error(err);
             }
         }
-        // toast.loading('Connecting to peer...', { toastId: 'findPeer' });
     };
 
     // Fulfill trade
@@ -218,6 +216,7 @@ export const useTrade = () => {
                     }
 
                     const { offers }: IOrderbookProps = await module.getUserData(resolved);
+                    if (TESTING) console.log('#getTrades - Offers:', offers);
                     await Promise.all(
                         offers.map((offer) => {
                             const tokens = [offer.gets?.token, offer.gives?.token];
@@ -231,7 +230,6 @@ export const useTrade = () => {
                             );
                         }),
                     );
-                    if (TESTING) console.log('#getTrades - Offers:', offers);
                     if (offers?.length > 0) {
                         // If only multiAddr in URL
                         if (TESTING) console.log('#getTrades - Order Hash:', hash);
@@ -297,6 +295,7 @@ export const useTrade = () => {
         const getter = async () => {
             if (pathname.includes('/') && multiaddr) {
                 const splitUrl = pathname.split('/');
+
                 if (splitUrl[1] === 'fulfill' && hash) {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
@@ -316,7 +315,7 @@ export const useTrade = () => {
             }
         };
         if (module) getter().catch((err) => console.error(err));
-    }, [module, multiaddr, hash]);
+    }, [module, multiaddr, hash, peersData?.length]);
 
     /*
      * TRADE EVENT MANAGER - START
@@ -332,7 +331,7 @@ export const useTrade = () => {
                 break;
             case 2:
                 console.log('#peerListener: found peer offers');
-                updateToast('findPeer', 'success', 'Connected to peer!');
+                // updateToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 3:
                 console.log('#peerListener: returning offers');

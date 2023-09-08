@@ -106,8 +106,6 @@ export const FulfillView = () => {
             })().catch((err) => console.error(err));
     }, [pintswap.module, fillAmount, trade]);
 
-    console.log('trade', trade);
-
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
@@ -171,7 +169,6 @@ export const FulfillView = () => {
                         </div>
                     }
                 >
-                    <>{console.log('addresses', tickerAddresses)}</>
                     <div className="grid grid-cols-1 gap-1.5 md:gap-3 md:grid-cols-2 lg:gap-4">
                         <DropdownInput
                             title={

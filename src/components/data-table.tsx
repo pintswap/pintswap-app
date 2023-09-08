@@ -237,7 +237,6 @@ const CustomRow = (props: IDataTableProps) => {
             // Address / MultiAddr
             return truncate(cell, charsShown);
         } else if (!isNaN(Number(cell))) {
-            console.log('ahhh', cells, type);
             // TODO: optimize and enable for all pairs, not just eth and stables
             let _cell: string;
             if (pair) {
