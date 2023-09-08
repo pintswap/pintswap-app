@@ -20,7 +20,6 @@ export const useSubgraph = (props: { address: string; history?: 'day' | 'hour' }
             if (props.address) {
                 updateRes('isLoading', true);
                 const data = await tryBoth(props);
-                console.log('trying both', data);
                 if (data) {
                     setRes({
                         ...res,

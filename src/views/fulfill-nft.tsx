@@ -43,8 +43,6 @@ export const FulfillNFTView = () => {
         })().catch((err) => console.error(err));
     }, [offer]);
 
-    console.log('offer', offer);
-
     const peer = state?.peer ? state.peer : multiaddr;
 
     return (
