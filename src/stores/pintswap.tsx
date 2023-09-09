@@ -46,7 +46,7 @@ export async function initializePintswapFromSigner({ signer, pintswap, setPintsw
         });
     const ps = (await Pintswap.fromPassword({
         signer,
-        password: await signer.getAddress(),
+        password: await signer?.getAddress(),
     } as any)) as Pintswap;
     const newPintswap = pintswap.module ? mergeUserData(ps, pintswap.module) : ps;
     newPintswap.logger.info(newPintswap);
@@ -129,7 +129,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 if (signer) {
                     const psFromPass = (await Pintswap.fromPassword({
                         signer: signer,
-                        password: await signer.getAddress(),
+                        password: await signer?.getAddress(),
                     } as any)) as Pintswap;
                     if (TESTING) console.log('psFromPass:', psFromPass);
                     return mergeUserData(psFromPass, pintswap.module);

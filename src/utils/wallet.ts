@@ -2,7 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { hardhat, mainnet } from 'wagmi/chains';
+import { hardhat, mainnet, polygon, arbitrum, optimism, zkSync } from 'wagmi/chains';
 import { NETWORK } from './constants';
 import {
     coinbaseWallet,
@@ -17,34 +17,27 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
-const projectId = '78ccad0d08b9ec965f59df86cc3e6a3c';
+const determineNetworks = () => {
+    if (NETWORK === 'LOCALHOST') return [hardhat, mainnet];
+    return [mainnet, polygon, arbitrum, optimism, zkSync];
+};
 
-import { WalletConnectConnector } from '@wagmi/core/connectors/walletConnect';
-
-const connector = new WalletConnectConnector({
-    options: {
-        projectId,
-    },
-});
-
-export const { chains, provider } = configureChains(
-    [NETWORK === 'LOCALHOST' ? hardhat : mainnet],
-    [publicProvider()],
-);
+export const { chains, provider } = configureChains(determineNetworks(), [publicProvider()]);
 
 export const connectors = connectorsForWallets([
     {
         groupName: 'Recommended',
-        wallets: [metaMaskWallet({ chains, projectId })],
+        wallets: [metaMaskWallet({ chains })],
     },
     {
         groupName: 'Popular',
         wallets: [
             coinbaseWallet({ appName: 'PintSwap', chains }),
-            rainbowWallet({ chains, projectId }),
-            trustWallet({ chains, projectId }),
-            ledgerWallet({ chains, projectId }),
-            imTokenWallet({ chains, projectId }),
+            rainbowWallet({ chains }),
+            walletConnectWallet({ chains }),
+            trustWallet({ chains }),
+            ledgerWallet({ chains }),
+            imTokenWallet({ chains }),
             braveWallet({ chains }),
             injectedWallet({ chains }),
         ],
