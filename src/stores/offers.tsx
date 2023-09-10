@@ -147,6 +147,7 @@ export function OffersStore(props: { children: ReactNode }) {
                     const grouped = groupByType(
                         (await resolveNames(module?.peers as any, module as any)) as any,
                     );
+                    // All trades converted to Array for DataTables
                     const flattened = toFlattened(grouped.erc20);
                     const mapped = (
                         await Promise.all(
@@ -157,7 +158,6 @@ export function OffersStore(props: { children: ReactNode }) {
                         peer: flattened[i].peer,
                         multiAddr: flattened[i].multiAddr,
                     }));
-                    // All trades converted to Array for DataTables
                     setLimitOrdersArr(mapped);
                 }
             };
