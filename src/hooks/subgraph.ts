@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { tryBoth } from '../api';
+import { usePricesContext } from '../stores';
 
 const DEFAULT_RES = {
     data: null, // TODO
@@ -8,8 +9,9 @@ const DEFAULT_RES = {
     error: false,
 };
 
-export const useSubgraph = (props: { address: string; history?: 'day' | 'hour' }) => {
+export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' }) => {
     const [res, setRes] = useState<any>(DEFAULT_RES);
+    const { eth } = usePricesContext();
 
     function updateRes(key: 'data' | 'isLoading' | 'isError' | 'error', data: any) {
         setRes({ ...res, [key]: data });
@@ -17,13 +19,19 @@ export const useSubgraph = (props: { address: string; history?: 'day' | 'hour' }
 
     useEffect(() => {
         (async () => {
-            if (props.address) {
+            if (props && props.address) {
                 updateRes('isLoading', true);
                 const data = await tryBoth(props);
                 if (data) {
                     setRes({
                         ...res,
-                        data: data as any,
+                        data: {
+                            ...data,
+                            usdPrice:
+                                Number(eth) > 0 && data?.token?.derivedETH
+                                    ? (Number(eth) * Number(data.token.derivedETH)).toString()
+                                    : '0',
+                        },
                         isLoading: false,
                     });
                 } else {

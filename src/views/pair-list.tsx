@@ -54,7 +54,7 @@ export const PairListView = () => {
             });
             setPairOrders(split);
         }
-    }, [limitOrdersArr]);
+    }, [limitOrdersArr?.length]);
 
     return (
         <div className="flex flex-col">

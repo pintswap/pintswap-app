@@ -7,13 +7,15 @@ export async function getV3Token({
     address,
     history,
 }: {
-    address: string;
+    address?: string;
     history?: 'day' | 'hour';
 }): Promise<{
     token: any;
     tokenDayDatas: any[];
     tokenHourDatas: any[];
 }> {
+    if (!address) return { token: undefined, tokenDayDatas: [], tokenHourDatas: [] };
+
     const formattedAddress = ethers.getAddress(address);
     const buildParams = () => {
         return `(id: "${formattedAddress}")`;
@@ -97,12 +99,13 @@ export async function getV2Token({
     address,
     history,
 }: {
-    address: string;
+    address?: string;
     history?: 'day' | 'hour';
 }): Promise<{
     token: any;
     tokenDayDatas: any[];
 }> {
+    if (!address) return { token: undefined, tokenDayDatas: [] };
     const formattedAddress = ethers.getAddress(address).toLowerCase();
 
     const buildOptionalQuery = () => {
@@ -150,7 +153,7 @@ export async function getV2Token({
     }
 }
 
-export async function tryBoth(props: { address: string; history?: 'day' | 'hour' }) {
+export async function tryBoth(props: { address?: string; history?: 'day' | 'hour' }) {
     if (!props) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
     const v2Token = await getV2Token(props);
     if (v2Token?.token) return v2Token;

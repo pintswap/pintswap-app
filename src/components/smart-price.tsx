@@ -1,14 +1,15 @@
-export function SmartPrice({ price }: { price: string }) {
-    if (price === 'N/A' && !price) return <>-</>;
+export function SmartPrice({ price }: { price: string | number }) {
+    const _price = String(price);
+    if (_price === 'N/A' && !_price) return <>-</>;
 
     // The case where the price is not too small
-    let mustReduce = price.substring(0, 6) === '0.0000';
+    let mustReduce = _price.substring(0, 6) === '0.0000';
     if (!mustReduce) {
-        if (price.includes('.')) {
-            if (Number(price) > 1000000) return <>{price.split('.')[0]}</>;
-            else if (Number(price) > 1000) return <>{Number(price).toFixed(2)}</>;
+        if (_price.includes('.')) {
+            if (Number(price) > 1000000) return <>{_price.split('.')[0]}</>;
+            else if (Number(_price) > 1000) return <>{Number(_price).toFixed(2)}</>;
         }
-        return <>{price.substring(0, 8)}</>;
+        return <>{_price.substring(0, 8)}</>;
     }
 
     // The case where the price needs to be reduced
@@ -16,7 +17,7 @@ export function SmartPrice({ price }: { price: string }) {
     let i = 0;
     let endingFour = '';
 
-    for (let mStr = price.substring(3); i < mStr.length; i++) {
+    for (let mStr = _price.substring(3); i < mStr.length; i++) {
         if (mStr[i] === '0') {
             zeroCount++;
         } else {

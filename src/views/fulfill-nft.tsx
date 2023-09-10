@@ -56,7 +56,7 @@ export const FulfillNFTView = () => {
                     {loading ? (
                         <SpinnerLoader height="min-h-96" />
                     ) : (
-                        <NFTDisplay nft={nft} show="full" height="h-96" />
+                        <NFTDisplay nft={nft} show="full" height="h-96" offer={offer} />
                     )}
                     <Button
                         checkNetwork
@@ -65,7 +65,7 @@ export const FulfillNFTView = () => {
                         onClick={fulfillTrade}
                         disabled={!nft || loading}
                     >
-                        Swap
+                        Buy
                     </Button>
                 </Card>
             </div>

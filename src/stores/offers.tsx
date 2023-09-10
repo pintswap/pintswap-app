@@ -20,10 +20,8 @@ export type IOffersStoreProps = {
     addTrade: (hash: string, { gives, gets }: IOffer) => void;
     deleteTrade: (hash: string) => void;
     peerTrades: Map<string, IOffer>;
-    tokenTrades: Map<string, IOffer>;
     setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
-    setTokenTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     limitOrdersArr: any[];
 };
 
@@ -31,12 +29,10 @@ export type IOffersStoreProps = {
 const OffersContext = createContext<IOffersStoreProps>({
     userTrades: new Map(),
     peerTrades: new Map(),
-    tokenTrades: new Map(),
     addTrade(hash, { gives, gets }) {},
     deleteTrade(hash) {},
     setUserTrades: () => {},
     setPeerTrades: () => {},
-    setTokenTrades: () => {},
     limitOrdersArr: [],
 });
 
@@ -116,10 +112,10 @@ const toFlattened = memoize((v) =>
 // Wrapper
 export function OffersStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
+    const { module } = pintswap;
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
-    const [tokenTrades, setTokenTrades] = useState<Map<string, IOffer>>(new Map());
     const [limitOrdersArr, setLimitOrdersArr] = useState<any[]>([]);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
@@ -139,51 +135,37 @@ export function OffersStore(props: { children: ReactNode }) {
 
     // Get Active Trades
     useEffect(() => {
-        const { module } = pintswap;
         if (module) {
-            const listener = () => {
-                (async () => {
-                    if ((pintswap.module?.peers.size as any) > 0) {
-                        const grouped = groupByType(
-                            (await resolveNames(
-                                pintswap.module?.peers as any,
-                                pintswap.module as any,
-                            )) as any,
-                        );
-                        setTokenTrades(grouped.erc20 as any);
+            const listener = async () => {
+                if ((module?.peers.size as any) > 0) {
+                    let signer: any;
+                    if (module?.signer?.provider) {
+                        signer = module.signer;
+                    } else {
+                        signer = new ethers.InfuraProvider('mainnet');
                     }
-                })().catch((err) => console.error(err));
+                    const grouped = groupByType(
+                        (await resolveNames(module?.peers as any, module as any)) as any,
+                    );
+                    const flattened = toFlattened(grouped.erc20);
+                    const mapped = (
+                        await Promise.all(
+                            flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                        )
+                    ).map((v, i) => ({
+                        ...v,
+                        peer: flattened[i].peer,
+                        multiAddr: flattened[i].multiAddr,
+                    }));
+                    // All trades converted to Array for DataTables
+                    setLimitOrdersArr(mapped);
+                }
             };
             module.on('/pubsub/orderbook-update', listener);
             return () => module.removeListener('/pubsub/orderbook-update', listener);
         }
         return () => {};
-    }, [pintswap.module]);
-
-    // All trades converted to Array for DataTables
-    useEffect(() => {
-        (async () => {
-            if (pintswap.module) {
-                let signer: any;
-                if (pintswap?.module?.signer?.provider) {
-                    signer = pintswap.module.signer;
-                } else {
-                    signer = new ethers.InfuraProvider('mainnet');
-                }
-                const flattened = toFlattened(tokenTrades);
-                const mapped = (
-                    await Promise.all(
-                        flattened.map(async (v: any) => await toLimitOrder(v, signer)),
-                    )
-                ).map((v, i) => ({
-                    ...v,
-                    peer: flattened[i].peer,
-                    multiAddr: flattened[i].multiAddr,
-                }));
-                setLimitOrdersArr(mapped);
-            }
-        })().catch((err) => console.error(err));
-    }, [pintswap.module, tokenTrades]);
+    }, [module]);
 
     return (
         <OffersContext.Provider
@@ -193,8 +175,6 @@ export function OffersStore(props: { children: ReactNode }) {
                 peerTrades,
                 setPeerTrades,
                 setUserTrades,
-                setTokenTrades,
-                tokenTrades,
                 limitOrdersArr,
                 deleteTrade,
             }}
