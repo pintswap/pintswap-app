@@ -19,8 +19,6 @@ export type IOffersStoreProps = {
     userTrades: Map<string, IOffer>;
     addTrade: (hash: string, { gives, gets }: IOffer) => void;
     deleteTrade: (hash: string) => void;
-    peerTrades: Map<string, IOffer>;
-    setPeerTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     limitOrdersArr: any[];
 };
@@ -28,11 +26,9 @@ export type IOffersStoreProps = {
 // Context
 const OffersContext = createContext<IOffersStoreProps>({
     userTrades: new Map(),
-    peerTrades: new Map(),
     addTrade(hash, { gives, gets }) {},
     deleteTrade(hash) {},
     setUserTrades: () => {},
-    setPeerTrades: () => {},
     limitOrdersArr: [],
 });
 
@@ -115,7 +111,6 @@ export function OffersStore(props: { children: ReactNode }) {
     const { module } = pintswap;
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
-    const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
     const [limitOrdersArr, setLimitOrdersArr] = useState<any[]>([]);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
@@ -172,8 +167,6 @@ export function OffersStore(props: { children: ReactNode }) {
             value={{
                 userTrades,
                 addTrade,
-                peerTrades,
-                setPeerTrades,
                 setUserTrades,
                 limitOrdersArr,
                 deleteTrade,

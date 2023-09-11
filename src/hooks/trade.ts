@@ -29,8 +29,9 @@ export const useTrade = () => {
         pintswap: { module },
     } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
-    const { addTrade, userTrades, setPeerTrades, peerTrades, setUserTrades } = useOffersContext();
+    const { addTrade, userTrades, setUserTrades } = useOffersContext();
 
+    const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
@@ -455,5 +456,6 @@ export const useTrade = () => {
         setTrade,
         clearTrade,
         isButtonDisabled,
+        peerTrades,
     };
 };

@@ -2,17 +2,8 @@ import { Transition } from '@headlessui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { fetchNFT } from '../utils/nft';
-import {
-    Avatar,
-    Button,
-    Card,
-    NFTDisplay,
-    PageStatus,
-    ProgressIndicator,
-    SpinnerLoader,
-} from '../components';
+import { Avatar, Button, Card, NFTDisplay, PageStatus, SpinnerLoader } from '../components';
 import { useTrade } from '../hooks/trade';
-import { useOffersContext } from '../stores';
 import { useSigner } from 'wagmi';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toFormatted } from '../utils/orderbook';
@@ -22,8 +13,7 @@ export const FulfillNFTView = () => {
     const navigate = useNavigate();
     const { multiaddr, hash } = useParams();
     const { state } = useLocation();
-    const { peerTrades } = useOffersContext();
-    const { fulfillTrade, steps, error } = useTrade();
+    const { fulfillTrade, steps, error, peerTrades } = useTrade();
     const [loading, setLoading] = useState(true);
     const { data: signer } = useSigner();
     const [nft, setNFT] = useState<INFTProps | null>(null);

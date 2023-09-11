@@ -1,5 +1,5 @@
 import { useMemo, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useSigner, useAccount } from 'wagmi';
+import { useSigner, useAccount, useNetwork } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { defer, TESTING } from '../utils';
@@ -90,6 +90,7 @@ export const makeGetGasPrice = (provider: any, multiplier: any) => {
 // Wrapper
 export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
+    const { chain } = useNetwork();
     const { address } = useAccount();
     const localPsUser = localStorage.getItem('_pintUser');
 
@@ -111,7 +112,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     }, [signer]);
 
     const determinePsModule = async () => {
-        if (!signer && !address) {
+        if ((!signer && !address) || chain?.unsupported) {
             const noWalletInitPs = await Pintswap.initialize({
                 awaitReceipts: false,
                 signer: new ethers.Wallet(
