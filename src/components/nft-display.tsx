@@ -1,4 +1,7 @@
+import { IOffer } from '@pintswap/sdk';
+import { useSubgraph } from '../hooks';
 import { INFTProps } from '../utils/types';
+import { SmartPrice } from './smart-price';
 import { TextDisplay } from './text-display';
 import { toNumber, toBigInt } from 'ethers6';
 
@@ -8,14 +11,18 @@ type INFTDisplayProps = {
     loading?: boolean;
     height?: `h-${string}` | `max-h-${string}`;
     width?: `w-${string}` | `max-w-${string}`;
+    offer?: IOffer;
 };
 
-export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayProps) => {
-    const _nft = nft as any;
-    if (_nft?.imageBlob || _nft?.name || _nft?.description) {
+export const NFTDisplay = ({ nft, show, loading, height, width, offer }: INFTDisplayProps) => {
+    console.log('nft', offer);
+    if (nft?.imageBlob || nft?.name || nft?.description) {
         if (show === 'full') {
+            const foundErc20 = offer?.gives?.amount ? offer?.gives : offer?.gets;
+            const tokenRes = useSubgraph({ address: foundErc20?.token });
+            console.log('tokenRes', tokenRes);
             return (
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 lg:gap-4 xl:gap-5">
                     <div>
                         {loading ? (
                             <div
@@ -24,13 +31,13 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                                 } ${width || 'w-full'}`}
                             />
                         ) : (
-                            _nft?.imageBlob && (
+                            nft?.imageBlob && (
                                 <img
-                                    src={URL.createObjectURL(_nft?.imageBlob)}
-                                    alt={_nft.name}
+                                    src={URL.createObjectURL(nft?.imageBlob)}
+                                    alt={nft.name}
                                     style={{
-                                        backgroundColor: _nft?.background_color
-                                            ? `#${_nft?.background_color}`
+                                        backgroundColor: nft?.background_color
+                                            ? `#${nft?.background_color}`
                                             : undefined,
                                     }}
                                     loading="lazy"
@@ -42,12 +49,24 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                         )}
                     </div>
                     <div className="flex flex-col gap-2 lg:gap-4">
-                        <TextDisplay label="Name" value={_nft?.name} />
-                        <TextDisplay label="Description" value={_nft?.description} />
-                        <TextDisplay label="ID" value={toNumber(_nft?.tokenId || toBigInt(0))} />
-                        {_nft?.token && _nft?.amount && (
-                            <TextDisplay label="Price" value={`${_nft?.amount} ${_nft?.token}`} />
-                            // TODO: get USD price
+                        <TextDisplay label="Name" value={nft?.name} />
+                        <TextDisplay label="Description" value={nft?.description} />
+                        <TextDisplay label="ID" value={toNumber(nft?.tokenId || toBigInt(0))} />
+                        {nft?.token && nft?.amount && (
+                            <TextDisplay
+                                label="Price"
+                                value={
+                                    <>
+                                        <SmartPrice price={nft?.amount} />
+                                        {` ${nft.token}`}
+                                    </>
+                                }
+                                usdValue={
+                                    Number(tokenRes?.data?.usdPrice || '0') > 0
+                                        ? Number(tokenRes.data.usdPrice) * Number(nft.amount)
+                                        : undefined
+                                }
+                            />
                         )}
                     </div>
                 </div>
@@ -62,13 +81,13 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                             }`}
                         />
                     ) : (
-                        _nft?.imageBlob && (
+                        nft?.imageBlob && (
                             <img
-                                src={URL.createObjectURL(_nft?.imageBlob)}
-                                alt={_nft.name}
+                                src={URL.createObjectURL(nft?.imageBlob)}
+                                alt={nft.name}
                                 style={{
-                                    backgroundColor: _nft?.background_color
-                                        ? `#${_nft?.background_color}`
+                                    backgroundColor: nft?.background_color
+                                        ? `#${nft?.background_color}`
                                         : undefined,
                                 }}
                                 loading="lazy"
@@ -90,13 +109,13 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                             }`}
                         />
                     ) : (
-                        _nft?.imageBlob && (
+                        nft?.imageBlob && (
                             <img
-                                src={URL.createObjectURL(_nft?.imageBlob)}
-                                alt={_nft.name}
+                                src={URL.createObjectURL(nft?.imageBlob)}
+                                alt={nft.name}
                                 style={{
-                                    backgroundColor: _nft?.background_color
-                                        ? `#${_nft?.background_color}`
+                                    backgroundColor: nft?.background_color
+                                        ? `#${nft?.background_color}`
                                         : undefined,
                                 }}
                                 loading="lazy"
@@ -106,8 +125,8 @@ export const NFTDisplay = ({ nft, show, loading, height, width }: INFTDisplayPro
                             />
                         )
                     )}
-                    {_nft?.name && <h3 className="pt-2 pb-1">{_nft?.name}</h3>}
-                    {_nft?.description && <small>{_nft?.description}</small>}
+                    {nft?.name && <h3 className="pt-2 pb-1">{nft?.name}</h3>}
+                    {nft?.description && <small>{nft?.description}</small>}
                 </div>
             );
         }

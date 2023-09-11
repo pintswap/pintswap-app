@@ -29,8 +29,9 @@ export const useTrade = () => {
         pintswap: { module },
     } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
-    const { addTrade, userTrades, setPeerTrades, peerTrades, setUserTrades } = useOffersContext();
+    const { addTrade, userTrades, setUserTrades } = useOffersContext();
 
+    const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
     const [order, setOrder] = useState<IOrderStateProps>({ orderHash: '', multiAddr: '' });
     const [steps, setSteps] = useState(DEFAULT_PROGRESS);
@@ -216,21 +217,23 @@ export const useTrade = () => {
                     }
 
                     const { offers }: IOrderbookProps = await module.getUserData(resolved);
-                    if (TESTING) console.log('#getTrades - Offers:', offers);
-                    await Promise.all(
-                        offers.map((offer) => {
-                            const tokens = [offer.gets?.token, offer.gives?.token];
-                            return Promise.all(
-                                tokens.map(async (t) => {
-                                    if (!Object.values(reverseSymbolCache).includes(t)) {
-                                        const symbol = await getSymbol(t, module.signer);
-                                        reverseSymbolCache[symbol] = t;
-                                    }
-                                }),
-                            );
-                        }),
-                    );
                     if (offers?.length > 0) {
+                        if (TESTING) console.log('#getTrades - Offers:', offers);
+
+                        await Promise.all(
+                            offers.map((offer) => {
+                                const tokens = [offer.gets?.token, offer.gives?.token];
+                                return Promise.all(
+                                    tokens.map(async (t) => {
+                                        if (!Object.values(reverseSymbolCache).includes(t)) {
+                                            const symbol = await getSymbol(t, module.signer);
+                                            reverseSymbolCache[symbol] = t;
+                                        }
+                                    }),
+                                );
+                            }),
+                        );
+
                         // If only multiAddr in URL
                         if (TESTING) console.log('#getTrades - Order Hash:', hash);
                         const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
@@ -295,7 +298,6 @@ export const useTrade = () => {
         const getter = async () => {
             if (pathname.includes('/') && multiaddr) {
                 const splitUrl = pathname.split('/');
-
                 if (splitUrl[1] === 'fulfill' && hash) {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
@@ -454,5 +456,6 @@ export const useTrade = () => {
         setTrade,
         clearTrade,
         isButtonDisabled,
+        peerTrades,
     };
 };

@@ -20,8 +20,7 @@ const markIndex = (o: any, index: number) =>
 export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     const { trade, base } = useParams();
     const { pintswap } = usePintswapContext();
-    const { peerTrades } = useOffersContext();
-    const { order } = useTrade();
+    const { order, peerTrades } = useTrade();
     const { hash, multiaddr } = useParams();
 
     // All peers limit orders states
