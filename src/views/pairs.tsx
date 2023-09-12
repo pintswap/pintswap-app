@@ -10,7 +10,7 @@ export const PairsView = () => {
         pintswap: { chainId },
     } = usePintswapContext();
     const navigate = useNavigate();
-    const { limitOrdersArr } = useOffersContext();
+    const { limitOrdersArr, isLoading } = useOffersContext();
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
 
@@ -21,8 +21,6 @@ export const PairsView = () => {
             setUniquePairs(Array.from(new Set(limitOrdersArr.map((o) => o.ticker))));
         }
     }, [limitOrdersArr]);
-
-    const isLoading = uniquePairs.length === 0;
 
     return (
         <div className="flex flex-col">
