@@ -1,16 +1,16 @@
 import { ethers } from 'ethers6';
 
-export type ITokenProps = {
-    asset: string;
-    type: string;
-    address: string;
-    name: string;
-    symbol: string;
-    decimals: number;
-    logoURI: string;
-};
+// export type ITokenProps = {
+//     asset: string;
+//     type: string;
+//     address: string;
+//     name: string;
+//     symbol: string;
+//     decimals: number;
+//     logoURI: string;
+// };
 
-export const TOKENS: ITokenProps[] = [
+export const t: any[] = [
     {
         asset: 'c60_t0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
         type: 'ERC20',
@@ -2793,34 +2793,7 @@ export const TOKENS: ITokenProps[] = [
         logoURI:
             'https://assets-cdn.trustwallet.com/blockchains/ethereum/assets/0xfAd45E47083e4607302aa43c65fB3106F1cd7607/logo.png',
     },
-    {
-        asset: 'c60_t0xFa4bAa6951B6Ee382e9ff9AF2D523278b99ca6D0',
-        type: 'ERC20',
-        address: '0xFa4bAa6951B6Ee382e9ff9AF2D523278b99ca6D0',
-        name: 'House',
-        symbol: 'HOUSE',
-        decimals: 18,
-        logoURI: 'https://assets.coingecko.com/coins/images/31202/large/hm_icon_200x200.png',
-    },
-    {
-        asset: 'c60_t0x070e984fda37dd942f5c953f6b2375339adac308',
-        type: 'ERC20',
-        address: '0x070e984fda37dd942f5c953f6b2375339adac308',
-        name: 'AXE',
-        symbol: 'AXE',
-        decimals: 18,
-        logoURI:
-            'https://www.dextools.io/resources/tokens/logos/ether/0x070e984fda37dd942f5c953f6b2375339adac308.png?1692134673789',
-    },
-    {
-        asset: 'c60_t0x8d008CAC1a5CB08aC962b1e34E977B79ABEee88D',
-        type: 'ERC20',
-        address: '0x8d008CAC1a5CB08aC962b1e34E977B79ABEee88D',
-        name: 'Pepe Analytics',
-        symbol: 'PEPEAI',
-        decimals: 18,
-        logoURI: 'https://assets.coingecko.com/coins/images/31085/small/cg.jpeg?1690426151',
-    },
+
     {
         asset: 'c60_t0xFbEEa1C75E4c4465CB2FCCc9c6d6afe984558E20',
         type: 'ERC20',

@@ -1,14 +1,16 @@
 import { useMemo, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useSigner, useAccount, useNetwork } from 'wagmi';
+import { useSigner, useAccount } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
-import { defer, TESTING } from '../utils';
+import { DEFAULT_CHAINID, defer, TESTING } from '../utils';
+import { getNetwork } from '@wagmi/core';
 
 // Types
 export type IPintswapProps = {
     module: Pintswap | undefined;
     loading: boolean;
     error: boolean;
+    chainId: number;
 };
 
 export type IPintswapStoreProps = {
@@ -24,6 +26,7 @@ const PintswapContext = createContext<IPintswapStoreProps>({
         module: undefined,
         loading: true,
         error: false,
+        chainId: 1,
     },
 });
 
@@ -46,7 +49,7 @@ export async function initializePintswapFromSigner({ signer, pintswap, setPintsw
         });
     const ps = (await Pintswap.fromPassword({
         signer,
-        password: await signer.getAddress(),
+        password: await signer?.getAddress(),
     } as any)) as Pintswap;
     const newPintswap = pintswap.module ? mergeUserData(ps, pintswap.module) : ps;
     newPintswap.logger.info(newPintswap);
@@ -90,14 +93,15 @@ export const makeGetGasPrice = (provider: any, multiplier: any) => {
 // Wrapper
 export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
-    const { chain } = useNetwork();
     const { address } = useAccount();
     const localPsUser = localStorage.getItem('_pintUser');
+    const activeChainId = getNetwork()?.chain?.id || DEFAULT_CHAINID;
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
         loading: true,
         error: false,
+        chainId: activeChainId,
     });
 
     const metamask = useMemo(() => getMetamask(signer), [signer]);
@@ -112,7 +116,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     }, [signer]);
 
     const determinePsModule = async () => {
-        if ((!signer && !address) || chain?.unsupported) {
+        if (!signer && !address) {
             const noWalletInitPs = await Pintswap.initialize({
                 awaitReceipts: false,
                 signer: new ethers.Wallet(
@@ -130,7 +134,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 if (signer) {
                     const psFromPass = (await Pintswap.fromPassword({
                         signer: signer,
-                        password: await signer.getAddress(),
+                        password: await signer?.getAddress(),
                     } as any)) as Pintswap;
                     if (TESTING) console.log('psFromPass:', psFromPass);
                     return mergeUserData(psFromPass, pintswap.module);
@@ -183,9 +187,9 @@ export function PintswapStore(props: { children: ReactNode }) {
                 })().catch(reject);
             });
             if (ps.isStarted()) {
-                setPintswap({ ...pintswap, module: ps, loading: false });
+                setPintswap({ ...pintswap, chainId: activeChainId, module: ps, loading: false });
             } else {
-                setPintswap({ ...pintswap, loading: false });
+                setPintswap({ ...pintswap, chainId: activeChainId, loading: false });
             }
         };
         initialize();

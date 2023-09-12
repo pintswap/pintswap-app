@@ -35,7 +35,9 @@ export const FulfillView = () => {
     const { width, breakpoints } = useWindowSize();
     const { address } = useAccount();
     const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
-    const { pintswap } = usePintswapContext();
+    const {
+        pintswap: { module, chainId },
+    } = usePintswapContext();
     const { limitOrders } = useLimitOrders('peer-orderbook');
     const { hash, multiaddr } = useParams();
 
@@ -51,43 +53,44 @@ export const FulfillView = () => {
 
     useEffect(() => {
         (async () => {
-            if (pintswap.module) {
+            if (module) {
                 const foundLimitOrder = limitOrders.find((order) => order?.hash === hash);
                 if (foundLimitOrder) {
                     setLimitOrder(foundLimitOrder);
                     setFillAmount(foundLimitOrder?.amount || '');
                 } else {
                     if (!trade.gets?.token && !trade.gives?.token) return;
-                    const raw = await fromFormatted(trade, pintswap.module.signer);
+                    const raw = await fromFormatted(trade, module.signer);
                     const {
                         pair: [base, tradeToken],
-                    } = orderTokens(raw);
+                    } = orderTokens(raw, module.signer);
                     setTickerAddresses(
                         `${truncate(tradeToken.address, 6)} / ${truncate(base.address, 6)}`,
                     );
-                    const decimals = await getDecimals(tradeToken.address, pintswap.module.signer);
+                    const decimals = await getDecimals(tradeToken.address, module.signer);
                     setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
-                    const limitOrderRes = await toLimitOrder(raw as any, pintswap.module.signer);
+                    const limitOrderRes = await toLimitOrder(raw as any, module.signer);
                     setLimitOrder(limitOrderRes as any);
                 }
             }
         })().catch((err) => console.error(err));
-    }, [trade, pintswap.module, hash, multiaddr, limitOrders]);
+    }, [trade, module, hash, multiaddr, limitOrders]);
 
     useEffect(() => {
-        const m = pintswap.module;
-        if (m)
+        if (module)
             (async () => {
                 if (!trade.gets?.token && !trade.gives?.token) return;
-                const raw = await fromFormatted(trade, m.signer);
+                const raw = await fromFormatted(trade, module.signer);
                 const {
                     pair: [base, tradeToken],
-                } = orderTokens(raw);
+                } = orderTokens(raw, chainId);
                 setTickerAddresses(
                     `${truncate(tradeToken.address, 6)} / ${truncate(base.address, 6)}`,
                 );
                 const [baseDecimals, tradeDecimals] = await Promise.all(
-                    [base, tradeToken].map(async (v) => await getDecimals(v.address, m.signer)),
+                    [base, tradeToken].map(
+                        async (v) => await getDecimals(v.address, module.signer),
+                    ),
                 );
 
                 let toBeFormatted;
@@ -104,7 +107,7 @@ export const FulfillView = () => {
                 }
                 setOutputAmount(Number(ethers.formatUnits(toBeFormatted, baseDecimals)).toFixed(6));
             })().catch((err) => console.error(err));
-    }, [pintswap.module, fillAmount, trade]);
+    }, [module, fillAmount, trade]);
 
     return (
         <>

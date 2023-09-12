@@ -139,11 +139,15 @@ export function OffersStore(props: { children: ReactNode }) {
                     } else {
                         signer = new ethers.InfuraProvider('mainnet');
                     }
-                    const grouped = groupByType(
-                        (await resolveNames(module?.peers as any, module as any)) as any,
-                    );
+                    const availablePeers = (await resolveNames(
+                        module?.peers as any,
+                        module as any,
+                    )) as any;
+                    console.log('availablePeers', [...availablePeers.entries()]);
+                    const grouped = groupByType(availablePeers);
                     // All trades converted to Array for DataTables
                     const flattened = toFlattened(grouped.erc20);
+                    // TODO: pass all trades through here and filter by chain ID
                     const mapped = (
                         await Promise.all(
                             flattened.map(async (v: any) => await toLimitOrder(v, signer)),

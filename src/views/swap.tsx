@@ -3,14 +3,17 @@ import { Button, Card, CoinInput, Statistic, TooltipWrapper, TxDetails } from '.
 import { useSubgraph, useTrade } from '../hooks';
 import { useEffect } from 'react';
 import { percentChange, toAddress } from '../utils';
-import { usePricesContext } from '../stores';
+import { usePintswapContext, usePricesContext } from '../stores';
 
 export const SwapView = () => {
+    const {
+        pintswap: { chainId },
+    } = usePintswapContext();
     const { loading, trade, broadcastTrade, updateTrade, isButtonDisabled, clearTrade } =
         useTrade();
     const { formatToUsd } = usePricesContext();
     const { data } = useSubgraph({
-        address: toAddress(trade.gets.token),
+        address: toAddress(trade.gets.token, chainId),
         history: 'day',
     });
 

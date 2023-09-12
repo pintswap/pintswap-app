@@ -1,9 +1,10 @@
 import { ChangeEventHandler, useState } from 'react';
 import { SelectCoin } from './select-coin';
 import { useAccount, useBalance } from 'wagmi';
-import { toAddress } from '../utils';
-import { ethers } from 'ethers6';
+import { DEFAULT_CHAINID, toAddress } from '../utils';
+import { getNetwork } from '@wagmi/core';
 import { SmartPrice } from './smart-price';
+import { usePintswapContext } from '../stores';
 
 type ICoinInput = {
     label?: string;
@@ -26,8 +27,11 @@ export const CoinInput = ({
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const { address } = useAccount();
+    const {
+        pintswap: { chainId },
+    } = usePintswapContext();
     const balance = useBalance(
-        asset === 'ETH' ? { address } : { token: toAddress(asset || '') as any, address },
+        asset === 'ETH' ? { address } : { token: toAddress(asset || '', chainId) as any, address },
     );
 
     function clickAndClose(e: any) {
