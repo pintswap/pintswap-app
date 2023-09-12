@@ -21,6 +21,7 @@ export type IOffersStoreProps = {
     deleteTrade: (hash: string) => void;
     setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     limitOrdersArr: any[];
+    nftOrdersArr: any[];
 };
 
 // Context
@@ -30,6 +31,7 @@ const OffersContext = createContext<IOffersStoreProps>({
     deleteTrade(hash) {},
     setUserTrades: () => {},
     limitOrdersArr: [],
+    nftOrdersArr: [],
 });
 
 // Utils
@@ -112,6 +114,7 @@ export function OffersStore(props: { children: ReactNode }) {
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [limitOrdersArr, setLimitOrdersArr] = useState<any[]>([]);
+    const [nftOrdersArr, setNftOrdersArr] = useState<any>([]);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
         setUserTrades(userTrades.set(hash, tradeProps));
@@ -145,19 +148,22 @@ export function OffersStore(props: { children: ReactNode }) {
                     )) as any;
                     console.log('availablePeers', [...availablePeers.entries()]);
                     const grouped = groupByType(availablePeers);
+                    console.log('grouped', grouped);
                     // All trades converted to Array for DataTables
-                    const flattened = toFlattened(grouped.erc20);
+                    const flattenedPairs = toFlattened(grouped.erc20);
+                    const flattenedNftTrades = toFlattened(grouped.nft);
                     // TODO: pass all trades through here and filter by chain ID
-                    const mapped = (
+                    const mappedPairs = (
                         await Promise.all(
-                            flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                            flattenedPairs.map(async (v: any) => await toLimitOrder(v, signer)),
                         )
                     ).map((v, i) => ({
                         ...v,
-                        peer: flattened[i].peer,
-                        multiAddr: flattened[i].multiAddr,
+                        peer: flattenedPairs[i].peer,
+                        multiAddr: flattenedPairs[i].multiAddr,
                     }));
-                    setLimitOrdersArr(mapped);
+                    setLimitOrdersArr(mappedPairs);
+                    setNftOrdersArr(flattenedNftTrades);
                 }
             };
             module.on('/pubsub/orderbook-update', listener);
@@ -174,6 +180,7 @@ export function OffersStore(props: { children: ReactNode }) {
                 setUserTrades,
                 limitOrdersArr,
                 deleteTrade,
+                nftOrdersArr,
             }}
         >
             {props.children}

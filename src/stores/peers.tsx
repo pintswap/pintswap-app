@@ -23,7 +23,7 @@ const PeersContext = createContext<IPeersStoreProps>({
 // Wrapper
 export function PeersStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
-    const { limitOrdersArr } = useOffersContext();
+    const { limitOrdersArr, nftOrdersArr } = useOffersContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [data, setData] = useState<any[]>([]);
@@ -34,7 +34,9 @@ export function PeersStore(props: { children: ReactNode }) {
 
     const getAllPeersData = async () => {
         setLoading(true);
-        const peerAddresses = Array.from(new Set(limitOrdersArr.map((o) => o.peer)));
+        const peerAddresses = Array.from(
+            new Set([...limitOrdersArr, ...nftOrdersArr].map((o) => o.peer)),
+        );
         try {
             const allPeersData = await Promise.all(
                 peerAddresses.map(
