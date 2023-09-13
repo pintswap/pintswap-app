@@ -9,7 +9,7 @@ import {
 import { maybeShorten } from './format';
 import { ITokenProps } from './types';
 import { isAddress, getAddress, Contract, toBeHex, parseUnits, formatUnits, Signer } from 'ethers6';
-import { chainIdFromProvider } from './provider';
+import { chainIdFromProvider, providerFromChainId } from './provider';
 
 export const decimalsCache: any = {};
 export const symbolCache: any = {};
@@ -66,7 +66,16 @@ export async function getSymbol(address?: string, provider?: Signer) {
             symbolCache[address] = symbol;
             if (!reverseSymbolCache[symbol]) reverseSymbolCache[symbol] = address;
         } catch (e) {
-            symbolCache[address] = address;
+            try {
+                const mainnetTry = await new Contract(
+                    address,
+                    ['function symbol() view returns (string)'],
+                    providerFromChainId(1),
+                ).symbol();
+                symbolCache[address] = mainnetTry || address;
+            } catch (err) {
+                symbolCache[address] = address;
+            }
         }
         return symbolCache[address];
     }

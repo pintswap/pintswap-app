@@ -12,7 +12,6 @@ import { useOffersContext, usePintswapContext, usePricesContext, useUserContext 
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
-import { usePrices } from '../hooks';
 
 type IDataTableProps = {
     title?: string;
@@ -215,19 +214,22 @@ const CustomRow = (props: IDataTableProps) => {
     };
 
     const determineCell = (cell: string, index: number) => {
-        if (!cell) return <></>;
-        const charsShown = width > 900 ? 4 : 5;
-        if (type === 'manage') {
-            return (
-                <Button
-                    className="text-red-400 hover:text-red-500 w-full text-right"
-                    type="transparent"
-                    onClick={(e) => handleDelete(e, cells[0])}
-                >
-                    Cancel
-                </Button>
-            );
+        if (!cell) {
+            if (type === 'manage') {
+                return (
+                    <Button
+                        className="text-red-400 hover:text-red-500 w-full text-right"
+                        type="transparent"
+                        onClick={(e) => handleDelete(e, cells[0])}
+                    >
+                        Cancel
+                    </Button>
+                );
+            }
+            return <></>;
         }
+
+        const charsShown = width > 900 ? 4 : 5;
         if (
             typeof cell === 'string' &&
             cell.startsWith('pint') &&

@@ -43,7 +43,7 @@ export const PeerOrderbookView = () => {
     const { filteredNfts } = useLimitOrders('peer-orderbook');
     const { state } = useLocation();
     const { multiaddr } = useParams();
-    const { limitOrdersArr } = useOffersContext();
+    const { offersByChain } = useOffersContext();
     const [uniquePairs, setUniquePairs] = useState<any[]>([]);
     const { pintswap } = usePintswapContext();
     const [resolved, setResolved] = useState<any>(null);
@@ -60,7 +60,7 @@ export const PeerOrderbookView = () => {
 
     useEffect(() => {
         const byTicker = groupBy(
-            limitOrdersArr.filter((v) => [multiaddr, resolved].includes(v.peer)),
+            offersByChain.erc20.filter((v) => [multiaddr, resolved].includes(v.peer)),
             'ticker',
         );
         setUniquePairs(
@@ -69,7 +69,7 @@ export const PeerOrderbookView = () => {
                 ticker: ticker,
             })),
         );
-    }, [limitOrdersArr, resolved, multiaddr]);
+    }, [offersByChain.erc20, resolved, multiaddr]);
 
     const peer = state?.peer ? state.peer : multiaddr ? multiaddr : order.multiAddr;
 

@@ -10,17 +10,17 @@ export const PairsView = () => {
         pintswap: { chainId },
     } = usePintswapContext();
     const navigate = useNavigate();
-    const { limitOrdersArr, isLoading } = useOffersContext();
+    const { offersByChain, isLoading } = useOffersContext();
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
 
     const memoizedList = useMemo(() => list, [list]);
 
     useEffect(() => {
-        if (limitOrdersArr) {
-            setUniquePairs(Array.from(new Set(limitOrdersArr.map((o) => o.ticker))));
+        if (offersByChain.erc20) {
+            setUniquePairs(Array.from(new Set(offersByChain.erc20.map((o) => o.ticker))));
         }
-    }, [limitOrdersArr]);
+    }, [offersByChain.erc20]);
 
     return (
         <div className="flex flex-col">
