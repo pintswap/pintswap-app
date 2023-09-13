@@ -136,6 +136,7 @@ export async function toLimitOrder(offer: any, provider: Signer) {
         Number(ethers.formatUnits(base.amount, baseDecimals)) /
         Number(ethers.formatUnits(trade.amount, tradeDecimals));
     return {
+        chainId: offer.chainId || 1,
         price: String(price),
         amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,

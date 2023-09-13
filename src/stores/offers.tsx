@@ -188,9 +188,9 @@ export function OffersStore(props: { children: ReactNode }) {
                 userTrades,
                 addTrade,
                 setUserTrades,
-                limitOrdersArr,
+                limitOrdersArr: limitOrdersArr.filter((el) => el.chainId === chainId),
                 deleteTrade,
-                nftOrdersArr,
+                nftOrdersArr: nftOrdersArr.filter((el) => el.chainId === chainId),
                 isLoading,
             }}
         >
