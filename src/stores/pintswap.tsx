@@ -4,6 +4,7 @@ import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { DEFAULT_CHAINID, defer, TESTING } from '../utils';
 import { getNetwork } from '@wagmi/core';
+import { toast } from 'react-toastify';
 
 // Types
 export type IPintswapProps = {
@@ -95,13 +96,12 @@ export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const localPsUser = localStorage.getItem('_pintUser');
-    const activeChainId = getNetwork()?.chain?.id || DEFAULT_CHAINID;
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
         loading: true,
         error: false,
-        chainId: activeChainId,
+        chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
     });
 
     const metamask = useMemo(() => getMetamask(signer), [signer]);
@@ -187,9 +187,9 @@ export function PintswapStore(props: { children: ReactNode }) {
                 })().catch(reject);
             });
             if (ps.isStarted()) {
-                setPintswap({ ...pintswap, chainId: activeChainId, module: ps, loading: false });
+                setPintswap({ ...pintswap, module: ps, loading: false });
             } else {
-                setPintswap({ ...pintswap, chainId: activeChainId, loading: false });
+                setPintswap({ ...pintswap, loading: false });
             }
         };
         initialize();
@@ -208,10 +208,18 @@ export function PintswapStore(props: { children: ReactNode }) {
             pintswap.module.signer = signer;
     }, [signer, pintswap]);
 
+    // On chain change, reset any toasts
+    useEffect(() => {
+        toast.dismiss('findPeer');
+    }, [pintswap.chainId]);
+
     return (
         <PintswapContext.Provider
             value={{
-                pintswap,
+                pintswap: {
+                    ...pintswap,
+                    chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
+                },
                 initializePintswapFromSigner: async ({ signer }: any) =>
                     await initializePintswapFromSigner({ pintswap, setPintswap, signer }),
                 setPintswap,

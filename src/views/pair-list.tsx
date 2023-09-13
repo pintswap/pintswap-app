@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Asset, Card, DataTable, Header } from '../components';
-import { useOffersContext } from '../stores';
+import { useOffersContext, usePintswapContext } from '../stores';
 import { useWindowSize } from '../hooks';
 import { Tab } from '@headlessui/react';
 
@@ -36,15 +36,18 @@ const columns = [
 ];
 
 export const PairListView = () => {
+    const {
+        pintswap: { chainId, loading },
+    } = usePintswapContext();
     const { width, breakpoints } = useWindowSize();
     const { pathname } = useLocation();
-    const { limitOrdersArr } = useOffersContext();
+    const { offersByChain } = useOffersContext();
     const [pairOrders, setPairOrders] = useState({ bids: [], asks: [] });
     const pair = pathname.split('/')[2].toUpperCase().replace('-', ' / ');
 
     useEffect(() => {
-        if (limitOrdersArr) {
-            const duplicates = limitOrdersArr.filter(
+        if (offersByChain.erc20) {
+            const duplicates = offersByChain.erc20.filter(
                 (obj) => obj.ticker === pair.replaceAll(' ', ''),
             );
             const split: any = { ...pairOrders };
@@ -54,7 +57,7 @@ export const PairListView = () => {
             });
             setPairOrders(split);
         }
-    }, [limitOrdersArr?.length]);
+    }, [offersByChain.erc20?.length, chainId]);
 
     return (
         <div className="flex flex-col">
@@ -84,7 +87,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.asks}
-                            loading={limitOrdersArr.length === 0}
+                            loading={loading}
                             toolbar={false}
                             options={{
                                 sortOrder: {
@@ -104,7 +107,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.bids}
-                            loading={limitOrdersArr.length === 0}
+                            loading={loading}
                             toolbar={false}
                             options={{
                                 sortOrder: {
@@ -124,7 +127,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.asks}
-                            loading={limitOrdersArr.length === 0}
+                            loading={loading}
                             toolbar={false}
                             options={{
                                 sortOrder: {
@@ -141,7 +144,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.bids}
-                            loading={limitOrdersArr.length === 0}
+                            loading={loading}
                             toolbar={false}
                             options={{
                                 sortOrder: {

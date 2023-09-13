@@ -3,7 +3,7 @@ import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { arbitrum, hardhat, mainnet } from 'wagmi/chains';
-import { NETWORK } from './constants';
+import { TESTING } from './constants';
 import {
     coinbaseWallet,
     injectedWallet,
@@ -20,7 +20,7 @@ import merge from 'lodash.merge';
 const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '';
 
 const determineChains = () => {
-    if (NETWORK === 'LOCALHOST') return [hardhat, mainnet, arbitrum];
+    if (TESTING) return [mainnet, arbitrum, hardhat];
     return [mainnet, arbitrum];
 };
 

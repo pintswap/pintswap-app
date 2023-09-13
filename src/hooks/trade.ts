@@ -26,7 +26,7 @@ export const useTrade = () => {
     const params = useParams();
     const { pathname } = useLocation();
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
     const { addTrade, userTrades, setUserTrades } = useOffersContext();
@@ -317,7 +317,7 @@ export const useTrade = () => {
             }
         };
         if (module) getter().catch((err) => console.error(err));
-    }, [module, multiaddr, hash, peersData?.length]);
+    }, [module, multiaddr, hash, peersData?.length, chainId]);
 
     /*
      * TRADE EVENT MANAGER - START

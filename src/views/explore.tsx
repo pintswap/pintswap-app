@@ -1,5 +1,5 @@
 import { Card, DataTable } from '../components';
-import { useOffersContext } from '../stores';
+import { useOffersContext, usePintswapContext } from '../stores';
 
 const columns = [
     {
@@ -61,7 +61,10 @@ const columns = [
  * Pair List is used as current home page instead
  */
 export const ExploreView = () => {
-    const { limitOrdersArr } = useOffersContext();
+    const { offersByChain } = useOffersContext();
+    const {
+        pintswap: { loading },
+    } = usePintswapContext();
 
     return (
         <div className="flex flex-col">
@@ -70,8 +73,8 @@ export const ExploreView = () => {
                 <DataTable
                     title="Open Orders"
                     columns={columns}
-                    data={limitOrdersArr}
-                    loading={limitOrdersArr.length === 0}
+                    data={offersByChain.erc20}
+                    loading={loading}
                     type="explore"
                 />
             </Card>

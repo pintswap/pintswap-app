@@ -4,14 +4,14 @@ import { IUserDataProps } from '../stores';
 import { keyBy } from 'lodash';
 import { ethers } from 'ethers6';
 import { ITokenProps } from './types';
-import { getNetwork } from '@wagmi/core';
 
 // COMMON
 export const APP_VERSION = 'v1.2 BETA';
-export const NETWORK: string = process.env.REACT_APP_NETWORK || 'ETHEREUM';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
 export const BASE_URL: string = window.location.origin;
 export const WS_URL: string = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
+
+// DEFAULTS
 export const DEFAULT_NETWORK = 'ethereum';
 export const DEFAULT_CHAINID = 1;
 
