@@ -4,11 +4,19 @@ import { TransitionModal } from './modal';
 import { Card } from './card';
 import { Input } from './input';
 import { useSearch } from '../hooks';
-import { ITokenProps, TOKENS, alphaTokenSort, dropdownItemClass, getSymbol } from '../utils';
+import {
+    ITokenProps,
+    getTokenList,
+    alphaTokenSort,
+    dropdownItemClass,
+    getSymbol,
+    DEFAULT_CHAINID,
+} from '../utils';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { ethers } from 'ethers6';
 import { usePintswapContext } from '../stores';
+import { getNetwork } from '@wagmi/core';
 
 type ISelectCoin = {
     asset?: string;
@@ -19,10 +27,9 @@ type ISelectCoin = {
 
 export const SelectCoin = ({ asset, onAssetClick, modalOpen, setModalOpen }: ISelectCoin) => {
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
-    const { query, list, handleChange } = useSearch(TOKENS);
-
+    const { query, list, handleChange } = useSearch(getTokenList(chainId));
     const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
 
     useEffect(() => {
@@ -109,7 +116,7 @@ export const SelectCoin = ({ asset, onAssetClick, modalOpen, setModalOpen }: ISe
                                             <Asset
                                                 icon={el.logoURI}
                                                 symbol={el.symbol}
-                                                alt={el.asset}
+                                                alt={el.name}
                                                 fontSize="text-lg"
                                                 size={30}
                                             />

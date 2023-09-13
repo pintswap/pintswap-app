@@ -31,3 +31,4 @@ export * from './statistic';
 export * from './select-coin';
 export * from './coin-input';
 export * from './gas';
+export * from './chain-dropdown';

@@ -1,11 +1,19 @@
 import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { MdChevronRight } from 'react-icons/md';
-import { alphaTokenSort, dropdownItemClass, getSymbol, ITokenProps, TOKENS } from '../utils';
+import {
+    alphaTokenSort,
+    dropdownItemClass,
+    getSymbol,
+    ITokenProps,
+    getTokenList,
+    DEFAULT_CHAINID,
+} from '../utils';
 import { Asset } from './asset';
 import { ethers } from 'ethers6';
 import { useSearch } from '../hooks';
 import { usePintswapContext } from '../stores';
+import { getNetwork } from '@wagmi/core';
 
 type IDropdownProps = {
     state: any;
@@ -32,11 +40,13 @@ export const DropdownInput = ({
     loading,
     wrapperClass,
 }: IDropdownProps) => {
-    const isToken = type === 'gives.token' || type === 'gets.token';
-    const { query, list, handleChange } = useSearch(isToken ? TOKENS : options || []);
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
+    const isToken = type === 'gives.token' || type === 'gets.token';
+    const { query, list, handleChange } = useSearch(
+        isToken ? getTokenList(chainId) : options || [],
+    );
 
     const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
 
@@ -113,7 +123,7 @@ export const DropdownInput = ({
                                                   <Asset
                                                       icon={el.logoURI}
                                                       symbol={el.symbol}
-                                                      alt={el.asset}
+                                                      alt={el.name}
                                                   />
                                               </button>
                                           )}

@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Card, GradientBorder, Header, Input } from '../components';
-import { useOffersContext } from '../stores';
+import { useOffersContext, usePintswapContext } from '../stores';
 import { getTokenLogo } from '../utils/token';
 import { useSearch } from '../hooks';
 
 export const PairsView = () => {
+    const {
+        pintswap: { chainId },
+    } = usePintswapContext();
     const navigate = useNavigate();
-    const { limitOrdersArr } = useOffersContext();
+    const { limitOrdersArr, isLoading } = useOffersContext();
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
 
@@ -18,8 +21,6 @@ export const PairsView = () => {
             setUniquePairs(Array.from(new Set(limitOrdersArr.map((o) => o.ticker))));
         }
     }, [limitOrdersArr]);
-
-    const isLoading = uniquePairs.length === 0;
 
     return (
         <div className="flex flex-col">
@@ -41,8 +42,8 @@ export const PairsView = () => {
                           const split = pair.split('/');
                           const token1 = split[0];
                           const token2 = split[1];
-                          const icon1 = getTokenLogo(token1);
-                          const icon2 = getTokenLogo(token2);
+                          const icon1 = getTokenLogo(token1, chainId);
+                          const icon2 = getTokenLogo(token2, chainId);
                           return (
                               <button
                                   key={`unique-pair-${pair}`}

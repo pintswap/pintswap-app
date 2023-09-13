@@ -17,25 +17,23 @@ import 'react-tooltip/dist/react-tooltip.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
-    <>
+    <WagmiConfig client={wagmiClient}>
         <ThemeStore>
-            <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider chains={chains} theme={walletTheme}>
-                    <PintswapStore>
-                        <PricesStore>
-                            <OffersStore>
-                                <UserStore>
-                                    <PeersStore>
-                                        <HashRouter>
-                                            <App />
-                                        </HashRouter>
-                                    </PeersStore>
-                                </UserStore>
-                            </OffersStore>
-                        </PricesStore>
-                    </PintswapStore>
-                </RainbowKitProvider>
-            </WagmiConfig>
+            <RainbowKitProvider chains={chains} theme={walletTheme}>
+                <PintswapStore>
+                    <PricesStore>
+                        <OffersStore>
+                            <UserStore>
+                                <PeersStore>
+                                    <HashRouter>
+                                        <App />
+                                    </HashRouter>
+                                </PeersStore>
+                            </UserStore>
+                        </OffersStore>
+                    </PricesStore>
+                </PintswapStore>
+            </RainbowKitProvider>
         </ThemeStore>
-    </>,
+    </WagmiConfig>,
 );

@@ -5,6 +5,8 @@ import {
     SetStateAction,
     useContext,
     useEffect,
+    useMemo,
+    useRef,
     useState,
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
@@ -12,7 +14,7 @@ import { usePintswapContext } from './pintswap';
 import { memoize } from 'lodash';
 import { toLimitOrder, TESTING, defer } from '../utils';
 import { ethers } from 'ethers6';
-import { hashOffer, isERC20Transfer } from '@pintswap/sdk/lib/trade';
+import { detectTradeNetwork, hashOffer, isERC20Transfer } from '@pintswap/sdk';
 
 // Types
 export type IOffersStoreProps = {
@@ -21,6 +23,8 @@ export type IOffersStoreProps = {
     deleteTrade: (hash: string) => void;
     setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     limitOrdersArr: any[];
+    nftOrdersArr: any[];
+    isLoading: boolean;
 };
 
 // Context
@@ -30,6 +34,8 @@ const OffersContext = createContext<IOffersStoreProps>({
     deleteTrade(hash) {},
     setUserTrades: () => {},
     limitOrdersArr: [],
+    nftOrdersArr: [],
+    isLoading: false,
 });
 
 // Utils
@@ -92,26 +98,33 @@ const groupByType = (m: any) => {
     };
 };
 
-const toFlattened = memoize((v) =>
-    [...v.entries()].reduce(
-        (r, [multiaddr, [_, offerList]]) =>
-            r.concat(
-                offerList.map((v: any) => ({
-                    ...v,
-                    peer: multiaddr,
-                })),
+const toFlattened = memoize(
+    async (v) =>
+        await Promise.all(
+            [...v.entries()].reduce(
+                (r, [multiaddr, [_, offerList]]) =>
+                    r.concat(
+                        offerList.map(async (v: any) => ({
+                            ...v,
+                            peer: multiaddr,
+                            chainId: await detectTradeNetwork(v),
+                        })),
+                    ),
+                [],
             ),
-        [],
-    ),
+        ),
 );
 
 // Wrapper
 export function OffersStore(props: { children: ReactNode }) {
-    const { pintswap } = usePintswapContext();
-    const { module } = pintswap;
+    const {
+        pintswap: { module, chainId },
+    } = usePintswapContext();
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [limitOrdersArr, setLimitOrdersArr] = useState<any[]>([]);
+    const [nftOrdersArr, setNftOrdersArr] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
         setUserTrades(userTrades.set(hash, tradeProps));
@@ -119,9 +132,9 @@ export function OffersStore(props: { children: ReactNode }) {
 
     const deleteTrade = (hash: string) => {
         const foundTrade = userTrades.get(hash);
-        if (foundTrade && pintswap.module) {
+        if (foundTrade && module) {
             if (TESTING) console.log('#deleteTrade - Hash:', hash);
-            pintswap.module.offers.delete(hashOffer(foundTrade));
+            module.offers.delete(hashOffer(foundTrade));
             const shallow = new Map(userTrades);
             shallow.delete(hash);
             setUserTrades(shallow);
@@ -129,33 +142,40 @@ export function OffersStore(props: { children: ReactNode }) {
     };
 
     // Get Active Trades
+    const listener = async () => {
+        if ((module?.peers.size as any) > 0) {
+            let signer: any;
+            if (module?.signer?.provider) {
+                signer = module.signer;
+            } else {
+                signer = new ethers.InfuraProvider('mainnet');
+            }
+            const availablePeers = (await resolveNames(module?.peers as any, module as any)) as any;
+            const grouped = groupByType(availablePeers);
+            // All trades converted to Array for DataTables
+            const flattenedPairs = (await toFlattened(grouped.erc20)).filter(
+                (el) => el.chainId === chainId,
+            );
+            const flattenedNftTrades = (await toFlattened(grouped.nft)).filter(
+                (el) => el.chainId === chainId,
+            );
+            const mappedPairs = (
+                await Promise.all(
+                    flattenedPairs.map(async (v: any) => await toLimitOrder(v, signer)),
+                )
+            ).map((v, i) => ({
+                ...v,
+                peer: flattenedPairs[i].peer,
+                multiAddr: flattenedPairs[i].multiAddr,
+            }));
+            setLimitOrdersArr(mappedPairs);
+            setNftOrdersArr(flattenedNftTrades);
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         if (module) {
-            const listener = async () => {
-                if ((module?.peers.size as any) > 0) {
-                    let signer: any;
-                    if (module?.signer?.provider) {
-                        signer = module.signer;
-                    } else {
-                        signer = new ethers.InfuraProvider('mainnet');
-                    }
-                    const grouped = groupByType(
-                        (await resolveNames(module?.peers as any, module as any)) as any,
-                    );
-                    // All trades converted to Array for DataTables
-                    const flattened = toFlattened(grouped.erc20);
-                    const mapped = (
-                        await Promise.all(
-                            flattened.map(async (v: any) => await toLimitOrder(v, signer)),
-                        )
-                    ).map((v, i) => ({
-                        ...v,
-                        peer: flattened[i].peer,
-                        multiAddr: flattened[i].multiAddr,
-                    }));
-                    setLimitOrdersArr(mapped);
-                }
-            };
             module.on('/pubsub/orderbook-update', listener);
             return () => module.removeListener('/pubsub/orderbook-update', listener);
         }
@@ -168,8 +188,10 @@ export function OffersStore(props: { children: ReactNode }) {
                 userTrades,
                 addTrade,
                 setUserTrades,
-                limitOrdersArr,
+                limitOrdersArr: limitOrdersArr.filter((el) => el.chainId === chainId),
                 deleteTrade,
+                nftOrdersArr: nftOrdersArr.filter((el) => el.chainId === chainId),
+                isLoading,
             }}
         >
             {props.children}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ITokenProps, TOKENS, getSymbol } from '../utils';
+import { getTokenList, getSymbol, DEFAULT_CHAINID } from '../utils';
 import { usePintswapContext } from '../stores';
+import { getNetwork } from '@wagmi/core';
 
 type IAssetProps = {
     icon?: string;
@@ -20,7 +21,7 @@ export const Asset = ({
     fontSize = 'text-md',
 }: IAssetProps) => {
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const [assetData, setAssetData] = useState<any>({
         symbol: symbol || '',
@@ -30,7 +31,7 @@ export const Asset = ({
 
     useEffect(() => {
         (async () => {
-            const found = TOKENS.find(
+            const found = getTokenList(chainId).find(
                 (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
             );
             if (found) setAssetData({ ...found, icon: found.logoURI, alt: alt || found.symbol });

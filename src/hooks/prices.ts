@@ -1,9 +1,10 @@
 import { isAddress } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { tryBoth } from '../api';
-import { TOKENS_BY_SYMBOL } from '../utils';
+import { getTokenListBySymbol } from '../utils';
 import { usePricesContext } from '../stores';
-import { IOffer, ITransfer } from '@pintswap/sdk';
+import { ITransfer } from '@pintswap/sdk';
+import { getNetwork } from '@wagmi/core';
 
 export const calculatePrices = async ({
     gives,
@@ -14,15 +15,16 @@ export const calculatePrices = async ({
     gets?: ITransfer;
     eth?: string;
 }) => {
+    const activeChainId = getNetwork()?.chain?.id || 1;
     if (!gives?.token || !gets?.token || !gives?.amount || !gets?.amount || !eth)
         return { eth: '0', usd: '0' };
     try {
         const addressA = isAddress(gives?.token)
             ? gives?.token
-            : TOKENS_BY_SYMBOL[gives?.token]?.address;
+            : getTokenListBySymbol(activeChainId)[gives?.token]?.address;
         const addressB = isAddress(gets?.token)
             ? gets?.token
-            : TOKENS_BY_SYMBOL[gets?.token]?.address;
+            : getTokenListBySymbol(activeChainId)[gets?.token]?.address;
         if (addressA && addressB) {
             const { token: aToken } = await tryBoth({ address: addressA });
             const { token: bToken } = await tryBoth({ address: addressB });

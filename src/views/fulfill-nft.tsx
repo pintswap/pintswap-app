@@ -8,6 +8,7 @@ import { useSigner } from 'wagmi';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { toFormatted } from '../utils/orderbook';
 import { INFTProps } from '../utils/types';
+import { usePintswapContext } from '../stores';
 
 export const FulfillNFTView = () => {
     const navigate = useNavigate();
@@ -15,8 +16,10 @@ export const FulfillNFTView = () => {
     const { state } = useLocation();
     const { fulfillTrade, steps, error, peerTrades } = useTrade();
     const [loading, setLoading] = useState(true);
-    const { data: signer } = useSigner();
     const [nft, setNFT] = useState<INFTProps | null>(null);
+    const {
+        pintswap: { module },
+    } = usePintswapContext();
 
     const offer = useMemo(() => {
         return peerTrades.get(hash as string);
@@ -26,7 +29,7 @@ export const FulfillNFTView = () => {
         (async () => {
             if (offer) {
                 const n = await fetchNFT(offer.gives);
-                const cost = await toFormatted(offer.gets, signer);
+                const cost = await toFormatted(offer.gets, module?.signer);
                 setLoading(false);
                 setNFT({ ...n, ...cost });
             }
