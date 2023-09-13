@@ -4,6 +4,7 @@ import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { DEFAULT_CHAINID, defer, TESTING } from '../utils';
 import { getNetwork } from '@wagmi/core';
+import { toast } from 'react-toastify';
 
 // Types
 export type IPintswapProps = {
@@ -206,6 +207,11 @@ export function PintswapStore(props: { children: ReactNode }) {
         )
             pintswap.module.signer = signer;
     }, [signer, pintswap]);
+
+    // On chain change, reset any toasts
+    useEffect(() => {
+        toast.dismiss('findPeer');
+    }, [pintswap.chainId]);
 
     return (
         <PintswapContext.Provider
