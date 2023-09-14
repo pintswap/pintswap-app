@@ -14,6 +14,7 @@ import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { EXPLORER_URLS } from '../utils';
+import { usePintswapContext } from '../stores';
 
 const columns = [
     {
@@ -47,6 +48,9 @@ const columns = [
 
 export const PeerTickerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
+    const {
+        pintswap: { chainId },
+    } = usePintswapContext();
     const { order } = useTrade();
     const { multiaddr, base: baseAsset, trade: tradeAsset } = useParams();
     const { ticker, bidLimitOrders, askLimitOrders, loading } =
@@ -162,7 +166,7 @@ export const PeerTickerOrderbookView = () => {
                                 position="left"
                             >
                                 <a
-                                    href={`${EXPLORER_URLS['ETH']}/token/${
+                                    href={`${EXPLORER_URLS[chainId]}/token/${
                                         determineTokenAddresses()?.quote
                                     }`}
                                     rel="noreferrer"
@@ -179,7 +183,7 @@ export const PeerTickerOrderbookView = () => {
                                 position="left"
                             >
                                 <a
-                                    href={`${EXPLORER_URLS['ETH']}/token/${
+                                    href={`${EXPLORER_URLS[chainId]}/token/${
                                         determineTokenAddresses()?.base
                                     }`}
                                     rel="noreferrer"

@@ -133,7 +133,7 @@ const CustomRow = (props: IDataTableProps) => {
     const { userData } = useUserContext();
     const { pair, base: baseAsset } = useParams();
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const { eth } = usePricesContext();
     const cols = columns as string[];
@@ -166,7 +166,7 @@ const CustomRow = (props: IDataTableProps) => {
             case 'manage':
                 return navigate(`${url}fulfill/${userData.name || module?.address}/${firstCell}`);
             case 'history': // TODO
-                return window.open(`https://${EXPLORER_URLS['ETH']}/tx/${firstCell}`, '_blank');
+                return window.open(`${EXPLORER_URLS[chainId]}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook':
                 return navigate(`/${peer}/${firstCell}`);
             case 'pairs':

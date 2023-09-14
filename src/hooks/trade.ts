@@ -67,7 +67,7 @@ export const useTrade = () => {
                     amount: undefined,
                 },
                 gets: {
-                    token: getTokenAddress(foundGetsToken, gets),
+                    token: getTokenAddress(foundGetsToken, gets, chainId),
                     amount: await convertAmount(
                         'hex',
                         gets?.amount || '0',
@@ -82,7 +82,7 @@ export const useTrade = () => {
         // ERC20
         const builtObj = {
             gives: {
-                token: getTokenAddress(foundGivesToken, gives),
+                token: getTokenAddress(foundGivesToken, gives, chainId),
                 amount: await convertAmount(
                     'hex',
                     gives?.amount || '0',
@@ -91,7 +91,7 @@ export const useTrade = () => {
                 ),
             },
             gets: {
-                token: getTokenAddress(foundGetsToken, gets),
+                token: getTokenAddress(foundGetsToken, gets, chainId),
                 amount: await convertAmount('hex', gets?.amount || '0', gets.token, module?.signer),
             },
         };
@@ -225,9 +225,11 @@ export const useTrade = () => {
                                 const tokens = [offer.gets?.token, offer.gives?.token];
                                 return Promise.all(
                                     tokens.map(async (t) => {
-                                        if (!Object.values(reverseSymbolCache).includes(t)) {
+                                        if (
+                                            !Object.values(reverseSymbolCache[chainId]).includes(t)
+                                        ) {
                                             const symbol = await getSymbol(t, module.signer);
-                                            reverseSymbolCache[symbol] = t;
+                                            reverseSymbolCache[chainId][symbol] = t;
                                         }
                                     }),
                                 );

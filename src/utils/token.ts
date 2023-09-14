@@ -19,8 +19,11 @@ export function toAddress(symbolOrAddress: string, chainId: number): string {
     if (!symbolOrAddress) return '';
     const token = getTokenListBySymbol(chainId)[symbolOrAddress];
     if (token) return getAddress(token.address);
-    if (String(symbolOrAddress).substr(0, 2) !== '0x' && reverseSymbolCache[symbolOrAddress])
-        return getAddress(reverseSymbolCache[symbolOrAddress]);
+    if (
+        String(symbolOrAddress).substr(0, 2) !== '0x' &&
+        reverseSymbolCache[chainId][symbolOrAddress]
+    )
+        return getAddress(reverseSymbolCache[chainId][symbolOrAddress]);
     if (symbolOrAddress?.startsWith('0x')) return getAddress(symbolOrAddress);
     return '';
 }
@@ -39,11 +42,15 @@ export async function toTicker(pair: any, provider?: Signer) {
     ).join('/');
 }
 
-export const getTokenAddress = (token: ITokenProps | undefined, raw: ITransfer) => {
+export const getTokenAddress = (
+    token: ITokenProps | undefined,
+    raw: ITransfer,
+    chainId: number,
+) => {
     if (token?.address) return token.address;
     else if (raw?.token) {
         if (isAddress(raw?.token)) return raw.token;
-        if (reverseSymbolCache[raw?.token]) return reverseSymbolCache[raw?.token];
+        if (reverseSymbolCache[chainId][raw?.token]) return reverseSymbolCache[chainId][raw?.token];
     } else return '';
 };
 
@@ -53,8 +60,8 @@ export async function getSymbol(address?: string, provider?: Signer) {
     const activeChainId = await chainIdFromProvider(provider);
     const match = getTokenList(activeChainId).find((v) => getAddress(v.address) === address);
     if (match) return match.symbol;
-    else if (symbolCache[address]) {
-        return symbolCache[address];
+    else if (symbolCache[activeChainId][address]) {
+        return symbolCache[activeChainId][address];
     } else {
         const contract = new Contract(
             address,
@@ -63,8 +70,9 @@ export async function getSymbol(address?: string, provider?: Signer) {
         );
         try {
             const symbol = await contract.symbol();
-            symbolCache[address] = symbol;
-            if (!reverseSymbolCache[symbol]) reverseSymbolCache[symbol] = address;
+            symbolCache[activeChainId][address] = symbol;
+            if (!reverseSymbolCache[activeChainId][symbol])
+                reverseSymbolCache[activeChainId][symbol] = address;
         } catch (e) {
             try {
                 const mainnetTry = await new Contract(
@@ -72,12 +80,12 @@ export async function getSymbol(address?: string, provider?: Signer) {
                     ['function symbol() view returns (string)'],
                     providerFromChainId(1),
                 ).symbol();
-                symbolCache[address] = mainnetTry || address;
+                symbolCache[activeChainId][address] = mainnetTry || address;
             } catch (err) {
-                symbolCache[address] = address;
+                symbolCache[activeChainId][address] = address;
             }
         }
-        return symbolCache[address];
+        return symbolCache[activeChainId][address];
     }
 }
 
@@ -112,7 +120,8 @@ export async function getTokenAttributes(
             try {
                 const symbol = await getSymbol(token, provider);
                 const decimals = await getDecimals(token, provider);
-                if (!reverseSymbolCache[symbol]) reverseSymbolCache[symbol] = token;
+                if (!reverseSymbolCache[activeChainId][symbol])
+                    reverseSymbolCache[activeChainId][symbol] = token;
                 const tokenAttributes = {
                     chainId: activeChainId,
                     address: token,
@@ -147,8 +156,8 @@ export async function getDecimals(token: string, provider: Signer) {
         const address = getAddress(token);
         const match = getTokenList(activeChainId).find((v) => getAddress(v.address) === address);
         if (match) return match.decimals;
-        else if (decimalsCache[address]) {
-            return decimalsCache[address];
+        else if (decimalsCache[activeChainId][address]) {
+            return decimalsCache[activeChainId][address];
         } else {
             try {
                 const contract = new Contract(
@@ -156,8 +165,8 @@ export async function getDecimals(token: string, provider: Signer) {
                     ['function decimals() view returns (uint8)'],
                     provider,
                 );
-                decimalsCache[address] = Number(await contract.decimals());
-                return decimalsCache[address];
+                decimalsCache[activeChainId][address] = Number(await contract.decimals());
+                return decimalsCache[activeChainId][address];
             } catch (err) {
                 try {
                     const mainnetTry = await new Contract(

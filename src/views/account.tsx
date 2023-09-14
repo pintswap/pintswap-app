@@ -41,7 +41,6 @@ const columns = [
 
 export const AccountView = () => {
     const subgraph = useSubgraph({});
-    console.log(subgraph);
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { pintswap } = usePintswapContext();
