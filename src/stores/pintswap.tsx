@@ -1,10 +1,11 @@
-import { useMemo, createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useSigner, useAccount } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { DEFAULT_CHAINID, defer, TESTING } from '../utils';
 import { getNetwork } from '@wagmi/core';
 import { toast } from 'react-toastify';
+import { useNetworkContext } from './network';
 
 // Types
 export type IPintswapProps = {
@@ -42,12 +43,6 @@ function mergeUserData(a: any, b: any): typeof a {
 export async function initializePintswapFromSigner({ signer, pintswap, setPintswap }: any) {
     await (window as any).discoveryDeferred.promise;
     if (pintswap.module) await pintswap.module.stopNode();
-    const metamask = getMetamask(signer);
-    if (metamask)
-        await metamask.request({
-            method: 'wallet_requestPermissions',
-            params: [{ eth_accounts: {} }],
-        });
     const ps = (await Pintswap.fromPassword({
         signer,
         password: await signer?.getAddress(),
@@ -71,13 +66,6 @@ export async function initializePintswapFromSigner({ signer, pintswap, setPintsw
     });
 }
 
-const getMetamask = (signer: any) =>
-    signer &&
-    signer.provider &&
-    signer.provider.provider &&
-    signer.provider.provider.isMetaMask &&
-    signer.provider.provider;
-
 export const GAS_PRICE_MULTIPLIER = ethers.parseEther('1.8');
 
 export const makeGetGasPrice = (provider: any, multiplier: any) => {
@@ -95,6 +83,7 @@ export const makeGetGasPrice = (provider: any, multiplier: any) => {
 export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
     const { address } = useAccount();
+    const { newAddress } = useNetworkContext();
     const localPsUser = localStorage.getItem('_pintUser');
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
@@ -103,17 +92,6 @@ export function PintswapStore(props: { children: ReactNode }) {
         error: false,
         chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
     });
-
-    const metamask = useMemo(() => getMetamask(signer), [signer]);
-    useEffect(() => {
-        if (metamask) {
-            const listener = async () => {
-                await initializePintswapFromSigner({ signer, pintswap, setPintswap });
-            };
-            metamask.on('accountsChanged', listener);
-            return () => metamask.removeListener('accountsChanged', listener);
-        }
-    }, [signer]);
 
     const determinePsModule = async () => {
         if (!signer && !address) {
@@ -191,23 +169,10 @@ export function PintswapStore(props: { children: ReactNode }) {
         }
     };
 
-    // Initialize Pintswap
+    // Initialize Pintswap unless just network switch
     useEffect(() => {
-        if (!pintswap.module) initialize();
+        if (!pintswap.module || newAddress) initialize();
     }, [signer, address]);
-
-    // useEffect(() => {
-    //     if (
-    //         signer &&
-    //         pintswap.module &&
-    //         pintswap.module.signer &&
-    //         (!pintswap.module.signer.provider ||
-    //             ((signer as any).address || '').toLowerCase() ===
-    //                 '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) &&
-    //         signer
-    //     )
-    //         pintswap.module.signer = signer;
-    // }, [signer, pintswap]);
 
     // On chain change, reset any toasts
     useEffect(() => {

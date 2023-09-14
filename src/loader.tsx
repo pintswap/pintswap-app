@@ -10,6 +10,7 @@ import {
     UserStore,
     PeersStore,
     PricesStore,
+    NetworkStore,
 } from './stores';
 
 import './styles/tailwind.css';
@@ -20,19 +21,21 @@ root.render(
     <WagmiConfig client={wagmiClient}>
         <ThemeStore>
             <RainbowKitProvider chains={chains} theme={walletTheme}>
-                <PintswapStore>
-                    <PricesStore>
-                        <OffersStore>
-                            <UserStore>
-                                <PeersStore>
-                                    <HashRouter>
-                                        <App />
-                                    </HashRouter>
-                                </PeersStore>
-                            </UserStore>
-                        </OffersStore>
-                    </PricesStore>
-                </PintswapStore>
+                <NetworkStore>
+                    <PintswapStore>
+                        <PricesStore>
+                            <OffersStore>
+                                <UserStore>
+                                    <PeersStore>
+                                        <HashRouter>
+                                            <App />
+                                        </HashRouter>
+                                    </PeersStore>
+                                </UserStore>
+                            </OffersStore>
+                        </PricesStore>
+                    </PintswapStore>
+                </NetworkStore>
             </RainbowKitProvider>
         </ThemeStore>
     </WagmiConfig>,
