@@ -4,9 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { ActiveText, AnimatedHamburger, ChainDropdown, Gas, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
 import { APP_VERSION } from '../utils';
+import { useAccount } from 'wagmi';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useDashNav();
+    const { address } = useAccount();
     const { width, breakpoints } = useWindowSize();
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -31,20 +33,24 @@ export const Navbar = () => {
                         />
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
-                        {breakpoints.md <= width && (
+                        {breakpoints.md <= width ? (
+                            // Desktop
                             <div className="flex items-center gap-2">
                                 <Gas className="mr-2" units="gwei" />
                                 <ChainDropdown />
+                                <Wallet />
                             </div>
-                        )}
-                        <Wallet />
-                        {width < breakpoints.md && (
-                            <button
-                                onClick={() => setIsMobileOpen(!isMobileOpen)}
-                                className="px-0.5"
-                            >
-                                <AnimatedHamburger state={isMobileOpen} />
-                            </button>
+                        ) : (
+                            // Mobile
+                            <div className="flex items-center gap-2">
+                                {address ? <ChainDropdown /> : <Wallet />}
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="px-0.5"
+                                >
+                                    <AnimatedHamburger state={isMobileOpen} />
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -89,6 +95,9 @@ export const Navbar = () => {
                             </button>
                         </li>
                     ))}
+                    <li className="w-full pb-2 mt-2">
+                        <Wallet fullWidth />
+                    </li>
                 </ul>
             </Transition>
 
