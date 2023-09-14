@@ -10,7 +10,7 @@ type IChainDropdown = {
 export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
     const { openChainModal } = useChainModal();
     const getNetworkName = () => {
-        if (getNetwork()) {
+        if (getNetwork()?.chain) {
             const formattedNetworkName = getNetwork().chain?.name?.toLowerCase();
             if (formattedNetworkName?.includes(' ')) return formattedNetworkName.split(' ')[0];
             return formattedNetworkName;

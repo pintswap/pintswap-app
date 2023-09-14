@@ -147,66 +147,67 @@ export function PintswapStore(props: { children: ReactNode }) {
         }
     };
 
+    const initialize = async () => {
+        const ps: Pintswap = await new Promise((resolve, reject) => {
+            (async () => {
+                try {
+                    // Stop exisiting node if there is one started
+                    if (pintswap.module?.isStarted() && pintswap.module) {
+                        await pintswap.module.stopNode();
+                        if (TESTING) console.log('Stopped previous node');
+                    }
+
+                    const ps = await determinePsModule();
+                    if (ps?.signer?.provider) {
+                        ps.signer.provider.getGasPrice = makeGetGasPrice(
+                            ps.signer.provider,
+                            GAS_PRICE_MULTIPLIER,
+                        );
+                    }
+                    (window as any).ps = ps;
+                    ps.on('pintswap/node/status', (s: any) => {
+                        if (TESTING) console.log('Node emitting', s);
+                    });
+                    // Start node
+                    await ps.startNode();
+                    if (TESTING) console.log('Starting new node');
+                    // Subscribe to peer
+                    ps.on('peer:discovery', async (peer: any) => {
+                        (window as any).discoveryDeferred.resolve(peer);
+                    });
+                    // Subscribe to pubsub
+                    await ps.subscribeOffers();
+                    resolve(ps);
+                } catch (err) {
+                    console.warn('#initialize:', err);
+                    setPintswap({ ...pintswap, loading: false });
+                }
+            })().catch(reject);
+        });
+        if (ps.isStarted()) {
+            setPintswap({ ...pintswap, module: ps, loading: false });
+        } else {
+            setPintswap({ ...pintswap, loading: false });
+        }
+    };
+
     // Initialize Pintswap
     useEffect(() => {
-        const initialize = async () => {
-            const ps: Pintswap = await new Promise((resolve, reject) => {
-                (async () => {
-                    try {
-                        // Stop exisiting node if there is one started
-                        if (pintswap.module?.isStarted() && pintswap.module) {
-                            await pintswap.module.stopNode();
-                            if (TESTING) console.log('Stopped previous node');
-                        }
-
-                        const ps = await determinePsModule();
-                        if (ps?.signer?.provider) {
-                            ps.signer.provider.getGasPrice = makeGetGasPrice(
-                                ps.signer.provider,
-                                GAS_PRICE_MULTIPLIER,
-                            );
-                        }
-                        (window as any).ps = ps;
-                        ps.on('pintswap/node/status', (s: any) => {
-                            if (TESTING) console.log('Node emitting', s);
-                        });
-                        // Start node
-                        await ps.startNode();
-                        if (TESTING) console.log('Starting new node');
-                        // Subscribe to peer
-                        ps.on('peer:discovery', async (peer: any) => {
-                            (window as any).discoveryDeferred.resolve(peer);
-                        });
-                        // Subscribe to pubsub
-                        await ps.subscribeOffers();
-                        resolve(ps);
-                    } catch (err) {
-                        console.warn('#initialize:', err);
-                        setPintswap({ ...pintswap, loading: false });
-                    }
-                })().catch(reject);
-            });
-            if (ps.isStarted()) {
-                setPintswap({ ...pintswap, module: ps, loading: false });
-            } else {
-                setPintswap({ ...pintswap, loading: false });
-            }
-        };
-        initialize();
+        if (!pintswap.module) initialize();
     }, [signer, address]);
 
-    useEffect(() => {
-        if (
-            signer &&
-            pintswap.module &&
-            pintswap.module.signer &&
-            (!pintswap.module.signer.provider ||
-                ((signer as any).address || '').toLowerCase() ===
-                    '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) &&
-            signer
-        )
-            pintswap.module.signer = signer;
-    }, [signer, pintswap]);
+    // useEffect(() => {
+    //     if (
+    //         signer &&
+    //         pintswap.module &&
+    //         pintswap.module.signer &&
+    //         (!pintswap.module.signer.provider ||
+    //             ((signer as any).address || '').toLowerCase() ===
+    //                 '0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199'.toLowerCase()) &&
+    //         signer
+    //     )
+    //         pintswap.module.signer = signer;
+    // }, [signer, pintswap]);
 
     // On chain change, reset any toasts
     useEffect(() => {
