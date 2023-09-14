@@ -63,7 +63,8 @@ export const NFTDisplay = ({ nft, show, loading, height, width, offer }: INFTDis
                                 }
                                 usdValue={
                                     Number(tokenRes?.data?.usdPrice || '0') > 0
-                                        ? Number(tokenRes.data.usdPrice) * Number(nft.amount)
+                                        ? Number(tokenRes?.data?.usdPrice || '0') *
+                                          Number(nft.amount)
                                         : undefined
                                 }
                             />

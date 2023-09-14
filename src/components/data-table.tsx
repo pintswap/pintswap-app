@@ -12,6 +12,7 @@ import { useOffersContext, usePintswapContext, usePricesContext, useUserContext 
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
+import { EXPLORER_URLS } from '../utils';
 
 type IDataTableProps = {
     title?: string;
@@ -26,7 +27,8 @@ type IDataTableProps = {
         | 'asks'
         | 'bids'
         | 'manage'
-        | 'peer-orderbook';
+        | 'peer-orderbook'
+        | 'history';
     peer?: string;
     toolbar?: boolean;
     pagination?: boolean;
@@ -163,6 +165,8 @@ const CustomRow = (props: IDataTableProps) => {
                 });
             case 'manage':
                 return navigate(`${url}fulfill/${userData.name || module?.address}/${firstCell}`);
+            case 'history': // TODO
+                return window.open(`https://${EXPLORER_URLS['ETH']}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook':
                 return navigate(`/${peer}/${firstCell}`);
             case 'pairs':
@@ -192,6 +196,15 @@ const CustomRow = (props: IDataTableProps) => {
     };
 
     const formatCell = (s: string) => {
+        if (type === 'history' && s.length > 15) {
+            const [amount, asset] = s.split(' ');
+            return (
+                <span className="flex items-center gap-1.5">
+                    <SmartPrice price={amount} />
+                    <span>{asset}</span>
+                </span>
+            );
+        }
         switch (s) {
             case 'ask':
                 return 'Ask';
@@ -225,16 +238,25 @@ const CustomRow = (props: IDataTableProps) => {
                         Cancel
                     </Button>
                 );
+            } else if (type === 'history') {
+                return (
+                    <Button
+                        className="text-indigo-500 hover:text-indigo-600 w-full text-right"
+                        type="transparent"
+                    >
+                        Open Explorer
+                    </Button>
+                );
             }
             return <></>;
         }
 
         const charsShown = width > 900 ? 4 : 5;
         if (
-            typeof cell === 'string' &&
-            cell.startsWith('pint') &&
-            cell.length > 30 &&
-            (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
+            (typeof cell === 'string' && cell.startsWith('pint') && cell.length > 30) ||
+            cell?.startsWith('Q') ||
+            cell?.startsWith('0x') ||
+            cell?.startsWith('pint')
         ) {
             // Address / MultiAddr
             return truncate(cell, charsShown);

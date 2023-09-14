@@ -26,6 +26,7 @@ export const ENDPOINTS = {
         v2: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev',
         v3: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
     },
+    pintswap: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-eth',
 };
 
 // TOKENS

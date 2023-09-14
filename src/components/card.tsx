@@ -11,6 +11,7 @@ type ICardProps = {
     defaultTab?: string;
     onTabChange?: any;
     bg?: string;
+    customTabCols?: 'grid-cols-2' | 'grid-cols-3' | 'grid-cols-4';
 };
 
 export const Card = ({
@@ -23,6 +24,7 @@ export const Card = ({
     defaultTab,
     onTabChange,
     bg,
+    customTabCols = 'grid-cols-2',
 }: ICardProps) => {
     const backgroundColor = bg
         ? bg
@@ -40,6 +42,7 @@ export const Card = ({
         );
     }
     if (type === 'tabs') {
+        const columns = `grid-cols-${tabs?.length || '2'}`;
         return (
             <Tab.Group
                 defaultIndex={
@@ -52,7 +55,7 @@ export const Card = ({
                 >
                     {tabs && !header && (
                         <div className="md:text-lg text-center mb-2 lg:mb-3 font-semibold">
-                            <Tab.List className="grid grid-cols-2 gap-2 lg:gap-4">
+                            <Tab.List className={`grid ${customTabCols} gap-2 lg:gap-3`}>
                                 {tabs.map((tab, i) => (
                                     <Tab key={`tabs-${i}`} className="focus-visible:outline-none">
                                         {({ selected }) => (
@@ -60,8 +63,8 @@ export const Card = ({
                                                 className={`${
                                                     selected
                                                         ? 'border-indigo-600'
-                                                        : 'border-neutral-800 text-neutral-400 hover:text-neutral-300'
-                                                } border-b-2 lg:border-b-4 rounded w-full pb-2 transition duration-200`}
+                                                        : 'border-neutral-800 text-neutral-400 hover:text-neutral-300 hover:border-b-neutral-700'
+                                                } border-b-2 lg:border-b-4 w-full pb-2 transition duration-200`}
                                             >
                                                 {tab}
                                             </div>

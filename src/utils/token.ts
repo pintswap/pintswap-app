@@ -48,7 +48,7 @@ export const getTokenAddress = (token: ITokenProps | undefined, raw: ITransfer) 
 };
 
 export async function getSymbol(address?: string, provider?: Signer) {
-    if (!address || !provider || !isAddress(address)) return address || '';
+    if (!address || !provider) return address || '';
     address = getAddress(address);
     const activeChainId = await chainIdFromProvider(provider);
     const match = getTokenList(activeChainId).find((v) => getAddress(v.address) === address);
@@ -159,7 +159,16 @@ export async function getDecimals(token: string, provider: Signer) {
                 decimalsCache[address] = Number(await contract.decimals());
                 return decimalsCache[address];
             } catch (err) {
-                return 18;
+                try {
+                    const mainnetTry = await new Contract(
+                        address,
+                        ['function decimals() view returns (uint8)'],
+                        providerFromChainId(1),
+                    ).decimals();
+                    return mainnetTry || 18;
+                } catch (err) {
+                    return 18;
+                }
             }
         }
     } else {

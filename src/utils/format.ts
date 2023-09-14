@@ -1,3 +1,6 @@
+import { Signer, formatUnits } from 'ethers6';
+import { getDecimals, getSymbol } from './token';
+
 // STRING
 export function truncate(s: string, amount?: number) {
     if (!s) return s;
@@ -32,6 +35,40 @@ export const maybeFormatMultiAddr = (s: string): string => {
         return shorten(s);
     return s;
 };
+
+// Subgraph Pintswap Trades
+export async function formatPintswapTrade(trade: any, signer: Signer) {
+    const givesDecimals = await getDecimals(trade.gives.token, signer);
+    const givesAmount = formatUnits(trade.gives.amount, givesDecimals);
+    const givesSymbol = await getSymbol(trade.gives.token, signer);
+
+    const getsDecimals = await getDecimals(trade.gets.token, signer);
+    const getsAmount = formatUnits(trade.gets.amount, getsDecimals);
+    const getsSymbol = await getSymbol(trade.gets.token, signer);
+
+    return {
+        hash: trade.id,
+        timestamp: new Date(Number(trade.timestamp) * 1000).toLocaleDateString(),
+        chainId: Number(trade.chainId),
+        pair: trade.pair,
+        maker: trade.maker,
+        taker: trade.taker,
+        gets: {
+            amount: getsAmount,
+            address: trade.gets.token,
+            symbol: getsSymbol,
+            decimals: getsDecimals,
+        },
+        gives: {
+            amount: givesAmount,
+            address: trade.gives.token,
+            symbol: givesSymbol,
+            decimals: givesDecimals,
+        },
+        sending: `${givesAmount} ${givesSymbol}`,
+        receiving: `${getsAmount} ${getsSymbol}`,
+    };
+}
 
 // CSS CLASS
 export function classNames(...classes: string[]) {

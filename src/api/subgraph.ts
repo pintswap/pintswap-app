@@ -1,5 +1,5 @@
-import { ethers } from 'ethers6';
-import { ENDPOINTS } from '../utils';
+import { ethers, Signer } from 'ethers6';
+import { ENDPOINTS, formatPintswapTrade } from '../utils';
 
 const JSON_HEADER_POST = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
 
@@ -162,6 +162,15 @@ export async function tryBoth(props: { address?: string; history?: 'day' | 'hour
     return { token: null };
 }
 
+export async function getManyV2Tokens(addresses: string[]): Promise<any[]> {
+    if (!addresses) return [];
+    const validAddresses = addresses.filter((t) => ethers.isAddress(t));
+    const promises = await Promise.all(
+        validAddresses.map(async (token) => getV2Token({ address: token })),
+    );
+    return promises;
+}
+
 export async function getEthPrice(): Promise<string> {
     const response = await fetch(ENDPOINTS['uniswap']['v3'], {
         ...JSON_HEADER_POST,
@@ -177,4 +186,51 @@ export async function getEthPrice(): Promise<string> {
         data: { bundles },
     } = await response.json();
     return bundles[0].ethPriceUSD;
+}
+
+export async function getUserHistory(address: string, signer: Signer) {
+    const params = ['taker', 'maker'];
+    const res = await Promise.all(
+        params.map(async (el) => {
+            return await (
+                await fetch(ENDPOINTS['pintswap'], {
+                    ...JSON_HEADER_POST,
+                    body: JSON.stringify({
+                        query: `{
+                    pintswapTrades(
+                        orderBy: timestamp, 
+                        orderDirection: asc,
+                        where: { ${el}: "${address.toLowerCase()}" }
+                    ) {
+                        id
+                        timestamp
+                        chainId
+                        pair
+                        maker
+                        taker
+                        gets {
+                          amount
+                          token
+                        }
+                        gives {
+                          amount
+                          token
+                        }
+                      }
+                }`,
+                    }),
+                })
+            ).json();
+        }),
+    );
+    if (res.length) {
+        const [taker, maker] = res;
+        return await Promise.all(
+            taker?.data?.pintswapTrades
+                .concat(maker?.data?.pintswapTrades)
+                .map(async (x: any) => await formatPintswapTrade(x, signer)),
+        );
+    } else {
+        return [];
+    }
 }

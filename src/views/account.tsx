@@ -18,6 +18,7 @@ import { convertAmount } from '../utils/token';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { formatPeerImg, truncate } from '../utils';
+import { useSubgraph } from '../hooks';
 
 const columns = [
     {
@@ -39,6 +40,8 @@ const columns = [
 ];
 
 export const AccountView = () => {
+    const subgraph = useSubgraph({});
+    console.log(subgraph);
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { pintswap } = usePintswapContext();
@@ -100,7 +103,7 @@ export const AccountView = () => {
         })().catch((err) => console.error(err));
     }, [userTrades.size]);
 
-    const TABS = ['Profile', width > 600 ? 'Your Orders' : 'Orders'];
+    const TABS = ['Profile', width > 600 ? 'Active Offers' : 'Offers', 'History'];
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
@@ -128,7 +131,7 @@ export const AccountView = () => {
                     </Skeleton>
                 </div>
             </div>
-            <Card tabs={TABS} type="tabs" scroll>
+            <Card tabs={TABS} customTabCols="grid-cols-3" type="tabs" scroll>
                 <Tab.Panel>
                     <form>
                         <div
@@ -309,6 +312,15 @@ export const AccountView = () => {
                 </Tab.Panel>
                 <Tab.Panel>
                     <DataTable columns={columns} data={tableData} type="manage" toolbar={false} />
+                </Tab.Panel>
+                <Tab.Panel>
+                    <DataTable
+                        columns={columns}
+                        data={subgraph?.data?.userHistory || []}
+                        toolbar={false}
+                        type="history"
+                        loading={subgraph.isLoading}
+                    />
                 </Tab.Panel>
             </Card>
 
