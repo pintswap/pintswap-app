@@ -10,10 +10,7 @@ import { maybeShorten } from './format';
 import { ITokenProps } from './types';
 import { isAddress, getAddress, Contract, toBeHex, parseUnits, formatUnits, Signer } from 'ethers6';
 import { chainIdFromProvider, providerFromChainId } from './provider';
-
-export const decimalsCache: any = {};
-export const symbolCache: any = {};
-export const reverseSymbolCache: any = {};
+import { reverseSymbolCache, symbolCache, decimalsCache } from './cache';
 
 export function toAddress(symbolOrAddress: string, chainId: number): string {
     if (!symbolOrAddress) return '';
@@ -52,6 +49,7 @@ export const getTokenAddress = (
         if (isAddress(raw?.token)) return raw.token;
         if (reverseSymbolCache[chainId][raw?.token]) return reverseSymbolCache[chainId][raw?.token];
     } else return '';
+    return '';
 };
 
 export async function getSymbol(address?: string, provider?: Signer) {
@@ -80,9 +78,10 @@ export async function getSymbol(address?: string, provider?: Signer) {
                     ['function symbol() view returns (string)'],
                     providerFromChainId(1),
                 ).symbol();
-                symbolCache[activeChainId][address] = mainnetTry || address;
+                if (mainnetTry) symbolCache[1][address] = mainnetTry;
+                return mainnetTry;
             } catch (err) {
-                symbolCache[activeChainId][address] = address;
+                return address;
             }
         }
         return symbolCache[activeChainId][address];
@@ -165,7 +164,8 @@ export async function getDecimals(token: string, provider: Signer) {
                     ['function decimals() view returns (uint8)'],
                     provider,
                 );
-                decimalsCache[activeChainId][address] = Number(await contract.decimals());
+                const decimals = Number(await contract.decimals());
+                decimalsCache[activeChainId][address] = decimals;
                 return decimalsCache[activeChainId][address];
             } catch (err) {
                 try {
@@ -174,6 +174,7 @@ export async function getDecimals(token: string, provider: Signer) {
                         ['function decimals() view returns (uint8)'],
                         providerFromChainId(1),
                     ).decimals();
+                    if (mainnetTry) decimalsCache[1][address] = Number(mainnetTry);
                     return mainnetTry || 18;
                 } catch (err) {
                     return 18;

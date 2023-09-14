@@ -3,6 +3,7 @@ import { getFormattedPeer } from '../utils/peer';
 import { usePintswapContext } from './pintswap';
 import { useOffersContext } from './offers';
 import { IUserDataProps } from './user';
+import { useNetworkContext } from './network';
 
 // Types
 export type IPeersStoreProps = {
@@ -23,6 +24,7 @@ const PeersContext = createContext<IPeersStoreProps>({
 // Wrapper
 export function PeersStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
+    const { network } = useNetworkContext();
     const { offersByChain, allOffers, isLoading } = useOffersContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
@@ -57,7 +59,7 @@ export function PeersStore(props: { children: ReactNode }) {
         const getter = async () => await getAllPeersData();
         if (allOffers.erc20 && allOffers.erc20.length > 0) getter();
         else if (!isLoading) setLoading(false);
-    }, [offersByChain.erc20, pintswap.chainId]);
+    }, [offersByChain.erc20, pintswap.chainId, network?.id]);
 
     return (
         <PeersContext.Provider

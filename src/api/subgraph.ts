@@ -228,7 +228,7 @@ export async function getUserHistory(address: string, signer: Signer) {
         return await Promise.all(
             taker?.data?.pintswapTrades
                 .concat(maker?.data?.pintswapTrades)
-                .map(async (x: any) => await formatPintswapTrade(x, signer)),
+                .map(formatPintswapTrade),
         );
     } else {
         return [];

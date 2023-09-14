@@ -1,5 +1,6 @@
 import { Signer, formatUnits } from 'ethers6';
 import { getDecimals, getSymbol } from './token';
+import { providerFromChainId } from './provider';
 
 // STRING
 export function truncate(s: string, amount?: number) {
@@ -37,14 +38,15 @@ export const maybeFormatMultiAddr = (s: string): string => {
 };
 
 // Subgraph Pintswap Trades
-export async function formatPintswapTrade(trade: any, signer: Signer) {
-    const givesDecimals = await getDecimals(trade.gives.token, signer);
+export async function formatPintswapTrade(trade: any) {
+    const tradeChainId: any = providerFromChainId(Number(trade.chainId || '1'));
+    const givesDecimals = await getDecimals(trade.gives.token, tradeChainId);
     const givesAmount = formatUnits(trade.gives.amount, givesDecimals);
-    const givesSymbol = await getSymbol(trade.gives.token, signer);
+    const givesSymbol = await getSymbol(trade.gives.token, tradeChainId);
 
-    const getsDecimals = await getDecimals(trade.gets.token, signer);
+    const getsDecimals = await getDecimals(trade.gets.token, tradeChainId);
     const getsAmount = formatUnits(trade.gets.amount, getsDecimals);
-    const getsSymbol = await getSymbol(trade.gets.token, signer);
+    const getsSymbol = await getSymbol(trade.gets.token, tradeChainId);
 
     return {
         hash: trade.id,
