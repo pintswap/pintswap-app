@@ -8,7 +8,15 @@ import {
 } from './constants';
 import { maybeShorten } from './format';
 import { ITokenProps } from './types';
-import { isAddress, getAddress, Contract, toBeHex, parseUnits, formatUnits, Signer } from 'ethers6';
+import {
+    isAddress,
+    getAddress,
+    Contract,
+    toBeHex,
+    parseUnits,
+    formatUnits,
+    ZeroAddress,
+} from 'ethers6';
 import { chainIdFromProvider, providerFromChainId } from './provider';
 import { reverseSymbolCache, symbolCache, decimalsCache } from './cache';
 
@@ -29,12 +37,12 @@ export function fromAddress(symbolOrAddress: string, chainId: number): string {
     return (getTokenListByAddress(chainId)[symbolOrAddress] || { address: symbolOrAddress }).symbol;
 }
 
-export async function toTicker(pair: any, provider?: Signer) {
-    if (!pair || !provider) return '';
+export async function toTicker(pair: any, chainId?: number) {
+    if (!pair || !chainId) return '';
     const flipped = [...pair].reverse();
     return (
         await Promise.all(
-            flipped.map(async (v: any) => maybeShorten(await getSymbol(v.address, provider))),
+            flipped.map(async (v: any) => maybeShorten(await getSymbol(v.address, chainId))),
         )
     ).join('/');
 }
@@ -52,14 +60,15 @@ export const getTokenAddress = (
     return '';
 };
 
-export async function getSymbol(address?: string, provider?: Signer) {
-    if (!address || !provider) return address || '';
+export async function getSymbol(address?: string, chainId?: number) {
+    if (!address || !chainId) return address || '';
     address = getAddress(address);
-    const activeChainId = await chainIdFromProvider(provider);
-    const match = getTokenList(activeChainId).find((v) => getAddress(v.address) === address);
+    if (address === ZeroAddress) return 'ETH';
+    const provider = providerFromChainId(chainId);
+    const match = getTokenList(chainId).find((v) => getAddress(v.address) === address);
     if (match) return match.symbol;
-    else if (symbolCache[activeChainId][address]) {
-        return symbolCache[activeChainId][address];
+    else if (symbolCache[chainId][address]) {
+        return symbolCache[chainId][address];
     } else {
         const contract = new Contract(
             address,
@@ -67,24 +76,23 @@ export async function getSymbol(address?: string, provider?: Signer) {
             provider,
         );
         try {
-            const symbol = await contract.symbol();
-            symbolCache[activeChainId][address] = symbol;
-            if (!reverseSymbolCache[activeChainId][symbol])
-                reverseSymbolCache[activeChainId][symbol] = address;
+            const symbol = await contract?.symbol();
+            symbolCache[chainId][address] = symbol;
+            if (!reverseSymbolCache[chainId][symbol]) reverseSymbolCache[chainId][symbol] = address;
         } catch (e) {
             try {
                 const mainnetTry = await new Contract(
                     address,
                     ['function symbol() view returns (string)'],
                     providerFromChainId(1),
-                ).symbol();
+                )?.symbol();
                 if (mainnetTry) symbolCache[1][address] = mainnetTry;
                 return mainnetTry;
             } catch (err) {
                 return address;
             }
         }
-        return symbolCache[activeChainId][address];
+        return symbolCache[chainId][address];
     }
 }
 
@@ -96,18 +104,18 @@ export const alphaTokenSort = (a: ITokenProps, b: ITokenProps) => {
 
 export async function getTokenAttributes(
     token: string,
-    provider: Signer,
+    chainId: number,
     attribute?: keyof ITokenProps,
 ) {
     let found;
     if (!token) return token;
-    const activeChainId = await chainIdFromProvider(provider);
+    const provider = providerFromChainId(chainId);
     if (isAddress(token)) {
-        found = getTokenList(activeChainId).find(
+        found = getTokenList(chainId).find(
             (el) => el.address.toLowerCase() === token.toLowerCase(),
         );
     } else {
-        found = getTokenList(activeChainId).find(
+        found = getTokenList(chainId).find(
             (el) => el.symbol.toLowerCase() === (token as string).toLowerCase(),
         );
     }
@@ -117,12 +125,12 @@ export async function getTokenAttributes(
     } else {
         if (isAddress(token)) {
             try {
-                const symbol = await getSymbol(token, provider);
-                const decimals = await getDecimals(token, provider);
-                if (!reverseSymbolCache[activeChainId][symbol])
-                    reverseSymbolCache[activeChainId][symbol] = token;
+                const symbol = await getSymbol(token, chainId);
+                const decimals = await getDecimals(token, chainId);
+                if (!reverseSymbolCache[chainId][symbol])
+                    reverseSymbolCache[chainId][symbol] = token;
                 const tokenAttributes = {
-                    chainId: activeChainId,
+                    chainId: chainId,
                     address: token,
                     name: '',
                     symbol,
@@ -149,14 +157,16 @@ export async function getTokenAttributes(
     }
 }
 
-export async function getDecimals(token: string, provider: Signer) {
-    const activeChainId = await chainIdFromProvider(provider);
+export async function getDecimals(token: string, chainId: number) {
+    if (!token || !chainId) return token || '';
+    const provider = providerFromChainId(chainId);
     if (isAddress(token)) {
         const address = getAddress(token);
-        const match = getTokenList(activeChainId).find((v) => getAddress(v.address) === address);
+        if (address === ZeroAddress) return 18;
+        const match = getTokenList(chainId).find((v) => getAddress(v?.address) === address);
         if (match) return match.decimals;
-        else if (decimalsCache[activeChainId][address]) {
-            return decimalsCache[activeChainId][address];
+        else if (decimalsCache[chainId][address]) {
+            return decimalsCache[chainId][address];
         } else {
             try {
                 const contract = new Contract(
@@ -164,9 +174,9 @@ export async function getDecimals(token: string, provider: Signer) {
                     ['function decimals() view returns (uint8)'],
                     provider,
                 );
-                const decimals = Number(await contract.decimals());
-                decimalsCache[activeChainId][address] = decimals;
-                return decimalsCache[activeChainId][address];
+                const decimals = Number(await contract?.decimals());
+                decimalsCache[chainId][address] = decimals;
+                return decimals || 18;
             } catch (err) {
                 try {
                     const mainnetTry = await new Contract(
@@ -182,7 +192,7 @@ export async function getDecimals(token: string, provider: Signer) {
             }
         }
     } else {
-        const found = getTokenList(activeChainId).find(
+        const found = getTokenList(chainId).find(
             (el) => el.symbol.toLowerCase() === (token as string).toLowerCase(),
         );
         return found?.decimals || 18;
@@ -193,20 +203,20 @@ export async function convertAmount(
     to: 'hex' | 'number' | 'readable',
     amount: string,
     token: string,
-    provider: Signer,
+    chainId: number,
 ) {
     let output;
     if (to === 'hex') {
         if (amount.startsWith('0x')) output = amount;
-        else output = toBeHex(parseUnits(amount, await getDecimals(token, provider)));
+        else output = toBeHex(parseUnits(amount, await getDecimals(token, chainId)));
     } else {
         if (amount.startsWith('0x'))
-            output = formatUnits(amount, await getDecimals(token, provider));
+            output = formatUnits(amount, await getDecimals(token, chainId));
         else output = amount;
     }
     if (TESTING) console.log('#convertAmount:', { amount, token, output });
     return to === 'readable'
-        ? `${output}  ${(await getTokenAttributes(token, provider, 'symbol')) || ''}`
+        ? `${output}  ${(await getTokenAttributes(token, chainId, 'symbol')) || ''}`
         : output;
 }
 

@@ -4,7 +4,7 @@ import { hashOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
-import { chainIdFromProvider } from './provider';
+import { chainIdFromProvider, providerFromChainId } from './provider';
 
 function givesBase(offer: any) {
     return {
@@ -78,32 +78,30 @@ export function orderTokens(offer: any, chainId: number) {
     } else return givesTrade(mapped);
 }
 
-export async function formattedFromTransfer(transfer: any, provider: Signer) {
-    const activeChainId = await chainIdFromProvider(provider);
-    const token = toAddress(transfer.token, activeChainId);
+export async function formattedFromTransfer(transfer: any, chainId: number) {
+    const token = toAddress(transfer.token, chainId);
     return {
         token,
         amount: ethers.toBeHex(
-            ethers.parseUnits(transfer.amount, await getDecimals(token, provider)),
+            ethers.parseUnits(transfer.amount, await getDecimals(token, chainId)),
         ),
     };
 }
 
-export async function fromFormatted(trade: any, provider: Signer) {
-    const activeChainId = await chainIdFromProvider(provider);
+export async function fromFormatted(trade: any, chainId: number) {
     const [givesToken, getsToken] = [trade.gives, trade.gets].map((v) =>
-        toAddress(v.token, activeChainId),
+        toAddress(v.token, chainId),
     );
     const returnObj = {
         gives: {
             token: givesToken,
             amount: ethers.toBeHex(
-                ethers.parseUnits(trade.gives.amount, await getDecimals(givesToken, provider)),
+                ethers.parseUnits(trade.gives.amount, await getDecimals(givesToken, chainId)),
             ),
         },
         gets: {
             amount: ethers.toBeHex(
-                ethers.parseUnits(trade.gets.amount, await getDecimals(getsToken, provider)),
+                ethers.parseUnits(trade.gets.amount, await getDecimals(getsToken, chainId)),
             ),
             token: getsToken,
         },
@@ -111,11 +109,10 @@ export async function fromFormatted(trade: any, provider: Signer) {
     return returnObj;
 }
 
-export async function toFormatted(transfer: any, provider: Signer) {
+export async function toFormatted(transfer: any, chainId: number) {
     if (!isERC20Transfer(transfer)) return transfer;
-    const activeChainId = await chainIdFromProvider(provider);
-    const token = fromAddress(transfer.token, activeChainId);
-    const decimals = await getDecimals(transfer.token, provider);
+    const token = fromAddress(transfer.token, chainId);
+    const decimals = await getDecimals(transfer.token, chainId);
     const amount = Number(ethers.formatUnits(transfer.amount, decimals)).toFixed(4);
     return {
         token,
@@ -123,14 +120,13 @@ export async function toFormatted(transfer: any, provider: Signer) {
     };
 }
 
-export async function toLimitOrder(offer: any, provider: Signer) {
-    const activeChainId = await chainIdFromProvider(provider);
+export async function toLimitOrder(offer: any, chainId: number) {
     const {
         pair: [base, trade],
         type,
-    } = orderTokens(offer, activeChainId);
+    } = orderTokens(offer, chainId);
     const [baseDecimals, tradeDecimals] = await Promise.all(
-        [base, trade].map(async (v) => await getDecimals(v.address, provider)),
+        [base, trade].map(async (v) => await getDecimals(v.address, chainId)),
     );
     const price =
         Number(ethers.formatUnits(base.amount, baseDecimals)) /
@@ -140,7 +136,7 @@ export async function toLimitOrder(offer: any, provider: Signer) {
         price: String(price),
         amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,
-        ticker: await toTicker([base, trade], provider),
+        ticker: await toTicker([base, trade], chainId),
         hash: hashOffer(offer),
     };
 }

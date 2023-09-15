@@ -47,7 +47,7 @@ export const Input = ({
 }: IInputProps) => {
     const { address } = useAccount();
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
     const tradeObjKey = placeholder?.includes('Receive') ? 'gets.amount' : 'gives.amount';
@@ -65,7 +65,7 @@ export const Input = ({
                                   token:
                                       ((await getTokenAttributes(
                                           token,
-                                          module?.signer,
+                                          chainId,
                                           'address',
                                       )) as string) || token,
                               };

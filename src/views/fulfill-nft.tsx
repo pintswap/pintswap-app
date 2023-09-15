@@ -18,7 +18,7 @@ export const FulfillNFTView = () => {
     const [loading, setLoading] = useState(true);
     const [nft, setNFT] = useState<INFTProps | null>(null);
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
 
     const offer = useMemo(() => {
@@ -29,7 +29,7 @@ export const FulfillNFTView = () => {
         (async () => {
             if (offer) {
                 const n = await fetchNFT(offer.gives);
-                const cost = await toFormatted(offer.gets, module?.signer);
+                const cost = await toFormatted(offer.gets, chainId);
                 setLoading(false);
                 setNFT({ ...n, ...cost });
             }

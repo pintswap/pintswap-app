@@ -98,13 +98,13 @@ export const CreateView = () => {
                         'readable',
                         entry[1].gives.amount || '',
                         entry[1].gives.token,
-                        pintswap.module?.signer,
+                        pintswap.chainId,
                     ),
                     receiving: await convertAmount(
                         'readable',
                         entry[1].gets.amount || '',
                         entry[1].gets.token,
-                        pintswap.module?.signer,
+                        pintswap.chainId,
                     ),
                 })),
             );

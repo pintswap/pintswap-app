@@ -60,16 +60,16 @@ export const FulfillView = () => {
                     setFillAmount(foundLimitOrder?.amount || '');
                 } else {
                     if (!trade.gets?.token && !trade.gives?.token) return;
-                    const raw = await fromFormatted(trade, module.signer);
+                    const raw = await fromFormatted(trade, chainId);
                     const {
                         pair: [base, tradeToken],
-                    } = orderTokens(raw, module.signer);
+                    } = orderTokens(raw, chainId);
                     setTickerAddresses(
                         `${truncate(tradeToken.address, 6)} / ${truncate(base.address, 6)}`,
                     );
-                    const decimals = await getDecimals(tradeToken.address, module.signer);
+                    const decimals = await getDecimals(tradeToken.address, chainId);
                     setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
-                    const limitOrderRes = await toLimitOrder(raw as any, module.signer);
+                    const limitOrderRes = await toLimitOrder(raw as any, chainId);
                     setLimitOrder(limitOrderRes as any);
                 }
             }
@@ -80,7 +80,7 @@ export const FulfillView = () => {
         if (module)
             (async () => {
                 if (!trade.gets?.token && !trade.gives?.token) return;
-                const raw = await fromFormatted(trade, module.signer);
+                const raw = await fromFormatted(trade, chainId);
                 const {
                     pair: [base, tradeToken],
                 } = orderTokens(raw, chainId);
@@ -88,9 +88,7 @@ export const FulfillView = () => {
                     `${truncate(tradeToken.address, 6)} / ${truncate(base.address, 6)}`,
                 );
                 const [baseDecimals, tradeDecimals] = await Promise.all(
-                    [base, tradeToken].map(
-                        async (v) => await getDecimals(v.address, module.signer),
-                    ),
+                    [base, tradeToken].map(async (v) => await getDecimals(v.address, chainId)),
                 );
 
                 let toBeFormatted;

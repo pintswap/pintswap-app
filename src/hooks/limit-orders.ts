@@ -90,11 +90,10 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
             setLoading(true);
             if (type === 'peer-orderbook') {
                 if (module) {
-                    const signer = module.signer || new ethers.InfuraProvider('mainnet');
                     const { erc20: flattened } = sorted;
                     const mapped = (
                         await Promise.all(
-                            flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                            flattened.map(async (v: any) => await toLimitOrder(v, chainId)),
                         )
                     ).map((v, i) => ({
                         ...v,
@@ -110,7 +109,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     const flattened = forTicker.bid.concat(forTicker.ask);
                     const mapped = (
                         await Promise.all(
-                            flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                            flattened.map(async (v: any) => await toLimitOrder(v, chainId)),
                         )
                     ).map((v, i) => ({
                         ...v,

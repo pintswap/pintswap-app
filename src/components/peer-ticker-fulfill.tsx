@@ -21,7 +21,7 @@ export const PeerTickerFulfill = ({
     const { base: baseAsset, trade: tradeAsset } = useParams();
     const { address } = useAccount();
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const { fulfillTrade, loading, trade, steps, order, error, fill, setFill } = useTrade();
     const [limitOrder, setLimitOrder] = useState<any>({
@@ -48,7 +48,7 @@ export const PeerTickerFulfill = ({
                     token: ((matchInputs.list[0] || {}).gets || {}).token || ethers.ZeroAddress,
                     amount: input,
                 },
-                module?.signer,
+                chainId,
             )
         ).amount;
         const newMatchInputs = {
@@ -76,7 +76,7 @@ export const PeerTickerFulfill = ({
                             amount: match.effective.gives,
                         },
                     },
-                    module?.signer,
+                    chainId,
                 )) as any;
                 if (TESTING)
                     console.log('tradeType:', tradeType, '\nmatch:', match, '\nlimit:', limit);

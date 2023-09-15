@@ -36,7 +36,7 @@ export const SelectCoin = ({ asset, onAssetClick, modalOpen, setModalOpen }: ISe
         if (ethers.isAddress(query)) {
             (async () => {
                 setUnknownToken({ ...unknownToken, loading: true });
-                const symbol = await getSymbol(query, module?.signer);
+                const symbol = await getSymbol(query, chainId);
                 if (symbol) setUnknownToken({ symbol, loading: false });
                 else setUnknownToken({ ...unknownToken, loading: false });
             })().catch((err) => console.error(err));

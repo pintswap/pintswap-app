@@ -51,10 +51,10 @@ export const useTrade = () => {
 
     const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
         if (!gets.token && !gives.token) return EMPTY_TRADE;
-        const foundGivesToken = (await getTokenAttributes(gives.token, module?.signer)) as
+        const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
             | ITokenProps
             | undefined;
-        const foundGetsToken = (await getTokenAttributes(gets.token, module?.signer)) as
+        const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
             | ITokenProps
             | undefined;
 
@@ -68,12 +68,7 @@ export const useTrade = () => {
                 },
                 gets: {
                     token: getTokenAddress(foundGetsToken, gets, chainId),
-                    amount: await convertAmount(
-                        'hex',
-                        gets?.amount || '0',
-                        gets.token,
-                        module?.signer,
-                    ),
+                    amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
                 },
             };
             if (TESTING) console.log('#buildTradeObj:', builtObj);
@@ -83,16 +78,11 @@ export const useTrade = () => {
         const builtObj = {
             gives: {
                 token: getTokenAddress(foundGivesToken, gives, chainId),
-                amount: await convertAmount(
-                    'hex',
-                    gives?.amount || '0',
-                    gives.token,
-                    module?.signer,
-                ),
+                amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
             },
             gets: {
                 token: getTokenAddress(foundGetsToken, gets, chainId),
-                amount: await convertAmount('hex', gets?.amount || '0', gets.token, module?.signer),
+                amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
             },
         };
         if (TESTING) console.log('#buildTradeObj:', builtObj);
@@ -104,31 +94,15 @@ export const useTrade = () => {
             return {
                 gives: {
                     token:
-                        ((await getTokenAttributes(
-                            gives.token,
-                            module?.signer,
-                            'symbol',
-                        )) as string) || gives.token,
-                    amount: await convertAmount(
-                        'number',
-                        gives.amount || '',
+                        ((await getTokenAttributes(gives.token, chainId, 'symbol')) as string) ||
                         gives.token,
-                        module?.signer,
-                    ),
+                    amount: await convertAmount('number', gives.amount || '', gives.token, chainId),
                 },
                 gets: {
                     token:
-                        ((await getTokenAttributes(
-                            gets.token,
-                            module?.signer,
-                            'symbol',
-                        )) as string) || gets.token,
-                    amount: await convertAmount(
-                        'number',
-                        gets.amount || '',
+                        ((await getTokenAttributes(gets.token, chainId, 'symbol')) as string) ||
                         gets.token,
-                        module?.signer,
-                    ),
+                    amount: await convertAmount('number', gets.amount || '', gets.token, chainId),
                 },
             };
         } catch (err) {
@@ -228,7 +202,7 @@ export const useTrade = () => {
                                         if (
                                             !Object.values(reverseSymbolCache[chainId]).includes(t)
                                         ) {
-                                            const symbol = await getSymbol(t, module.signer);
+                                            const symbol = await getSymbol(t, chainId);
                                             reverseSymbolCache[chainId][symbol] = t;
                                         }
                                     }),
