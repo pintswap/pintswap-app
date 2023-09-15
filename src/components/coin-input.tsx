@@ -38,7 +38,6 @@ export const CoinInput = ({
     const { data } = useSubgraph({
         address: toAddress(asset, chainId),
     });
-    console.log('data', data);
 
     function clickAndClose(e: any) {
         onAssetClick(e);

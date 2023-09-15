@@ -1,7 +1,6 @@
 import { Transition } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { Avatar, PageStatus, ProgressIndicator, TransitionModal, SwapModule } from '../components';
+import { Avatar, PageStatus, TransitionModal, SwapModule } from '../components';
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from '../stores';
 import { orderTokens, fromFormatted, toLimitOrder, parseTickerAsset } from '../utils';
@@ -11,7 +10,7 @@ import { useParams } from 'react-router-dom';
 
 export const FulfillView = () => {
     const { address } = useAccount();
-    const { fulfillTrade, loading, trade, steps, order, error } = useTrade();
+    const { fulfillTrade, loading, trade, steps, order } = useTrade();
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
@@ -43,18 +42,12 @@ export const FulfillView = () => {
                 const foundLimitOrder = limitOrders.find((order) => order?.hash === hash);
                 if (foundLimitOrder) {
                     setLimitOrder(foundLimitOrder);
-                    // setFillAmount(foundLimitOrder?.amount || '');
                 } else {
                     if (!trade.gets?.token && !trade.gives?.token) return;
                     const raw = await fromFormatted(trade, chainId);
                     const {
                         pair: [base, tradeToken],
                     } = orderTokens(raw, chainId);
-                    // setTickerAddresses(
-                    //     `${tradeToken.address} / ${truncate(base.address, 6)}`,
-                    // );
-                    // const decimals = await getDecimals(tradeToken.address, chainId);
-                    // setFillAmount(ethers.formatUnits(tradeToken.amount, decimals));
                     const limitOrderRes = await toLimitOrder(raw as any, chainId);
                     setLimitOrder(limitOrderRes as any);
                 }
@@ -69,7 +62,6 @@ export const FulfillView = () => {
 
     return (
         <>
-            {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
             <div className="flex flex-col gap-4 md:gap-6 max-w-xl mx-auto">
                 <div className="flex items-center justify-between">
                     <TransitionModal

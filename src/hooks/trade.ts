@@ -127,6 +127,7 @@ export const useTrade = () => {
         if (module) {
             try {
                 module.broadcastOffer(await buildTradeObj(trade));
+                toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                 savePintswap(module);
                 if (!userData.active) toggleActive();
             } catch (err) {
@@ -150,6 +151,7 @@ export const useTrade = () => {
                     const nftTrade = userTrades.get(hash) || peerTrades.get(hash);
                     if (TESTING) console.log('#fulfillTrade - NFT Trade:', nftTrade);
                     module.createTrade(peeredUp, nftTrade);
+                    toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                     // If peer orderbook swap
                 } else if (params.base && params.trade) {
                     if (TESTING) console.log('#fulfillTrade - Fill:', fill);
@@ -162,6 +164,7 @@ export const useTrade = () => {
                     if (TESTING)
                         console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
                     module.createTrade(peeredUp, await buildTradeObj(trade));
+                    toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                 }
             } catch (err) {
                 console.error(err);

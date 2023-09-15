@@ -43,8 +43,9 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
 };
 
 export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full' | 'minimal') {
+    const emptyObj = { offers: [], bio: '', image: '' };
     const { module } = ps;
-    if (!module) return { offers: [], bio: '', image: '' };
+    if (!module) return emptyObj;
     try {
         const formattedPeerAddress = await formatPeerName(ps, peer, true);
 
@@ -63,10 +64,10 @@ export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full
             }
         }
         if (res) return res;
-        else return { offers: [], bio: '', image: '' };
+        else return emptyObj;
     } catch (err) {
         console.warn('#getPeerData:', err);
-        return { offers: [], bio: '', image: '' };
+        return emptyObj;
     }
 }
 
