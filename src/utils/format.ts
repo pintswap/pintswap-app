@@ -39,7 +39,7 @@ export const maybeFormatMultiAddr = (s: string): string => {
 
 // Subgraph Pintswap Trades
 export async function formatPintswapTrade(trade: any) {
-    const tradeChainId: any = providerFromChainId(Number(trade.chainId || '1'));
+    const tradeChainId = Number(trade.chainId || '1');
     const givesDecimals = await getDecimals(trade.gives.token, tradeChainId);
     const givesAmount = formatUnits(trade.gives.amount, givesDecimals);
     const givesSymbol = await getSymbol(trade.gives.token, tradeChainId);

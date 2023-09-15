@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getUserHistory, tryBoth } from '../api';
 import { usePintswapContext, usePricesContext } from '../stores';
 import { useAccount } from 'wagmi';
+import { ZeroAddress } from 'ethers6';
 
 type IUserSubgraphRes = {
     data: {
@@ -39,30 +40,43 @@ export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' 
         (async () => {
             if (props && props?.address) {
                 updateRes('isLoading', true);
-                const data = await tryBoth(props);
-                if (data) {
+                if (props.address === ZeroAddress) {
                     setRes({
                         ...res,
-                        data: {
-                            ...data,
-                            usdPrice:
-                                Number(eth) > 0 && data?.token?.derivedETH
-                                    ? (Number(eth) * Number(data.token.derivedETH)).toString()
-                                    : '0',
-                        },
                         isLoading: false,
+                        data: {
+                            ...res.data,
+                            usdPrice: eth,
+                        },
                     });
                 } else {
-                    setRes({
-                        ...res,
-                        isLoading: false,
-                        isError: true,
-                        error: 'Something went wrong.',
-                    });
+                    const data = await tryBoth(props);
+                    if (data) {
+                        setRes({
+                            ...res,
+                            data: {
+                                ...data,
+                                usdPrice:
+                                    Number(eth) > 0 && data?.token?.derivedETH
+                                        ? (Number(eth) * Number(data.token.derivedETH)).toString()
+                                        : address === ZeroAddress
+                                        ? ''
+                                        : '0',
+                            },
+                            isLoading: false,
+                        });
+                    } else {
+                        setRes({
+                            ...res,
+                            isLoading: false,
+                            isError: true,
+                            error: 'Something went wrong.',
+                        });
+                    }
                 }
             }
         })().catch((err) => console.error('#useSubgraph:', err));
-    }, [props?.address, props?.history]);
+    }, [props?.address, props?.history, eth]);
 
     useEffect(() => {
         (async () => {
@@ -81,7 +95,7 @@ export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' 
                 }
             }
         })().catch((err) => console.error(err));
-    }, [address, module?.signer]);
+    }, [address, module?.signer, eth]);
 
     return res;
 };

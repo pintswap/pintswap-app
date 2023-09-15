@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Asset, Card, DataTable, Header } from '../components';
-import { useNetworkContext, useOffersContext, usePintswapContext } from '../stores';
+import { useOffersContext, usePintswapContext } from '../stores';
 import { useWindowSize } from '../hooks';
 import { Tab } from '@headlessui/react';
 
@@ -39,7 +39,6 @@ export const PairListView = () => {
     const {
         pintswap: { chainId, loading },
     } = usePintswapContext();
-    const { network } = useNetworkContext();
     const { width, breakpoints } = useWindowSize();
     const { pathname } = useLocation();
     const { offersByChain } = useOffersContext();

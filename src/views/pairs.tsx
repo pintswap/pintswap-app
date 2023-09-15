@@ -38,7 +38,7 @@ export const PairsView = () => {
                 className={
                     !isLoading && !memoizedList?.length
                         ? 'flex flex-col items-center justify-center w-full h-[50vh] gap-3'
-                        : `grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`
+                        : `grid grid-cols-1 gap-1 md:gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`
                 }
             >
                 {!isLoading ? (

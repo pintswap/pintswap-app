@@ -1,11 +1,5 @@
 import { ITransfer } from '@pintswap/sdk';
-import {
-    TESTING,
-    getTokenListByAddress,
-    getTokenListBySymbol,
-    getTokenList,
-    DEFAULT_CHAINID,
-} from './constants';
+import { TESTING, getTokenListByAddress, getTokenListBySymbol, getTokenList } from './constants';
 import { maybeShorten } from './format';
 import { ITokenProps } from './types';
 import {
@@ -17,11 +11,13 @@ import {
     formatUnits,
     ZeroAddress,
 } from 'ethers6';
-import { chainIdFromProvider, providerFromChainId } from './provider';
+import { providerFromChainId } from './provider';
 import { reverseSymbolCache, symbolCache, decimalsCache } from './cache';
 
-export function toAddress(symbolOrAddress: string, chainId: number): string {
+export function toAddress(symbolOrAddress?: string, chainId = 1): string {
     if (!symbolOrAddress) return '';
+    if (symbolOrAddress === ZeroAddress || symbolOrAddress.toUpperCase() === 'ETH')
+        return ZeroAddress;
     const token = getTokenListBySymbol(chainId)[symbolOrAddress];
     if (token) return getAddress(token.address);
     if (

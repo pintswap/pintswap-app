@@ -163,7 +163,6 @@ export const useTrade = () => {
                         console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
                     module.createTrade(peeredUp, await buildTradeObj(trade));
                 }
-                if (TESTING) console.log('Fulfilled trade!');
             } catch (err) {
                 console.error(err);
                 setError(true);

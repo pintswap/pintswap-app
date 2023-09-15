@@ -27,7 +27,7 @@ export const PeersView = () => {
                 className={
                     !peersLoading && !memoizedList?.length
                         ? 'flex flex-col justify-center items-center gap-3 w-full h-[50vh]'
-                        : `grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`
+                        : `grid grid-cols-1 gap-1 md:gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`
                 }
             >
                 {!peersLoading ? (
