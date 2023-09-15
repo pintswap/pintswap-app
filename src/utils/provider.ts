@@ -2,7 +2,7 @@ import { ethers, Signer } from 'ethers6';
 import { DEFAULT_CHAINID } from './constants';
 
 // TODO: move this to .env
-const INFURA_PROJECT_ID = '2f1de898efb74331bf933d3ac469b98d';
+const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_KEY || '';
 
 export function providerFromChainId(chainId: number | string) {
     switch (Number(chainId)) {

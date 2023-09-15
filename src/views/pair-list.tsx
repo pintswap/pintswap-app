@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Asset, Card, DataTable, Header } from '../components';
-import { useOffersContext, usePintswapContext } from '../stores';
+import { useNetworkContext, useOffersContext, usePintswapContext } from '../stores';
 import { useWindowSize } from '../hooks';
 import { Tab } from '@headlessui/react';
 
@@ -39,6 +39,7 @@ export const PairListView = () => {
     const {
         pintswap: { chainId, loading },
     } = usePintswapContext();
+    const { network } = useNetworkContext();
     const { width, breakpoints } = useWindowSize();
     const { pathname } = useLocation();
     const { offersByChain } = useOffersContext();
@@ -46,7 +47,7 @@ export const PairListView = () => {
     const pair = pathname.split('/')[2].toUpperCase().replace('-', ' / ');
 
     useEffect(() => {
-        if (offersByChain.erc20) {
+        if (offersByChain?.erc20?.length) {
             const duplicates = offersByChain.erc20.filter(
                 (obj) => obj.ticker === pair.replaceAll(' ', ''),
             );
@@ -56,6 +57,8 @@ export const PairListView = () => {
                 else split.asks.push(el);
             });
             setPairOrders(split);
+        } else {
+            setPairOrders({ bids: [], asks: [] });
         }
     }, [offersByChain.erc20?.length, chainId]);
 
