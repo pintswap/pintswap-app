@@ -1,28 +1,11 @@
 import { Transition } from '@headlessui/react';
-import { useEffect, useState } from 'react';
 import { Avatar, PageStatus, TransitionModal, SwapModule } from '../components';
 import { useTrade } from '../hooks/trade';
-import { usePintswapContext } from '../stores';
-import { orderTokens, fromFormatted, toLimitOrder, parseTickerAsset } from '../utils';
 import { useAccount } from 'wagmi';
-import { useLimitOrders } from '../hooks';
-import { useParams } from 'react-router-dom';
 
 export const FulfillView = () => {
     const { address } = useAccount();
     const { fulfillTrade, loading, trade, steps, order } = useTrade();
-    const {
-        pintswap: { module, chainId },
-    } = usePintswapContext();
-    const { limitOrders } = useLimitOrders('peer-orderbook');
-    const { hash, multiaddr } = useParams();
-
-    const [limitOrder, setLimitOrder] = useState({
-        price: Number(0),
-        amount: '',
-        ticker: '',
-        type: '',
-    });
 
     const isButtonDisabled = () => {
         return (
@@ -35,30 +18,6 @@ export const FulfillView = () => {
             !address
         );
     };
-
-    useEffect(() => {
-        (async () => {
-            if (module) {
-                const foundLimitOrder = limitOrders.find((order) => order?.hash === hash);
-                if (foundLimitOrder) {
-                    setLimitOrder(foundLimitOrder);
-                } else {
-                    if (!trade.gets?.token && !trade.gives?.token) return;
-                    const raw = await fromFormatted(trade, chainId);
-                    const {
-                        pair: [base, tradeToken],
-                    } = orderTokens(raw, chainId);
-                    const limitOrderRes = await toLimitOrder(raw as any, chainId);
-                    setLimitOrder(limitOrderRes as any);
-                }
-            }
-        })().catch((err) => console.error(err));
-    }, [trade, module, hash, multiaddr, limitOrders]);
-
-    const sendAsset = parseTickerAsset(limitOrder.ticker, 2);
-    const sendAmount = String(limitOrder.price);
-    const receiveAsset = parseTickerAsset(limitOrder.ticker, 1);
-    const receiveAmount = limitOrder.amount;
 
     return (
         <>
@@ -83,14 +42,8 @@ export const FulfillView = () => {
                     header="Fulfill"
                     type="fulfill"
                     trade={{
-                        gets: {
-                            token: receiveAsset,
-                            amount: receiveAmount,
-                        },
-                        gives: {
-                            token: sendAsset,
-                            amount: sendAmount,
-                        },
+                        gets: trade.gives,
+                        gives: trade.gets,
                     }}
                     disabled={isButtonDisabled()}
                     onClick={fulfillTrade}
