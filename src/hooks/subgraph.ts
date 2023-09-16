@@ -29,8 +29,8 @@ export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' 
         pintswap: { module },
     } = usePintswapContext();
     const { address } = useAccount();
-    const [res, setRes] = useState(DEFAULT_RES);
     const { eth } = usePricesContext();
+    const [res, setRes] = useState<IUserSubgraphRes>({ ...DEFAULT_RES, data: { usdPrice: eth } });
 
     function updateRes(key: 'data' | 'isLoading' | 'isError' | 'error', data: any) {
         setRes({ ...res, [key]: data });

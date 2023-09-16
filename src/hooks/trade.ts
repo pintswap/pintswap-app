@@ -44,7 +44,6 @@ export const useTrade = () => {
     const [error, setError] = useState(false);
     const { multiaddr, hash } = useParams();
     const [fill, setFill] = useState<any>(null);
-    const { peersData } = usePeersContext();
 
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/explore' || pathname === '/swap';
@@ -117,15 +116,17 @@ export const useTrade = () => {
     };
 
     // Create trade
-    const broadcastTrade = async (e: React.SyntheticEvent) => {
+    const broadcastTrade = async (e: React.SyntheticEvent, isPublic = true) => {
         e.preventDefault();
         if (TESTING) console.log('#broadcastTrade: TradeObj', await buildTradeObj(trade));
         if (module) {
             try {
+                const offer = await buildTradeObj(trade);
+                setOrder({ ...order, orderHash: hashOffer(offer) });
                 module.broadcastOffer(await buildTradeObj(trade));
                 toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                 savePintswap(module);
-                if (!userData.active) toggleActive();
+                if (isPublic && !userData.active) toggleActive();
             } catch (err) {
                 console.error(err);
             }

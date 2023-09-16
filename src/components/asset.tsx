@@ -61,7 +61,7 @@ export const Asset = ({
             ) : (
                 <>
                     <img
-                        src={assetData?.icon}
+                        src={assetData?.icon || '/img/generic.svg'}
                         alt={assetData?.alt || assetData?.symbol}
                         width={size}
                         height={size}

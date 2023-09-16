@@ -6,6 +6,7 @@ import { IOffer } from '@pintswap/sdk';
 import { TxDetails } from './tx-details';
 import { Button } from './button';
 import { MouseEventHandler } from 'react';
+import { StatusIndicator } from './status-indicator';
 
 type ISwapModule = {
     trade: IOffer;
@@ -19,6 +20,8 @@ type ISwapModule = {
     disabled?: boolean;
     type?: 'swap' | 'fulfill';
     header?: string;
+    otc?: boolean;
+    toggleOtc?: () => void;
 };
 
 export const SwapModule = ({
@@ -29,6 +32,8 @@ export const SwapModule = ({
     onClick,
     disabled,
     type = 'swap',
+    otc,
+    toggleOtc,
 }: ISwapModule) => {
     const determineLoadingText = () => {
         if (loading?.broadcast || loading?.fulfill) return 'Swapping';
@@ -43,7 +48,24 @@ export const SwapModule = ({
     return (
         <Card className="!py-4">
             <div className="flex items-center justify-between mb-2 md:mb-3 lg:mb-4 px-0.5">
-                <span className="text-xl">{header}</span>
+                <span className="text-xl">
+                    {header && type !== 'swap'
+                        ? header
+                        : otc !== undefined && (
+                              <button
+                                  onClick={toggleOtc}
+                                  className="py-1 pl-0.5 pr-2 transition duration-150 hover:text-neutral-300"
+                              >
+                                  <StatusIndicator
+                                      active={!otc}
+                                      message={!otc ? 'Public Orderbook' : 'Share via OTC'}
+                                      customColors={[
+                                          'bg-gradient-to-tr to-sky-300 from-indigo-600',
+                                      ]}
+                                  />
+                              </button>
+                          )}
+                </span>
                 <TooltipWrapper text="Working on it" id="working-on-it-swap-settings">
                     <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-100">
                         <MdSettings size={20} />

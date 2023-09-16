@@ -134,7 +134,7 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <form>
                         <div
-                            className={`grid grid-cols-1 lg:flex gap-3 lg:gap-5 overflow-x-hidden`}
+                            className={`grid grid-cols-1 lg:flex gap-3 lg:gap-5 overflow-x-hidden mt-3`}
                         >
                             <div
                                 className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}
@@ -145,7 +145,7 @@ export const AccountView = () => {
                                     >
                                         {useNft.using ? (
                                             <div
-                                                className={`flex flex-col gap-2 justify-center items-center w-full`}
+                                                className={`flex flex-col gap-2 justify-center items-center w-full min-w-[254px] min-h-[254px]`}
                                             >
                                                 <Input
                                                     value={useNft.address}
@@ -186,10 +186,10 @@ export const AccountView = () => {
                                                             setImgFile(e.target.files[0].name);
                                                         updateImg(e);
                                                     }}
-                                                    className="absolute bg-transparent rounded h-[200px] w-[200px] text-transparent z-50 hover:cursor-pointer text-center"
+                                                    className="absolute bg-transparent rounded h-[250px] w-[250px] text-transparent z-50 hover:cursor-pointer text-center"
                                                     src={formatPeerImg(img)}
                                                 />
-                                                <span className="absolute h-[204px] w-[204px] -translate-x-0.5 translate-y-0.5">
+                                                <span className="absolute h-[254px] w-[254px] -translate-x-0.5 translate-y-0.5">
                                                     <span className="flex justify-center items-center h-full w-full -top-1 relative rounded bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
                                                         {imgFile ? (
                                                             imgFile
@@ -203,14 +203,14 @@ export const AccountView = () => {
                                                     </span>
                                                 </span>
                                                 <Avatar
-                                                    size={200}
+                                                    size={250}
                                                     peer={pintswap?.module?.address}
                                                     imgShape="square"
                                                 />
                                             </div>
                                         )}
                                         <Button
-                                            className={`text-sm text-center lg:absolute lg:mt-60 ${
+                                            className={`text-sm text-center lg:absolute lg:mt-72 ${
                                                 useNft.using ? 'mt-5' : ''
                                             }`}
                                             type="transparent"
@@ -222,7 +222,7 @@ export const AccountView = () => {
                                     </div>
                                 ) : (
                                     <Avatar
-                                        size={200}
+                                        size={250}
                                         peer={pintswap?.module?.address}
                                         imgShape="square"
                                     />

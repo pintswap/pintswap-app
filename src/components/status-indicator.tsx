@@ -3,9 +3,16 @@ type IStatusIndicatorProps = {
     className?: string;
     size?: `sm` | 'md' | 'lg';
     message?: string;
+    customColors?: string[];
 };
 
-export const StatusIndicator = ({ active, className, size, message }: IStatusIndicatorProps) => {
+export const StatusIndicator = ({
+    active,
+    className,
+    size,
+    message,
+    customColors,
+}: IStatusIndicatorProps) => {
     const renderSize = () => {
         switch (size) {
             case 'sm':
@@ -17,6 +24,10 @@ export const StatusIndicator = ({ active, className, size, message }: IStatusInd
         }
     };
     const renderColor = () => {
+        if (customColors) {
+            if (active) return customColors[1] || 'bg-green-400';
+            return customColors[0] || 'bg-red-400';
+        }
         if (active) return 'bg-green-400';
         else return 'bg-red-400';
     };

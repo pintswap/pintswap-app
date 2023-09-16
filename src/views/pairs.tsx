@@ -42,7 +42,7 @@ export const PairsView = () => {
                 }
             >
                 {!isLoading ? (
-                    memoizedList?.length ? (
+                    offersByChain.erc20?.length ? (
                         (memoizedList as string[]).map((pair) => {
                             const split = pair.split('/');
                             const token1 = split[0];

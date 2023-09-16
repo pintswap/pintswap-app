@@ -6,7 +6,7 @@ import { Button } from './button';
 
 type IModalProps = {
     children: React.ReactElement;
-    button: React.ReactNode;
+    button?: React.ReactNode;
     title?: string;
     modalClass?: string;
     state?: boolean;
@@ -27,13 +27,18 @@ export function TransitionModal({
 
     return (
         <>
-            {typeof button === 'string' ? (
-                <Button onClick={handleOpen}>{button}</Button>
-            ) : (
-                <button onClick={handleOpen} className="cursor-pointer w-fit">
-                    {button}
-                </button>
+            {button && (
+                <>
+                    {typeof button === 'string' ? (
+                        <Button onClick={handleOpen}>{button}</Button>
+                    ) : (
+                        <button onClick={handleOpen} className="cursor-pointer w-fit">
+                            {button}
+                        </button>
+                    )}
+                </>
             )}
+
             <Modal
                 aria-labelledby={title || 'Modal'}
                 open={state || open}
@@ -51,7 +56,7 @@ export function TransitionModal({
                     <div
                         className={`${
                             modalClass || ''
-                        } absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[400px] p-4 focus-visible:outline-none`}
+                        } absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[500px] p-4 focus-visible:outline-none`}
                     >
                         {children}
                     </div>
