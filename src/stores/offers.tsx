@@ -106,6 +106,7 @@ const toFlattened = memoize(
                             ...v,
                             peer: multiaddr,
                             chainId: await detectTradeNetwork(v),
+                            hash: hashOffer(v),
                         })),
                     ),
                 [],

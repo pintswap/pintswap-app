@@ -7,13 +7,13 @@ export const useDashNav = () => {
     const ICON_SIZE = '20px';
     const NAV_ITEMS = address
         ? [
-              //   {
-              //       text: 'Swap',
-              //       route: '/swap',
-              //       disabled: false,
-              //       icon: <MdSwapHoriz size={ICON_SIZE} />,
-              //       tooltip: 'Automatically swap tokens',
-              //   },
+              {
+                  text: 'Swap',
+                  route: '/swap',
+                  disabled: false,
+                  icon: <MdSwapHoriz size={ICON_SIZE} />,
+                  tooltip: 'Automatically swap tokens',
+              },
               {
                   text: 'Markets',
                   route: '/markets',
@@ -28,15 +28,15 @@ export const useDashNav = () => {
                   icon: <MdGroup size={ICON_SIZE} />,
                   tooltip: 'See who is currently publishing offers',
               },
+              //   {
+              //       text: 'Create',
+              //       route: '/create',
+              //       disabled: false,
+              //       icon: <MdCreate size={ICON_SIZE} />,
+              //       tooltip: 'Create an offer for someone to take',
+              //   },
               {
-                  text: 'Create',
-                  route: '/create',
-                  disabled: false,
-                  icon: <MdCreate size={ICON_SIZE} />,
-                  tooltip: 'Create an offer for someone to take',
-              },
-              {
-                  text: 'Fulfill',
+                  text: 'OTC',
                   route: '/fulfill',
                   disabled: false,
                   icon: <MdSearch size={ICON_SIZE} />,

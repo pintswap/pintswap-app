@@ -39,7 +39,7 @@ export const Asset = ({
                 setAssetData({
                     ...assetData,
                     icon: '/img/generic.svg',
-                    symbol: await getSymbol(symbol, chainId),
+                    symbol: await getSymbol(symbol || '', chainId),
                 });
             }
         })().catch((err) => console.error(err));

@@ -29,7 +29,7 @@ export const useTrade = () => {
         pintswap: { module, chainId },
     } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
-    const { addTrade, userTrades, setUserTrades } = useOffersContext();
+    const { addTrade, userTrades, setUserTrades, allOffers } = useOffersContext();
 
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
@@ -93,15 +93,11 @@ export const useTrade = () => {
         try {
             return {
                 gives: {
-                    token:
-                        ((await getTokenAttributes(gives.token, chainId, 'symbol')) as string) ||
-                        gives.token,
+                    token: (await getSymbol(gives.token, chainId)) || gives.token,
                     amount: await convertAmount('number', gives.amount || '', gives.token, chainId),
                 },
                 gets: {
-                    token:
-                        ((await getTokenAttributes(gets.token, chainId, 'symbol')) as string) ||
-                        gets.token,
+                    token: (await getSymbol(gets.token, chainId)) || gets.token,
                     amount: await convertAmount('number', gets.amount || '', gets.token, chainId),
                 },
             };
@@ -174,60 +170,62 @@ export const useTrade = () => {
     };
 
     // Get single trade or all peer trades
-    const getTrades = async (multiAddr: string, orderHash?: string) => {
-        let resolved = multiAddr;
-        if (multiAddr.match(/\.drip$/) && module) resolved = await module.resolveName(multiAddr);
-        if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
-        const trade = hash ? userTrades.get(hash) : undefined;
-        // MAKER
-        if (trade) setTrade(trade);
-        // TAKER
-        else {
-            if (module) {
-                try {
-                    // TODO: optimize
-                    if (orderHash && peerTrades.get(orderHash)) {
-                        const { gives, gets } = peerTrades.get(orderHash) as any;
-                        setTrade(await displayTradeObj({ gets, gives }));
-                        return;
-                    }
+    const getTrades = async () => {
+        let _offers: Map<string, IOffer> = new Map();
 
-                    const { offers }: IOrderbookProps = await module.getUserData(resolved);
-                    if (offers?.length > 0) {
-                        if (TESTING) console.log('#getTrades - Offers:', offers);
-
-                        await Promise.all(
-                            offers.map((offer) => {
-                                const tokens = [offer.gets?.token, offer.gives?.token];
-                                return Promise.all(
-                                    tokens.map(async (t) => {
-                                        if (
-                                            !Object.values(reverseSymbolCache[chainId]).includes(t)
-                                        ) {
-                                            const symbol = await getSymbol(t, chainId);
-                                            reverseSymbolCache[chainId][symbol] = t;
-                                        }
-                                    }),
-                                );
+        // If multiaddr
+        if (multiaddr) {
+            let resolved = multiaddr;
+            if (multiaddr.match(/\.drip$/) && module)
+                resolved = await module.resolveName(multiaddr);
+            if (TESTING) console.log('#getTrades - Args:', { resolved, multiaddr, hash });
+            const { offers }: IOrderbookProps = module
+                ? await module.getUserData(resolved)
+                : { offers: [] };
+            if (offers?.length > 0 && !peerTrades?.size) {
+                if (TESTING) console.log('#getTrades - Offers:', offers);
+                await Promise.all(
+                    offers.map(async (offer) => {
+                        const tokens = [offer.gets?.token, offer.gives?.token];
+                        return await Promise.all(
+                            tokens.map(async (t) => {
+                                if (!Object.values(reverseSymbolCache[chainId]).includes(t)) {
+                                    const symbol = await getSymbol(t, chainId);
+                                    reverseSymbolCache[chainId][symbol] = t;
+                                }
                             }),
                         );
-
-                        // If only multiAddr in URL
-                        if (TESTING) console.log('#getTrades - Order Hash:', hash);
-                        const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                        if (TESTING) console.log('#getTrades - Map:', map);
-                        setPeerTrades(map);
-                        // Set first found trade as trade state
-                        const { gives, gets } = offers[0];
-                        setTrade(await displayTradeObj({ gets, gives }));
-                    }
-                } catch (err) {
-                    console.error('Error in #getTrade:', err);
-                    setError(true);
-                    updateToast('findPeer', 'error', 'Error while finding peer');
-                }
+                    }),
+                );
+                _offers = new Map(offers.map((offer) => [hashOffer(offer), offer]));
+                setPeerTrades(_offers);
+                if (TESTING) console.log('#getTrades - Map:', _offers);
+                updateToast('findPeer', 'success', 'Connected to peer!');
             }
         }
+
+        // If offer hash
+        if (hash) {
+            if (TESTING) console.log('#getTrades - Order Hash:', hash);
+            if (_offers.get(hash)) {
+                setTrade(await displayTradeObj(_offers.get(hash) as IOffer));
+                return;
+            }
+
+            // Check public orderbook if there's an offer hash
+            const found = [...allOffers.erc20, ...allOffers.nft].find(
+                (el) => el.hash?.toLowerCase() === hash,
+            );
+            if (found) {
+                setTrade({ gets: found.gets, gives: found.gives });
+                return;
+            }
+
+            // Check user
+            const trade = hash ? userTrades.get(hash) : undefined;
+            if (trade) setTrade(trade);
+        }
+        return;
     };
 
     // Update order form
@@ -281,7 +279,7 @@ export const useTrade = () => {
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: hash });
-                    await getTrades(multiaddr, hash);
+                    await getTrades();
                     setLoading({ ...loading, trade: false });
                 } else if (multiaddr) {
                     // Only multiAddr
@@ -289,13 +287,13 @@ export const useTrade = () => {
                     if (params.base && params.trade && steps[1].status !== 'current')
                         updateSteps('Fulfill');
                     setOrder({ multiAddr: multiaddr, orderHash: '' });
-                    await getTrades(multiaddr);
+                    await getTrades();
                     setLoading({ ...loading, allTrades: false });
                 }
             }
         };
         if (module) getter().catch((err) => console.error(err));
-    }, [module, multiaddr, hash, peersData?.length, chainId]);
+    }, [module, multiaddr, hash, chainId]);
 
     /*
      * TRADE EVENT MANAGER - START
@@ -307,7 +305,6 @@ export const useTrade = () => {
                 break;
             case 1:
                 console.log('#peerListener: peer found');
-                updateToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 2:
                 console.log('#peerListener: found peer offers');

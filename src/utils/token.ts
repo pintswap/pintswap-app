@@ -56,16 +56,15 @@ export const getTokenAddress = (
     return '';
 };
 
-export async function getSymbol(address?: string, chainId?: number) {
+export async function getSymbol(address: string, chainId: number) {
     if (!address || !chainId) return address || '';
     address = getAddress(address);
     if (address === ZeroAddress) return 'ETH';
+    if (symbolCache[chainId][address]) return symbolCache[chainId][address];
     const provider = providerFromChainId(chainId);
     const match = getTokenList(chainId).find((v) => getAddress(v.address) === address);
     if (match) return match.symbol;
-    else if (symbolCache[chainId][address]) {
-        return symbolCache[chainId][address];
-    } else {
+    else {
         const contract = new Contract(
             address,
             ['function symbol() view returns (string)'],
@@ -77,6 +76,7 @@ export async function getSymbol(address?: string, chainId?: number) {
             if (!reverseSymbolCache[chainId][symbol]) reverseSymbolCache[chainId][symbol] = address;
         } catch (e) {
             try {
+                if (symbolCache[1][address]) return symbolCache[1][address];
                 const mainnetTry = await new Contract(
                     address,
                     ['function symbol() view returns (string)'],
@@ -175,6 +175,7 @@ export async function getDecimals(token: string, chainId: number) {
                 return decimals || 18;
             } catch (err) {
                 try {
+                    if (decimalsCache[1][address]) return decimalsCache[1][address];
                     const mainnetTry = await new Contract(
                         address,
                         ['function decimals() view returns (uint8)'],

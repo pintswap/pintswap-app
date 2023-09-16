@@ -102,7 +102,7 @@ export const AccountView = () => {
         })().catch((err) => console.error(err));
     }, [userTrades.size]);
 
-    const TABS = ['Profile', width > 600 ? 'Active Offers' : 'Offers', 'History'];
+    const TABS = ['Profile', 'Offers', 'History'];
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
@@ -134,7 +134,7 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <form>
                         <div
-                            className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}
+                            className={`grid grid-cols-1 lg:flex gap-3 lg:gap-5 overflow-x-hidden`}
                         >
                             <div
                                 className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}
@@ -228,7 +228,7 @@ export const AccountView = () => {
                                     />
                                 )}
                             </div>
-                            <div className="grid grid-cols-1 gap-3 lg:gap-2">
+                            <div className="grid grid-cols-1 gap-3 lg:gap-2 lg:flex-auto">
                                 <div className="flex items-end w-full flex-grow">
                                     <Input
                                         value={
