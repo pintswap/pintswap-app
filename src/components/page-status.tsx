@@ -20,7 +20,7 @@ export const PageStatus = ({ type = 'loading', message, fx }: IPageStatusProps) 
     }, []);
 
     return (
-        <div className="fixed z-[100] h-screen w-screen top-0 left-0 bg-brand-dashboard">
+        <div className="fixed z-[9999] h-screen w-screen top-0 left-0 bg-brand-dashboard">
             <div className="flex flex-col justify-center items-center h-full gap-3 text-center">
                 <img src="/logo/ps-logo.png" alt="PintSwap Logo" height="100" width="100" />
                 {type === 'loading' && (

@@ -45,6 +45,7 @@ export const useTrade = () => {
     });
     const [error, setError] = useState(false);
     const [fill, setFill] = useState<any>(null);
+    const [foundPeerOffers, setFoundPeerOffers] = useState(false);
 
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/explore' || pathname === '/swap';
@@ -297,7 +298,7 @@ export const useTrade = () => {
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            if (pathname.includes('/') && params.multiaddr) {
+            if (pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill' && params.hash) {
                     // If multiAddr and orderHash
@@ -318,7 +319,7 @@ export const useTrade = () => {
             }
         };
         if (module) getter().catch((err) => console.error(err));
-    }, [module, params.multiaddr, params.hash, params.chainid, chainId]);
+    }, [module, pathname, chainId, foundPeerOffers]);
 
     /*
      * TRADE EVENT MANAGER - START
@@ -337,6 +338,7 @@ export const useTrade = () => {
                 break;
             case 3:
                 console.log('#peerListener: returning offers');
+                setFoundPeerOffers(true);
                 break;
         }
     };

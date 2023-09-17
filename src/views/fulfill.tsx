@@ -9,10 +9,10 @@ export const FulfillView = () => {
 
     const isButtonDisabled = () => {
         return (
-            !trade.gets.amount ||
-            !trade.gives.amount ||
-            !trade.gets.token ||
-            !trade.gives.token ||
+            !trade.gets?.amount ||
+            !trade.gives?.amount ||
+            !trade.gets?.token ||
+            !trade.gives?.token ||
             loading.trade ||
             loading.fulfill ||
             !address

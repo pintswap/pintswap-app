@@ -1,18 +1,35 @@
-import { Button, Card, CopyClipboard, Input, SwapModule, TransitionModal } from '../components';
+import {
+    Button,
+    Card,
+    CopyClipboard,
+    Input,
+    PageStatus,
+    SwapModule,
+    TransitionModal,
+} from '../components';
 import { useTrade } from '../hooks';
 import React, { useEffect, useState } from 'react';
 import { BASE_URL } from '../utils';
 import { usePintswapContext } from '../stores';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+import { Transition } from '@headlessui/react';
 
 export const SwapView = () => {
     const navigate = useNavigate();
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
-    const { loading, trade, broadcastTrade, updateTrade, isButtonDisabled, clearTrade, order } =
-        useTrade();
+    const {
+        loading,
+        trade,
+        broadcastTrade,
+        updateTrade,
+        isButtonDisabled,
+        clearTrade,
+        order,
+        steps,
+    } = useTrade();
     const [isPublic, setIsPublic] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [resolvedName, setResolvedName] = useState(module?.peerId?.toB58String());
@@ -113,6 +130,19 @@ export const SwapView = () => {
                     </div>
                 </Card>
             </TransitionModal>
+
+            <Transition
+                show={steps[2].status === 'current'}
+                enter="transition-opacity duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="transition-opacity duration-100"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+                className="flex flex-col justify-center items-center text-center"
+            >
+                <PageStatus type="success" />
+            </Transition>
         </>
     );
 };

@@ -39,7 +39,7 @@ export const SelectCoin = ({
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
-    const { query, list, handleChange } = useSearch(getTokenList(chainId));
+    const { query, list, handleChange, clearQuery } = useSearch(getTokenList(chainId));
     const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
 
     useEffect(() => {
@@ -123,10 +123,10 @@ export const SelectCoin = ({
                                     target: { value },
                                 } = e;
                                 if (value?.startsWith('0x') && value?.length === 42) {
-                                    setTimeout(
-                                        () => onAssetClick({ target: { innerText: value } }),
-                                        200,
-                                    );
+                                    setTimeout(() => {
+                                        onAssetClick({ target: { innerText: value } });
+                                    }, 200);
+                                    clearQuery();
                                 }
                             }}
                             placeholder="Search name or paste address"
@@ -143,7 +143,10 @@ export const SelectCoin = ({
                                             className={`${dropdownItemClass(
                                                 false,
                                             )} transition duration-100 hover:bg-neutral-900`}
-                                            onClick={onAssetClick}
+                                            onClick={(e) => {
+                                                onAssetClick(e);
+                                                setTimeout(() => clearQuery(), 200);
+                                            }}
                                         >
                                             <Asset
                                                 icon={el.logoURI}
@@ -161,7 +164,10 @@ export const SelectCoin = ({
                                         className={`${dropdownItemClass(false)} ${
                                             unknownToken.loading ? 'animate-pulse' : ''
                                         }`}
-                                        onClick={onAssetClick}
+                                        onClick={(e) => {
+                                            onAssetClick(e);
+                                            setTimeout(() => clearQuery(), 200);
+                                        }}
                                     >
                                         <Asset
                                             symbol={unknownToken.symbol}

@@ -18,6 +18,9 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => 
         else return 'string';
     };
 
+    const clearQuery = () =>
+        determineType() === 'token' && setSearchState({ list: getTokenList(chainId), query: '' });
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         let results;
         if (determineType() === 'token') {
@@ -53,5 +56,6 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => 
         list:
             searchState.list.length === 0 && determineType() !== 'token' ? list : searchState.list,
         handleChange,
+        clearQuery,
     };
 };

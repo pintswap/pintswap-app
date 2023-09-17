@@ -76,14 +76,14 @@ export const SwapModule = ({
             <div className="flex flex-col justify-center items-center gap-1.5">
                 <CoinInput
                     label="You give"
-                    value={trade.gives.amount}
+                    value={trade.gives?.amount}
                     onAssetClick={(e: any) =>
                         updateTrade ? updateTrade('gives.token', e.target.innerText) : {}
                     }
                     onAmountChange={({ currentTarget }) =>
                         updateTrade ? updateTrade('gives.amount', currentTarget.value) : {}
                     }
-                    asset={trade.gives.token}
+                    asset={trade.gives?.token}
                     max={type === 'swap'}
                     disabled={type === 'fulfill'}
                     type={type}
@@ -97,14 +97,14 @@ export const SwapModule = ({
                 </button>
                 <CoinInput
                     label="You get"
-                    value={trade.gets.amount || ''}
+                    value={trade.gets?.amount}
                     onAssetClick={(e: any) =>
                         updateTrade ? updateTrade('gets.token', e.target.innerText) : {}
                     }
                     onAmountChange={({ currentTarget }) =>
                         updateTrade ? updateTrade('gets.amount', currentTarget.value) : {}
                     }
-                    asset={trade.gets.token}
+                    asset={trade.gets?.token}
                     disabled={type === 'fulfill'}
                     type={type}
                     id="swap-module-get"
