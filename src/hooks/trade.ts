@@ -140,15 +140,15 @@ export const useTrade = () => {
         if (module) {
             // Determine correct offer
             let offer = trade;
-            if (params.hash) {
-                if (TESTING) console.log('#fulfillTrade - Unformatted offer:', offer);
-                if (hashOffer(trade).toLowerCase() !== params.hash.toLowerCase()) {
-                    const reverse = { gets: trade.gives, gives: trade.gets };
-                    if (params.hash.toLowerCase() === hashOffer(reverse).toLowerCase())
-                        offer = reverse;
-                }
-                if (TESTING) console.log('#fulfillTrade: Formatted offer:', offer);
-            }
+            // if (params.hash) {
+            //     if (TESTING) console.log('#fulfillTrade - Unformatted offer:', offer);
+            //     if (hashOffer(trade).toLowerCase() !== params.hash.toLowerCase()) {
+            //         const reverse = { gets: trade.gives, gives: trade.gets };
+            //         if (params.hash.toLowerCase() === hashOffer(reverse).toLowerCase())
+            //             offer = reverse;
+            //     }
+            //     if (TESTING) console.log('#fulfillTrade: Formatted offer:', offer);
+            // }
 
             try {
                 // Determine multiaddr
