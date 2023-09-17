@@ -138,30 +138,39 @@ export const useTrade = () => {
         e.preventDefault();
         setLoading({ ...loading, fulfill: true });
         if (module) {
-            toast.loading('Swapping...', { toastId: 'swapping' });
+            // Determine correct offer
+            let offer = trade;
+            if (params.hash) {
+                if (TESTING) console.log('#fulfillTrade - Unformatted offer:', offer);
+                if (hashOffer(trade) !== params.hash) {
+                    const reverse = { gets: trade.gives, gives: trade.gets };
+                    if (params.hash === hashOffer(reverse)) offer = reverse;
+                }
+            }
             try {
+                // Determine multiaddr
                 let multiAddr = order.multiAddr;
                 if (multiAddr.match(/\.drip$/))
                     multiAddr = await module.resolveName(order.multiAddr);
-                const peeredUp = multiAddr;
+
                 // If NFT swap
                 if (window.location.hash.match('nft') && params.hash) {
                     const nftTrade = userTrades.get(params.hash) || peerTrades.get(params.hash);
                     if (TESTING) console.log('#fulfillTrade - NFT Trade:', nftTrade);
-                    module.createTrade(peeredUp, nftTrade);
+                    module.createTrade(multiAddr, nftTrade);
                     toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                     // If peer orderbook swap
                 } else if (params.base && params.trade) {
                     if (TESTING) console.log('#fulfillTrade - Fill:', fill);
                     module.createBatchTrade(
-                        peeredUp,
+                        multiAddr,
                         fill.fill.map((v: any) => ({ offer: v.offer, amount: toBeHex(v.amount) })),
                     );
                     // If standard swap
                 } else {
                     if (TESTING)
-                        console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
-                    module.createTrade(peeredUp, await buildTradeObj(trade));
+                        console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(offer));
+                    module.createTrade(multiAddr, await buildTradeObj(offer));
                 }
                 toast.loading('Swapping...', { toastId: 'swapping' });
             } catch (err) {
