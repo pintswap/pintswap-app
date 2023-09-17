@@ -9,6 +9,7 @@ import {
     DropdownInput,
     Input,
     Skeleton,
+    TooltipWrapper,
     TransitionModal,
 } from '../components';
 import { useWindowSize } from '../hooks/window-size';
@@ -328,13 +329,22 @@ export const AccountView = () => {
                 <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
                     Create Order
                 </Button>
-                <Button
-                    onClick={toggleActive}
-                    className="sm:max-w-lg sm:self-center"
-                    type="transparent"
+                <TooltipWrapper
+                    text={
+                        userData.active
+                            ? 'Removes offers from public orderbook'
+                            : 'Posts offers to public orderbook'
+                    }
+                    id="account-module-publish"
                 >
-                    {userData.active ? 'Stop Publishing' : 'Publish Offers'}
-                </Button>
+                    <Button
+                        onClick={toggleActive}
+                        className="sm:max-w-lg sm:self-center"
+                        type="transparent"
+                    >
+                        {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                    </Button>
+                </TooltipWrapper>
             </div>
         </div>
     );

@@ -9,6 +9,7 @@ import {
     PageStatus,
     DataTable,
     NFTDisplay,
+    TooltipWrapper,
 } from '../components';
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from '../stores/pintswap';
@@ -276,13 +277,22 @@ export const CreateView = () => {
                             toolbar={false}
                         />
                     </Card>
-                    <Button
-                        onClick={toggleActive}
-                        className="sm:max-w-lg sm:self-center mt-4"
-                        type="outline"
+                    <TooltipWrapper
+                        text={
+                            userData.active
+                                ? 'Removes offers from public orderbook'
+                                : 'Posts offers to public orderbook'
+                        }
+                        id="create-module-publish"
                     >
-                        {userData.active ? 'Stop Publishing' : 'Publish Offers'}
-                    </Button>
+                        <Button
+                            onClick={toggleActive}
+                            className="sm:max-w-lg sm:self-center mt-4"
+                            type="outline"
+                        >
+                            {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                        </Button>
+                    </TooltipWrapper>
                 </Transition>
             </div>
             <Transition

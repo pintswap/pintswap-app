@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ActiveText, StatusIndicator, TooltipWrapper } from '../components';
 import { Avatar } from '../components';
 import { useAccount } from 'wagmi';
@@ -15,6 +15,7 @@ const backgroundClass = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
     const { address } = useAccount();
+    const { userData } = useUserContext();
     const { width, breakpoints } = useWindowSize();
     const { NAV_ITEMS } = useDashNav();
     const {
@@ -62,8 +63,12 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                             truncated
                         />
                         <TooltipWrapper
-                            id="publish-offers"
-                            text="Let others see your offers"
+                            id="dashboard-publish-offers"
+                            text={
+                                userData.active
+                                    ? 'Make offers private'
+                                    : 'Let others see your offers'
+                            }
                             position="right"
                         >
                             <button
