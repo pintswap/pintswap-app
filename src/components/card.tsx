@@ -11,7 +11,6 @@ type ICardProps = {
     defaultTab?: string;
     onTabChange?: any;
     bg?: string;
-    customTabCols?: 'grid-cols-2' | 'grid-cols-3' | 'grid-cols-4';
 };
 
 export const Card = ({
@@ -24,7 +23,6 @@ export const Card = ({
     defaultTab,
     onTabChange,
     bg,
-    customTabCols = 'grid-cols-2',
 }: ICardProps) => {
     const backgroundColor = bg
         ? bg

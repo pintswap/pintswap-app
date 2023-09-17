@@ -15,7 +15,7 @@ type ISwapModule = {
         broadcast?: boolean;
         fulfill?: boolean;
     };
-    onClick: MouseEventHandler<HTMLButtonElement>;
+    onClick?: MouseEventHandler<HTMLButtonElement>;
     updateTrade?: (key: string | any, val: string) => void;
     disabled?: boolean;
     type?: 'swap' | 'fulfill';
@@ -87,6 +87,7 @@ export const SwapModule = ({
                     max={type === 'swap'}
                     disabled={type === 'fulfill'}
                     type={type}
+                    id="swap-module-give"
                 />
 
                 <button className="absolute p-1.5 bg-brand-dashboard rounded-lg">
@@ -106,6 +107,7 @@ export const SwapModule = ({
                     asset={trade.gets.token}
                     disabled={type === 'fulfill'}
                     type={type}
+                    id="swap-module-get"
                 />
             </div>
 
@@ -122,6 +124,7 @@ export const SwapModule = ({
                     loading={loading?.broadcast || loading?.fulfill || loading?.trade}
                     onClick={onClick}
                     checkNetwork
+                    form="submit"
                 >
                     {determineButtonText()}
                 </Button>

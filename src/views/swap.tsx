@@ -1,11 +1,13 @@
-import { Card, CopyClipboard, Input, SwapModule, TransitionModal } from '../components';
+import { Button, Card, CopyClipboard, Input, SwapModule, TransitionModal } from '../components';
 import { useTrade } from '../hooks';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BASE_URL } from '../utils';
-import { usePintswapContext, useUserContext } from '../stores';
-import { MdClose, MdContentCopy } from 'react-icons/md';
+import { usePintswapContext } from '../stores';
+import { MdClose } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 export const SwapView = () => {
+    const navigate = useNavigate();
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
@@ -15,7 +17,7 @@ export const SwapView = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [resolvedName, setResolvedName] = useState(order.multiAddr);
 
-    const handleSwap = async (e: any) => {
+    const handleSwap = async (e: React.SyntheticEvent) => {
         await broadcastTrade(e, isPublic);
         setIsModalOpen(true);
         clearTrade();
@@ -63,11 +65,11 @@ export const SwapView = () => {
                 />
             </div>
 
-            <TransitionModal state={true} setState={setIsModalOpen}>
+            <TransitionModal state={isModalOpen} setState={setIsModalOpen}>
                 <Card className="border border-neutral-800 w-full">
-                    <div className="flex flex-col gap-2 lg:gap-3">
+                    <div className="flex flex-col gap-3 lg:gap-6">
                         <div className="flex items-center justify-between">
-                            <span>Select a token</span>
+                            <span>Swap Initiated</span>
                             <button
                                 className="p-1 relative -mt-0.5 -mr-2"
                                 onClick={() => setIsModalOpen(false)}
@@ -79,16 +81,30 @@ export const SwapView = () => {
                             </button>
                         </div>
                         <div className="border border-neutral-600 bg-gradient-to-t from-blue-500 to-blue-600 px-2 py-1 rounded-lg">
-                            <span>Please do not leave the app until the trade is complete.</span>
+                            <span>Please do not leave the app until the trade is complete</span>
                         </div>
-                        <CopyClipboard value={createTradeLink()}>
-                            <div className="flex items-center">
-                                <Input type="text" value={createTradeLink()} />
-                                <button>
-                                    <MdContentCopy />
-                                </button>
-                            </div>
-                        </CopyClipboard>
+
+                        <div>
+                            <span className="text-xs">Share Link:</span>
+                            <CopyClipboard value={createTradeLink()} icon>
+                                <Input
+                                    noSpace
+                                    className="pointer-events-none"
+                                    type="text"
+                                    value={createTradeLink()}
+                                />
+                            </CopyClipboard>
+                        </div>
+
+                        <div className="flex justify-end gap-4 mt-3">
+                            <Button
+                                type="transparent"
+                                onClick={() => navigate('/account', { state: { tab: 'Offers' } })}
+                            >
+                                My Offers
+                            </Button>
+                            <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+                        </div>
                     </div>
                 </Card>
             </TransitionModal>

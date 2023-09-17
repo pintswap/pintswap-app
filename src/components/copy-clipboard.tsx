@@ -6,7 +6,7 @@ import { ReactNode, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 type ICopyClipboardProps = {
-    icon?: boolean;
+    icon?: boolean | 'button';
     value: string;
     lg?: boolean;
     truncate?: number;

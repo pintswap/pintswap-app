@@ -1,5 +1,5 @@
 import { ethers } from 'ethers6';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
     Avatar,
     Button,
@@ -43,6 +43,7 @@ export const AccountView = () => {
     const subgraph = useSubgraph({});
     const { width } = useWindowSize();
     const navigate = useNavigate();
+    const { state } = useLocation();
     const { pintswap } = usePintswapContext();
     const { userTrades } = useOffersContext();
     const {
@@ -130,7 +131,7 @@ export const AccountView = () => {
                     </Skeleton>
                 </div>
             </div>
-            <Card tabs={TABS} customTabCols="grid-cols-3" type="tabs" scroll>
+            <Card tabs={TABS} defaultTab={state?.tab && state?.tab} type="tabs" scroll>
                 <Tab.Panel>
                     <form>
                         <div

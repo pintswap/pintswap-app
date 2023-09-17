@@ -15,6 +15,7 @@ type ICoinInput = {
     max?: boolean;
     disabled?: boolean;
     type?: 'swap' | 'fulfill';
+    id?: string;
 };
 
 export const CoinInput = ({
@@ -26,6 +27,7 @@ export const CoinInput = ({
     max,
     disabled,
     type = 'swap',
+    id,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const { address } = useAccount();
@@ -55,6 +57,7 @@ export const CoinInput = ({
                     onChange={onAmountChange}
                     value={value}
                     disabled={disabled}
+                    id={id}
                 />
                 <SelectCoin
                     asset={asset}
@@ -70,7 +73,7 @@ export const CoinInput = ({
                     <span>$</span>
                     <SmartPrice
                         price={
-                            Number(value) > 0
+                            Number(value) > 0 && asset
                                 ? Number(value) * Number(data?.usdPrice || '0')
                                 : '0.00'
                         }

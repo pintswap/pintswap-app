@@ -165,7 +165,7 @@ const CustomRow = (props: IDataTableProps) => {
                 });
             case 'manage':
                 return navigate(`${url}fulfill/${userData.name || module?.address}/${firstCell}`);
-            case 'history': // TODO
+            case 'history':
                 return window.open(`${EXPLORER_URLS[chainId]}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook':
                 return navigate(`/${peer}/${firstCell}`);

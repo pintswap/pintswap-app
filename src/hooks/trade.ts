@@ -124,7 +124,6 @@ export const useTrade = () => {
                 const offer = await buildTradeObj(trade);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 module.broadcastOffer(await buildTradeObj(trade));
-                toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                 savePintswap(module);
                 if (isPublic && !userData.active) toggleActive();
             } catch (err) {
@@ -138,6 +137,7 @@ export const useTrade = () => {
         e.preventDefault();
         setLoading({ ...loading, fulfill: true });
         if (module) {
+            toast.loading('Swapping...', { toastId: 'swapping' });
             try {
                 let multiAddr = order.multiAddr;
                 if (multiAddr.match(/\.drip$/))
@@ -161,11 +161,12 @@ export const useTrade = () => {
                     if (TESTING)
                         console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
                     module.createTrade(peeredUp, await buildTradeObj(trade));
-                    toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                 }
+                toast.loading('Swapping...', { toastId: 'swapping' });
             } catch (err) {
                 console.error(err);
                 setError(true);
+                updateToast('swapping', 'error');
             }
         }
     };
@@ -324,6 +325,7 @@ export const useTrade = () => {
                 if (module) savePintswap(module);
                 console.log('#makerListener: taker approving trade');
                 toast('Taker is approving transaction...');
+                toast.loading('Swapping...', { toastId: 'swapping' });
                 break;
             case 1:
                 console.log('#makerListener: taker approved trade');
@@ -335,6 +337,7 @@ export const useTrade = () => {
                 shallow.delete(order.orderHash);
                 setUserTrades(shallow);
                 shallow = userTrades;
+                updateToast('swapping', 'success');
                 break;
         }
     };
@@ -363,6 +366,7 @@ export const useTrade = () => {
                 setLoading({ ...loading, fulfill: false });
                 shallow.delete(order.orderHash);
                 setUserTrades(shallow);
+                updateToast('swapping', 'success');
                 break;
         }
     };
