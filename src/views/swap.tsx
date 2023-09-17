@@ -15,7 +15,7 @@ export const SwapView = () => {
         useTrade();
     const [isPublic, setIsPublic] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [resolvedName, setResolvedName] = useState(order.multiAddr);
+    const [resolvedName, setResolvedName] = useState(module?.peerId?.toB58String());
 
     const handleSwap = async (e: React.SyntheticEvent) => {
         await broadcastTrade(e, isPublic);
@@ -46,7 +46,8 @@ export const SwapView = () => {
             setResolvedName(order.multiAddr);
             if (module) {
                 try {
-                    setResolvedName(await module.resolveName(order.multiAddr));
+                    const dripName = await module.resolveName(module.peerId.toB58String());
+                    setResolvedName(dripName);
                 } catch (e) {
                     module && module.logger.error(e);
                 }
