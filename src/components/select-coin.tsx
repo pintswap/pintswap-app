@@ -132,6 +132,7 @@ export const SelectCoin = ({
                             placeholder="Search name or paste address"
                             type="search"
                             className="w-full"
+                            autoFocus
                         />
 
                         <ul className="h-80 overflow-y-scroll">

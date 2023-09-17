@@ -26,6 +26,8 @@ type IInputProps = {
     enableStateCss?: boolean;
     wrapperClass?: string;
     inputClass?: string;
+    autoFocus?: boolean;
+    ref?: any;
 };
 
 export const Input = ({
@@ -44,6 +46,8 @@ export const Input = ({
     enableStateCss,
     wrapperClass,
     inputClass,
+    autoFocus,
+    ref,
 }: IInputProps) => {
     const { address } = useAccount();
     const {
@@ -98,6 +102,8 @@ export const Input = ({
                     maxLength={max}
                     type={'text'}
                     disabled={disabled}
+                    ref={ref}
+                    autoFocus={autoFocus}
                 />
             </div>
         );
@@ -141,6 +147,8 @@ export const Input = ({
                 maxLength={max}
                 type={type}
                 disabled={disabled}
+                ref={ref}
+                autoFocus={autoFocus}
             />
             {token && maxClick && (
                 <button

@@ -129,11 +129,6 @@ export async function getV2Token({
                 symbol
                 name
                 decimals
-                totalSupply
-                tradeVolume
-                tradeVolumeUSD
-                txCount
-                totalLiquidity
                 derivedETH
               }
               ${buildOptionalQuery()}
@@ -199,7 +194,7 @@ export async function getUserHistory(address: string, signer: Signer) {
                         query: `{
                     pintswapTrades(
                         orderBy: timestamp, 
-                        orderDirection: asc,
+                        orderDirection: desc,
                         where: { ${el}: "${address.toLowerCase()}" }
                     ) {
                         id
