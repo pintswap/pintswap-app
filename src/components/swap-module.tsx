@@ -66,11 +66,11 @@ export const SwapModule = ({
                               </button>
                           )}
                 </span>
-                <TooltipWrapper text="Working on it" id="working-on-it-swap-settings">
+                {/* <TooltipWrapper text="Working on it" id="working-on-it-swap-settings">
                     <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-100">
                         <MdSettings size={20} />
                     </button>
-                </TooltipWrapper>
+                </TooltipWrapper> */}
             </div>
 
             <div className="flex flex-col justify-center items-center gap-1.5">

@@ -20,7 +20,11 @@ export const SwapView = () => {
     const handleSwap = async (e: React.SyntheticEvent) => {
         await broadcastTrade(e, isPublic);
         setIsModalOpen(true);
+    };
+
+    const handleModalClose = () => {
         clearTrade();
+        setIsModalOpen(false);
     };
 
     const createTradeLink = () => {
@@ -72,7 +76,7 @@ export const SwapView = () => {
                             <span>Swap Initiated</span>
                             <button
                                 className="p-1 relative -mt-0.5 -mr-2"
-                                onClick={() => setIsModalOpen(false)}
+                                onClick={handleModalClose}
                             >
                                 <MdClose
                                     size={24}
@@ -103,7 +107,7 @@ export const SwapView = () => {
                             >
                                 My Offers
                             </Button>
-                            <Button onClick={() => setIsModalOpen(false)}>Close</Button>
+                            <Button onClick={handleModalClose}>Close</Button>
                         </div>
                     </div>
                 </Card>

@@ -56,7 +56,7 @@ export function TransitionModal({
                     <div
                         className={`${
                             modalClass || ''
-                        } absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[500px] w-full p-4 focus-visible:outline-none`}
+                        } absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[500px] w-full p-4 focus-visible:outline-none z-[999]`}
                     >
                         {children}
                     </div>

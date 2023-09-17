@@ -91,7 +91,7 @@ export const Input = ({
                     <MdSearch size="18px" className="text-neutral-200" />
                 </div>
                 <input
-                    className={`bg-transparent outline-none ring-none p-2 ${className} min-w-0 group `}
+                    className={`bg-transparent outline-none ring-none p-2 pl-0.5 ${className} min-w-0 group placeholder:text-sm`}
                     value={value}
                     onChange={onChange}
                     placeholder={!placeholder ? 'Search here' : placeholder}

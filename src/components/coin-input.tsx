@@ -51,7 +51,7 @@ export const CoinInput = ({
             {label && <span className="text-xs text-gray-400">{label}</span>}
             <div className="flex justify-between items-center gap-0.5 pt-4 pb-1">
                 <input
-                    className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow min-w-0 w-fit"
+                    className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] sm:max-w-none min-w-0 w-fit"
                     placeholder="0"
                     type="number"
                     onChange={onAmountChange}
