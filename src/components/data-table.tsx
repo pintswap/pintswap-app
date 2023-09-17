@@ -12,7 +12,9 @@ import { useOffersContext, usePintswapContext, usePricesContext, useUserContext 
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
-import { EXPLORER_URLS } from '../utils';
+import { BASE_URL, EXPLORER_URLS } from '../utils';
+import { detectTradeNetwork, parseTrade } from '@pintswap/sdk';
+import { toast } from 'react-toastify';
 
 type IDataTableProps = {
     title?: string;
@@ -138,7 +140,7 @@ const CustomRow = (props: IDataTableProps) => {
     const { eth } = usePricesContext();
     const cols = columns as string[];
     const { width } = useWindowSize();
-    const { deleteTrade } = useOffersContext();
+    const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
 
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
@@ -150,7 +152,7 @@ const CustomRow = (props: IDataTableProps) => {
         deleteTrade(hash);
     };
 
-    const route = (cells: string[]) => {
+    const route = async (cells: string[]) => {
         const firstCell = cells[0];
         const secondCell = cells[1];
         let url = '/';
@@ -163,8 +165,16 @@ const CustomRow = (props: IDataTableProps) => {
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`, {
                     state: { ...props },
                 });
-            case 'manage':
-                return navigate(`${url}fulfill/${userData.name || module?.address}/${firstCell}`);
+            case 'manage': {
+                toast.info('Copied offer share link', { autoClose: 2000 });
+                const found = userTrades.get(firstCell);
+                const offerChainId = found ? await detectTradeNetwork(found) : 1;
+                return navigator.clipboard.writeText(
+                    `${BASE_URL}/#/fulfill/${
+                        userData.name || module?.address
+                    }/${firstCell}/${offerChainId}`,
+                );
+            }
             case 'history':
                 return window.open(`${EXPLORER_URLS[chainId]}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook':
