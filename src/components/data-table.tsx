@@ -206,7 +206,6 @@ const CustomRow = (props: IDataTableProps) => {
     const formatCell = (s: string) => {
         if (type === 'history') {
             const [amount, asset] = s.split(' ');
-            console.log('asset', asset);
             return (
                 <span className="flex items-center gap-1.5">
                     <SmartPrice price={amount} />
