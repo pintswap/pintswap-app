@@ -101,7 +101,7 @@ export const alphaTokenSort = (a: ITokenProps, b: ITokenProps) => {
 export const balanceTokenSort = (a: ITokenProps, b: ITokenProps) => {
     const balanceA = Number(a?.balance);
     const balanceB = Number(b?.balance);
-    return balanceA < balanceB ? -1 : balanceA > balanceB ? 1 : 0;
+    return balanceB - balanceA;
 };
 
 export async function getTokenAttributes(

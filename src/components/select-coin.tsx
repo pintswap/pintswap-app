@@ -14,7 +14,7 @@ import {
     EXPLORER_URLS,
     balanceTokenSort,
 } from '../utils';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { ethers } from 'ethers6';
 import { usePintswapContext, useUserContext } from '../stores';
@@ -56,6 +56,13 @@ export const SelectCoin = ({
             })().catch((err) => console.error(err));
         }
     }, [query, module?.signer]);
+
+    const memoizedList = useMemo(() => {
+        return (list as ITokenProps[]).map((el) => ({
+            ...el,
+            balance: matchWithUserBalances(el.address, tokenHoldings),
+        }));
+    }, [tokenHoldings, list]);
 
     return (
         <>
@@ -140,42 +147,31 @@ export const SelectCoin = ({
                         />
 
                         <ul className="h-80 overflow-y-scroll">
-                            {(list as ITokenProps[])
-                                .map((el) => ({
-                                    ...el,
-                                    balance: matchWithUserBalances(el.address, tokenHoldings),
-                                }))
-                                .sort(alphaTokenSort)
-                                .sort(balanceTokenSort)
-                                .map((el: ITokenProps, i) => (
-                                    <li key={`dropdown-item-${el.symbol}-${i}`}>
-                                        <button
-                                            className={`${dropdownItemClass(
-                                                false,
-                                            )} transition duration-100 hover:bg-neutral-900 flex justify-between items-center`}
-                                            onClick={(e) => {
-                                                onAssetClick(e);
-                                                setTimeout(() => clearQuery(), 200);
-                                            }}
-                                        >
-                                            <Asset
-                                                icon={el.logoURI}
-                                                symbol={el.symbol}
-                                                alt={el.name}
-                                                fontSize="text-lg"
-                                                size={30}
-                                            />
-                                            <span className="text-sm">
-                                                <SmartPrice
-                                                    price={matchWithUserBalances(
-                                                        el.address,
-                                                        tokenHoldings,
-                                                    )}
-                                                />
-                                            </span>
-                                        </button>
-                                    </li>
-                                ))}
+                            {memoizedList.sort(balanceTokenSort).map((el: ITokenProps, i) => (
+                                <li key={`dropdown-item-${el.symbol}-${i}`}>
+                                    <button
+                                        className={`${dropdownItemClass(
+                                            false,
+                                        )} transition duration-100 hover:bg-neutral-900 flex justify-between items-center`}
+                                        onClick={(e) => {
+                                            console.log(e);
+                                            onAssetClick({ target: { innerText: el.symbol } });
+                                            setTimeout(() => clearQuery(), 200);
+                                        }}
+                                    >
+                                        <Asset
+                                            icon={el.logoURI}
+                                            symbol={el.symbol}
+                                            alt={el.name}
+                                            fontSize="text-lg"
+                                            size={30}
+                                        />
+                                        <span className="text-sm">
+                                            <SmartPrice price={el.balance || '0'} />
+                                        </span>
+                                    </button>
+                                </li>
+                            ))}
                             {ethers.isAddress(query) && (
                                 <li>
                                     <button
