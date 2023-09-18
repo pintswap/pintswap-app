@@ -18,7 +18,7 @@ export const getTokenBalances = async (address: string): Promise<ITokenResProps[
     if (!address || !isAddress(address)) return [];
 
     const url = `${baseUrl}/getAddressInfo/${getAddress(address)}?apiKey=${
-        process.env.REACT_APP_ETHPLORER_KEY
+        process.env.REACT_APP_ETHPLORER_KEY || 'freekey'
     }&showTxsCount=false&showETHTTotals=false`;
     fetch(url, options)
         .then((res) => res.json())
