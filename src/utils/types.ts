@@ -47,4 +47,5 @@ export type ITokenProps = {
     extensions?: {
         bridgeInfo: Record<string, { tokenAddress: string }>;
     };
+    balance?: string;
 };

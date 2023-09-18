@@ -1,7 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { DEFAULT_CHAINID, ITokenProps, getTokenList } from '../utils';
+import { ITokenProps, getTokenList } from '../utils';
 import { IUserDataProps, usePintswapContext } from '../stores';
-import { getNetwork } from '@wagmi/core';
 
 const isKeyInObjArray = (list: any[], key: string) =>
     list.some((obj) => Object.keys(obj).includes(key));

@@ -7,6 +7,7 @@ const options = {
     headers: {
         accept: 'application/json',
         'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': '*',
     },
 };
@@ -50,4 +51,11 @@ export const getTokenBalances = async (address: string): Promise<ITokenResProps[
             console.error('#getTokenBalances:', err);
             return [];
         });
+};
+
+export const matchWithUserBalances = (address: string, arr: ITokenResProps[]) => {
+    if (!address || !arr) return '0';
+    const found = arr.find((x) => x.address?.toLowerCase() === address?.toLowerCase());
+    if (found) return found.balance;
+    return '0';
 };

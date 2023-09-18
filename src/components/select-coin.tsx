@@ -12,12 +12,15 @@ import {
     getSymbol,
     toAddress,
     EXPLORER_URLS,
+    balanceTokenSort,
 } from '../utils';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { ethers } from 'ethers6';
-import { usePintswapContext } from '../stores';
+import { usePintswapContext, useUserContext } from '../stores';
 import { TooltipWrapper } from './tooltip';
+import { matchWithUserBalances } from '../api';
+import { SmartPrice } from './smart-price';
 
 type ISelectCoin = {
     asset?: string;
@@ -39,6 +42,7 @@ export const SelectCoin = ({
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
+    const { tokenHoldings } = useUserContext();
     const { query, list, handleChange, clearQuery } = useSearch(getTokenList(chainId));
     const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
 
@@ -137,13 +141,18 @@ export const SelectCoin = ({
 
                         <ul className="h-80 overflow-y-scroll">
                             {(list as ITokenProps[])
+                                .map((el) => ({
+                                    ...el,
+                                    balance: matchWithUserBalances(el.address, tokenHoldings),
+                                }))
                                 .sort(alphaTokenSort)
+                                .sort(balanceTokenSort)
                                 .map((el: ITokenProps, i) => (
                                     <li key={`dropdown-item-${el.symbol}-${i}`}>
                                         <button
                                             className={`${dropdownItemClass(
                                                 false,
-                                            )} transition duration-100 hover:bg-neutral-900`}
+                                            )} transition duration-100 hover:bg-neutral-900 flex justify-between items-center`}
                                             onClick={(e) => {
                                                 onAssetClick(e);
                                                 setTimeout(() => clearQuery(), 200);
@@ -156,6 +165,14 @@ export const SelectCoin = ({
                                                 fontSize="text-lg"
                                                 size={30}
                                             />
+                                            <span className="text-sm">
+                                                <SmartPrice
+                                                    price={matchWithUserBalances(
+                                                        el.address,
+                                                        tokenHoldings,
+                                                    )}
+                                                />
+                                            </span>
                                         </button>
                                     </li>
                                 ))}

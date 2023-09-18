@@ -98,6 +98,12 @@ export const alphaTokenSort = (a: ITokenProps, b: ITokenProps) => {
     return textA < textB ? -1 : textA > textB ? 1 : 0;
 };
 
+export const balanceTokenSort = (a: ITokenProps, b: ITokenProps) => {
+    const balanceA = Number(a?.balance);
+    const balanceB = Number(b?.balance);
+    return balanceA < balanceB ? -1 : balanceA > balanceB ? 1 : 0;
+};
+
 export async function getTokenAttributes(
     token: string,
     chainId: number,
@@ -135,7 +141,7 @@ export async function getTokenAttributes(
                     extensions: undefined,
                 };
                 if (TESTING) console.log('#getTokenAttributes:', tokenAttributes);
-                if (attribute) return tokenAttributes[attribute];
+                if (attribute) return (tokenAttributes as any)[attribute];
                 return tokenAttributes;
             } catch (err) {
                 console.warn('#getTokenAttributes: Error finding token', {
