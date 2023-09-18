@@ -1,4 +1,4 @@
-import { Transition } from '@headlessui/react';
+import { Tab, Transition } from '@headlessui/react';
 import { Avatar, PageStatus, TransitionModal, SwapModule, Card } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useAccount } from 'wagmi';
@@ -38,20 +38,19 @@ export const FulfillView = () => {
                         <Avatar peer={order.multiAddr} size={300} />
                     </TransitionModal>
                 </div>
-                <Card className="!py-4">
-                    <div>
-                        <span className="text-xl">Fulfill</span>
-                    </div>
-                    <SwapModule
-                        type="fulfill"
-                        trade={{
-                            gets: trade.gives,
-                            gives: trade.gets,
-                        }}
-                        disabled={isButtonDisabled()}
-                        onClick={fulfillTrade}
-                        loading={loading}
-                    />
+                <Card className="!py-4" type="tabs" tabs={['Fulfill']}>
+                    <Tab.Panel>
+                        <SwapModule
+                            type="fulfill"
+                            trade={{
+                                gets: trade.gives,
+                                gives: trade.gets,
+                            }}
+                            disabled={isButtonDisabled()}
+                            onClick={fulfillTrade}
+                            loading={loading}
+                        />
+                    </Tab.Panel>
                 </Card>
             </div>
             <Transition

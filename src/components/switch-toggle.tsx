@@ -34,10 +34,14 @@ export const SwitchToggle = ({
                         className={`${
                             state
                                 ? `translate-x-[calc(100%-2px)] ${
-                                      customColors ? customColors[0] : 'bg-red-500'
+                                      customColors
+                                          ? customColors[0]
+                                          : 'bg-gradient-to-tr to-red-700 from-rose-400'
                                   }`
                                 : `translate-x-0.5 ${
-                                      customColors ? customColors[1] : 'bg-green-500'
+                                      customColors
+                                          ? customColors[1]
+                                          : 'bg-gradient-to-tr to-green-700 from-emerald-400'
                                   }`
                         } absolute inline-block transform rounded transition-transform w-1/2 py-[18px]`}
                     />
