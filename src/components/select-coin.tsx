@@ -129,13 +129,14 @@ export const SelectCoin = ({
                         <Input
                             value={query}
                             onChange={(e) => {
+                                e.preventDefault();
                                 handleChange(e);
                                 const {
                                     target: { value },
                                 } = e;
                                 if (value?.startsWith('0x') && value?.length === 42) {
                                     setTimeout(() => {
-                                        onAssetClick({ target: { innerText: value } });
+                                        onAssetClick({ ...e, target: { innerText: value } });
                                     }, 200);
                                     clearQuery();
                                 }
@@ -154,8 +155,11 @@ export const SelectCoin = ({
                                             false,
                                         )} transition duration-100 hover:bg-neutral-900 flex justify-between items-center`}
                                         onClick={(e) => {
-                                            console.log(e);
-                                            onAssetClick({ target: { innerText: el.symbol } });
+                                            e.preventDefault();
+                                            onAssetClick({
+                                                ...e,
+                                                target: { innerText: el.symbol },
+                                            });
                                             setTimeout(() => clearQuery(), 200);
                                         }}
                                     >
@@ -179,6 +183,7 @@ export const SelectCoin = ({
                                             unknownToken.loading ? 'animate-pulse' : ''
                                         }`}
                                         onClick={(e) => {
+                                            e.preventDefault();
                                             onAssetClick(e);
                                             setTimeout(() => clearQuery(), 200);
                                         }}

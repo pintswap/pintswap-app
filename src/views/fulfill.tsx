@@ -1,5 +1,5 @@
 import { Transition } from '@headlessui/react';
-import { Avatar, PageStatus, TransitionModal, SwapModule } from '../components';
+import { Avatar, PageStatus, TransitionModal, SwapModule, Card } from '../components';
 import { useTrade } from '../hooks/trade';
 import { useAccount } from 'wagmi';
 
@@ -38,17 +38,21 @@ export const FulfillView = () => {
                         <Avatar peer={order.multiAddr} size={300} />
                     </TransitionModal>
                 </div>
-                <SwapModule
-                    header="Fulfill"
-                    type="fulfill"
-                    trade={{
-                        gets: trade.gives,
-                        gives: trade.gets,
-                    }}
-                    disabled={isButtonDisabled()}
-                    onClick={fulfillTrade}
-                    loading={loading}
-                />
+                <Card className="!py-4">
+                    <div>
+                        <span className="text-xl">Fulfill</span>
+                    </div>
+                    <SwapModule
+                        type="fulfill"
+                        trade={{
+                            gets: trade.gives,
+                            gives: trade.gets,
+                        }}
+                        disabled={isButtonDisabled()}
+                        onClick={fulfillTrade}
+                        loading={loading}
+                    />
+                </Card>
             </div>
             <Transition
                 show={steps[2].status === 'current'}

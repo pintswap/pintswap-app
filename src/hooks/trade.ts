@@ -274,7 +274,8 @@ export const useTrade = () => {
     };
 
     // Clear Trade
-    const clearTrade = () => setTrade(EMPTY_TRADE);
+    const clearTrade = () =>
+        setTrade({ gets: { token: '', amount: '' }, gives: { token: '', amount: '' } });
 
     // Update progress indicator
     const updateSteps = (nextStep: 'Create' | 'Fulfill' | 'Complete') => {

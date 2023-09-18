@@ -5,8 +5,11 @@ import { CoinInput } from './coin-input';
 import { IOffer } from '@pintswap/sdk';
 import { TxDetails } from './tx-details';
 import { Button } from './button';
-import { MouseEventHandler } from 'react';
+import { MouseEventHandler, useEffect, useState } from 'react';
 import { StatusIndicator } from './status-indicator';
+import { INFTProps, fetchNFT } from '../utils';
+import { NFTDisplay } from './nft-display';
+import { Input } from './input';
 
 type ISwapModule = {
     trade: IOffer;
@@ -18,23 +21,19 @@ type ISwapModule = {
     onClick?: MouseEventHandler<HTMLButtonElement>;
     updateTrade?: (key: string | any, val: string) => void;
     disabled?: boolean;
-    type?: 'swap' | 'fulfill';
-    header?: string;
-    otc?: boolean;
-    toggleOtc?: () => void;
+    type?: 'swap' | 'fulfill' | 'nft';
 };
 
 export const SwapModule = ({
-    header,
     trade,
     loading,
     updateTrade,
     onClick,
     disabled,
     type = 'swap',
-    otc,
-    toggleOtc,
 }: ISwapModule) => {
+    const [nft, setNFT] = useState<INFTProps | null>(null);
+
     const determineLoadingText = () => {
         if (loading?.broadcast || loading?.fulfill) return 'Swapping';
         if (loading?.trade) return 'Loading Offer';
@@ -45,34 +44,82 @@ export const SwapModule = ({
         return 'Swap';
     };
 
-    return (
-        <Card className="!py-4">
-            <div className="flex items-center justify-between mb-2 md:mb-3 lg:mb-4 px-0.5">
-                <span className="text-xl">
-                    {header && type !== 'swap'
-                        ? header
-                        : otc !== undefined && (
-                              <button
-                                  onClick={toggleOtc}
-                                  className="py-1 pl-0.5 pr-2 transition duration-150 hover:text-neutral-300"
-                              >
-                                  <StatusIndicator
-                                      active={!otc}
-                                      message={!otc ? 'Public Orderbook' : 'Share via OTC'}
-                                      customColors={[
-                                          'bg-gradient-to-tr to-sky-300 from-indigo-600',
-                                      ]}
-                                  />
-                              </button>
-                          )}
-                </span>
-                {/* <TooltipWrapper text="Working on it" id="working-on-it-swap-settings">
-                    <button className="pl-2 py-0.5 hover:text-neutral-300 transition duration-100">
-                        <MdSettings size={20} />
-                    </button>
-                </TooltipWrapper> */}
-            </div>
+    if (type === 'nft') {
+        useEffect(() => {
+            (async () => {
+                const { gives } = trade;
+                if (gives.tokenId && gives.token) {
+                    const n = await fetchNFT({ token: gives.token, tokenId: gives.tokenId });
+                    setNFT(n);
+                }
+            })().catch((err) => console.error(err));
+        }, [trade.gives.tokenId, trade.gives.token]);
 
+        return (
+            <div className="grid grid-cols-1 gap-6 items-start">
+                {nft && (
+                    <div className="max-h-[180px] max-w-[180px] mx-auto overflow-hidden flex justify-center items-center">
+                        <NFTDisplay nft={nft} show="img" />
+                    </div>
+                )}
+                <div className="grid grid-cols-1 gap-1.5 md:gap-3 items-start">
+                    <Input
+                        title="NFT Details"
+                        placeholder="NFT Contract Address"
+                        value={trade.gives.token || ''}
+                        onChange={({ currentTarget }: any) =>
+                            updateTrade ? updateTrade('gives.token', currentTarget.value) : {}
+                        }
+                        type="text"
+                        token={trade.gives.token || true}
+                    />
+                    <Input
+                        placeholder="NFT Token ID"
+                        value={trade.gives.tokenId || ''}
+                        onChange={({ currentTarget }: any) =>
+                            updateTrade ? updateTrade('gives.tokenId', currentTarget.value) : {}
+                        }
+                        type="number"
+                        token={trade.gives.tokenId || true}
+                        noSpace
+                    />
+                </div>
+                <CoinInput
+                    label="You get"
+                    value={trade.gets?.amount}
+                    onAssetClick={(e: any) =>
+                        updateTrade ? updateTrade('gets.token', e.target.innerText) : {}
+                    }
+                    onAmountChange={({ currentTarget }) =>
+                        updateTrade ? updateTrade('gets.amount', currentTarget.value) : {}
+                    }
+                    asset={trade.gets?.token}
+                    type={'swap'}
+                    id="swap-module-get"
+                />
+                <div className="flex flex-col gap-2 mt-2">
+                    <Button
+                        className="w-full rounded-lg !py-3"
+                        disabled={disabled}
+                        loadingText={determineLoadingText()}
+                        loading={loading?.broadcast || loading?.fulfill || loading?.trade}
+                        onClick={onClick}
+                        checkNetwork
+                        form="submit"
+                    >
+                        {determineButtonText()}
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    useEffect(() => {
+        if (!trade.gives.token && updateTrade) updateTrade('gives.token', 'ETH');
+    }, [trade]);
+
+    return (
+        <>
             <div className="flex flex-col justify-center items-center gap-1.5">
                 <CoinInput
                     label="You give"
@@ -129,6 +176,6 @@ export const SwapModule = ({
                     {determineButtonText()}
                 </Button>
             </div>
-        </Card>
+        </>
     );
 };

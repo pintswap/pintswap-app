@@ -13,7 +13,7 @@ import { BASE_URL } from '../utils';
 import { usePintswapContext } from '../stores';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import { Transition } from '@headlessui/react';
+import { Tab, Transition } from '@headlessui/react';
 
 export const SwapView = () => {
     const navigate = useNavigate();
@@ -39,7 +39,7 @@ export const SwapView = () => {
         setIsModalOpen(true);
     };
 
-    const handleModalClose = () => {
+    const handleModalClose = (e: any) => {
         clearTrade();
         setIsModalOpen(false);
     };
@@ -53,10 +53,6 @@ export const SwapView = () => {
         }
         return `${finalUrl}/${chainId}`;
     };
-
-    useEffect(() => {
-        if (!trade.gives.token) updateTrade('gives.token', 'ETH');
-    }, [trade]);
 
     useEffect(() => {
         (async () => {
@@ -76,15 +72,32 @@ export const SwapView = () => {
         <>
             <div className="flex flex-col max-w-xl mx-auto">
                 <h2 className="view-header text-left">Swap</h2>
-                <SwapModule
-                    trade={trade}
-                    updateTrade={updateTrade}
-                    disabled={isButtonDisabled()}
-                    onClick={handleSwap}
-                    loading={loading}
-                    otc={!isPublic}
-                    toggleOtc={() => setIsPublic(!isPublic)}
-                />
+                <Card
+                    className="!py-4"
+                    type="tabs"
+                    tabs={['ERC20', 'NFT']}
+                    onTabChange={clearTrade}
+                >
+                    <Tab.Panel>
+                        <SwapModule
+                            trade={trade}
+                            updateTrade={updateTrade}
+                            disabled={isButtonDisabled()}
+                            onClick={handleSwap}
+                            loading={loading}
+                        />
+                    </Tab.Panel>
+                    <Tab.Panel>
+                        <SwapModule
+                            type="nft"
+                            trade={trade}
+                            updateTrade={updateTrade}
+                            disabled={isButtonDisabled()}
+                            onClick={handleSwap}
+                            loading={loading}
+                        />
+                    </Tab.Panel>
+                </Card>
             </div>
 
             <TransitionModal state={isModalOpen} setState={setIsModalOpen}>
