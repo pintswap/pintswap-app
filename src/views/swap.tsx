@@ -5,6 +5,7 @@ import {
     Input,
     PageStatus,
     SwapModule,
+    SwitchToggle,
     TransitionModal,
 } from '../components';
 import { useTrade } from '../hooks';
@@ -78,6 +79,18 @@ export const SwapView = () => {
                     tabs={['ERC20', 'NFT']}
                     onTabChange={clearTrade}
                 >
+                    <div className="mb-3">
+                        <SwitchToggle
+                            labelOff="OTC"
+                            labelOn="Public"
+                            state={!isPublic}
+                            setState={() => setIsPublic(!isPublic)}
+                            customColors={[
+                                'bg-gradient-to-tr to-indigo-700 from-sky-400',
+                                'bg-gradient-to-tr to-green-700 from-emerald-400',
+                            ]}
+                        />
+                    </div>
                     <Tab.Panel>
                         <SwapModule
                             trade={trade}

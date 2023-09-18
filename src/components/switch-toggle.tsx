@@ -2,12 +2,13 @@ import { Switch } from '@headlessui/react';
 import { Dispatch, SetStateAction } from 'react';
 
 type ISwitchToggle = {
-    label: string;
+    label?: string;
     state: boolean;
     setState: Dispatch<SetStateAction<boolean>> | any;
     labelOn: string;
     labelOff: string;
     disabled?: boolean;
+    customColors?: string[];
 };
 
 export const SwitchToggle = ({
@@ -17,10 +18,11 @@ export const SwitchToggle = ({
     labelOn,
     labelOff,
     disabled,
+    customColors,
 }: ISwitchToggle) => {
     return (
         <div className="w-full flex flex-col gap-1">
-            <span className="text-sm">{label}</span>
+            {label && <span className="text-sm">{label}</span>}
             <div className="flex items-center w-full">
                 <Switch
                     checked={state}
@@ -31,8 +33,12 @@ export const SwitchToggle = ({
                     <span
                         className={`${
                             state
-                                ? 'translate-x-[calc(100%-2px)] bg-red-500'
-                                : 'translate-x-0.5 bg-green-500'
+                                ? `translate-x-[calc(100%-2px)] ${
+                                      customColors ? customColors[0] : 'bg-red-500'
+                                  }`
+                                : `translate-x-0.5 ${
+                                      customColors ? customColors[1] : 'bg-green-500'
+                                  }`
                         } absolute inline-block transform rounded transition-transform w-1/2 py-[18px]`}
                     />
                     <span
