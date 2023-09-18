@@ -1,19 +1,17 @@
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
-import { muiCache, muiOptions, muiTheme } from '../utils/mui';
 import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
 import { SpinnerLoader } from './spinner-loader';
-import { useWindowSize } from '../hooks/window-size';
+import { useWindowSize } from '../hooks';
 import { useNavigate } from 'react-router-dom';
-import { truncate } from '../utils/format';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
 import { useOffersContext, usePintswapContext, usePricesContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
-import { BASE_URL, EXPLORER_URLS } from '../utils';
-import { detectTradeNetwork, parseTrade } from '@pintswap/sdk';
+import { BASE_URL, EXPLORER_URLS, truncate, muiCache, muiOptions, muiTheme } from '../utils';
+import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
 
 type IDataTableProps = {
@@ -206,12 +204,13 @@ const CustomRow = (props: IDataTableProps) => {
     };
 
     const formatCell = (s: string) => {
-        if (type === 'history' && s.length > 15) {
+        if (type === 'history') {
             const [amount, asset] = s.split(' ');
+            console.log('asset', asset);
             return (
                 <span className="flex items-center gap-1.5">
                     <SmartPrice price={amount} />
-                    <span>{asset}</span>
+                    <Asset symbol={asset} size={18} position="right" />
                 </span>
             );
         }

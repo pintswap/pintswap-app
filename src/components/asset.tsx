@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getTokenList, getSymbol, DEFAULT_CHAINID } from '../utils';
 import { usePintswapContext } from '../stores';
-import { getNetwork } from '@wagmi/core';
 
 type IAssetProps = {
     icon?: string;
@@ -10,6 +9,7 @@ type IAssetProps = {
     alt?: string;
     loading?: boolean;
     fontSize?: 'text-sm' | 'text-md' | 'text-lg';
+    position?: 'left' | 'right';
 };
 
 export const Asset = ({
@@ -19,6 +19,7 @@ export const Asset = ({
     loading,
     size = 25,
     fontSize = 'text-md',
+    position = 'left',
 }: IAssetProps) => {
     const {
         pintswap: { module, chainId },
@@ -46,7 +47,11 @@ export const Asset = ({
     }, [symbol]);
 
     return (
-        <div className={`flex items-center gap-2 ${loading ? 'animate-pulse' : ''}`}>
+        <div
+            className={`flex items-center gap-1.5 sm: ${
+                position === 'right' ? 'flex-row-reverse' : 'flex-row'
+            } ${loading ? 'animate-pulse' : ''}`}
+        >
             {loading ? (
                 <>
                     <div

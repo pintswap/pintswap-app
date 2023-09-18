@@ -132,7 +132,7 @@ export const AccountView = () => {
                     </Skeleton>
                 </div>
             </div>
-            <Card tabs={TABS} defaultTab={state?.tab && state?.tab} type="tabs" scroll>
+            <Card tabs={TABS} defaultTab={state?.tab && state?.tab} type="tabs">
                 <Tab.Panel>
                     <form>
                         <div
