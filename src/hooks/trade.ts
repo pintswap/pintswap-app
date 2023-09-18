@@ -268,8 +268,7 @@ export const useTrade = () => {
             !trade.gives.token ||
             (!trade.gives.amount && !trade.gives.tokenId) ||
             !trade.gets.token ||
-            !trade.gets.amount ||
-            !!order.orderHash
+            !trade.gets.amount
         );
     };
 

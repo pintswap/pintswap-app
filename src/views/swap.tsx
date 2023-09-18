@@ -30,6 +30,7 @@ export const SwapView = () => {
         clearTrade,
         order,
         steps,
+        setTrade,
     } = useTrade();
     const [isPublic, setIsPublic] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -98,6 +99,7 @@ export const SwapView = () => {
                             disabled={isButtonDisabled()}
                             onClick={handleSwap}
                             loading={loading}
+                            setTrade={setTrade}
                         />
                     </Tab.Panel>
                     <Tab.Panel>

@@ -5,7 +5,7 @@ import { CoinInput } from './coin-input';
 import { IOffer } from '@pintswap/sdk';
 import { TxDetails } from './tx-details';
 import { Button } from './button';
-import { MouseEventHandler, useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { StatusIndicator } from './status-indicator';
 import { INFTProps, fetchNFT } from '../utils';
 import { NFTDisplay } from './nft-display';
@@ -22,6 +22,7 @@ type ISwapModule = {
     updateTrade?: (key: string | any, val: string) => void;
     disabled?: boolean;
     type?: 'swap' | 'fulfill' | 'nft';
+    setTrade?: React.Dispatch<React.SetStateAction<IOffer>>;
 };
 
 export const SwapModule = ({
@@ -31,6 +32,7 @@ export const SwapModule = ({
     onClick,
     disabled,
     type = 'swap',
+    setTrade,
 }: ISwapModule) => {
     const [nft, setNFT] = useState<INFTProps | null>(null);
 
@@ -113,6 +115,13 @@ export const SwapModule = ({
             </div>
         );
     } else {
+        const reverse = () => {
+            setTrade &&
+                setTrade({
+                    gets: trade.gives,
+                    gives: trade.gets,
+                });
+        };
         useEffect(() => {
             if (!trade.gives.token && updateTrade) updateTrade('gives.token', 'ETH');
         }, [trade]);
@@ -136,7 +145,10 @@ export const SwapModule = ({
                         id="swap-module-give"
                     />
 
-                    <button className="absolute p-1.5 bg-brand-dashboard rounded-lg">
+                    <button
+                        className="absolute p-1.5 bg-brand-dashboard hover:bg-black transition duration-150 rounded-lg"
+                        onClick={reverse}
+                    >
                         <div className="bg-neutral-800 p-1 rounded-md">
                             <MdArrowDownward />
                         </div>
