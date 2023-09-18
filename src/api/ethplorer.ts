@@ -1,5 +1,6 @@
 import { getAddress, isAddress, formatUnits, ZeroAddress } from 'ethers6';
 import { ITokenResProps } from '../stores';
+import { TESTING } from '../utils';
 
 // REQUEST OPTIONS
 const options = { method: 'GET', headers: { accept: 'application/json' } };
@@ -13,31 +14,36 @@ export const getTokenBalances = async (address: string): Promise<ITokenResProps[
         process.env.REACT_APP_ETHPLORER_KEY || 'freekey'
     }&showTxsCount=false&showETHTTotals=false`;
 
-    const res = await fetch(url, options);
-    const json = await res.json();
-    const final: ITokenResProps[] = [];
+    try {
+        const res = await fetch(url, options);
+        const json = await res.json();
+        const final: ITokenResProps[] = [];
 
-    final.push({
-        symbol: 'ETH',
-        address: ZeroAddress,
-        decimals: 18,
-        balance: formatUnits(json.ETH?.rawBalance),
-    });
-
-    json.tokens?.length &&
-        json.tokens?.forEach((t: any) => {
-            if (t?.tokenInfo && t?.tokenInfo?.price) {
-                const decimals = Number(t?.tokenInfo?.decimals || '18');
-                final.push({
-                    symbol: t.tokenInfo.symbol,
-                    address: getAddress(t.tokenInfo.address),
-                    decimals,
-                    balance: formatUnits(t?.rawBalance, decimals),
-                });
-            }
+        final.push({
+            symbol: 'ETH',
+            address: ZeroAddress,
+            decimals: 18,
+            balance: formatUnits(json.ETH?.rawBalance),
         });
-    console.log('#getTokenHoldings:', final);
-    return final;
+
+        json.tokens?.length &&
+            json.tokens?.forEach((t: any) => {
+                if (t?.tokenInfo && t?.tokenInfo?.price) {
+                    const decimals = Number(t?.tokenInfo?.decimals || '18');
+                    final.push({
+                        symbol: t.tokenInfo.symbol,
+                        address: getAddress(t.tokenInfo.address),
+                        decimals,
+                        balance: formatUnits(t?.rawBalance, decimals),
+                    });
+                }
+            });
+        if (TESTING) console.log('#getTokenHoldings:', final);
+        return final;
+    } catch (err) {
+        console.error('#getTokenHoldings');
+        return [];
+    }
 };
 
 export const matchWithUserBalances = (address: string, arr: ITokenResProps[]) => {

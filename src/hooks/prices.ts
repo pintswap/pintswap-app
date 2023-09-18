@@ -1,7 +1,7 @@
 import { isAddress } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { tryBoth } from '../api';
-import { getTokenListBySymbol } from '../utils';
+import { DEFAULT_CHAINID, getTokenListBySymbol } from '../utils';
 import { usePricesContext } from '../stores';
 import { ITransfer } from '@pintswap/sdk';
 import { getNetwork } from '@wagmi/core';
@@ -15,7 +15,7 @@ export const calculatePrices = async ({
     gets?: ITransfer;
     eth?: string;
 }) => {
-    const activeChainId = getNetwork()?.chain?.id || 1;
+    const activeChainId = getNetwork()?.chain?.id || DEFAULT_CHAINID;
     if (!gives?.token || !gets?.token || !gives?.amount || !gets?.amount || !eth)
         return { eth: '0', usd: '0' };
     try {

@@ -4,7 +4,6 @@ import { hashOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
-import { chainIdFromProvider, providerFromChainId } from './provider';
 
 function givesBase(offer: any) {
     return {

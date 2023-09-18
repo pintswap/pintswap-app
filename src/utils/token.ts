@@ -111,7 +111,6 @@ export async function getTokenAttributes(
 ) {
     let found;
     if (!token) return token;
-    const provider = providerFromChainId(chainId);
     if (isAddress(token)) {
         found = getTokenList(chainId).find(
             (el) => el.address.toLowerCase() === token.toLowerCase(),

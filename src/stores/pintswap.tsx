@@ -1,11 +1,12 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useSigner, useAccount } from 'wagmi';
+import { useSigner, useAccount, useNetwork } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
 import { DEFAULT_CHAINID, defer, TESTING } from '../utils';
 import { getNetwork } from '@wagmi/core';
 import { toast } from 'react-toastify';
 import { useNetworkContext } from './network';
+import { useChainModal } from '@rainbow-me/rainbowkit';
 
 // Types
 export type IPintswapProps = {
@@ -85,6 +86,8 @@ export function PintswapStore(props: { children: ReactNode }) {
     const { address } = useAccount();
     const { newAddress } = useNetworkContext();
     const localPsUser = localStorage.getItem('_pintUser');
+    const { chain } = useNetwork();
+    const { openChainModal } = useChainModal();
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
@@ -178,6 +181,12 @@ export function PintswapStore(props: { children: ReactNode }) {
     useEffect(() => {
         toast.dismiss('findPeer');
     }, [pintswap.chainId]);
+
+    useEffect(() => {
+        if (pintswap.module && address && chain?.unsupported) {
+            openChainModal && openChainModal();
+        }
+    }, [address, pintswap.module]);
 
     return (
         <PintswapContext.Provider

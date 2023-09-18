@@ -11,17 +11,15 @@ export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
 export const BASE_URL: string = window.location.origin;
 export const WS_URL: string = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
 
-// DEFAULTS
+// NETWORKS
 export const DEFAULT_NETWORK = 'ethereum';
 export const DEFAULT_CHAINID = 1;
-
-// EXPLORERS
 export const EXPLORER_URLS: Record<number, string> = {
     1: 'https://etherscan.io',
     42161: 'https://arbiscan.io', // arb
-    10: 'https://optimistic.etherscan.io', // op
-    137: 'https://polygonscan.com', // polygon
-    8453: 'https://basescan.org', // base
+    // 10: 'https://optimistic.etherscan.io', // op
+    // 137: 'https://polygonscan.com', // polygon
+    // 8453: 'https://basescan.org', // base
 };
 
 // ENDPOINTS

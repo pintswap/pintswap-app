@@ -10,12 +10,13 @@ type IChainDropdown = {
 export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
     const { openChainModal } = useChainModal();
     const getNetworkName = () => {
-        if (getNetwork()?.chain) {
+        if (getNetwork()?.chain && !getNetwork()?.chain?.unsupported) {
             const formattedNetworkName = getNetwork().chain?.name?.toLowerCase();
+            console.log(formattedNetworkName);
             if (formattedNetworkName?.includes(' ')) return formattedNetworkName.split(' ')[0];
             return formattedNetworkName;
         }
-        return DEFAULT_NETWORK;
+        return 'unknown';
     };
 
     return (
@@ -26,7 +27,7 @@ export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
         >
             <img
                 src={`/networks/${getNetworkName()}.svg`}
-                alt={getNetworkName()}
+                alt={`${getNetworkName()} network`}
                 height={size}
                 width={size}
             />

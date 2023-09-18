@@ -2,7 +2,7 @@ import fetch from 'cross-fetch';
 import { ethers } from 'ethers6';
 import { providerFromChainId } from './provider';
 import { INFTProps } from './types';
-import { TESTING } from './constants';
+import { DEFAULT_CHAINID, TESTING } from './constants';
 
 const IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 
@@ -30,7 +30,7 @@ export async function fetchNFT(
 ): Promise<INFTProps> {
     const hash = hashNftIdentifier({ token, tokenId });
     if (nftCache[hash]) return nftCache[hash];
-    chainId = chainId || 1;
+    chainId = chainId || DEFAULT_CHAINID;
     const contract = new ethers.Contract(
         token,
         ['function tokenURI(uint256) view returns (string)'],

@@ -24,27 +24,33 @@ export const Asset = ({
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
-    const [assetData, setAssetData] = useState<any>({
-        symbol: symbol || '',
-        icon: icon || '',
-        alt: alt || '',
-    });
 
-    useEffect(() => {
-        (async () => {
-            const found = getTokenList(chainId).find(
-                (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
-            );
-            if (found) setAssetData({ ...found, icon: found.logoURI, alt: alt || found.symbol });
-            else {
-                setAssetData({
-                    ...assetData,
-                    icon: '/img/generic.svg',
-                    symbol: await getSymbol(symbol || '', chainId),
-                });
-            }
-        })().catch((err) => console.error(err));
-    }, [symbol]);
+    const determineAssetProps = () => {
+        const DEFAULT = {
+            icon: '/img/generic.svg',
+            alt: 'unknown token',
+            symbol: 'Unknown',
+        };
+        const found = getTokenList(chainId).find(
+            (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
+        );
+        if (found)
+            return {
+                icon: found?.logoURI || '',
+                alt: alt || found?.symbol || 'Unknown',
+                symbol: found?.symbol || 'Unknown',
+            };
+        const mainnetFound = getTokenList().find(
+            (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
+        );
+        if (mainnetFound)
+            return {
+                icon: mainnetFound?.logoURI || '',
+                alt: alt || mainnetFound?.symbol || 'Unknown',
+                symbol: mainnetFound?.symbol || 'Unknown',
+            };
+        return DEFAULT;
+    };
 
     return (
         <div
@@ -66,13 +72,13 @@ export const Asset = ({
             ) : (
                 <>
                     <img
-                        src={assetData?.icon || '/img/generic.svg'}
-                        alt={assetData?.alt || assetData?.symbol}
+                        src={determineAssetProps()?.icon || '/img/generic.svg'}
+                        alt={determineAssetProps()?.alt || determineAssetProps()?.symbol}
                         width={size}
                         height={size}
                         className="rounded-full"
                     />
-                    <span className={fontSize}>{assetData?.symbol}</span>
+                    <span className={fontSize}>{determineAssetProps()?.symbol}</span>
                 </>
             )}
         </div>
