@@ -180,7 +180,7 @@ export const Avatar = ({
                         <div
                             className={` ${
                                 imgShape === 'square' ? 'rounded' : 'rounded-full'
-                            } self-center bg-neutral-800`}
+                            } self-center bg-neutral-900`}
                             style={{
                                 minWidth: size,
                                 minHeight: size,
@@ -213,7 +213,7 @@ export const Avatar = ({
                     <div>
                         {loading || peerData.loading ? (
                             <div
-                                className={`rounded-md self-center bg-neutral-800 mt-0.5`}
+                                className={`rounded-md self-center bg-neutral-900 mt-0.5`}
                                 style={{ width: 150, height: 30 }}
                             />
                         ) : (
@@ -227,7 +227,7 @@ export const Avatar = ({
                     <div>
                         {loading || peerData.loading ? (
                             <div
-                                className={`rounded-md bg-neutral-800 mt-1`}
+                                className={`rounded-md bg-neutral-900 mt-1`}
                                 style={{ width: 200, height: 20 }}
                             />
                         ) : (
@@ -258,7 +258,7 @@ export const Avatar = ({
                                     <div
                                         className={` ${
                                             imgShape === 'square' ? 'rounded' : 'rounded-full'
-                                        } self-center bg-neutral-800`}
+                                        } self-center bg-neutral-900`}
                                         style={{
                                             minWidth: size,
                                             minHeight: size,
@@ -296,7 +296,7 @@ export const Avatar = ({
                             <>
                                 {loading || peerData.loading ? (
                                     <div
-                                        className={`rounded-md self-center bg-neutral-800`}
+                                        className={`rounded-md self-center bg-neutral-900`}
                                         style={{ width: 150, height: 20 }}
                                     />
                                 ) : (
@@ -313,7 +313,7 @@ export const Avatar = ({
                         <>
                             {loading || peerData.loading ? (
                                 <div
-                                    className={`rounded-md bg-neutral-800`}
+                                    className={`rounded-md bg-neutral-900`}
                                     style={{ width: 200, height: 15 }}
                                 />
                             ) : (

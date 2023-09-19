@@ -209,9 +209,9 @@ export async function getDecimals(token: string, chainId: number) {
         const address = getAddress(token);
         if (address === ZeroAddress) return 18;
         const match = getTokenList(chainId).find((v) => getAddress(v?.address) === address);
-        if (match) return match.decimals;
+        if (match) return match?.decimals || 18;
         else if (decimalsCache[chainId][address]) {
-            return decimalsCache[chainId][address];
+            return decimalsCache[chainId][address] || 18;
         } else {
             try {
                 const contract = new Contract(
@@ -219,7 +219,7 @@ export async function getDecimals(token: string, chainId: number) {
                     ['function decimals() view returns (uint8)'],
                     provider,
                 );
-                const decimals = Number(await contract?.decimals());
+                const decimals = Number((await contract?.decimals()) || '18');
                 decimalsCache[chainId][address] = decimals;
                 return decimals || 18;
             } catch (err) {
@@ -254,10 +254,10 @@ export async function convertAmount(
     let output;
     if (to === 'hex') {
         if (amount.startsWith('0x')) output = amount;
-        else output = toBeHex(parseUnits(amount, await getDecimals(token, chainId)));
+        else output = toBeHex(parseUnits(amount, (await getDecimals(token, chainId)) || 18));
     } else {
         if (amount.startsWith('0x'))
-            output = formatUnits(amount, await getDecimals(token, chainId));
+            output = formatUnits(amount, (await getDecimals(token, chainId)) || 18);
         else output = amount;
     }
     if (TESTING) console.log('#convertAmount:', { amount, token, output });
