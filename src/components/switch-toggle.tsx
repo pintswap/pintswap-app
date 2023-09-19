@@ -57,6 +57,7 @@ export const SwitchToggle = ({
                             <TooltipWrapper
                                 text={labelOnTooltip}
                                 id={`label-off-tooltip-${labelOn}`}
+                                position="bottom"
                             >
                                 {labelOn}
                             </TooltipWrapper>
@@ -76,6 +77,7 @@ export const SwitchToggle = ({
                             <TooltipWrapper
                                 text={labelOffTooltip}
                                 id={`label-off-tooltip-${labelOff}`}
+                                position="bottom"
                             >
                                 {labelOff}
                             </TooltipWrapper>
