@@ -28,7 +28,7 @@ export const SwitchToggle = ({
                     checked={state}
                     onChange={setState}
                     disabled={disabled}
-                    className={` bg-neutral-600 w-full relative inline-flex items-center rounded transition-colors focus:outline-none focus:ring-1 focus:ring-indigo-600 focus:ring-offset-1`}
+                    className={`bg-neutral-800  hover:outline hover:outline-1 hover:outline-neutral-700 w-full relative inline-flex items-center rounded transition-colors focus:ring-0`}
                 >
                     <span
                         className={`${
@@ -51,7 +51,7 @@ export const SwitchToggle = ({
                         {labelOn}
                     </span>
                     <span
-                        className={`inline-block transform rounded transition-transform w-1/2 py-2 bg-transparent`}
+                        className={`inline-block transform rounded transition-transform w-1/2 py-2`}
                     >
                         {labelOff}
                     </span>

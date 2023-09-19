@@ -20,12 +20,13 @@ type IDropdownProps = {
     setState?: Dispatch<SetStateAction<any>> | any;
     options?: string[];
     placeholder?: string;
-    type?: 'gives.token' | 'gets.token' | 'string' | 'input-ext';
+    type?: 'gives.token' | 'gets.token' | 'string' | 'input-ext' | 'nft-id';
     title?: string | ReactNode;
     search?: boolean;
     disabled?: boolean;
     loading?: boolean;
     wrapperClass?: string;
+    searchPlaceholder?: string;
 };
 
 export const DropdownInput = ({
@@ -39,6 +40,7 @@ export const DropdownInput = ({
     disabled,
     loading,
     wrapperClass,
+    searchPlaceholder,
 }: IDropdownProps) => {
     const {
         pintswap: { module, chainId },
@@ -72,7 +74,11 @@ export const DropdownInput = ({
                 <Menu.Button
                     className={`inline-flex w-full overflow-x-hidden ${
                         !disabled ? 'justify-between' : 'justify-end'
-                    } items-center gap-x-1.5 bg-neutral-800 p-2 hover:bg-neutral-700 transition duration-100 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-800 ${
+                    } items-center gap-x-1.5 ${
+                        type === 'nft-id'
+                            ? 'bg-indigo-600'
+                            : 'bg-neutral-800 hover:bg-neutral-700 disabled:hover:bg-neutral-800'
+                    } p-2 transition duration-100 disabled:hover:cursor-not-allowed ${
                         loading ? 'animate-pulse' : ''
                     } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
                     disabled={disabled}
@@ -106,7 +112,7 @@ export const DropdownInput = ({
                                 value={query}
                                 onChange={handleChange}
                                 className="bg-neutral-700 text-neutral-200 px-4 py-2 text-sm ring-2 ring-neutral-400 w-full"
-                                placeholder="Search name or paste address"
+                                placeholder={searchPlaceholder || 'Search name or paste address'}
                             />
                         )}
 

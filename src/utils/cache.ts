@@ -21,3 +21,18 @@ export const reverseSymbolCache: Record<number, Record<string, string>> = {
     137: {},
     8453: {},
 };
+export const totalSupplyCache: Record<number, Record<string, string>> = {
+    1: {},
+    42161: {},
+    10: {},
+    137: {},
+    8453: {},
+};
+
+export const nameCache: Record<number, Record<string, string>> = {
+    1: {},
+    42161: {},
+    10: {},
+    137: {},
+    8453: {},
+};

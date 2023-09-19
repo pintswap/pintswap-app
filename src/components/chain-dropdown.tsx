@@ -12,7 +12,6 @@ export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
     const getNetworkName = () => {
         if (getNetwork()?.chain && !getNetwork()?.chain?.unsupported) {
             const formattedNetworkName = getNetwork().chain?.name?.toLowerCase();
-            console.log(formattedNetworkName);
             if (formattedNetworkName?.includes(' ')) return formattedNetworkName.split(' ')[0];
             return formattedNetworkName;
         }

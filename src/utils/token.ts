@@ -1,5 +1,11 @@
 import { ITransfer } from '@pintswap/sdk';
-import { TESTING, getTokenListByAddress, getTokenListBySymbol, getTokenList } from './constants';
+import {
+    TESTING,
+    getTokenListByAddress,
+    getTokenListBySymbol,
+    getTokenList,
+    MIN_ABIS,
+} from './constants';
 import { maybeShorten } from './format';
 import { ITokenProps } from './types';
 import {
@@ -12,7 +18,13 @@ import {
     ZeroAddress,
 } from 'ethers6';
 import { providerFromChainId } from './provider';
-import { reverseSymbolCache, symbolCache, decimalsCache } from './cache';
+import {
+    reverseSymbolCache,
+    symbolCache,
+    decimalsCache,
+    totalSupplyCache,
+    nameCache,
+} from './cache';
 
 export function toAddress(symbolOrAddress?: string, chainId = 1): string {
     if (!symbolOrAddress) return '';
@@ -55,6 +67,38 @@ export const getTokenAddress = (
     } else return '';
     return '';
 };
+
+export async function getTotalSupply(address: string, chainId: number, type?: 'NFT' | 'ERC20') {
+    if (!address || !chainId) return address || '';
+    address = getAddress(address);
+    if (totalSupplyCache[chainId][address]) return totalSupplyCache[chainId][address];
+    const provider = providerFromChainId(chainId);
+    const contract = new Contract(address, MIN_ABIS[type || 'NFT'], provider);
+    try {
+        const totalSupply = await contract?.totalSupply();
+        totalSupplyCache[chainId][address] = totalSupply;
+        return totalSupply;
+    } catch (e) {
+        console.error(e);
+        return '0';
+    }
+}
+
+export async function getName(address: string, chainId: number) {
+    if (!address || !chainId) return address || '';
+    address = getAddress(address);
+    if (nameCache[chainId][address]) return nameCache[chainId][address];
+    const provider = providerFromChainId(chainId);
+    const contract = new Contract(address, ['function name() view returns (string)'], provider);
+    try {
+        const name = await contract?.name();
+        nameCache[chainId][address] = name;
+        return name;
+    } catch (e) {
+        console.error(e);
+        return '0';
+    }
+}
 
 export async function getSymbol(address: string, chainId: number) {
     if (!address || !chainId) return address || '';

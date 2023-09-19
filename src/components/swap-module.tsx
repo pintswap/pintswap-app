@@ -10,6 +10,7 @@ import { StatusIndicator } from './status-indicator';
 import { INFTProps, fetchNFT } from '../utils';
 import { NFTDisplay } from './nft-display';
 import { Input } from './input';
+import { NFTInput } from './nft-input';
 
 type ISwapModule = {
     trade: IOffer;
@@ -56,15 +57,15 @@ export const SwapModule = ({
                 }
             })().catch((err) => console.error(err));
         }, [trade.gives.tokenId, trade.gives.token]);
-
+        console.log('trade', trade);
         return (
-            <div className="grid grid-cols-1 gap-3 items-start">
+            <div className="flex flex-col justify-center items-center gap-1.5">
                 {nft && (
                     <div className="max-h-[180px] max-w-[180px] mx-auto overflow-hidden flex justify-center items-center">
                         <NFTDisplay nft={nft} show="img" />
                     </div>
                 )}
-                <div className="grid grid-cols-1 gap-1.5 items-start">
+                {/* <div className="grid grid-cols-1 gap-1.5 items-start">
                     <Input
                         title="You give"
                         placeholder="NFT Contract Address"
@@ -85,7 +86,23 @@ export const SwapModule = ({
                         token={trade.gives.tokenId || true}
                         noSpace
                     />
-                </div>
+                </div> */}
+                <NFTInput
+                    label="You give"
+                    onAddressChange={({ currentTarget }: any) =>
+                        updateTrade ? updateTrade('gives.token', currentTarget.value) : {}
+                    }
+                    onNftIdChange={({ currentTarget }: any) =>
+                        updateTrade ? updateTrade('gives.tokenId', currentTarget.value) : {}
+                    }
+                    value={trade.gives?.token}
+                    nftId={trade.gives?.tokenId}
+                />
+                <button className="absolute mb-16 p-1.5 bg-brand-dashboard rounded-lg">
+                    <div className="bg-neutral-800 p-1 rounded-md">
+                        <MdArrowDownward />
+                    </div>
+                </button>
                 <CoinInput
                     label="You get"
                     value={trade.gets?.amount}
@@ -99,24 +116,24 @@ export const SwapModule = ({
                     type={'swap'}
                     id="swap-module-get"
                 />
-                <div className="flex flex-col gap-2 mt-2">
-                    <Button
-                        className="w-full rounded-lg !py-3"
-                        disabled={disabled}
-                        loadingText={determineLoadingText()}
-                        loading={loading?.broadcast || loading?.fulfill || loading?.trade}
-                        onClick={onClick}
-                        checkNetwork
-                        form="submit"
-                    >
-                        {determineButtonText()}
-                    </Button>
-                </div>
+                <Button
+                    className="w-full rounded-lg !py-3"
+                    disabled={disabled}
+                    loadingText={determineLoadingText()}
+                    loading={loading?.broadcast || loading?.fulfill || loading?.trade}
+                    onClick={onClick}
+                    checkNetwork
+                    form="submit"
+                >
+                    {determineButtonText()}
+                </Button>
             </div>
         );
     } else {
         const reverse = () => {
             setTrade &&
+                trade.gives.token &&
+                trade.gets.token &&
                 setTrade({
                     gets: trade.gives,
                     gives: trade.gets,

@@ -46,6 +46,88 @@ export const USDC = (chainId = 1) => getTokenList(chainId).find((v) => v.symbol 
 export const USDT = (chainId = 1) => getTokenList(chainId).find((v) => v.symbol === 'USDT');
 export const DAI = (chainId = 1) => getTokenList(chainId).find((v) => v.symbol === 'DAI');
 
+export const MIN_ABIS = {
+    NFT: [
+        {
+            constant: true,
+            inputs: [{ name: '_owner', type: 'address' }],
+            name: 'balanceOf',
+            outputs: [{ name: 'balance', type: 'uint256' }],
+            type: 'function',
+        },
+        {
+            constant: true,
+            inputs: [{ name: 'tokenId', type: 'uint256' }],
+            name: 'ownerOf',
+            outputs: [{ name: '', type: 'address' }],
+            type: 'function',
+        },
+        {
+            constant: true,
+            inputs: [],
+            name: 'totalSupply',
+            outputs: [
+                {
+                    name: '',
+                    type: 'uint256',
+                },
+            ],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function',
+        },
+    ],
+    ERC20: [
+        {
+            constant: true,
+            inputs: [
+                {
+                    name: '_owner',
+                    type: 'address',
+                },
+            ],
+            name: 'balanceOf',
+            outputs: [
+                {
+                    name: 'balance',
+                    type: 'uint256',
+                },
+            ],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function',
+        },
+        {
+            constant: true,
+            inputs: [],
+            name: 'decimals',
+            outputs: [
+                {
+                    name: '',
+                    type: 'uint8',
+                },
+            ],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function',
+        },
+        {
+            constant: true,
+            inputs: [],
+            name: 'totalSupply',
+            outputs: [
+                {
+                    name: '',
+                    type: 'uint256',
+                },
+            ],
+            payable: false,
+            stateMutability: 'view',
+            type: 'function',
+        },
+    ],
+};
+
 // DEFAULT VALS
 export const EMPTY_TRADE: IOffer = {
     gets: { token: '', amount: '' },
