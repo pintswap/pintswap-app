@@ -1,5 +1,6 @@
 import { Switch } from '@headlessui/react';
 import { Dispatch, SetStateAction } from 'react';
+import { TooltipWrapper } from './tooltip';
 
 type ISwitchToggle = {
     label?: string;
@@ -9,6 +10,8 @@ type ISwitchToggle = {
     labelOff: string;
     disabled?: boolean;
     customColors?: string[];
+    labelOnTooltip?: string;
+    labelOffTooltip?: string;
 };
 
 export const SwitchToggle = ({
@@ -19,6 +22,8 @@ export const SwitchToggle = ({
     labelOff,
     disabled,
     customColors,
+    labelOnTooltip,
+    labelOffTooltip,
 }: ISwitchToggle) => {
     return (
         <div className="w-full flex flex-col gap-1">
@@ -45,16 +50,43 @@ export const SwitchToggle = ({
                                   }`
                         } absolute inline-block transform rounded transition-transform w-1/2 py-[18px]`}
                     />
-                    <span
-                        className={`inline-block transform rounded transition-transform w-1/2 py-2`}
-                    >
-                        {labelOn}
-                    </span>
-                    <span
-                        className={`inline-block transform rounded transition-transform w-1/2 py-2`}
-                    >
-                        {labelOff}
-                    </span>
+                    {labelOnTooltip ? (
+                        <span
+                            className={`inline-block transform rounded transition-transform w-1/2 py-2`}
+                        >
+                            <TooltipWrapper
+                                text={labelOnTooltip}
+                                id={`label-off-tooltip-${labelOn}`}
+                            >
+                                {labelOn}
+                            </TooltipWrapper>
+                        </span>
+                    ) : (
+                        <span
+                            className={`inline-block transform rounded transition-transform w-1/2 py-2`}
+                        >
+                            {labelOn}
+                        </span>
+                    )}
+
+                    {labelOffTooltip ? (
+                        <span
+                            className={`inline-block transform rounded transition-transform w-1/2 py-2`}
+                        >
+                            <TooltipWrapper
+                                text={labelOffTooltip}
+                                id={`label-off-tooltip-${labelOff}`}
+                            >
+                                {labelOff}
+                            </TooltipWrapper>
+                        </span>
+                    ) : (
+                        <span
+                            className={`inline-block transform rounded transition-transform w-1/2 py-2`}
+                        >
+                            {labelOff}
+                        </span>
+                    )}
                 </Switch>
             </div>
         </div>

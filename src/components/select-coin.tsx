@@ -29,6 +29,7 @@ type ISelectCoin = {
     setModalOpen: Dispatch<SetStateAction<boolean>>;
     disabled?: boolean;
     type?: 'swap' | 'fulfill';
+    loading?: boolean;
 };
 
 export const SelectCoin = ({
@@ -38,6 +39,7 @@ export const SelectCoin = ({
     setModalOpen,
     disabled,
     type = 'swap',
+    loading,
 }: ISelectCoin) => {
     const {
         pintswap: { module, chainId },
@@ -97,7 +99,7 @@ export const SelectCoin = ({
                             ) : (
                                 <Asset symbol={asset} />
                             )
-                        ) : type === 'fulfill' ? (
+                        ) : type === 'fulfill' || loading ? (
                             <span className="pl-2">Loading</span>
                         ) : (
                             <span className="pl-2 flex items-center">

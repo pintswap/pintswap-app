@@ -1,5 +1,6 @@
 import { ethers, Signer } from 'ethers6';
-import { ENDPOINTS, formatPintswapTrade } from '../utils';
+import { ENDPOINTS, formatPintswapTrade, toAddress } from '../utils';
+import { IOffer } from '@pintswap/sdk';
 
 const JSON_HEADER_POST = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
 
@@ -228,4 +229,35 @@ export async function getUserHistory(address: string, signer: Signer) {
     } else {
         return [];
     }
+}
+
+export async function getQuote(
+    trade: IOffer,
+    ethPrice: string,
+    type?: 'conservative' | 'exact',
+): Promise<string> {
+    if (
+        trade.gives.amount &&
+        trade.gives.token &&
+        trade.gets.token &&
+        (!trade.gets.amount || Number(trade.gets.amount) === 0)
+    ) {
+        let givesEthPrice: string;
+        if ((trade.gives.token === 'ETH' || trade.gives.token === 'WETH') && ethPrice) {
+            givesEthPrice = trade.gives.amount;
+        } else {
+            givesEthPrice = (
+                Number(
+                    (await tryBoth({ address: toAddress(trade.gives.token) }))?.token?.derivedETH ||
+                        '0',
+                ) * Number(trade.gives.amount)
+            ).toString();
+        }
+        const getsEthPrice =
+            (await tryBoth({ address: toAddress(trade.gets.token) }))?.token?.derivedETH || '0';
+        const quote = Number(givesEthPrice) / Number(getsEthPrice);
+        if (type === 'exact') return quote.toString();
+        return (Math.round(quote * 9990) / 10000).toString(); // round down to nearest 4 decimal places
+    }
+    return '0';
 }

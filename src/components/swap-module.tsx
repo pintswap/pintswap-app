@@ -1,16 +1,14 @@
-import { MdArrowDownward, MdSettings } from 'react-icons/md';
-import { Card } from './card';
-import { TooltipWrapper } from './tooltip';
+import { MdArrowDownward } from 'react-icons/md';
 import { CoinInput } from './coin-input';
 import { IOffer } from '@pintswap/sdk';
 import { TxDetails } from './tx-details';
 import { Button } from './button';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
-import { StatusIndicator } from './status-indicator';
 import { INFTProps, fetchNFT } from '../utils';
 import { NFTDisplay } from './nft-display';
-import { Input } from './input';
 import { NFTInput } from './nft-input';
+import { getQuote } from '../api';
+import { usePricesContext } from '../stores';
 
 type ISwapModule = {
     trade: IOffer;
@@ -35,6 +33,7 @@ export const SwapModule = ({
     type = 'swap',
     setTrade,
 }: ISwapModule) => {
+    const { eth } = usePricesContext();
     const [nft, setNFT] = useState<INFTProps | null>(null);
 
     const determineLoadingText = () => {
@@ -57,7 +56,7 @@ export const SwapModule = ({
                 }
             })().catch((err) => console.error(err));
         }, [trade.gives.tokenId, trade.gives.token]);
-        console.log('trade', trade);
+
         return (
             <div className="flex flex-col justify-center items-center gap-1.5">
                 {nft && (
@@ -65,28 +64,7 @@ export const SwapModule = ({
                         <NFTDisplay nft={nft} show="img" />
                     </div>
                 )}
-                {/* <div className="grid grid-cols-1 gap-1.5 items-start">
-                    <Input
-                        title="You give"
-                        placeholder="NFT Contract Address"
-                        value={trade.gives.token || ''}
-                        onChange={({ currentTarget }: any) =>
-                            updateTrade ? updateTrade('gives.token', currentTarget.value) : {}
-                        }
-                        type="text"
-                        token={trade.gives.token || true}
-                    />
-                    <Input
-                        placeholder="NFT Token ID"
-                        value={trade.gives.tokenId || ''}
-                        onChange={({ currentTarget }: any) =>
-                            updateTrade ? updateTrade('gives.tokenId', currentTarget.value) : {}
-                        }
-                        type="number"
-                        token={trade.gives.tokenId || true}
-                        noSpace
-                    />
-                </div> */}
+
                 <NFTInput
                     label="You give"
                     onAddressChange={({ currentTarget }: any) =>
@@ -139,9 +117,14 @@ export const SwapModule = ({
                     gives: trade.gets,
                 });
         };
+
         useEffect(() => {
             if (!trade.gives.token && updateTrade) updateTrade('gives.token', 'ETH');
         }, [trade]);
+
+        // useEffect(() => {
+        //     (async () => updateTrade && updateTrade('gets.amount', await getQuote(trade, eth)))().catch(err => console.error(err));
+        // }, [trade.gets.token, trade.gives.token, trade.gives.amount])
 
         return (
             <>

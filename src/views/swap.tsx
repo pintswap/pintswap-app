@@ -82,8 +82,10 @@ export const SwapView = () => {
                 >
                     <div className="mb-3">
                         <SwitchToggle
-                            labelOff="OTC"
                             labelOn="Public"
+                            labelOnTooltip="Post your offer to public orderbook"
+                            labelOff="OTC"
+                            labelOffTooltip="Keep your offer private"
                             state={!isPublic}
                             setState={() => setIsPublic(!isPublic)}
                             customColors={[
