@@ -37,7 +37,6 @@ export const NFTInput = ({
                         await getName(value, chainId),
                         await getTotalSupply(value, chainId),
                     ]);
-                    console.log('promises', promises);
                     setMeta({
                         totalSupply: promises[1],
                         name: promises[0],

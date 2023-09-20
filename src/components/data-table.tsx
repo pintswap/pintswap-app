@@ -137,7 +137,7 @@ const CustomRow = (props: IDataTableProps) => {
     } = usePintswapContext();
     const { eth } = usePricesContext();
     const cols = columns as string[];
-    const { width } = useWindowSize();
+    const { width, breakpoints } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
 
@@ -169,7 +169,7 @@ const CustomRow = (props: IDataTableProps) => {
                 const offerChainId = found ? await detectTradeNetwork(found) : 1;
                 return navigator.clipboard.writeText(
                     `${BASE_URL}/#/fulfill/${
-                        userData.name || module?.address
+                        userData.name || module?.address || module?.peerId?.toB58String()
                     }/${firstCell}/${offerChainId}`,
                 );
             }
@@ -207,7 +207,7 @@ const CustomRow = (props: IDataTableProps) => {
         if (type === 'history') {
             const [amount, asset] = s.split(' ');
             return (
-                <span className="flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 justify-end">
                     <SmartPrice price={amount} />
                     <Asset symbol={asset} size={18} position="right" />
                 </span>
@@ -246,7 +246,7 @@ const CustomRow = (props: IDataTableProps) => {
                         Cancel
                     </Button>
                 );
-            } else if (type === 'history') {
+            } else if (type === 'history' && width > breakpoints.md) {
                 return (
                     <Button
                         className="text-indigo-500 hover:text-indigo-600 w-full text-right"

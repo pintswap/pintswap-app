@@ -30,11 +30,9 @@ export const Asset = ({
             alt: 'unknown token',
             symbol: 'Unknown',
         };
-        let _symbol: string;
         const found = getTokenList(chainId).find(
             (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
         );
-        console.log('found', found);
         if (found)
             return {
                 icon: found?.logoURI || DEFAULT.icon,
@@ -44,7 +42,6 @@ export const Asset = ({
         const mainnetFound = getTokenList().find(
             (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
         );
-        console.log('mainnetfound', mainnetFound);
         if (mainnetFound)
             return {
                 icon: mainnetFound?.logoURI || DEFAULT.icon,

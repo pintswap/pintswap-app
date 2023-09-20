@@ -47,7 +47,7 @@ export const SwapView = () => {
     };
 
     const createTradeLink = () => {
-        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName}`;
+        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName || module?.peerId?.toB58String()}`;
         if (trade.gives.tokenId) {
             finalUrl = `${finalUrl}/nft/${order.orderHash}`;
         } else {
