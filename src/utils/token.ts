@@ -49,9 +49,7 @@ export async function toTicker(pair: any, chainId?: number) {
     if (!pair || !chainId) return '';
     const flipped = [...pair].reverse();
     return (
-        await Promise.all(
-            flipped.map(async (v: any) => maybeShorten(await getSymbol(v.address, chainId))),
-        )
+        await Promise.all(flipped.map(async (v: any) => await getSymbol(v.address, chainId)))
     ).join('/');
 }
 
@@ -101,7 +99,7 @@ export async function getName(address: string, chainId: number) {
 }
 
 export async function getSymbol(address: string, chainId: number) {
-    if (!address || !chainId) return address || '';
+    if (!address || !chainId || !isAddress(address)) return address || '';
     address = getAddress(address);
     if (address === ZeroAddress) return 'ETH';
     if (symbolCache[chainId][address]) return symbolCache[chainId][address];

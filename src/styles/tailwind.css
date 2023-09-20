@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +9,8 @@
   body {
     padding: 0;
     margin: 0;
-    font-family: 'Days One', sans-serif;
+    /* font-family: 'Days One', sans-serif; */
+    font-family: 'Chakra Petch', sans-serif;
     color: #fff;
     @apply md:overflow-y-hidden bg-brand-dashboard;
   }

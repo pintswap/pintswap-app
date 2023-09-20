@@ -47,8 +47,6 @@ export const PairsView = () => {
                             const split = pair.split('/');
                             const token1 = split[0];
                             const token2 = split[1];
-                            const icon1 = getTokenLogo(token1, chainId);
-                            const icon2 = getTokenLogo(token2, chainId);
                             return (
                                 <button
                                     key={`unique-pair-${pair}`}
@@ -63,9 +61,9 @@ export const PairsView = () => {
                                             <div
                                                 className={`text-center flex items-center justify-center gap-3`}
                                             >
-                                                <Asset icon={icon1} symbol={token1} size={20} />
+                                                <Asset symbol={token1} size={20} />
                                                 <span>/</span>
-                                                <Asset icon={icon2} symbol={token2} size={20} />
+                                                <Asset symbol={token2} size={20} />
                                             </div>
                                         </Card>
                                     </GradientBorder>

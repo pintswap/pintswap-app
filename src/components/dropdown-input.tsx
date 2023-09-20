@@ -126,11 +126,7 @@ export const DropdownInput = ({
                                                   className={dropdownItemClass(active)}
                                                   onClick={() => setState(type, el.symbol)}
                                               >
-                                                  <Asset
-                                                      icon={el.logoURI}
-                                                      symbol={el.symbol}
-                                                      alt={el.name}
-                                                  />
+                                                  <Asset symbol={el.symbol} alt={el.name} />
                                               </button>
                                           )}
                                       </Menu.Item>
@@ -157,11 +153,7 @@ export const DropdownInput = ({
                                         }`}
                                         onClick={() => setState(type, query)}
                                     >
-                                        <Asset
-                                            symbol={unknownToken.symbol}
-                                            icon="/img/generic.svg"
-                                            alt="Unknown Token"
-                                        />
+                                        <Asset symbol={unknownToken.symbol} alt="Unknown Token" />
                                     </button>
                                 )}
                             </Menu.Item>

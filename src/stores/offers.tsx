@@ -10,9 +10,10 @@ import {
 import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
 import { memoize } from 'lodash';
-import { toLimitOrder, TESTING, defer } from '../utils';
+import { toLimitOrder, TESTING, defer, getSymbol } from '../utils';
 import { ethers } from 'ethers6';
 import { detectTradeNetwork, hashOffer, isERC20Transfer } from '@pintswap/sdk';
+import { useNetworkContext } from './network';
 
 // Types
 export type IOffersStoreProps = {
@@ -121,6 +122,7 @@ export function OffersStore(props: { children: ReactNode }) {
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
+    const { newNetwork } = useNetworkContext();
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [allOffers, setAllOffers] = useState<Record<'nft' | 'erc20', any[]>>({
@@ -189,7 +191,16 @@ export function OffersStore(props: { children: ReactNode }) {
             erc20: filterByChain(allOffers.erc20, chainId),
             nft: filterByChain(allOffers.nft, chainId),
         });
-    }, [allOffers.erc20.length, chainId]);
+    }, [allOffers.erc20, chainId]);
+
+    useEffect(() => {
+        if (newNetwork) {
+            (async () => {
+                setIsLoading(true);
+                await listener();
+            })().catch((err) => console.error(err));
+        }
+    }, [newNetwork]);
 
     return (
         <OffersContext.Provider

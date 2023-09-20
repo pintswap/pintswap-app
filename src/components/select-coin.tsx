@@ -7,7 +7,6 @@ import { useSearch } from '../hooks';
 import {
     ITokenProps,
     getTokenList,
-    alphaTokenSort,
     dropdownItemClass,
     getSymbol,
     toAddress,
@@ -166,7 +165,6 @@ export const SelectCoin = ({
                                         }}
                                     >
                                         <Asset
-                                            icon={el.logoURI}
                                             symbol={el.symbol}
                                             alt={el.name}
                                             fontSize="text-lg"
@@ -190,11 +188,7 @@ export const SelectCoin = ({
                                             setTimeout(() => clearQuery(), 200);
                                         }}
                                     >
-                                        <Asset
-                                            symbol={unknownToken.symbol}
-                                            icon="/img/generic.svg"
-                                            alt="Unknown Token"
-                                        />
+                                        <Asset symbol={unknownToken.symbol} alt="Unknown Token" />
                                     </button>
                                 </li>
                             )}

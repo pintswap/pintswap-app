@@ -4,7 +4,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
-import { useOffersContext, useUserContext } from '../stores';
+import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
 import { toBeHex } from 'ethers6';
 import {
     savePintswap,
@@ -26,6 +26,7 @@ import { useSwitchNetwork } from 'wagmi';
 export const useTrade = () => {
     const params = useParams();
     const { switchNetwork } = useSwitchNetwork();
+    const { newNetwork } = useNetworkContext();
     const { pathname } = useLocation();
     const {
         pintswap: { module, chainId },
@@ -285,6 +286,10 @@ export const useTrade = () => {
         });
         setSteps(updated);
     };
+
+    useEffect(() => {
+        if (newNetwork) clearTrade();
+    }, [newNetwork]);
 
     // Get trade based on URL
     useEffect(() => {

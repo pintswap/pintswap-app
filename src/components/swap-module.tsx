@@ -122,9 +122,12 @@ export const SwapModule = ({
             if (!trade.gives.token && updateTrade) updateTrade('gives.token', 'ETH');
         }, [trade]);
 
-        // useEffect(() => {
-        //     (async () => updateTrade && updateTrade('gets.amount', await getQuote(trade, eth)))().catch(err => console.error(err));
-        // }, [trade.gets.token, trade.gives.token, trade.gives.amount])
+        useEffect(() => {
+            (async () =>
+                updateTrade && updateTrade('gets.amount', await getQuote(trade, eth)))().catch(
+                (err) => console.error(err),
+            );
+        }, [trade.gets.token, trade.gives.token, trade.gives.amount]);
 
         return (
             <>

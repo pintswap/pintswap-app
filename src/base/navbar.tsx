@@ -15,8 +15,8 @@ export const Navbar = () => {
 
     const logoSize =
         width < breakpoints.lg
-            ? { width: '180', height: '22.63' }
-            : { width: '200', height: '25.14' };
+            ? { width: '170', height: '21.38' }
+            : { width: '180', height: '22.63' };
 
     return (
         <>

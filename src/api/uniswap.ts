@@ -256,8 +256,9 @@ export async function getQuote(
         const getsEthPrice =
             (await tryBoth({ address: toAddress(trade.gets.token) }))?.token?.derivedETH || '0';
         const quote = Number(givesEthPrice) / Number(getsEthPrice);
+        if (quote === 0) return '';
         if (type === 'exact') return quote.toString();
         return (Math.round(quote * 9990) / 10000).toString(); // round down to nearest 4 decimal places
     }
-    return '0';
+    return '';
 }

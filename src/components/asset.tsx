@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getTokenList, getSymbol, DEFAULT_CHAINID } from '../utils';
 import { usePintswapContext } from '../stores';
+import { isAddress } from 'ethers/lib/utils.js';
 
 type IAssetProps = {
-    icon?: string;
     symbol?: string;
     size?: number;
     alt?: string;
@@ -13,7 +13,6 @@ type IAssetProps = {
 };
 
 export const Asset = ({
-    icon,
     symbol,
     alt,
     loading,
@@ -25,29 +24,32 @@ export const Asset = ({
         pintswap: { module, chainId },
     } = usePintswapContext();
 
-    const determineAssetProps = () => {
+    const assetProps = () => {
         const DEFAULT = {
             icon: '/img/generic.svg',
             alt: 'unknown token',
             symbol: 'Unknown',
         };
+        let _symbol: string;
         const found = getTokenList(chainId).find(
             (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
         );
+        console.log('found', found);
         if (found)
             return {
-                icon: found?.logoURI || '',
-                alt: alt || found?.symbol || 'Unknown',
-                symbol: found?.symbol || 'Unknown',
+                icon: found?.logoURI || DEFAULT.icon,
+                alt: alt || found?.symbol || DEFAULT.alt,
+                symbol: found?.symbol || DEFAULT.symbol,
             };
         const mainnetFound = getTokenList().find(
             (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
         );
+        console.log('mainnetfound', mainnetFound);
         if (mainnetFound)
             return {
-                icon: mainnetFound?.logoURI || '',
-                alt: alt || mainnetFound?.symbol || 'Unknown',
-                symbol: mainnetFound?.symbol || 'Unknown',
+                icon: mainnetFound?.logoURI || DEFAULT.icon,
+                alt: alt || mainnetFound?.symbol || DEFAULT.alt,
+                symbol: mainnetFound?.symbol || DEFAULT.symbol,
             };
         return DEFAULT;
     };
@@ -72,13 +74,13 @@ export const Asset = ({
             ) : (
                 <>
                     <img
-                        src={determineAssetProps()?.icon || '/img/generic.svg'}
-                        alt={determineAssetProps()?.alt || determineAssetProps()?.symbol}
+                        src={assetProps()?.icon}
+                        alt={assetProps()?.alt || assetProps()?.symbol}
                         width={size}
                         height={size}
                         className="rounded-full"
                     />
-                    <span className={fontSize}>{determineAssetProps()?.symbol}</span>
+                    <span className={fontSize}>{assetProps()?.symbol}</span>
                 </>
             )}
         </div>
