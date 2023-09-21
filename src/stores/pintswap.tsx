@@ -84,7 +84,7 @@ export const makeGetGasPrice = (provider: any, multiplier: any) => {
 export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
     const { address } = useAccount();
-    const { newAddress } = useNetworkContext();
+    const { newAddress, newNetwork } = useNetworkContext();
     const localPsUser = localStorage.getItem('_pintUser');
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
@@ -187,6 +187,12 @@ export function PintswapStore(props: { children: ReactNode }) {
             openChainModal && openChainModal();
         }
     }, [address, pintswap.module]);
+
+    useEffect(() => {
+        if (newNetwork && chain?.id && pintswap.module && signer) {
+            pintswap.module.signer = signer;
+        }
+    }, [newNetwork, signer]);
 
     return (
         <PintswapContext.Provider

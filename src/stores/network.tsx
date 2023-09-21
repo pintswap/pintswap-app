@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { Chain, ConnectorData, useAccount, useNetwork } from 'wagmi';
+import { usePintswapContext } from './pintswap';
 
 // Types
 export type INetworkStoreProps = {
