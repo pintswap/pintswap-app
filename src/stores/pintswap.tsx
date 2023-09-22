@@ -96,6 +96,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
     });
 
+    // Determine PintSwap module source
     const determinePsModule = async () => {
         if (!signer && !address) {
             const noWalletInitPs = await Pintswap.initialize({
@@ -128,6 +129,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         }
     };
 
+    // Initialize PintSwap Module
     const initialize = async () => {
         const ps: Pintswap = await new Promise((resolve, reject) => {
             (async () => {
@@ -182,12 +184,14 @@ export function PintswapStore(props: { children: ReactNode }) {
         toast.dismiss('findPeer');
     }, [pintswap.chainId]);
 
+    // If incorrect network, prompt switch network
     useEffect(() => {
         if (pintswap.module && address && chain?.unsupported) {
             openChainModal && openChainModal();
         }
     }, [address, pintswap.module]);
 
+    // Assign new network's signer to pintswap's signer
     useEffect(() => {
         if (chain?.id && pintswap.module && signer) {
             pintswap.module.signer = signer;
