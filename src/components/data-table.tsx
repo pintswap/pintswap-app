@@ -249,10 +249,10 @@ const CustomRow = (props: IDataTableProps) => {
             } else if (type === 'history' && width > breakpoints.md) {
                 return (
                     <Button
-                        className="text-indigo-500 hover:text-indigo-600 w-full text-right"
+                        className="text-indigo-500 hover:!text-indigo-600 w-full text-right"
                         type="transparent"
                     >
-                        Open Explorer
+                        Explorer
                     </Button>
                 );
             }
@@ -261,7 +261,7 @@ const CustomRow = (props: IDataTableProps) => {
 
         const charsShown = width > 900 ? 4 : 5;
         if (
-            (typeof cell === 'string' && cell.startsWith('pint') && cell.length > 30) ||
+            (typeof cell === 'string' && cell?.startsWith('pint') && cell.length > 30) ||
             cell?.startsWith('Q') ||
             cell?.startsWith('0x') ||
             cell?.startsWith('pint')
@@ -340,7 +340,7 @@ const CustomRow = (props: IDataTableProps) => {
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-2 pl-4`}
+                        className={`py-2 px-4`}
                     >
                         {determineCell(cell, i)}
                     </td>

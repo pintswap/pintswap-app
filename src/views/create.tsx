@@ -1,3 +1,6 @@
+/**
+ * @deprecated Now using new Swap view and Swap Module component
+ */
 import { Tab, Transition } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import {

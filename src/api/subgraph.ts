@@ -187,45 +187,49 @@ export async function getEthPrice(): Promise<string> {
 export async function getUserHistory(address: string, signer: Signer) {
     const params = ['taker', 'maker'];
     const res = await Promise.all(
-        params.map(async (el) => {
-            return await (
-                await fetch(ENDPOINTS['pintswap'], {
-                    ...JSON_HEADER_POST,
-                    body: JSON.stringify({
-                        query: `{
-                    pintswapTrades(
-                        orderBy: timestamp, 
-                        orderDirection: desc,
-                        where: { ${el}: "${address.toLowerCase()}" }
-                    ) {
-                        id
-                        timestamp
-                        chainId
-                        pair
-                        maker
-                        taker
-                        gets {
-                          amount
-                          token
-                        }
-                        gives {
-                          amount
-                          token
-                        }
-                      }
-                }`,
+        Object.keys(ENDPOINTS['pintswap']).map(
+            async (ep) =>
+                await Promise.all(
+                    params.map(async (el) => {
+                        return await (
+                            await fetch(ENDPOINTS['pintswap'][ep], {
+                                ...JSON_HEADER_POST,
+                                body: JSON.stringify({
+                                    query: `{
+                        pintswapTrades(
+                            orderBy: timestamp, 
+                            orderDirection: desc,
+                            where: { ${el}: "${address.toLowerCase()}" }
+                        ) {
+                            id
+                            timestamp
+                            chainId
+                            pair
+                            maker
+                            taker
+                            gets {
+                              amount
+                              token
+                            }
+                            gives {
+                              amount
+                              token
+                            }
+                          }
+                    }`,
+                                }),
+                            })
+                        ).json();
                     }),
-                })
-            ).json();
-        }),
+                ),
+        ),
     );
     if (res.length) {
-        const [taker, maker] = res;
-        return await Promise.all(
-            taker?.data?.pintswapTrades
-                .concat(maker?.data?.pintswapTrades)
-                .map(formatPintswapTrade),
+        const returnList: any[] = [];
+        res.flat().forEach(({ data }) =>
+            data.pintswapTrades.forEach((t: any) => returnList.push(t)),
         );
+        return await Promise.all(returnList.map(formatPintswapTrade));
     } else {
         return [];
     }

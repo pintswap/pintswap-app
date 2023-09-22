@@ -102,6 +102,7 @@ export const SwapView = () => {
                             onClick={handleSwap}
                             loading={loading}
                             setTrade={setTrade}
+                            isPublic={isPublic}
                         />
                     </Tab.Panel>
                     <Tab.Panel>
@@ -112,6 +113,7 @@ export const SwapView = () => {
                             disabled={isButtonDisabled()}
                             onClick={handleSwap}
                             loading={loading}
+                            isPublic={isPublic}
                         />
                     </Tab.Panel>
                 </Card>

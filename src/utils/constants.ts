@@ -23,12 +23,15 @@ export const EXPLORER_URLS: Record<number, string> = {
 };
 
 // ENDPOINTS
-export const ENDPOINTS = {
+export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> = {
     uniswap: {
         v2: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev',
         v3: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
     },
-    pintswap: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-eth',
+    pintswap: {
+        eth: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-eth',
+        arb: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-arb',
+    },
 };
 
 // TOKENS

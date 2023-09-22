@@ -22,6 +22,7 @@ type ISwapModule = {
     disabled?: boolean;
     type?: 'swap' | 'fulfill' | 'nft';
     setTrade?: React.Dispatch<React.SetStateAction<IOffer>>;
+    isPublic?: boolean;
 };
 
 export const SwapModule = ({
@@ -31,6 +32,7 @@ export const SwapModule = ({
     onClick,
     disabled,
     type = 'swap',
+    isPublic = true,
     setTrade,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
@@ -43,6 +45,7 @@ export const SwapModule = ({
     };
     const determineButtonText = () => {
         if (type === 'fulfill') return 'Fulfill';
+        if (!isPublic) return 'Create Offer';
         return 'Swap';
     };
 

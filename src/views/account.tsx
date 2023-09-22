@@ -25,14 +25,23 @@ const columns = [
     {
         name: 'hash',
         label: 'Hash',
+        options: { sort: false },
     },
     {
         name: 'sending',
         label: 'Sending',
+        options: {
+            sort: false,
+            setCellHeaderProps: () => ({ align: 'right' }),
+        },
     },
     {
         name: 'receiving',
         label: 'Receiving',
+        options: {
+            sort: false,
+            setCellHeaderProps: () => ({ align: 'right' }),
+        },
     },
     {
         name: '',
@@ -42,6 +51,8 @@ const columns = [
 
 export const AccountView = () => {
     const subgraph = useSubgraph({});
+    // TODO: remove
+    console.log('subgraph?.data?.userHistory', subgraph?.data?.userHistory);
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { state } = useLocation();
@@ -326,7 +337,7 @@ export const AccountView = () => {
             </Card>
 
             <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
-                <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
+                <Button onClick={() => navigate('/swap')} className="sm:max-w-lg sm:self-center">
                     Create Order
                 </Button>
                 <TooltipWrapper

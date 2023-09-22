@@ -1,2 +1,2 @@
-export * from './uniswap';
+export * from './subgraph';
 export * from './ethplorer';
