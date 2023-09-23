@@ -1,20 +1,22 @@
 import { Transition } from '@headlessui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ActiveText, AnimatedHamburger, Gas, Wallet } from '../components';
+import { ActiveText, AnimatedHamburger, ChainDropdown, Gas, Wallet } from '../components';
 import { useDashNav, useWindowSize } from '../hooks';
 import { APP_VERSION } from '../utils';
+import { useAccount } from 'wagmi';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useDashNav();
+    const { address } = useAccount();
     const { width, breakpoints } = useWindowSize();
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     const logoSize =
         width < breakpoints.lg
-            ? { width: '180', height: '22.63' }
-            : { width: '200', height: '25.14' };
+            ? { width: '170', height: '21.38' }
+            : { width: '180', height: '22.63' };
 
     return (
         <>
@@ -31,15 +33,24 @@ export const Navbar = () => {
                         />
                     </button>
                     <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
-                        {breakpoints.md <= width && <Gas className="mr-2" units="gwei" />}
-                        <Wallet />
-                        {width < breakpoints.md && (
-                            <button
-                                onClick={() => setIsMobileOpen(!isMobileOpen)}
-                                className="px-0.5"
-                            >
-                                <AnimatedHamburger state={isMobileOpen} />
-                            </button>
+                        {breakpoints.md <= width ? (
+                            // Desktop
+                            <div className="flex items-center gap-2">
+                                <Gas className="mr-2" units="gwei" />
+                                <ChainDropdown />
+                                <Wallet />
+                            </div>
+                        ) : (
+                            // Mobile
+                            <div className="flex items-center gap-2">
+                                {address ? <ChainDropdown /> : <Wallet />}
+                                <button
+                                    onClick={() => setIsMobileOpen(!isMobileOpen)}
+                                    className="px-0.5"
+                                >
+                                    <AnimatedHamburger state={isMobileOpen} />
+                                </button>
+                            </div>
                         )}
                     </div>
                 </div>
@@ -84,6 +95,9 @@ export const Navbar = () => {
                             </button>
                         </li>
                     ))}
+                    <li className="w-full pb-2 mt-2">
+                        <Wallet fullWidth />
+                    </li>
                 </ul>
             </Transition>
 

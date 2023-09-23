@@ -19,7 +19,9 @@ const markIndex = (o: any, index: number) =>
 
 export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     const { trade, base } = useParams();
-    const { pintswap } = usePintswapContext();
+    const {
+        pintswap: { module, chainId },
+    } = usePintswapContext();
     const { order, peerTrades } = useTrade();
     const { hash, multiaddr } = useParams();
 
@@ -71,7 +73,12 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                   return Object.fromEntries(
                       ['ask', 'bid'].map((type) => [
                           type,
-                          filterERC20OffersForTicker(sorted.erc20 || [], ticker, type as any),
+                          filterERC20OffersForTicker(
+                              sorted.erc20 || [],
+                              ticker,
+                              type as any,
+                              chainId,
+                          ),
                       ]),
                   );
               }, [sorted])
@@ -82,12 +89,11 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
         (async () => {
             setLoading(true);
             if (type === 'peer-orderbook') {
-                if (pintswap.module) {
-                    const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+                if (module) {
                     const { erc20: flattened } = sorted;
                     const mapped = (
                         await Promise.all(
-                            flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                            flattened.map(async (v: any) => await toLimitOrder(v, chainId)),
                         )
                     ).map((v, i) => ({
                         ...v,
@@ -98,12 +104,12 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     setLimitOrders(mapped);
                 }
             } else if (type === 'peer-ticker-orderbook') {
-                if (pintswap.module && forTicker) {
-                    const signer = pintswap.module.signer || new ethers.InfuraProvider('mainnet');
+                if (module && forTicker) {
+                    const signer = module.signer || new ethers.InfuraProvider('mainnet');
                     const flattened = forTicker.bid.concat(forTicker.ask);
                     const mapped = (
                         await Promise.all(
-                            flattened.map(async (v: any) => await toLimitOrder(v, signer)),
+                            flattened.map(async (v: any) => await toLimitOrder(v, chainId)),
                         )
                     ).map((v, i) => ({
                         ...v,
@@ -146,7 +152,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
             }
             setLoading(false);
         })().catch((err) => console.error(err));
-    }, [pintswap.module, peerTrades, order.multiAddr]);
+    }, [module, peerTrades, order.multiAddr]);
 
     const filteredNfts = useMemo(
         () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)),

@@ -34,6 +34,7 @@ const useWindowSize = () => {
     return {
         ...windowDimensions,
         breakpoints,
+        tableBreak: windowDimensions.width >= 900,
     };
 };
 

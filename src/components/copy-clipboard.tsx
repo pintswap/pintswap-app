@@ -6,7 +6,7 @@ import { ReactNode, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 
 type ICopyClipboardProps = {
-    icon?: boolean;
+    icon?: boolean | 'button';
     value: string;
     lg?: boolean;
     truncate?: number;
@@ -51,7 +51,7 @@ export const CopyClipboard = ({ icon, value, lg, truncate, children }: ICopyClip
                 </CopyToClipboard>
             )}
             <Tooltip
-                className="!z-[999999999]"
+                className="!z-50"
                 id="clipboard-copy-click"
                 content="Copied!"
                 isOpen={tooltipOpen}

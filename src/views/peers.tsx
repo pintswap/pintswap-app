@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Avatar, Card, GradientBorder, Header, Input } from '../components';
+import { Avatar, Button, Card, GradientBorder, Header, Input } from '../components';
 import { IUserDataProps, usePeersContext } from '../stores';
 import { useSearch } from '../hooks';
 import { useMemo } from 'react';
@@ -24,44 +24,57 @@ export const PeersView = () => {
                 />
             </div>
             <div
-                className={`grid grid-cols-1 gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`}
+                className={
+                    !peersLoading && !memoizedList?.length
+                        ? 'flex flex-col justify-center items-center gap-3 w-full h-[50vh]'
+                        : `grid grid-cols-1 gap-1 md:gap-1.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5`
+                }
             >
-                {!peersLoading
-                    ? (memoizedList as IUserDataProps[]).map((peer, i) => {
-                          return (
-                              <button
-                                  key={`unique-peer-${i}`}
-                                  onClick={() =>
-                                      navigate(`/peers/${peer.name}`, { state: { peer } })
-                                  }
-                              >
-                                  <GradientBorder className="rounded-lg from-transparent to-transparent h-full">
-                                      <Card className="h-full">
-                                          <Avatar
-                                              peer={peer}
-                                              size={30}
-                                              withName
-                                              withBio
-                                              withImage={false}
-                                              align="left"
-                                          />
-                                      </Card>
-                                  </GradientBorder>
-                              </button>
-                          );
-                      })
-                    : [1, 2, 3, 4, 5, 6].map((i) => (
-                          <Card key={`loading-card-${i}`} className="justify-start">
-                              <Avatar
-                                  loading
-                                  size={40}
-                                  withName
-                                  withBio
-                                  withImage={false}
-                                  align="left"
-                              />
-                          </Card>
-                      ))}
+                {!peersLoading ? (
+                    memoizedList?.length ? (
+                        (memoizedList as IUserDataProps[]).map((peer, i) => {
+                            return (
+                                <button
+                                    key={`unique-peer-${i}`}
+                                    onClick={() =>
+                                        navigate(`/peers/${peer.name}`, { state: { peer } })
+                                    }
+                                >
+                                    <GradientBorder className="rounded-lg from-transparent to-transparent h-full">
+                                        <Card className="h-full">
+                                            <Avatar
+                                                peer={peer}
+                                                size={30}
+                                                withName
+                                                withBio
+                                                withImage={false}
+                                                align="left"
+                                            />
+                                        </Card>
+                                    </GradientBorder>
+                                </button>
+                            );
+                        })
+                    ) : (
+                        <>
+                            <span className="lg:text-lg">No active peers</span>
+                            <Button onClick={() => navigate('/create')}>Create a trade</Button>
+                        </>
+                    )
+                ) : (
+                    [1, 2, 3, 4, 5, 6].map((i) => (
+                        <Card key={`loading-card-${i}`} className="justify-start">
+                            <Avatar
+                                loading
+                                size={40}
+                                withName
+                                withBio
+                                withImage={false}
+                                align="left"
+                            />
+                        </Card>
+                    ))
+                )}
             </div>
         </div>
     );

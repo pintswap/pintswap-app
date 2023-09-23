@@ -13,6 +13,8 @@ import { EMPTY_USER_DATA, fetchNFT, savePintswap } from '../utils';
 import { ethers } from 'ethers6';
 import { NFTPFP } from '@pintswap/sdk';
 import { GAS_PRICE_MULTIPLIER, makeGetGasPrice } from './pintswap';
+import { getTokenBalances } from '../api';
+import { useAccount } from 'wagmi';
 
 // Types
 export type IUserDataProps = {
@@ -32,7 +34,15 @@ type IUseNftProps = {
     id: string;
 };
 
+export type ITokenResProps = {
+    symbol: string;
+    address: string;
+    decimals: number;
+    balance: string;
+};
+
 export type IUserStoreProps = {
+    tokenHoldings: ITokenResProps[];
     userData: IUserDataProps;
     useNft: IUseNftProps;
     loading: boolean;
@@ -53,6 +63,7 @@ const DEFAULT_USE_NFT = { using: false, address: '', id: '' };
 
 // Context
 const UserContext = createContext<IUserStoreProps>({
+    tokenHoldings: [],
     userData: EMPTY_USER_DATA,
     useNft: DEFAULT_USE_NFT,
     loading: false,
@@ -70,12 +81,14 @@ const UserContext = createContext<IUserStoreProps>({
 
 // Wrapper
 export function UserStore(props: { children: ReactNode }) {
+    const { address } = useAccount();
     const psUser = localStorage.getItem('_pintUser');
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const [userData, setUserData] = useState<IUserDataProps>(EMPTY_USER_DATA);
     const [useNft, setUseNft] = useState(DEFAULT_USE_NFT);
     const [loading, setLoading] = useState(false);
+    const [tokenHoldings, setTokenHoldings] = useState<ITokenResProps[]>([]);
 
     function toggleActive(e?: any) {
         if (!userData.active) module?.startPublishingOffers(60000);
@@ -182,6 +195,18 @@ export function UserStore(props: { children: ReactNode }) {
         })().catch((err) => console.error(err));
     }, [module?.address, module?.userData]);
 
+    /**
+     * Gets user's token holdings (used only for select token dropdown button component)
+     */
+    useEffect(() => {
+        (async () => {
+            if (address) {
+                const tokenHoldings = await getTokenBalances(address);
+                if (tokenHoldings?.length) setTokenHoldings(tokenHoldings);
+            }
+        })().catch((err) => console.error(err));
+    }, [address]);
+
     return (
         <UserContext.Provider
             value={{
@@ -198,6 +223,7 @@ export function UserStore(props: { children: ReactNode }) {
                 setUseNft,
                 loading,
                 setUserData,
+                tokenHoldings,
             }}
         >
             {props.children}

@@ -26,6 +26,8 @@ type IInputProps = {
     enableStateCss?: boolean;
     wrapperClass?: string;
     inputClass?: string;
+    autoFocus?: boolean;
+    ref?: any;
 };
 
 export const Input = ({
@@ -44,10 +46,12 @@ export const Input = ({
     enableStateCss,
     wrapperClass,
     inputClass,
+    autoFocus,
+    ref,
 }: IInputProps) => {
     const { address } = useAccount();
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const [balance, setBalance] = useState({ loading: false, formatted: '0.00', symbol: '' });
     const tradeObjKey = placeholder?.includes('Receive') ? 'gets.amount' : 'gives.amount';
@@ -65,7 +69,7 @@ export const Input = ({
                                   token:
                                       ((await getTokenAttributes(
                                           token,
-                                          module?.signer,
+                                          chainId,
                                           'address',
                                       )) as string) || token,
                               };
@@ -91,13 +95,15 @@ export const Input = ({
                     <MdSearch size="18px" className="text-neutral-200" />
                 </div>
                 <input
-                    className={`bg-transparent outline-none ring-none p-2 ${className} min-w-0 group `}
+                    className={`bg-transparent outline-none ring-none p-2 pl-0.5 ${className} min-w-0 group placeholder:text-sm`}
                     value={value}
                     onChange={onChange}
                     placeholder={!placeholder ? 'Search here' : placeholder}
                     maxLength={max}
                     type={'text'}
                     disabled={disabled}
+                    ref={ref}
+                    autoFocus={autoFocus}
                 />
             </div>
         );
@@ -141,6 +147,8 @@ export const Input = ({
                 maxLength={max}
                 type={type}
                 disabled={disabled}
+                ref={ref}
+                autoFocus={autoFocus}
             />
             {token && maxClick && (
                 <button

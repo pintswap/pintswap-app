@@ -1,18 +1,19 @@
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
-import { muiCache, muiOptions, muiTheme } from '../utils/mui';
 import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
 import { SpinnerLoader } from './spinner-loader';
-import { useWindowSize } from '../hooks/window-size';
+import { useWindowSize } from '../hooks';
 import { useNavigate } from 'react-router-dom';
-import { truncate } from '../utils/format';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
 import { useOffersContext, usePintswapContext, usePricesContext, useUserContext } from '../stores';
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
-import { usePrices } from '../hooks';
+import { BASE_URL, NETWORKS, truncate, muiCache, muiOptions, muiTheme } from '../utils';
+import { detectTradeNetwork } from '@pintswap/sdk';
+import { toast } from 'react-toastify';
+import { TooltipWrapper } from './tooltip';
 
 type IDataTableProps = {
     title?: string;
@@ -27,7 +28,8 @@ type IDataTableProps = {
         | 'asks'
         | 'bids'
         | 'manage'
-        | 'peer-orderbook';
+        | 'peer-orderbook'
+        | 'history';
     peer?: string;
     toolbar?: boolean;
     pagination?: boolean;
@@ -132,12 +134,12 @@ const CustomRow = (props: IDataTableProps) => {
     const { userData } = useUserContext();
     const { pair, base: baseAsset } = useParams();
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const { eth } = usePricesContext();
     const cols = columns as string[];
-    const { width } = useWindowSize();
-    const { deleteTrade } = useOffersContext();
+    const { tableBreak } = useWindowSize();
+    const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
 
     const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
@@ -149,7 +151,7 @@ const CustomRow = (props: IDataTableProps) => {
         deleteTrade(hash);
     };
 
-    const route = (cells: string[]) => {
+    const route = async (cells: string[]) => {
         const firstCell = cells[0];
         const secondCell = cells[1];
         let url = '/';
@@ -162,8 +164,18 @@ const CustomRow = (props: IDataTableProps) => {
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`, {
                     state: { ...props },
                 });
-            case 'manage':
-                return navigate(`${url}fulfill/${userData.name || module?.address}/${firstCell}`);
+            case 'manage': {
+                toast.info('Copied offer share link', { autoClose: 2000 });
+                const found = userTrades.get(firstCell);
+                const offerChainId = found ? await detectTradeNetwork(found) : 1;
+                return navigator.clipboard.writeText(
+                    `${BASE_URL}/#/fulfill/${
+                        userData.name || module?.address || module?.peerId?.toB58String()
+                    }/${firstCell}/${offerChainId}`,
+                );
+            }
+            case 'history':
+                return window.open(`${NETWORKS[chainId].explorer}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook':
                 return navigate(`/${peer}/${firstCell}`);
             case 'pairs':
@@ -193,6 +205,15 @@ const CustomRow = (props: IDataTableProps) => {
     };
 
     const formatCell = (s: string) => {
+        if (type === 'history' || type === 'manage') {
+            const [amount, asset] = type === 'manage' ? s.split('  ') : s.split(' ');
+            return (
+                <span className="flex items-center gap-1.5 justify-end">
+                    <SmartPrice price={amount} />
+                    <Asset symbol={asset} size={18} position="right" />
+                </span>
+            );
+        }
         switch (s) {
             case 'ask':
                 return 'Ask';
@@ -215,23 +236,33 @@ const CustomRow = (props: IDataTableProps) => {
     };
 
     const determineCell = (cell: string, index: number) => {
-        if (!cell) return <></>;
-        const charsShown = width > 900 ? 4 : 5;
-        if (type === 'manage') {
-            return (
-                <Button
-                    className="text-red-400 hover:text-red-500 w-full text-right"
-                    type="transparent"
-                    onClick={(e) => handleDelete(e, cells[0])}
-                >
-                    Cancel
-                </Button>
-            );
+        if (!cell) {
+            if (type === 'manage') {
+                return (
+                    <Button
+                        className="text-red-400 hover:text-red-500 w-full text-right"
+                        type="transparent"
+                        onClick={(e) => handleDelete(e, cells[0])}
+                    >
+                        Cancel
+                    </Button>
+                );
+            } else if (type === 'history' && tableBreak) {
+                return (
+                    <Button
+                        className="text-indigo-500 hover:!text-indigo-600 w-full text-right"
+                        type="transparent"
+                    >
+                        Explorer
+                    </Button>
+                );
+            }
+            return <></>;
         }
+
+        const charsShown = tableBreak ? 4 : 5;
         if (
-            typeof cell === 'string' &&
-            cell.startsWith('pint') &&
-            cell.length > 30 &&
+            typeof cell !== 'number' &&
             (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
         ) {
             // Address / MultiAddr
@@ -281,6 +312,17 @@ const CustomRow = (props: IDataTableProps) => {
                         </span>
                     );
                 }
+                if ((type === 'history' || type === 'manage') && !isNaN(Number(cell)))
+                    return (
+                        <TooltipWrapper
+                            position={tableBreak ? 'right' : 'left'}
+                            wrapperClass="w-fit block"
+                            text={NETWORKS[Number(cell)].name}
+                            id={`account-datatable-${type}-${index}-${NETWORKS[Number(cell)].name}`}
+                        >
+                            <img src={NETWORKS[Number(cell)].logo} height="18" width="18" />
+                        </TooltipWrapper>
+                    );
                 // Display Big Number
                 _cell = cell;
                 return <SmartPrice price={_cell} />;
@@ -299,7 +341,7 @@ const CustomRow = (props: IDataTableProps) => {
         }
     };
     // Desktop
-    if (width >= 900) {
+    if (tableBreak) {
         return (
             <tr
                 className={`text-sm xl:text-base ${baseStyle} ${determineColor()}`}
@@ -308,7 +350,7 @@ const CustomRow = (props: IDataTableProps) => {
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-2 pl-4`}
+                        className={`py-2 px-4`}
                     >
                         {determineCell(cell, i)}
                     </td>

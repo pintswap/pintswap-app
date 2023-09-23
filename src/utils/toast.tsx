@@ -10,7 +10,7 @@ type IToastStatusProps = {
 
 export const defaultToastOptions = {
     isLoading: false,
-    autoClose: 6000,
+    autoClose: 4000,
     closeButton: true,
 };
 

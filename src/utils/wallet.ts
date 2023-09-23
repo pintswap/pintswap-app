@@ -2,8 +2,8 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { hardhat, mainnet } from 'wagmi/chains';
-import { NETWORK } from './constants';
+import { arbitrum, hardhat, mainnet } from 'wagmi/chains';
+import { TESTING } from './constants';
 import {
     coinbaseWallet,
     injectedWallet,
@@ -19,10 +19,12 @@ import merge from 'lodash.merge';
 
 const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '';
 
-export const { chains, provider } = configureChains(
-    [NETWORK === 'LOCALHOST' ? hardhat : mainnet],
-    [publicProvider()],
-);
+const determineChains = () => {
+    if (TESTING) return [mainnet, arbitrum, hardhat];
+    return [mainnet, arbitrum];
+};
+
+export const { chains, provider } = configureChains(determineChains(), [publicProvider()]);
 
 export const connectors = connectorsForWallets([
     {
@@ -32,6 +34,7 @@ export const connectors = connectorsForWallets([
     {
         groupName: 'Popular',
         wallets: [
+            walletConnectWallet({ chains, projectId }),
             coinbaseWallet({ appName: 'PintSwap', chains }),
             rainbowWallet({ chains, projectId }),
             trustWallet({ chains, projectId }),

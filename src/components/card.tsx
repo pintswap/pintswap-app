@@ -51,20 +51,23 @@ export const Card = ({
                     className={`flex flex-col ${backgroundColor} pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
                 >
                     {tabs && !header && (
-                        <div className="md:text-lg text-center mb-2 lg:mb-3 font-semibold">
-                            <Tab.List className="grid grid-cols-2 gap-2 lg:gap-4">
+                        <div className="text-center mb-2 lg:mb-3 font-semibold">
+                            <Tab.List className={`flex items-center gap-2`}>
                                 {tabs.map((tab, i) => (
-                                    <Tab key={`tabs-${i}`} className="focus-visible:outline-none">
+                                    <Tab
+                                        key={`tabs-${i}`}
+                                        className="focus-visible:outline-none p-1"
+                                    >
                                         {({ selected }) => (
-                                            <div
+                                            <span
                                                 className={`${
                                                     selected
-                                                        ? 'border-indigo-600'
-                                                        : 'border-neutral-800 text-neutral-400 hover:text-neutral-300'
-                                                } border-b-2 lg:border-b-4 rounded w-full pb-2 transition duration-200`}
+                                                        ? ''
+                                                        : 'text-neutral-500 hover:text-neutral-400'
+                                                } pb-2 transition duration-150`}
                                             >
                                                 {tab}
-                                            </div>
+                                            </span>
                                         )}
                                     </Tab>
                                 ))}

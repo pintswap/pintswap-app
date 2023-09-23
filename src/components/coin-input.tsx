@@ -2,8 +2,9 @@ import { ChangeEventHandler, useState } from 'react';
 import { SelectCoin } from './select-coin';
 import { useAccount, useBalance } from 'wagmi';
 import { toAddress } from '../utils';
-import { ethers } from 'ethers6';
 import { SmartPrice } from './smart-price';
+import { usePintswapContext } from '../stores';
+import { useSubgraph } from '../hooks';
 
 type ICoinInput = {
     label?: string;
@@ -12,7 +13,9 @@ type ICoinInput = {
     onAssetClick?: any;
     asset?: string;
     max?: boolean;
-    fairValue?: string;
+    disabled?: boolean;
+    type?: 'swap' | 'fulfill';
+    id?: string;
 };
 
 export const CoinInput = ({
@@ -22,13 +25,21 @@ export const CoinInput = ({
     onAssetClick,
     asset,
     max,
-    fairValue,
+    disabled,
+    type = 'swap',
+    id,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const { address } = useAccount();
+    const {
+        pintswap: { chainId },
+    } = usePintswapContext();
     const balance = useBalance(
-        asset === 'ETH' ? { address } : { token: toAddress(asset || '') as any, address },
+        asset === 'ETH' ? { address } : { token: toAddress(asset || '', chainId) as any, address },
     );
+    const { data } = useSubgraph({
+        address: toAddress(asset, chainId),
+    });
 
     function clickAndClose(e: any) {
         onAssetClick(e);
@@ -40,24 +51,38 @@ export const CoinInput = ({
             {label && <span className="text-xs text-gray-400">{label}</span>}
             <div className="flex justify-between items-center gap-0.5 pt-4 pb-1">
                 <input
-                    className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow min-w-0 w-fit"
+                    className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] sm:max-w-none min-w-0 w-fit"
                     placeholder="0"
                     type="number"
                     onChange={onAmountChange}
                     value={value}
+                    disabled={disabled}
+                    id={id}
                 />
                 <SelectCoin
                     asset={asset}
                     onAssetClick={clickAndClose}
                     modalOpen={open}
                     setModalOpen={setOpen}
+                    disabled={disabled}
+                    type={type}
                 />
             </div>
-            {max ? (
-                <div className="w-full flex justify-end">
-                    <small>
+            <div className="w-full flex justify-between items-center">
+                <small className="text-gray-400 flex items-center gap-0.5">
+                    <span>$</span>
+                    <SmartPrice
+                        price={
+                            Number(value) > 0 && asset
+                                ? Number(value) * Number(data?.usdPrice || '0')
+                                : '0.00'
+                        }
+                    />
+                </small>
+                <small>
+                    {max && (
                         <button
-                            className="pt-1 pr-0.5 text-indigo-600 hover:text-indigo-500 transition duration-100"
+                            className="p-0.5 text-indigo-600 hover:text-indigo-500 transition duration-100"
                             onClick={() => {
                                 const amount = {
                                     currentTarget: {
@@ -72,23 +97,9 @@ export const CoinInput = ({
                         >
                             MAX: <SmartPrice price={balance?.data?.formatted || '0'} />
                         </button>
-                    </small>
-                </div>
-            ) : fairValue ? (
-                // TODO
-                <div className="w-full flex justify-end">
-                    <small>
-                        <button
-                            className="pt-1 pr-0.5 text-indigo-600 hover:text-indigo-500 transition duration-100"
-                            onClick={() => {}}
-                        >
-                            FAIR VALUE: <SmartPrice price={'0'} />
-                        </button>
-                    </small>
-                </div>
-            ) : (
-                <div className="h-[23px]" />
-            )}
+                    )}
+                </small>
+            </div>
         </div>
     );
 };

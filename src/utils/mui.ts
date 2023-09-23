@@ -10,7 +10,7 @@ export const muiCache = createCache({
 export function muiTheme() {
     return (createTheme as any)({
         typography: {
-            fontFamily: ['Days One'].join(','),
+            fontFamily: ['Chakra Petch'].join(','),
         },
         palette: {
             mode: 'dark',

@@ -1,5 +1,5 @@
 import { useAccount } from 'wagmi';
-import { MdGroup, MdLineAxis, MdCreate, MdSearch, MdTagFaces, MdSwapHoriz } from 'react-icons/md';
+import { MdGroup, MdLineAxis, MdShare, MdTagFaces, MdSwapHoriz } from 'react-icons/md';
 
 export const useDashNav = () => {
     const { address } = useAccount();
@@ -7,13 +7,13 @@ export const useDashNav = () => {
     const ICON_SIZE = '20px';
     const NAV_ITEMS = address
         ? [
-              //   {
-              //       text: 'Swap',
-              //       route: '/swap',
-              //       disabled: false,
-              //       icon: <MdSwapHoriz size={ICON_SIZE} />,
-              //       tooltip: 'Automatically swap tokens',
-              //   },
+              {
+                  text: 'Swap',
+                  route: '/swap',
+                  disabled: false,
+                  icon: <MdSwapHoriz size={ICON_SIZE} />,
+                  tooltip: 'Automatically swap tokens',
+              },
               {
                   text: 'Markets',
                   route: '/markets',
@@ -26,21 +26,14 @@ export const useDashNav = () => {
                   route: '/peers',
                   disabled: false,
                   icon: <MdGroup size={ICON_SIZE} />,
-                  tooltip: 'See who is currently publishing offers',
+                  tooltip: 'See who is currently online',
               },
               {
-                  text: 'Create',
-                  route: '/create',
-                  disabled: false,
-                  icon: <MdCreate size={ICON_SIZE} />,
-                  tooltip: 'Create an offer for someone to take',
-              },
-              {
-                  text: 'Fulfill',
+                  text: 'OTC',
                   route: '/fulfill',
                   disabled: false,
-                  icon: <MdSearch size={ICON_SIZE} />,
-                  tooltip: 'Find a specific trade',
+                  icon: <MdShare size={ICON_SIZE} />,
+                  tooltip: 'Search for or accept an OTC trade',
               },
               {
                   text: 'Account',

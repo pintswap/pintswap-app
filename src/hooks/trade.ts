@@ -4,7 +4,7 @@ import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
-import { useOffersContext, usePeersContext, useUserContext } from '../stores';
+import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
 import { toBeHex } from 'ethers6';
 import {
     savePintswap,
@@ -21,15 +21,18 @@ import {
     getTokenAddress,
 } from '../utils';
 import { ethers } from 'ethers';
+import { useSwitchNetwork } from 'wagmi';
 
 export const useTrade = () => {
     const params = useParams();
+    const { switchNetwork } = useSwitchNetwork();
+    const { newNetwork } = useNetworkContext();
     const { pathname } = useLocation();
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
-    const { addTrade, userTrades, setUserTrades } = useOffersContext();
+    const { addTrade, userTrades, setUserTrades, allOffers } = useOffersContext();
 
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
@@ -42,19 +45,18 @@ export const useTrade = () => {
         broadcast: false,
     });
     const [error, setError] = useState(false);
-    const { multiaddr, hash } = useParams();
     const [fill, setFill] = useState<any>(null);
-    const { peersData } = usePeersContext();
+    const [foundPeerOffers, setFoundPeerOffers] = useState(false);
 
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/explore' || pathname === '/swap';
 
     const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
         if (!gets.token && !gives.token) return EMPTY_TRADE;
-        const foundGivesToken = (await getTokenAttributes(gives.token, module?.signer)) as
+        const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
             | ITokenProps
             | undefined;
-        const foundGetsToken = (await getTokenAttributes(gets.token, module?.signer)) as
+        const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
             | ITokenProps
             | undefined;
 
@@ -67,13 +69,8 @@ export const useTrade = () => {
                     amount: undefined,
                 },
                 gets: {
-                    token: getTokenAddress(foundGetsToken, gets),
-                    amount: await convertAmount(
-                        'hex',
-                        gets?.amount || '0',
-                        gets.token,
-                        module?.signer,
-                    ),
+                    token: getTokenAddress(foundGetsToken, gets, chainId),
+                    amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
                 },
             };
             if (TESTING) console.log('#buildTradeObj:', builtObj);
@@ -82,17 +79,12 @@ export const useTrade = () => {
         // ERC20
         const builtObj = {
             gives: {
-                token: getTokenAddress(foundGivesToken, gives),
-                amount: await convertAmount(
-                    'hex',
-                    gives?.amount || '0',
-                    gives.token,
-                    module?.signer,
-                ),
+                token: getTokenAddress(foundGivesToken, gives, chainId),
+                amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
             },
             gets: {
-                token: getTokenAddress(foundGetsToken, gets),
-                amount: await convertAmount('hex', gets?.amount || '0', gets.token, module?.signer),
+                token: getTokenAddress(foundGetsToken, gets, chainId),
+                amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
             },
         };
         if (TESTING) console.log('#buildTradeObj:', builtObj);
@@ -103,32 +95,12 @@ export const useTrade = () => {
         try {
             return {
                 gives: {
-                    token:
-                        ((await getTokenAttributes(
-                            gives.token,
-                            module?.signer,
-                            'symbol',
-                        )) as string) || gives.token,
-                    amount: await convertAmount(
-                        'number',
-                        gives.amount || '',
-                        gives.token,
-                        module?.signer,
-                    ),
+                    token: (await getSymbol(gives.token, chainId)) || gives.token,
+                    amount: await convertAmount('number', gives.amount || '', gives.token, chainId),
                 },
                 gets: {
-                    token:
-                        ((await getTokenAttributes(
-                            gets.token,
-                            module?.signer,
-                            'symbol',
-                        )) as string) || gets.token,
-                    amount: await convertAmount(
-                        'number',
-                        gets.amount || '',
-                        gets.token,
-                        module?.signer,
-                    ),
+                    token: (await getSymbol(gets.token, chainId)) || gets.token,
+                    amount: await convertAmount('number', gets.amount || '', gets.token, chainId),
                 },
             };
         } catch (err) {
@@ -147,14 +119,16 @@ export const useTrade = () => {
     };
 
     // Create trade
-    const broadcastTrade = async (e: React.SyntheticEvent) => {
+    const broadcastTrade = async (e: React.SyntheticEvent, isPublic = true) => {
         e.preventDefault();
         if (TESTING) console.log('#broadcastTrade: TradeObj', await buildTradeObj(trade));
         if (module) {
             try {
+                const offer = await buildTradeObj(trade);
                 module.broadcastOffer(await buildTradeObj(trade));
+                setOrder({ ...order, orderHash: hashOffer(offer) });
                 savePintswap(module);
-                if (!userData.active) toggleActive();
+                if (isPublic && !userData.active) toggleActive();
             } catch (err) {
                 console.error(err);
             }
@@ -166,90 +140,110 @@ export const useTrade = () => {
         e.preventDefault();
         setLoading({ ...loading, fulfill: true });
         if (module) {
+            // Determine correct offer
+            let offer = trade;
+
             try {
+                // Determine multiaddr
                 let multiAddr = order.multiAddr;
                 if (multiAddr.match(/\.drip$/))
                     multiAddr = await module.resolveName(order.multiAddr);
-                const peeredUp = multiAddr;
+
                 // If NFT swap
-                if (window.location.hash.match('nft') && hash) {
-                    const nftTrade = userTrades.get(hash) || peerTrades.get(hash);
+                if (window.location.hash.match('nft') && params.hash) {
+                    const nftTrade = userTrades.get(params.hash) || peerTrades.get(params.hash);
                     if (TESTING) console.log('#fulfillTrade - NFT Trade:', nftTrade);
-                    module.createTrade(peeredUp, nftTrade);
+                    module.createTrade(multiAddr, nftTrade);
+                    toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
                     // If peer orderbook swap
                 } else if (params.base && params.trade) {
                     if (TESTING) console.log('#fulfillTrade - Fill:', fill);
                     module.createBatchTrade(
-                        peeredUp,
+                        multiAddr,
                         fill.fill.map((v: any) => ({ offer: v.offer, amount: toBeHex(v.amount) })),
                     );
                     // If standard swap
                 } else {
                     if (TESTING)
-                        console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(trade));
-                    module.createTrade(peeredUp, await buildTradeObj(trade));
+                        console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(offer));
+                    module.createTrade(multiAddr, await buildTradeObj(offer));
                 }
-                if (TESTING) console.log('Fulfilled trade!');
+                toast.loading('Swapping...', { toastId: 'swapping' });
             } catch (err) {
                 console.error(err);
                 setError(true);
+                updateToast('swapping', 'error');
             }
         }
     };
 
     // Get single trade or all peer trades
-    const getTrades = async (multiAddr: string, orderHash?: string) => {
-        let resolved = multiAddr;
-        if (multiAddr.match(/\.drip$/) && module) resolved = await module.resolveName(multiAddr);
-        if (TESTING) console.log('#getTrades - Args:', { resolved, multiAddr, orderHash: hash });
-        const trade = hash ? userTrades.get(hash) : undefined;
-        // MAKER
-        if (trade) setTrade(trade);
-        // TAKER
-        else {
-            if (module) {
-                try {
-                    // TODO: optimize
-                    if (orderHash && peerTrades.get(orderHash)) {
-                        const { gives, gets } = peerTrades.get(orderHash) as any;
-                        setTrade(await displayTradeObj({ gets, gives }));
-                        return;
-                    }
+    const getTrades = async () => {
+        let _offers: Map<string, IOffer> = new Map();
 
-                    const { offers }: IOrderbookProps = await module.getUserData(resolved);
-                    if (offers?.length > 0) {
-                        if (TESTING) console.log('#getTrades - Offers:', offers);
+        // If chainId
+        if (params.chainid && Number(params.chainid) !== chainId && switchNetwork) {
+            switchNetwork(Number(params.chainid));
+        }
 
-                        await Promise.all(
-                            offers.map((offer) => {
-                                const tokens = [offer.gets?.token, offer.gives?.token];
-                                return Promise.all(
-                                    tokens.map(async (t) => {
-                                        if (!Object.values(reverseSymbolCache).includes(t)) {
-                                            const symbol = await getSymbol(t, module.signer);
-                                            reverseSymbolCache[symbol] = t;
-                                        }
-                                    }),
-                                );
+        // If multiaddr
+        if (params.multiaddr) {
+            let resolved = params.multiaddr;
+            if (params.multiaddr.match(/\.drip$/) && module)
+                resolved = await module.resolveName(params.multiaddr);
+            if (TESTING)
+                console.log('#getTrades - Args:', {
+                    resolved,
+                    multiaddr: params.multiaddr,
+                    hash: params.hash,
+                });
+            const { offers }: IOrderbookProps = module
+                ? await module.getUserData(resolved)
+                : { offers: [] };
+            if (offers?.length > 0 && !peerTrades?.size) {
+                if (TESTING) console.log('#getTrades - Offers:', offers);
+                await Promise.all(
+                    offers.map(async (offer) => {
+                        const tokens = [offer.gets?.token, offer.gives?.token];
+                        return await Promise.all(
+                            tokens.map(async (t) => {
+                                if (!Object.values(reverseSymbolCache[chainId]).includes(t)) {
+                                    const symbol = await getSymbol(t, chainId);
+                                    reverseSymbolCache[chainId][symbol] = t;
+                                }
                             }),
                         );
-
-                        // If only multiAddr in URL
-                        if (TESTING) console.log('#getTrades - Order Hash:', hash);
-                        const map = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                        if (TESTING) console.log('#getTrades - Map:', map);
-                        setPeerTrades(map);
-                        // Set first found trade as trade state
-                        const { gives, gets } = offers[0];
-                        setTrade(await displayTradeObj({ gets, gives }));
-                    }
-                } catch (err) {
-                    console.error('Error in #getTrade:', err);
-                    setError(true);
-                    updateToast('findPeer', 'error', 'Error while finding peer');
-                }
+                    }),
+                );
+                _offers = new Map(offers.map((offer) => [hashOffer(offer), offer]));
+                setPeerTrades(_offers);
+                if (TESTING) console.log('#getTrades - Map:', _offers);
+                updateToast('findPeer', 'success', 'Connected to peer!');
             }
         }
+
+        // If offer hash
+        if (params.hash) {
+            if (TESTING) console.log('#getTrades - Order Hash:', params.hash);
+            if (_offers.get(params.hash)) {
+                setTrade(await displayTradeObj(_offers.get(params.hash) as IOffer));
+                return;
+            }
+
+            // Check public orderbook if there's an offer hash
+            const found = [...allOffers.erc20, ...allOffers.nft].find(
+                (el) => el.hash?.toLowerCase() === params.hash,
+            );
+            if (found) {
+                setTrade({ gets: found.gets, gives: found.gives });
+                return;
+            }
+
+            // Check user
+            const trade = params.hash ? userTrades.get(params.hash) : undefined;
+            if (trade) setTrade(trade);
+        }
+        return;
     };
 
     // Update order form
@@ -275,13 +269,13 @@ export const useTrade = () => {
             !trade.gives.token ||
             (!trade.gives.amount && !trade.gives.tokenId) ||
             !trade.gets.token ||
-            !trade.gets.amount ||
-            !!order.orderHash
+            !trade.gets.amount
         );
     };
 
     // Clear Trade
-    const clearTrade = () => setTrade(EMPTY_TRADE);
+    const clearTrade = () =>
+        setTrade({ gets: { token: '', amount: '' }, gives: { token: '', amount: '' } });
 
     // Update progress indicator
     const updateSteps = (nextStep: 'Create' | 'Fulfill' | 'Complete') => {
@@ -293,31 +287,35 @@ export const useTrade = () => {
         setSteps(updated);
     };
 
+    useEffect(() => {
+        if (newNetwork) clearTrade();
+    }, [newNetwork]);
+
     // Get trade based on URL
     useEffect(() => {
         const getter = async () => {
-            if (pathname.includes('/') && multiaddr) {
+            if (pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
-                if (splitUrl[1] === 'fulfill' && hash) {
+                if (splitUrl[1] === 'fulfill' && params.hash) {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
-                    setOrder({ multiAddr: multiaddr, orderHash: hash });
-                    await getTrades(multiaddr, hash);
+                    setOrder({ multiAddr: params.multiaddr, orderHash: params.hash });
+                    await getTrades();
                     setLoading({ ...loading, trade: false });
-                } else if (multiaddr) {
+                } else if (params.multiaddr) {
                     // Only multiAddr
                     setLoading({ ...loading, allTrades: true });
                     if (params.base && params.trade && steps[1].status !== 'current')
                         updateSteps('Fulfill');
-                    setOrder({ multiAddr: multiaddr, orderHash: '' });
-                    await getTrades(multiaddr);
+                    setOrder({ multiAddr: params.multiaddr, orderHash: '' });
+                    await getTrades();
                     setLoading({ ...loading, allTrades: false });
                 }
             }
         };
         if (module) getter().catch((err) => console.error(err));
-    }, [module, multiaddr, hash, peersData?.length]);
+    }, [module, pathname, chainId, foundPeerOffers]);
 
     /*
      * TRADE EVENT MANAGER - START
@@ -329,7 +327,6 @@ export const useTrade = () => {
                 break;
             case 1:
                 console.log('#peerListener: peer found');
-                updateToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 2:
                 console.log('#peerListener: found peer offers');
@@ -337,6 +334,7 @@ export const useTrade = () => {
                 break;
             case 3:
                 console.log('#peerListener: returning offers');
+                setFoundPeerOffers(true);
                 break;
         }
     };
@@ -348,6 +346,7 @@ export const useTrade = () => {
                 if (module) savePintswap(module);
                 console.log('#makerListener: taker approving trade');
                 toast('Taker is approving transaction...');
+                toast.loading('Swapping...', { toastId: 'swapping' });
                 break;
             case 1:
                 console.log('#makerListener: taker approved trade');
@@ -359,6 +358,7 @@ export const useTrade = () => {
                 shallow.delete(order.orderHash);
                 setUserTrades(shallow);
                 shallow = userTrades;
+                updateToast('swapping', 'success');
                 break;
         }
     };
@@ -387,6 +387,7 @@ export const useTrade = () => {
                 setLoading({ ...loading, fulfill: false });
                 shallow.delete(order.orderHash);
                 setUserTrades(shallow);
+                updateToast('swapping', 'success');
                 break;
         }
     };

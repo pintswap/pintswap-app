@@ -15,12 +15,10 @@ type INFTDisplayProps = {
 };
 
 export const NFTDisplay = ({ nft, show, loading, height, width, offer }: INFTDisplayProps) => {
-    console.log('nft', offer);
     if (nft?.imageBlob || nft?.name || nft?.description) {
         if (show === 'full') {
             const foundErc20 = offer?.gives?.amount ? offer?.gives : offer?.gets;
             const tokenRes = useSubgraph({ address: foundErc20?.token });
-            console.log('tokenRes', tokenRes);
             return (
                 <div className="flex flex-wrap gap-3 lg:gap-4 xl:gap-5">
                     <div>
@@ -63,7 +61,8 @@ export const NFTDisplay = ({ nft, show, loading, height, width, offer }: INFTDis
                                 }
                                 usdValue={
                                     Number(tokenRes?.data?.usdPrice || '0') > 0
-                                        ? Number(tokenRes.data.usdPrice) * Number(nft.amount)
+                                        ? Number(tokenRes?.data?.usdPrice || '0') *
+                                          Number(nft.amount)
                                         : undefined
                                 }
                             />

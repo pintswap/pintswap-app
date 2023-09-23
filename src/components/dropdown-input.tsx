@@ -1,23 +1,32 @@
 import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { MdChevronRight } from 'react-icons/md';
-import { alphaTokenSort, dropdownItemClass, getSymbol, ITokenProps, TOKENS } from '../utils';
+import {
+    alphaTokenSort,
+    dropdownItemClass,
+    getSymbol,
+    ITokenProps,
+    getTokenList,
+    DEFAULT_CHAINID,
+} from '../utils';
 import { Asset } from './asset';
 import { ethers } from 'ethers6';
 import { useSearch } from '../hooks';
 import { usePintswapContext } from '../stores';
+import { getNetwork } from '@wagmi/core';
 
 type IDropdownProps = {
     state: any;
     setState?: Dispatch<SetStateAction<any>> | any;
     options?: string[];
     placeholder?: string;
-    type?: 'gives.token' | 'gets.token' | 'string' | 'input-ext';
+    type?: 'gives.token' | 'gets.token' | 'string' | 'input-ext' | 'nft-id';
     title?: string | ReactNode;
     search?: boolean;
     disabled?: boolean;
     loading?: boolean;
     wrapperClass?: string;
+    searchPlaceholder?: string;
 };
 
 export const DropdownInput = ({
@@ -31,12 +40,15 @@ export const DropdownInput = ({
     disabled,
     loading,
     wrapperClass,
+    searchPlaceholder,
 }: IDropdownProps) => {
-    const isToken = type === 'gives.token' || type === 'gets.token';
-    const { query, list, handleChange } = useSearch(isToken ? TOKENS : options || []);
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
+    const isToken = type === 'gives.token' || type === 'gets.token';
+    const { query, list, handleChange } = useSearch(
+        isToken ? getTokenList(chainId) : options || [],
+    );
 
     const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });
 
@@ -44,7 +56,7 @@ export const DropdownInput = ({
         if (isToken && ethers.isAddress(query)) {
             (async () => {
                 setUnknownToken({ ...unknownToken, loading: true });
-                const symbol = await getSymbol(query, module?.signer);
+                const symbol = await getSymbol(query, chainId);
                 if (symbol) setUnknownToken({ symbol, loading: false });
                 else setUnknownToken({ ...unknownToken, loading: false });
             })().catch((err) => console.error(err));
@@ -62,7 +74,11 @@ export const DropdownInput = ({
                 <Menu.Button
                     className={`inline-flex w-full overflow-x-hidden ${
                         !disabled ? 'justify-between' : 'justify-end'
-                    } items-center gap-x-1.5 bg-neutral-800 p-2 hover:bg-neutral-700 transition duration-100 disabled:hover:cursor-not-allowed disabled:hover:bg-neutral-600 ${
+                    } items-center gap-x-1.5 ${
+                        type === 'nft-id'
+                            ? 'bg-indigo-600'
+                            : 'bg-neutral-800 hover:bg-neutral-700 disabled:hover:bg-neutral-800'
+                    } p-2 transition duration-100 disabled:hover:cursor-not-allowed ${
                         loading ? 'animate-pulse' : ''
                     } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
                     disabled={disabled}
@@ -96,7 +112,7 @@ export const DropdownInput = ({
                                 value={query}
                                 onChange={handleChange}
                                 className="bg-neutral-700 text-neutral-200 px-4 py-2 text-sm ring-2 ring-neutral-400 w-full"
-                                placeholder="Search name or paste address"
+                                placeholder={searchPlaceholder || 'Search name or paste address'}
                             />
                         )}
 
@@ -110,11 +126,7 @@ export const DropdownInput = ({
                                                   className={dropdownItemClass(active)}
                                                   onClick={() => setState(type, el.symbol)}
                                               >
-                                                  <Asset
-                                                      icon={el.logoURI}
-                                                      symbol={el.symbol}
-                                                      alt={el.asset}
-                                                  />
+                                                  <Asset symbol={el.symbol} alt={el.name} />
                                               </button>
                                           )}
                                       </Menu.Item>
@@ -141,11 +153,7 @@ export const DropdownInput = ({
                                         }`}
                                         onClick={() => setState(type, query)}
                                     >
-                                        <Asset
-                                            symbol={unknownToken.symbol}
-                                            icon="/img/generic.svg"
-                                            alt="Unknown Token"
-                                        />
+                                        <Asset symbol={unknownToken.symbol} alt="Unknown Token" />
                                     </button>
                                 )}
                             </Menu.Item>

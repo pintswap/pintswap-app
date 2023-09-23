@@ -1,11 +1,14 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { ITokenProps, TOKENS } from '../utils/token-list';
-import { IUserDataProps } from '../stores';
+import { ITokenProps, getTokenList } from '../utils';
+import { IUserDataProps, usePintswapContext } from '../stores';
 
 const isKeyInObjArray = (list: any[], key: string) =>
     list.some((obj) => Object.keys(obj).includes(key));
 
 export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => {
+    const {
+        pintswap: { chainId },
+    } = usePintswapContext();
     const [searchState, setSearchState] = useState({ query: '', list });
 
     const determineType = () => {
@@ -14,11 +17,14 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => 
         else return 'string';
     };
 
+    const clearQuery = () =>
+        determineType() === 'token' && setSearchState({ list: getTokenList(chainId), query: '' });
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         let results;
         if (determineType() === 'token') {
-            results = TOKENS.filter((el: ITokenProps) => {
-                if (e.target.value === '') return TOKENS;
+            results = getTokenList(chainId).filter((el: ITokenProps) => {
+                if (e.target.value === '') return getTokenList(chainId);
                 return el.symbol.toLowerCase().includes(e.target.value.toLowerCase());
             });
         } else if (determineType() === 'user') {
@@ -38,10 +44,17 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => 
         });
     };
 
+    useEffect(() => {
+        if (determineType() === 'token') {
+            setSearchState({ ...searchState, list: getTokenList(chainId) });
+        }
+    }, [chainId]);
+
     return {
         query: searchState.query,
         list:
             searchState.list.length === 0 && determineType() !== 'token' ? list : searchState.list,
         handleChange,
+        clearQuery,
     };
 };

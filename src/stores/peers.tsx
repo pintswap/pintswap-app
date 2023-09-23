@@ -3,6 +3,7 @@ import { getFormattedPeer } from '../utils/peer';
 import { usePintswapContext } from './pintswap';
 import { useOffersContext } from './offers';
 import { IUserDataProps } from './user';
+import { useNetworkContext } from './network';
 
 // Types
 export type IPeersStoreProps = {
@@ -23,7 +24,8 @@ const PeersContext = createContext<IPeersStoreProps>({
 // Wrapper
 export function PeersStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
-    const { limitOrdersArr } = useOffersContext();
+    const { network } = useNetworkContext();
+    const { offersByChain, allOffers, isLoading } = useOffersContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [data, setData] = useState<any[]>([]);
@@ -34,7 +36,9 @@ export function PeersStore(props: { children: ReactNode }) {
 
     const getAllPeersData = async () => {
         setLoading(true);
-        const peerAddresses = Array.from(new Set(limitOrdersArr.map((o) => o.peer)));
+        const peerAddresses = Array.from(
+            new Set([...offersByChain.erc20, ...offersByChain.nft].map((o) => o.peer)),
+        );
         try {
             const allPeersData = await Promise.all(
                 peerAddresses.map(
@@ -53,8 +57,9 @@ export function PeersStore(props: { children: ReactNode }) {
     useEffect(() => {
         if (data && data.length > 0) setLoading(false);
         const getter = async () => await getAllPeersData();
-        if (limitOrdersArr && limitOrdersArr.length > 0) getter();
-    }, [limitOrdersArr]);
+        if (allOffers.erc20 && allOffers.erc20.length > 0) getter();
+        else if (!isLoading) setLoading(false);
+    }, [offersByChain.erc20, pintswap.chainId, network?.id]);
 
     return (
         <PeersContext.Provider

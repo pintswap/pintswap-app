@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { getEthPrice } from '../api';
+import { useOffersContext } from './offers';
 
 const ETH_INTERVAL = 1000 * 30;
 
@@ -23,6 +24,7 @@ const PricesContext = createContext(DEFAULT_PRICES);
 
 // Wrapper
 export function PricesStore(props: { children: ReactNode }) {
+    const { allOffers } = useOffersContext();
     const [prices, setPrices] = useState(DEFAULT_PRICES);
 
     function updatePrice(asset: 'eth', usdValue: string) {
@@ -49,6 +51,15 @@ export function PricesStore(props: { children: ReactNode }) {
             return () => clearInterval(interval);
         })().catch((err) => console.error(err));
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            if (prices.eth === '0') {
+                const ethPrice = await getEthPrice();
+                updatePrice('eth', ethPrice);
+            }
+        })().catch((err) => console.error(err));
+    }, [allOffers?.erc20?.length]);
 
     return (
         <PricesContext.Provider value={{ ...prices, formatToUsd }}>

@@ -1,5 +1,6 @@
-import { ethers } from 'ethers6';
-import { ENDPOINTS } from '../utils';
+import { ethers, Signer } from 'ethers6';
+import { ENDPOINTS, formatPintswapTrade, toAddress } from '../utils';
+import { IOffer } from '@pintswap/sdk';
 
 const JSON_HEADER_POST = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
 
@@ -129,11 +130,6 @@ export async function getV2Token({
                 symbol
                 name
                 decimals
-                totalSupply
-                tradeVolume
-                tradeVolumeUSD
-                txCount
-                totalLiquidity
                 derivedETH
               }
               ${buildOptionalQuery()}
@@ -162,6 +158,15 @@ export async function tryBoth(props: { address?: string; history?: 'day' | 'hour
     return { token: null };
 }
 
+export async function getManyV2Tokens(addresses: string[]): Promise<any[]> {
+    if (!addresses) return [];
+    const validAddresses = addresses.filter((t) => ethers.isAddress(t));
+    const promises = await Promise.all(
+        validAddresses.map(async (token) => getV2Token({ address: token })),
+    );
+    return promises;
+}
+
 export async function getEthPrice(): Promise<string> {
     const response = await fetch(ENDPOINTS['uniswap']['v3'], {
         ...JSON_HEADER_POST,
@@ -177,4 +182,87 @@ export async function getEthPrice(): Promise<string> {
         data: { bundles },
     } = await response.json();
     return bundles[0].ethPriceUSD;
+}
+
+export async function getUserHistory(address: string, signer: Signer) {
+    const params = ['taker', 'maker'];
+    const res = await Promise.all(
+        Object.keys(ENDPOINTS['pintswap']).map(
+            async (ep) =>
+                await Promise.all(
+                    params.map(async (el) => {
+                        return await (
+                            await fetch(ENDPOINTS['pintswap'][ep], {
+                                ...JSON_HEADER_POST,
+                                body: JSON.stringify({
+                                    query: `{
+                        pintswapTrades(
+                            orderBy: timestamp, 
+                            orderDirection: desc,
+                            where: { ${el}: "${address.toLowerCase()}" }
+                        ) {
+                            id
+                            timestamp
+                            chainId
+                            pair
+                            maker
+                            taker
+                            gets {
+                              amount
+                              token
+                            }
+                            gives {
+                              amount
+                              token
+                            }
+                          }
+                    }`,
+                                }),
+                            })
+                        ).json();
+                    }),
+                ),
+        ),
+    );
+    if (res.length) {
+        const returnList: any[] = [];
+        res.flat().forEach(({ data }) =>
+            data.pintswapTrades.forEach((t: any) => returnList.push(t)),
+        );
+        return await Promise.all(returnList.map(formatPintswapTrade));
+    } else {
+        return [];
+    }
+}
+
+export async function getQuote(
+    trade: IOffer,
+    ethPrice: string,
+    type?: 'conservative' | 'exact',
+): Promise<string> {
+    if (
+        trade.gives.amount &&
+        trade.gives.token &&
+        trade.gets.token &&
+        (!trade.gets.amount || Number(trade.gets.amount) === 0)
+    ) {
+        let givesEthPrice: string;
+        if ((trade.gives.token === 'ETH' || trade.gives.token === 'WETH') && ethPrice) {
+            givesEthPrice = trade.gives.amount;
+        } else {
+            givesEthPrice = (
+                Number(
+                    (await tryBoth({ address: toAddress(trade.gives.token) }))?.token?.derivedETH ||
+                        '0',
+                ) * Number(trade.gives.amount)
+            ).toString();
+        }
+        const getsEthPrice =
+            (await tryBoth({ address: toAddress(trade.gets.token) }))?.token?.derivedETH || '0';
+        const quote = Number(givesEthPrice) / Number(getsEthPrice);
+        if (quote === 0) return '';
+        if (type === 'exact') return quote.toString();
+        return (Math.round(quote * 9990) / 10000).toString(); // round down to nearest 4 decimal places
+    }
+    return '';
 }

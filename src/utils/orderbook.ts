@@ -1,4 +1,4 @@
-import { BigNumberish, ethers } from 'ethers6';
+import { BigNumberish, ethers, Signer } from 'ethers6';
 import { groupBy } from 'lodash';
 import { hashOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
@@ -45,60 +45,62 @@ export const sortLimitOrders = (limitOrders: any) => {
         .reduce((r, v) => r.concat(v), []);
 };
 
-export function orderTokens(offer: any) {
+export function orderTokens(offer: any, chainId: number) {
     const mapped = {
         gives: {
             amount: offer.gives.amount,
-            token: toAddress(offer.gives.token),
+            token: toAddress(offer.gives.token, chainId),
         },
         gets: {
-            token: toAddress(offer.gets.token),
+            token: toAddress(offer.gets.token, chainId),
             amount: offer.gets.amount,
         },
     };
-    if (mapped.gives.token === USDC.address) {
+    if (mapped.gives.token === USDC(chainId)?.address) {
         return givesBase(mapped);
-    } else if (mapped.gets.token === USDC.address) {
+    } else if (mapped.gets.token === USDC(chainId)?.address) {
         return givesTrade(mapped);
-    } else if (mapped.gives.token === USDT.address) {
+    } else if (mapped.gives.token === USDT(chainId)?.address) {
         return givesBase(mapped);
-    } else if (mapped.gets.token === USDT.address) {
+    } else if (mapped.gets.token === USDT(chainId)?.address) {
         return givesTrade(mapped);
-    } else if (mapped.gives.token === DAI.address) {
+    } else if (mapped.gives.token === DAI(chainId)?.address) {
         return givesBase(mapped);
-    } else if (mapped.gets.token === DAI.address) {
+    } else if (mapped.gets.token === DAI(chainId)?.address) {
         return givesTrade(mapped);
-    } else if (mapped.gives.token === ETH.address) {
+    } else if (mapped.gives.token === ETH(chainId)?.address) {
         return givesBase(mapped);
-    } else if (mapped.gets.token === ETH.address) {
+    } else if (mapped.gets.token === ETH(chainId)?.address) {
         return givesTrade(mapped);
     } else if (Number(mapped.gives.token.toLowerCase()) < Number(mapped.gets.token.toLowerCase())) {
         return givesBase(mapped);
     } else return givesTrade(mapped);
 }
 
-export async function formattedFromTransfer(transfer: any, provider: any) {
-    const token = toAddress(transfer.token);
+export async function formattedFromTransfer(transfer: any, chainId: number) {
+    const token = toAddress(transfer.token, chainId);
     return {
         token,
         amount: ethers.toBeHex(
-            ethers.parseUnits(transfer.amount, await getDecimals(token, provider)),
+            ethers.parseUnits(transfer.amount, await getDecimals(token, chainId)),
         ),
     };
 }
 
-export async function fromFormatted(trade: any, provider: any) {
-    const [givesToken, getsToken] = [trade.gives, trade.gets].map((v) => toAddress(v.token));
+export async function fromFormatted(trade: any, chainId: number) {
+    const [givesToken, getsToken] = [trade.gives, trade.gets].map((v) =>
+        toAddress(v.token, chainId),
+    );
     const returnObj = {
         gives: {
             token: givesToken,
             amount: ethers.toBeHex(
-                ethers.parseUnits(trade.gives.amount, await getDecimals(givesToken, provider)),
+                ethers.parseUnits(trade.gives.amount, await getDecimals(givesToken, chainId)),
             ),
         },
         gets: {
             amount: ethers.toBeHex(
-                ethers.parseUnits(trade.gets.amount, await getDecimals(getsToken, provider)),
+                ethers.parseUnits(trade.gets.amount, await getDecimals(getsToken, chainId)),
             ),
             token: getsToken,
         },
@@ -106,10 +108,10 @@ export async function fromFormatted(trade: any, provider: any) {
     return returnObj;
 }
 
-export async function toFormatted(transfer: any, provider: any) {
+export async function toFormatted(transfer: any, chainId: number) {
     if (!isERC20Transfer(transfer)) return transfer;
-    const token = fromAddress(transfer.token);
-    const decimals = await getDecimals(transfer.token, provider);
+    const token = fromAddress(transfer.token, chainId);
+    const decimals = await getDecimals(transfer.token, chainId);
     const amount = Number(ethers.formatUnits(transfer.amount, decimals)).toFixed(4);
     return {
         token,
@@ -117,22 +119,23 @@ export async function toFormatted(transfer: any, provider: any) {
     };
 }
 
-export async function toLimitOrder(offer: any, provider: any) {
+export async function toLimitOrder(offer: any, chainId: number) {
     const {
         pair: [base, trade],
         type,
-    } = orderTokens(offer);
+    } = orderTokens(offer, chainId);
     const [baseDecimals, tradeDecimals] = await Promise.all(
-        [base, trade].map(async (v) => await getDecimals(v.address, provider)),
+        [base, trade].map(async (v) => await getDecimals(v.address, chainId)),
     );
     const price =
         Number(ethers.formatUnits(base.amount, baseDecimals)) /
         Number(ethers.formatUnits(trade.amount, tradeDecimals));
     return {
+        chainId: offer.chainId || 1,
         price: String(price),
         amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,
-        ticker: await toTicker([base, trade], provider),
+        ticker: await toTicker([base, trade], chainId),
         hash: hashOffer(offer),
     };
 }
@@ -141,11 +144,14 @@ export function filterERC20OffersForTicker(
     offers: any[],
     pair: string,
     type: 'ask' | 'bid',
+    chainId: number,
 ): any[] {
     if (!offers || offers.length === 0) return [];
     const filtered = offers.filter((v) => isERC20Transfer(v.gives) && isERC20Transfer(v.gets));
     const [trade, base] = pair.split('/');
-    const [tradeAddress, baseAddress] = [trade, base].map(toAddress).map((v) => v.toLowerCase());
+    const [tradeAddress, baseAddress] = [trade, base]
+        .map((x) => toAddress(x, chainId))
+        .map((v) => v.toLowerCase());
     const [givesAddress, getsAddress] =
         type === 'ask' ? [tradeAddress, baseAddress] : [baseAddress, tradeAddress];
     return filtered.filter(

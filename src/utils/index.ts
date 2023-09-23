@@ -7,11 +7,11 @@ export * from './peer';
 export * from './provider';
 export * from './toast';
 export * from './token';
-export * from './token-list';
 export * from './types';
 export * from './wallet';
 export * from './format';
 export * from './math';
+export * from './cache';
 
 export function defer() {
     let resolve,

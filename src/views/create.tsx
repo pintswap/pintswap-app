@@ -1,3 +1,6 @@
+/**
+ * @deprecated Now using new Swap view and Swap Module component
+ */
 import { Tab, Transition } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import {
@@ -9,6 +12,7 @@ import {
     PageStatus,
     DataTable,
     NFTDisplay,
+    TooltipWrapper,
 } from '../components';
 import { useTrade } from '../hooks/trade';
 import { usePintswapContext } from '../stores/pintswap';
@@ -98,13 +102,13 @@ export const CreateView = () => {
                         'readable',
                         entry[1].gives.amount || '',
                         entry[1].gives.token,
-                        pintswap.module?.signer,
+                        pintswap.chainId,
                     ),
                     receiving: await convertAmount(
                         'readable',
                         entry[1].gets.amount || '',
                         entry[1].gets.token,
-                        pintswap.module?.signer,
+                        pintswap.chainId,
                     ),
                 })),
             );
@@ -276,13 +280,22 @@ export const CreateView = () => {
                             toolbar={false}
                         />
                     </Card>
-                    <Button
-                        onClick={toggleActive}
-                        className="sm:max-w-lg sm:self-center mt-4"
-                        type="outline"
+                    <TooltipWrapper
+                        text={
+                            userData.active
+                                ? 'Removes offers from public orderbook'
+                                : 'Posts offers to public orderbook'
+                        }
+                        id="create-module-publish"
                     >
-                        {userData.active ? 'Stop Publishing' : 'Publish Offers'}
-                    </Button>
+                        <Button
+                            onClick={toggleActive}
+                            className="sm:max-w-lg sm:self-center mt-4"
+                            type="outline"
+                        >
+                            {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                        </Button>
+                    </TooltipWrapper>
                 </Transition>
             </div>
             <Transition

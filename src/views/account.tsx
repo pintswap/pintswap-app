@@ -1,5 +1,5 @@
 import { ethers } from 'ethers6';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
     Avatar,
     Button,
@@ -9,6 +9,7 @@ import {
     DropdownInput,
     Input,
     Skeleton,
+    TooltipWrapper,
     TransitionModal,
 } from '../components';
 import { useWindowSize } from '../hooks/window-size';
@@ -18,19 +19,34 @@ import { convertAmount } from '../utils/token';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { formatPeerImg, truncate } from '../utils';
+import { useSubgraph } from '../hooks';
+import { detectTradeNetwork } from '@pintswap/sdk';
 
 const columns = [
     {
         name: 'hash',
         label: 'Hash',
+        options: { sort: false },
+    },
+    {
+        name: 'chainId',
+        label: 'Chain',
     },
     {
         name: 'sending',
         label: 'Sending',
+        options: {
+            sort: false,
+            setCellHeaderProps: () => ({ align: 'right' }),
+        },
     },
     {
         name: 'receiving',
         label: 'Receiving',
+        options: {
+            sort: false,
+            setCellHeaderProps: () => ({ align: 'right' }),
+        },
     },
     {
         name: '',
@@ -39,8 +55,12 @@ const columns = [
 ];
 
 export const AccountView = () => {
+    const subgraph = useSubgraph({});
+    // TODO: remove
+    console.log('subgraph?.data?.userHistory', subgraph?.data?.userHistory);
     const { width } = useWindowSize();
     const navigate = useNavigate();
+    const { state } = useLocation();
     const { pintswap } = usePintswapContext();
     const { userTrades } = useOffersContext();
     const {
@@ -82,17 +102,18 @@ export const AccountView = () => {
             const tableDataRes = await Promise.all(
                 Array.from(userTrades, async (entry) => ({
                     hash: entry[0],
+                    chainId: await detectTradeNetwork(entry[1]),
                     sending: await convertAmount(
                         'readable',
                         entry[1].gives.amount || '',
                         entry[1].gives.token,
-                        pintswap.module?.signer,
+                        pintswap.chainId,
                     ),
                     receiving: await convertAmount(
                         'readable',
                         entry[1].gets.amount || '',
                         entry[1].gets.token,
-                        pintswap.module?.signer,
+                        pintswap.chainId,
                     ),
                 })),
             );
@@ -100,7 +121,7 @@ export const AccountView = () => {
         })().catch((err) => console.error(err));
     }, [userTrades.size]);
 
-    const TABS = ['Profile', width > 600 ? 'Your Orders' : 'Orders'];
+    const TABS = ['Profile', 'Offers', 'History'];
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
@@ -128,11 +149,11 @@ export const AccountView = () => {
                     </Skeleton>
                 </div>
             </div>
-            <Card tabs={TABS} type="tabs" scroll>
+            <Card tabs={TABS} defaultTab={state?.tab && state?.tab} type="tabs">
                 <Tab.Panel>
                     <form>
                         <div
-                            className={`grid grid-cols-1 lg:grid-cols-2 gap-3 lg:gap-5 overflow-x-hidden`}
+                            className={`grid grid-cols-1 lg:flex gap-3 lg:gap-5 overflow-x-hidden mt-3`}
                         >
                             <div
                                 className={`flex flex-col gap-3 lg:gap-5 justify-center items-center mt-4 mb-2 lg:my-0`}
@@ -143,7 +164,7 @@ export const AccountView = () => {
                                     >
                                         {useNft.using ? (
                                             <div
-                                                className={`flex flex-col gap-2 justify-center items-center w-full`}
+                                                className={`flex flex-col gap-2 justify-center items-center w-full min-w-[254px] min-h-[254px]`}
                                             >
                                                 <Input
                                                     value={useNft.address}
@@ -184,10 +205,10 @@ export const AccountView = () => {
                                                             setImgFile(e.target.files[0].name);
                                                         updateImg(e);
                                                     }}
-                                                    className="absolute bg-transparent rounded h-[200px] w-[200px] text-transparent z-50 hover:cursor-pointer text-center"
+                                                    className="absolute bg-transparent rounded h-[250px] w-[250px] text-transparent z-50 hover:cursor-pointer text-center"
                                                     src={formatPeerImg(img)}
                                                 />
-                                                <span className="absolute h-[204px] w-[204px] -translate-x-0.5 translate-y-0.5">
+                                                <span className="absolute h-[254px] w-[254px] -translate-x-0.5 translate-y-0.5">
                                                     <span className="flex justify-center items-center h-full w-full -top-1 relative rounded bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
                                                         {imgFile ? (
                                                             imgFile
@@ -201,14 +222,14 @@ export const AccountView = () => {
                                                     </span>
                                                 </span>
                                                 <Avatar
-                                                    size={200}
+                                                    size={250}
                                                     peer={pintswap?.module?.address}
                                                     imgShape="square"
                                                 />
                                             </div>
                                         )}
                                         <Button
-                                            className={`text-sm text-center lg:absolute lg:mt-60 ${
+                                            className={`text-sm text-center lg:absolute lg:mt-72 ${
                                                 useNft.using ? 'mt-5' : ''
                                             }`}
                                             type="transparent"
@@ -220,13 +241,13 @@ export const AccountView = () => {
                                     </div>
                                 ) : (
                                     <Avatar
-                                        size={200}
+                                        size={250}
                                         peer={pintswap?.module?.address}
                                         imgShape="square"
                                     />
                                 )}
                             </div>
-                            <div className="grid grid-cols-1 gap-3 lg:gap-2">
+                            <div className="grid grid-cols-1 gap-3 lg:gap-2 lg:flex-auto">
                                 <div className="flex items-end w-full flex-grow">
                                     <Input
                                         value={
@@ -310,19 +331,37 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <DataTable columns={columns} data={tableData} type="manage" toolbar={false} />
                 </Tab.Panel>
+                <Tab.Panel>
+                    <DataTable
+                        columns={columns}
+                        data={subgraph?.data?.userHistory || []}
+                        toolbar={false}
+                        type="history"
+                        loading={subgraph.isLoading}
+                    />
+                </Tab.Panel>
             </Card>
 
             <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
-                <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
+                <Button onClick={() => navigate('/swap')} className="sm:max-w-lg sm:self-center">
                     Create Order
                 </Button>
-                <Button
-                    onClick={toggleActive}
-                    className="sm:max-w-lg sm:self-center"
-                    type="transparent"
+                <TooltipWrapper
+                    text={
+                        userData.active
+                            ? 'Removes offers from public orderbook'
+                            : 'Posts offers to public orderbook'
+                    }
+                    id="account-module-publish"
                 >
-                    {userData.active ? 'Stop Publishing' : 'Publish Offers'}
-                </Button>
+                    <Button
+                        onClick={toggleActive}
+                        className="sm:max-w-lg sm:self-center"
+                        type="transparent"
+                    >
+                        {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                    </Button>
+                </TooltipWrapper>
             </div>
         </div>
     );

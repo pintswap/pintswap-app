@@ -19,7 +19,7 @@ import { ToastContainer } from 'react-toastify';
 import { Pintswap } from '@pintswap/sdk';
 import { detectPermit } from '@pintswap/sdk/lib/detect-permit';
 
-import { useSigner } from 'wagmi';
+import { useAccount, useSigner } from 'wagmi';
 import 'react-toastify/dist/ReactToastify.css';
 import { cryptoFromSeed } from '@pintswap/sdk/lib/p2p';
 import { SwapView } from './views/swap';
@@ -32,6 +32,7 @@ setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
 function App() {
     const { pintswap } = usePintswapContext();
+    const { address } = useAccount();
     const { data: signer } = useSigner();
     (window as any).signer = signer;
     if (!(window as any).pintswap && pintswap.module) {
@@ -62,8 +63,13 @@ function App() {
                     <Route path="/fulfill" element={<TradeSearchView />} />
                     <Route path="/fulfill/:multiaddr/:hash" element={<FulfillView />} />
                     <Route path="/fulfill/:multiaddr/nft/:hash" element={<FulfillNFTView />} />
+                    <Route path="/fulfill/:multiaddr/:hash/:chainid" element={<FulfillView />} />
+                    <Route
+                        path="/fulfill/:multiaddr/nft/:hash/:chainid"
+                        element={<FulfillNFTView />}
+                    />
 
-                    <Route path="*" element={<Navigate to="/markets" />} />
+                    <Route path="*" element={<Navigate to={address ? '/swap' : '/markets'} />} />
                 </Routes>
             </Base>
 

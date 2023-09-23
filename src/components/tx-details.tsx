@@ -13,7 +13,7 @@ type ITxDetailsProps = {
 
 export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
     const {
-        pintswap: { module },
+        pintswap: { module, chainId },
     } = usePintswapContext();
     const [displayTrade, setDisplayTrade] = useState({ sending: '0', receiving: '0' });
     const sending = trade.gives;
@@ -28,13 +28,13 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                     'readable',
                     sending.amount || '0',
                     sending.token,
-                    module?.signer,
+                    chainId,
                 ),
                 receiving: await convertAmount(
                     'readable',
                     receiving.amount || '0',
                     receiving.token,
-                    module?.signer,
+                    chainId,
                 ),
             });
         })().catch((err) => console.error(err));

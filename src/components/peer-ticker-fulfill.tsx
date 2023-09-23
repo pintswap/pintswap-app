@@ -8,7 +8,7 @@ import { useAccount, useSigner } from 'wagmi';
 import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
-import { usePricesContext } from '../stores';
+import { usePintswapContext, usePricesContext } from '../stores';
 import { usePrices } from '../hooks';
 
 export const PeerTickerFulfill = ({
@@ -20,7 +20,9 @@ export const PeerTickerFulfill = ({
     const prices = usePricesContext();
     const { base: baseAsset, trade: tradeAsset } = useParams();
     const { address } = useAccount();
-    const { data: signer } = useSigner();
+    const {
+        pintswap: { module, chainId },
+    } = usePintswapContext();
     const { fulfillTrade, loading, trade, steps, order, error, fill, setFill } = useTrade();
     const [limitOrder, setLimitOrder] = useState<any>({
         price: '',
@@ -46,7 +48,7 @@ export const PeerTickerFulfill = ({
                     token: ((matchInputs.list[0] || {}).gets || {}).token || ethers.ZeroAddress,
                     amount: input,
                 },
-                signer,
+                chainId,
             )
         ).amount;
         const newMatchInputs = {
@@ -74,7 +76,7 @@ export const PeerTickerFulfill = ({
                             amount: match.effective.gives,
                         },
                     },
-                    signer,
+                    chainId,
                 )) as any;
                 if (TESTING)
                     console.log('tradeType:', tradeType, '\nmatch:', match, '\nlimit:', limit);

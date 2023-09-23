@@ -10,6 +10,7 @@ import {
     UserStore,
     PeersStore,
     PricesStore,
+    NetworkStore,
 } from './stores';
 
 import './styles/tailwind.css';
@@ -17,10 +18,10 @@ import 'react-tooltip/dist/react-tooltip.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
-    <>
+    <WagmiConfig client={wagmiClient}>
         <ThemeStore>
-            <WagmiConfig client={wagmiClient}>
-                <RainbowKitProvider chains={chains} theme={walletTheme}>
+            <RainbowKitProvider chains={chains} theme={walletTheme}>
+                <NetworkStore>
                     <PintswapStore>
                         <PricesStore>
                             <OffersStore>
@@ -34,8 +35,8 @@ root.render(
                             </OffersStore>
                         </PricesStore>
                     </PintswapStore>
-                </RainbowKitProvider>
-            </WagmiConfig>
+                </NetworkStore>
+            </RainbowKitProvider>
         </ThemeStore>
-    </>,
+    </WagmiConfig>,
 );
