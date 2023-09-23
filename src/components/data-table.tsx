@@ -10,9 +10,10 @@ import { useOffersContext, usePintswapContext, usePricesContext, useUserContext 
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
-import { BASE_URL, EXPLORER_URLS, truncate, muiCache, muiOptions, muiTheme } from '../utils';
+import { BASE_URL, NETWORKS, truncate, muiCache, muiOptions, muiTheme } from '../utils';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
+import { TooltipWrapper } from './tooltip';
 
 type IDataTableProps = {
     title?: string;
@@ -137,7 +138,7 @@ const CustomRow = (props: IDataTableProps) => {
     } = usePintswapContext();
     const { eth } = usePricesContext();
     const cols = columns as string[];
-    const { width, breakpoints } = useWindowSize();
+    const { tableBreak } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
 
@@ -174,7 +175,7 @@ const CustomRow = (props: IDataTableProps) => {
                 );
             }
             case 'history':
-                return window.open(`${EXPLORER_URLS[chainId]}/tx/${firstCell}`, '_blank');
+                return window.open(`${NETWORKS[chainId].explorer}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook':
                 return navigate(`/${peer}/${firstCell}`);
             case 'pairs':
@@ -204,8 +205,8 @@ const CustomRow = (props: IDataTableProps) => {
     };
 
     const formatCell = (s: string) => {
-        if (type === 'history') {
-            const [amount, asset] = s.split(' ');
+        if (type === 'history' || type === 'manage') {
+            const [amount, asset] = type === 'manage' ? s.split('  ') : s.split(' ');
             return (
                 <span className="flex items-center gap-1.5 justify-end">
                     <SmartPrice price={amount} />
@@ -246,7 +247,7 @@ const CustomRow = (props: IDataTableProps) => {
                         Cancel
                     </Button>
                 );
-            } else if (type === 'history' && width > breakpoints.md) {
+            } else if (type === 'history' && tableBreak) {
                 return (
                     <Button
                         className="text-indigo-500 hover:!text-indigo-600 w-full text-right"
@@ -259,12 +260,10 @@ const CustomRow = (props: IDataTableProps) => {
             return <></>;
         }
 
-        const charsShown = width > 900 ? 4 : 5;
+        const charsShown = tableBreak ? 4 : 5;
         if (
-            (typeof cell === 'string' && cell?.startsWith('pint') && cell.length > 30) ||
-            cell?.startsWith('Q') ||
-            cell?.startsWith('0x') ||
-            cell?.startsWith('pint')
+            typeof cell !== 'number' &&
+            (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))
         ) {
             // Address / MultiAddr
             return truncate(cell, charsShown);
@@ -313,6 +312,17 @@ const CustomRow = (props: IDataTableProps) => {
                         </span>
                     );
                 }
+                if ((type === 'history' || type === 'manage') && !isNaN(Number(cell)))
+                    return (
+                        <TooltipWrapper
+                            position={tableBreak ? 'right' : 'left'}
+                            wrapperClass="w-fit block"
+                            text={NETWORKS[Number(cell)].name}
+                            id={`account-datatable-${type}-${index}-${NETWORKS[Number(cell)].name}`}
+                        >
+                            <img src={NETWORKS[Number(cell)].logo} height="18" width="18" />
+                        </TooltipWrapper>
+                    );
                 // Display Big Number
                 _cell = cell;
                 return <SmartPrice price={_cell} />;
@@ -331,7 +341,7 @@ const CustomRow = (props: IDataTableProps) => {
         }
     };
     // Desktop
-    if (width >= 900) {
+    if (tableBreak) {
         return (
             <tr
                 className={`text-sm xl:text-base ${baseStyle} ${determineColor()}`}

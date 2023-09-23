@@ -20,12 +20,17 @@ import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
 import { formatPeerImg, truncate } from '../utils';
 import { useSubgraph } from '../hooks';
+import { detectTradeNetwork } from '@pintswap/sdk';
 
 const columns = [
     {
         name: 'hash',
         label: 'Hash',
         options: { sort: false },
+    },
+    {
+        name: 'chainId',
+        label: 'Chain',
     },
     {
         name: 'sending',
@@ -97,6 +102,7 @@ export const AccountView = () => {
             const tableDataRes = await Promise.all(
                 Array.from(userTrades, async (entry) => ({
                     hash: entry[0],
+                    chainId: await detectTradeNetwork(entry[1]),
                     sending: await convertAmount(
                         'readable',
                         entry[1].gives.amount || '',

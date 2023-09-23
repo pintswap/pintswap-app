@@ -34,7 +34,7 @@ export const SwapView = () => {
     } = useTrade();
     const [isPublic, setIsPublic] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [resolvedName, setResolvedName] = useState(module?.peerId?.toB58String());
+    const [resolvedName, setResolvedName] = useState(module?.address);
 
     const handleSwap = async (e: React.SyntheticEvent) => {
         await broadcastTrade(e, isPublic);
@@ -47,7 +47,7 @@ export const SwapView = () => {
     };
 
     const createTradeLink = () => {
-        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName || module?.peerId?.toB58String()}`;
+        let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName || module?.address}`;
         if (trade.gives.tokenId) {
             finalUrl = `${finalUrl}/nft/${order.orderHash}`;
         } else {
@@ -62,7 +62,7 @@ export const SwapView = () => {
             if (module) {
                 try {
                     const dripName = await module.resolveName(module.peerId.toB58String());
-                    setResolvedName(dripName);
+                    setResolvedName(dripName ? dripName : module.address);
                 } catch (e) {
                     module && module.logger.error(e);
                 }

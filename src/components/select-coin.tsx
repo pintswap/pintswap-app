@@ -10,7 +10,7 @@ import {
     dropdownItemClass,
     getSymbol,
     toAddress,
-    EXPLORER_URLS,
+    NETWORKS,
     balanceTokenSort,
 } from '../utils';
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
@@ -85,7 +85,7 @@ export const SelectCoin = ({
                                     id={`select-coin-${type}-${asset}-${chainId}`}
                                 >
                                     <a
-                                        href={`${EXPLORER_URLS[chainId]}/token/${toAddress(
+                                        href={`${NETWORKS[chainId].explorer}/token/${toAddress(
                                             asset,
                                             chainId,
                                         )}`}

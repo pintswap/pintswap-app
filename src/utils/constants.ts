@@ -14,12 +14,22 @@ export const WS_URL: string = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
 // NETWORKS
 export const DEFAULT_NETWORK = 'ethereum';
 export const DEFAULT_CHAINID = 1;
-export const EXPLORER_URLS: Record<number, string> = {
-    1: 'https://etherscan.io',
-    42161: 'https://arbiscan.io', // arb
-    // 10: 'https://optimistic.etherscan.io', // op
-    // 137: 'https://polygonscan.com', // polygon
-    // 8453: 'https://basescan.org', // base
+export const NETWORKS: Record<number, Record<'explorer' | 'logo' | 'name', string>> = {
+    1: {
+        explorer: 'https://etherscan.io',
+        logo: '/networks/ethereum.svg',
+        name: 'Ethereum',
+    },
+    42161: {
+        explorer: 'https://arbiscan.io',
+        logo: '/networks/arbitrum.svg',
+        name: 'Arbitrum',
+    },
+    // 10: {
+    //     explorer: 'https://optimistic.etherscan.io',
+    //     logo: '/networks/optimism.svg',
+    //     name: 'Optimism'
+    // }
 };
 
 // ENDPOINTS

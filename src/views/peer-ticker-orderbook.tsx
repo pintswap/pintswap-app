@@ -13,7 +13,7 @@ import { useLimitOrders, useWindowSize } from '../hooks';
 import { ethers } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { EXPLORER_URLS } from '../utils';
+import { NETWORKS } from '../utils';
 import { usePintswapContext } from '../stores';
 
 const columns = [
@@ -166,7 +166,7 @@ export const PeerTickerOrderbookView = () => {
                                 position="left"
                             >
                                 <a
-                                    href={`${EXPLORER_URLS[chainId]}/token/${
+                                    href={`${NETWORKS[chainId].explorer}/token/${
                                         determineTokenAddresses()?.quote
                                     }`}
                                     rel="noreferrer"
@@ -183,7 +183,7 @@ export const PeerTickerOrderbookView = () => {
                                 position="left"
                             >
                                 <a
-                                    href={`${EXPLORER_URLS[chainId]}/token/${
+                                    href={`${NETWORKS[chainId].explorer}/token/${
                                         determineTokenAddresses()?.base
                                     }`}
                                     rel="noreferrer"
