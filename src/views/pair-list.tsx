@@ -134,7 +134,7 @@ export const PairListView = () => {
                             options={{
                                 sortOrder: {
                                     name: 'price',
-                                    direction: 'desc',
+                                    direction: 'asc',
                                 },
                             }}
                             trade="asks"
@@ -151,7 +151,7 @@ export const PairListView = () => {
                             options={{
                                 sortOrder: {
                                     name: 'price',
-                                    direction: 'asc',
+                                    direction: 'desc',
                                 },
                             }}
                             trade="bids"
