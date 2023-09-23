@@ -17,13 +17,13 @@ export const PeerTickerFulfill = ({
     matchInputs,
     setMatchInputs,
 }: any) => {
-    const prices = usePricesContext();
     const { base: baseAsset, trade: tradeAsset } = useParams();
     const { address } = useAccount();
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
-    const { fulfillTrade, loading, trade, steps, order, error, fill, setFill } = useTrade();
+    const { fulfillTrade, loading, trade, steps, order, error, fill, setFill, isButtonDisabled } =
+        useTrade();
     const [limitOrder, setLimitOrder] = useState<any>({
         price: '',
         output: '',
@@ -169,15 +169,7 @@ export const PeerTickerFulfill = ({
                         loadingText="Fulfilling"
                         loading={loading.fulfill && !error}
                         onClick={fulfillTrade}
-                        disabled={
-                            !trade.gets.amount ||
-                            !trade.gives.amount ||
-                            !trade.gets.token ||
-                            !trade.gives.token ||
-                            loading.trade ||
-                            loading.fulfill ||
-                            !address
-                        }
+                        disabled={!inputAsset || !outputAsset || !fill?.input || !fill?.output}
                     >
                         Swap
                     </Button>
