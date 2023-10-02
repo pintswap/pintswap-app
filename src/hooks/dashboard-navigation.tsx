@@ -44,6 +44,13 @@ export const useDashNav = () => {
               },
           ]
         : [
+                          {
+                  text: 'Swap',
+                  route: '/swap',
+                  disabled: false,
+                  icon: <MdSwapHoriz size={ICON_SIZE} />,
+                  tooltip: 'Automatically swap tokens',
+              },
               {
                   text: 'Markets',
                   route: '/markets',
