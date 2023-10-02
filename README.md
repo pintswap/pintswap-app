@@ -17,11 +17,6 @@ In the project directory, you can run:
 Runs the app in the development mode on localhost network.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-### `yarn start:dev:eth`
-
-Runs the app in the development mode on mainnet network.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
 ### `yarn start`
 
 Runs the app in production mode on mainnet network.
