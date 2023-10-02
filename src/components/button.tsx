@@ -1,7 +1,7 @@
-import { useChainModal } from '@rainbow-me/rainbowkit';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { MouseEventHandler, ReactNode } from 'react';
 import { ImSpinner9 } from 'react-icons/im';
-import { useNetwork } from 'wagmi';
+import { useAccount, useNetwork } from 'wagmi';
 import { Avatar } from './avatar';
 
 type IButtonProps = {
@@ -27,8 +27,10 @@ export const Button = ({
     form,
     checkNetwork,
 }: IButtonProps) => {
+    const { address } = useAccount();
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
+    const { openConnectModal } = useConnectModal();
 
     const renderType = () => {
         switch (type) {
@@ -43,13 +45,38 @@ export const Button = ({
         }
     };
 
+    const render = () => {
+        if (loadingText && loading) {
+            return {
+                text: loadingText,
+                onClick: () => {},
+            };
+        }
+        if (!address && checkNetwork) {
+            return {
+                text: 'Connect Wallet',
+                onClick: openConnectModal,
+            };
+        }
+        if (chain?.unsupported && checkNetwork) {
+            return {
+                text: 'Switch Networks',
+                onClick: openChainModal,
+            };
+        }
+        return {
+            text: children,
+            onClick: onClick,
+        };
+    };
+
     const borderStyle =
         type === 'wallet' ? `border-0` : `border-indigo-800 hover:border-indigo-900`;
     const paddingStyle = type === 'wallet' ? `p-0.5` : `px-2 py-1 lg:px-3 lg:py-1.5`;
     return (
         <button
             type={form ? form : 'button'}
-            onClick={chain?.unsupported && checkNetwork ? openChainModal : onClick}
+            onClick={render().onClick}
             disabled={disabled}
             className={`${className} ${renderType()} ${borderStyle} ${paddingStyle} rounded shadow disabled:cursor-not-allowed transition duration-200 border-2 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
@@ -58,13 +85,11 @@ export const Button = ({
                     className={`px-2 py-1 lg:px-3 lg:py-1.5 flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 back rounded-sm transition duration-200 group relative`}
                 >
                     <div className="absolute inset-0 h-0 w-0 transition-all duration-[250ms] ease-out group-hover:h-full group-hover:w-full bg-gradient-to-tr from-gray-800 via-gray-900 to-gray-900"></div>
-                    <span className="relative">
-                        {loadingText && loading ? loadingText : children}
-                    </span>
+                    <span className="relative">{render().text}</span>
                 </div>
             ) : (
                 <>
-                    {loadingText && loading ? loadingText : children}
+                    {render().text}
                     {loading && <ImSpinner9 className="animate-spin" />}
                 </>
             )}
