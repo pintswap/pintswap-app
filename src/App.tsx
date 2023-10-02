@@ -69,7 +69,7 @@ function App() {
                         element={<FulfillNFTView />}
                     />
 
-                    <Route path="*" element={<Navigate to={address ? '/swap' : '/markets'} />} />
+                    <Route path="*" element={<Navigate to={'/swap'} />} />
                 </Routes>
             </Base>
 
