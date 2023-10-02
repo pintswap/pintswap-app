@@ -26,7 +26,7 @@ export const Navbar = () => {
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button onClick={() => navigate('/')} className="flex gap-1">
                         <img
-                            src="/logo/ps-logo-drip.png"
+                            src="/logo/pintswap-logo.svg"
                             alt="PintSwap Logo"
                             height={logoSize.height}
                             width={logoSize.width}

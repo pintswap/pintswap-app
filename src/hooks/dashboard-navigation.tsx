@@ -44,7 +44,7 @@ export const useDashNav = () => {
               },
           ]
         : [
-                          {
+              {
                   text: 'Swap',
                   route: '/swap',
                   disabled: false,
