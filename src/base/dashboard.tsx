@@ -105,8 +105,13 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                 </div>
 
                 {address && (
-                    <div className="fixed left-2 bottom-2">
-                        <Avatar type="clickable" showActive peer={pintswap?.module?.address} />
+                    <div className="fixed left-2 bottom-1">
+                        <Avatar
+                            size={42}
+                            type="clickable"
+                            showActive
+                            peer={pintswap?.module?.address}
+                        />
                     </div>
                 )}
             </>
