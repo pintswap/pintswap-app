@@ -3,7 +3,7 @@ import { Menu, Transition } from '@headlessui/react';
 import { classNames } from '../utils/format';
 import { useNavigate } from 'react-router-dom';
 import { ActiveText } from './active-text';
-import { AnimatedHamburger } from './hamburger';
+import { AnimatedHamburger } from './animated-hamburger';
 
 export type IDropdownMenuItemsProps = {
     text: string;
@@ -59,7 +59,7 @@ export const DropdownMenu = ({ items, customIcon, buttonClass, onClick }: IDropd
                                             >
                                                 <ActiveText
                                                     route={item.route}
-                                                    className="text-indigo-500"
+                                                    className="text-primary"
                                                 >
                                                     {item.icon}
                                                 </ActiveText>

@@ -35,13 +35,13 @@ export const Button = ({
     const renderType = () => {
         switch (type) {
             case 'wallet':
-                return `bg-gradient-to-tr from-sky-400 to-indigo-500 !border-0`;
+                return `bg-gradient-to-tr from-accent-light to-primary !border-0`;
             case 'outline':
-                return 'bg-gray-900 disabled:border-indigo-900';
+                return 'bg-gray-900 disabled:border-primary-disabled';
             case 'transparent':
                 return '!border-0 !bg-transparent hover:text-neutral-300 !p-0';
             default:
-                return 'bg-indigo-800 hover:bg-indigo-900 disabled:bg-indigo-900 disabled:text-neutral-400 disabled:border-indigo-900';
+                return 'bg-primary-regular hover:bg-primary-hover disabled:bg-primary-disabled disabled:text-neutral-400 disabled:border-primary-disabled';
         }
     };
 
@@ -71,7 +71,7 @@ export const Button = ({
     };
 
     const borderStyle =
-        type === 'wallet' ? `border-0` : `border-indigo-800 hover:border-indigo-900`;
+        type === 'wallet' ? `border-0` : `border-primary-regular hover:border-primary-hover`;
     const paddingStyle = type === 'wallet' ? `p-0.5` : `px-2 py-1 lg:px-3 lg:py-1.5`;
     return (
         <button

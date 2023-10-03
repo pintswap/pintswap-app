@@ -21,8 +21,26 @@ module.exports = {
                     pink: '#f472b6',
                     blue: '#0ea5e9',
                 },
-                indigo: {
-                    hover: '#5055e0',
+                primary: {
+                    light: '#884bdd',
+                    regular: '#5d10c9',
+                    dark: '#3d167f',
+                    hover: '#7422e8',
+                    disabled: '#472777',
+                    DEFAULT: '#8224FE',
+                },
+                secondary: {
+                    black: '#000000',
+                    dark: '#545454',
+                    regular: '#707070',
+                    light: '#ABABAB',
+                    DEFAULT: '#707070',
+                },
+                accent: {
+                    light: '#FF6FA9',
+                    regular: '#ff3869',
+                    dark: '#e51b4a',
+                    DEFAULT: '#FF4878',
                 },
             },
             maxWidth: {

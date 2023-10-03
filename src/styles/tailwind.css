@@ -16,7 +16,7 @@
   }
 
   .view-header {
-    @apply text-lg md:text-xl text-center mb-4 lg:mb-6 font-semibold;
+    @apply text-lg md:text-xl text-center mb-3 lg:mb-6 font-semibold;
   }
 
   /* For upload profile picture */

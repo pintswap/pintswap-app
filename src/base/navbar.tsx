@@ -13,20 +13,17 @@ export const Navbar = () => {
     const navigate = useNavigate();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-    const logoSize =
-        width < breakpoints.lg
-            ? { width: '170', height: '21.38' }
-            : { width: '180', height: '22.63' };
+    const logoSize = { width: '159', height: '28' };
 
     return (
         <>
             <nav
-                className={`bg-brand-dashboard py-3 lg:py-4 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
+                className={`bg-brand-dashboard py-2.5 lg:py-3 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button onClick={() => navigate('/')} className="flex gap-1">
                         <img
-                            src="/logo/ps-logo-drip.png"
+                            src="/logo/pintswap-logo.svg"
                             alt="PintSwap Logo"
                             height={logoSize.height}
                             width={logoSize.width}
@@ -87,7 +84,7 @@ export const Navbar = () => {
                                     </ActiveText>
                                     <ActiveText
                                         route={item.route || ''}
-                                        className="text-indigo-500"
+                                        className="text-primary-light"
                                     >
                                         {item.icon}
                                     </ActiveText>

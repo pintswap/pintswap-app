@@ -89,7 +89,7 @@ export const SwapView = () => {
                             state={!isPublic}
                             setState={() => setIsPublic(!isPublic)}
                             customColors={[
-                                'bg-gradient-to-tr to-indigo-700 from-sky-400',
+                                'bg-gradient-to-tr to-accent-dark from-accent-light',
                                 'bg-gradient-to-tr to-green-700 from-emerald-400',
                             ]}
                         />

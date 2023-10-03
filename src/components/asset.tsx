@@ -8,7 +8,7 @@ type IAssetProps = {
     size?: number;
     alt?: string;
     loading?: boolean;
-    fontSize?: 'text-sm' | 'text-md' | 'text-lg';
+    fontSize?: `text-${string}`;
     position?: 'left' | 'right';
 };
 

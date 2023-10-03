@@ -159,7 +159,7 @@ export const PeerTickerOrderbookView = () => {
 
                 <div className="justify-self-end hidden sm:block">
                     <span className="text-sm md:text-md xl:text-lg">
-                        <span className="flex sm:flex-col sm:justify-end text-left gap-0.5 xl:gap-0">
+                        <span className="flex sm:flex-col sm:justify-end text-left">
                             <TooltipWrapper
                                 id={`${ticker?.split('/')[0]}-address`}
                                 text={determineTokenAddresses()?.quote}
@@ -173,10 +173,14 @@ export const PeerTickerOrderbookView = () => {
                                     className="transition duration-100 hover:underline"
                                     target="_blank"
                                 >
-                                    <Asset symbol={ticker?.split('/')[0]} size={16} />
+                                    <Asset
+                                        fontSize="text-[15px]"
+                                        symbol={ticker?.split('/')[0]}
+                                        size={16}
+                                    />
                                 </a>
                             </TooltipWrapper>
-                            <hr className="border opacity-25" />
+                            <hr className="border opacity-25 my-1 2xl:my-1.5" />
                             <TooltipWrapper
                                 id={`${ticker?.split('/')[1]}-address`}
                                 text={determineTokenAddresses()?.base}
@@ -190,7 +194,11 @@ export const PeerTickerOrderbookView = () => {
                                     className="transition duration-100 hover:underline"
                                     target="_blank"
                                 >
-                                    <Asset symbol={ticker?.split('/')[1]} size={16} />
+                                    <Asset
+                                        fontSize="text-[15px]"
+                                        symbol={ticker?.split('/')[1]}
+                                        size={16}
+                                    />
                                 </a>
                             </TooltipWrapper>
                         </span>

@@ -46,9 +46,9 @@ export const ProgressIndicator = ({ steps }: IProgressIndicatorProps) => (
                                 }`}
                                 aria-hidden="true"
                             >
-                                <div className="h-0.5 w-full bg-indigo-600" />
+                                <div className="h-0.5 w-full bg-primary" />
                             </div>
-                            <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-indigo-700">
+                            <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-primary-dark">
                                 <MdCheck className="h-5 w-5 text-white" aria-hidden="true" />
                                 <span className="sr-only">{step.name}</span>
                             </span>
@@ -64,11 +64,11 @@ export const ProgressIndicator = ({ steps }: IProgressIndicatorProps) => (
                                 <div className="h-0.5 w-full bg-gray-200" />
                             </div>
                             <span
-                                className="relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-indigo-700 bg-white"
+                                className="relative flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary-dark bg-white"
                                 aria-current="step"
                             >
                                 <span
-                                    className="h-2.5 w-2.5 rounded-full bg-indigo-700 animate-ping-slow"
+                                    className="h-2.5 w-2.5 rounded-full bg-primary-dark animate-ping-slow"
                                     aria-hidden="true"
                                 />
                                 <span className="sr-only">{step.name}</span>

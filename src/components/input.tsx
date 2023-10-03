@@ -152,7 +152,7 @@ export const Input = ({
             />
             {token && maxClick && (
                 <button
-                    className="text-xs text-indigo-600 transition duration-200 hover:text-indigo-700 text-right flex gap-1 justify-end"
+                    className="text-xs text-primary transition duration-200 hover:text-primary-hover text-right flex gap-1 justify-end"
                     onClick={() => maxClick(tradeObjKey, balance.formatted)}
                 >
                     MAX:

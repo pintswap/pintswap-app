@@ -43,7 +43,10 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                             onClick={() => navigate(el.route || '/')}
                                             className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300`}
                                         >
-                                            <ActiveText route={el.route} className="text-sky-400">
+                                            <ActiveText
+                                                route={el.route}
+                                                className="text-accent-light"
+                                            >
                                                 {el.icon}
                                             </ActiveText>
                                             <ActiveText route={el.route}>{el.text}</ActiveText>
@@ -96,14 +99,19 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         return (
             <>
                 <div className="flex flex-grow justify-center">
-                    <main className={`w-full py-4 px-2 pb-16 ${backgroundClass} h-full`}>
+                    <main className={`w-full pt-3 px-2 pb-12 ${backgroundClass} h-full`}>
                         {children}
                     </main>
                 </div>
 
                 {address && (
-                    <div className="fixed left-2 bottom-2">
-                        <Avatar type="clickable" showActive peer={pintswap?.module?.address} />
+                    <div className="fixed left-2 bottom-1">
+                        <Avatar
+                            size={42}
+                            type="clickable"
+                            showActive
+                            peer={pintswap?.module?.address}
+                        />
                     </div>
                 )}
             </>
