@@ -76,7 +76,7 @@ export const DropdownInput = ({
                         !disabled ? 'justify-between' : 'justify-end'
                     } items-center gap-x-1.5 ${
                         type === 'nft-id'
-                            ? 'bg-indigo-600'
+                            ? 'bg-primary'
                             : 'bg-neutral-800 hover:bg-neutral-700 disabled:hover:bg-neutral-800'
                     } p-2 transition duration-100 disabled:hover:cursor-not-allowed ${
                         loading ? 'animate-pulse' : ''

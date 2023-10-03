@@ -56,7 +56,7 @@ export const Statistic = ({
         <div
             className={`transition duration-100 rounded-lg py-3 px-4 outline outline-2 bg-neutral-900 outline-neutral-700 flex flex-col ${
                 sizeClass().gap
-            } ${alignClass()} ${className || ''} ${hover ? 'hover:border-indigo-600' : ''}`}
+            } ${alignClass()} ${className || ''} ${hover ? 'hover:border-primary' : ''}`}
         >
             <div className="flex justify-between items-center w-full">
                 <span className={`${sizeClass().label} text-gray-400`}>{label}</span>

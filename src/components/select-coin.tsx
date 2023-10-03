@@ -75,7 +75,7 @@ export const SelectCoin = ({
                                 ? `bg-neutral-600 ${
                                       disabled && type !== 'fulfill' ? '' : 'hover:bg-neutral-500'
                                   }`
-                                : `bg-indigo-600  ${disabled ? '' : 'hover:bg-indigo-hover'}`
+                                : `bg-primary  ${disabled ? '' : 'hover:bg-primary-hover'}`
                         } ${type === 'fulfill' ? 'pr-2.5' : ''}`}
                     >
                         {asset ? (

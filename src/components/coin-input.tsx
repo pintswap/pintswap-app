@@ -82,7 +82,7 @@ export const CoinInput = ({
                 <small>
                     {max && (
                         <button
-                            className="p-0.5 text-indigo-600 hover:text-indigo-500 transition duration-100"
+                            className="p-0.5 text-primary hover:text-primary-hover transition duration-100"
                             onClick={() => {
                                 const amount = {
                                     currentTarget: {

@@ -87,7 +87,7 @@ export const Navbar = () => {
                                     </ActiveText>
                                     <ActiveText
                                         route={item.route || ''}
-                                        className="text-indigo-500"
+                                        className="text-primary-light"
                                     >
                                         {item.icon}
                                     </ActiveText>

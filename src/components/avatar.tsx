@@ -136,7 +136,7 @@ export const Avatar = ({
                         className={`${
                             ringColor
                                 ? ringColor
-                                : 'bg-gradient-to-r from-sky-400 to-indigo-500 p-[2.5px] hover:to-sky-500'
+                                : 'bg-gradient-to-r from-accent-light to-primary p-[2.5px] hover:opacity-80 transition duration-150'
                         } ${imgShape === 'square' ? 'rounded' : 'rounded-full'}`}
                     >
                         {showActive && <StatusIndicator active={userData.active} />}

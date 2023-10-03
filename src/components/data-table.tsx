@@ -14,6 +14,7 @@ import { BASE_URL, NETWORKS, truncate, muiCache, muiOptions, muiTheme } from '..
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
 import { TooltipWrapper } from './tooltip';
+import { MdOutlineOpenInNew } from 'react-icons/md';
 
 type IDataTableProps = {
     title?: string;
@@ -249,11 +250,9 @@ const CustomRow = (props: IDataTableProps) => {
                 );
             } else if (type === 'history' && tableBreak) {
                 return (
-                    <Button
-                        className="text-indigo-500 hover:!text-indigo-600 w-full text-right"
-                        type="transparent"
-                    >
-                        Explorer
+                    <Button className="text-neutral-400 w-full text-right" type="transparent">
+                        <span>Explorer</span>
+                        <MdOutlineOpenInNew size={14} />
                     </Button>
                 );
             }

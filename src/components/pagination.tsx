@@ -47,7 +47,7 @@ export const Pagination = ({ max, next, prev, jump, perPage, currentPage }: IPag
                     <button
                         key={`page-${page}`}
                         className={`flex justify-center w-full text-center ${
-                            currentPage === page ? 'text-indigo-500' : ''
+                            currentPage === page ? 'text-primary-light' : ''
                         } ${page === 0 ? 'items-end' : ''}`}
                         onClick={() => (page === 0 ? {} : jump(page))}
                     >

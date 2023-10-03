@@ -43,7 +43,10 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                             onClick={() => navigate(el.route || '/')}
                                             className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300`}
                                         >
-                                            <ActiveText route={el.route} className="text-sky-400">
+                                            <ActiveText
+                                                route={el.route}
+                                                className="text-accent-light"
+                                            >
                                                 {el.icon}
                                             </ActiveText>
                                             <ActiveText route={el.route}>{el.text}</ActiveText>

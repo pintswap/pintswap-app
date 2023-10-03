@@ -36,7 +36,7 @@ export const PageStatus = ({ type = 'loading', message, fx }: IPageStatusProps) 
                         <span className="text-xs">or</span>
                         <Button
                             type="transparent"
-                            className="text-indigo-600 hover:text-indigo-500"
+                            className="text-primary hover:text-primary-hover"
                             onClick={() => navigate('/')}
                         >
                             Return Home

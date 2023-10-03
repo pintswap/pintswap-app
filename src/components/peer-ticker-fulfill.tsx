@@ -128,7 +128,7 @@ export const PeerTickerFulfill = ({
                             title={
                                 <span className="flex justify-between items-end">
                                     <span>Price</span>
-                                    <span className="text-indigo-600 opacity-80 text-xs">
+                                    <span className="text-primary-light opacity-80 text-xs">
                                         <SmartPrice price={renderPrices.eth} /> ETH
                                     </span>
                                 </span>

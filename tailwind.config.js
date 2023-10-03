@@ -25,21 +25,23 @@ module.exports = {
                     light: '#884bdd',
                     regular: '#5d10c9',
                     dark: '#3d167f',
-                    hover: '#550fbf',
+                    hover: '#7422e8',
+                    disabled: '#472777',
                     DEFAULT: '#8224FE',
-                  },
-                  secondary: {
+                },
+                secondary: {
                     black: '#000000',
                     dark: '#545454',
                     regular: '#707070',
                     light: '#ABABAB',
                     DEFAULT: '#707070',
-                  },
-                  accent: {
+                },
+                accent: {
                     light: '#FF6FA9',
                     regular: '#ff3869',
+                    dark: '#e51b4a',
                     DEFAULT: '#FF4878',
-                  },
+                },
             },
             maxWidth: {
                 '8xl': '1920px',
