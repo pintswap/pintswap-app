@@ -99,7 +99,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         return (
             <>
                 <div className="flex flex-grow justify-center">
-                    <main className={`w-full py-4 px-2 pb-16 ${backgroundClass} h-full`}>
+                    <main className={`w-full pt-3 px-2 pb-12 ${backgroundClass} h-full`}>
                         {children}
                     </main>
                 </div>
