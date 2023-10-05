@@ -23,7 +23,21 @@ export type IOffersStoreProps = {
     setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     isLoading: boolean;
     allOffers: Record<'nft' | 'erc20', any[]>;
-    offersByChain: Record<'nft' | 'erc20', any[]>;
+    offersByChain: Record<
+        'nft' | 'erc20',
+        {
+            amount: string;
+            chainId: number;
+            hash: string;
+            multiAddr?: string;
+            peer: string;
+            price: string;
+            ticker: string;
+            type: string;
+            priceUsd: string;
+            priceEth: string;
+        }[]
+    >;
 };
 
 // Context

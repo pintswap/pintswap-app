@@ -35,7 +35,7 @@ export const Button = ({
     const renderType = () => {
         switch (type) {
             case 'wallet':
-                return `bg-gradient-to-tr from-accent-light to-primary`;
+                return `bg-gradient-to-tr to-accent-light from-primary`;
             case 'outline':
                 return 'bg-neutral-900 disabled:border-primary-disabled';
             case 'transparent':
@@ -47,13 +47,10 @@ export const Button = ({
 
     const renderBorder = () => {
         switch (type) {
-            case 'wallet':
-            case 'transparent':
-                return 'border-transparent';
             case 'outline':
-                return 'border-accent hover:border-accent-light';
+                return 'border-accent-light hover:border-accent';
             default:
-                return 'border-primary-regular hover:border-primary-hover';
+                return 'border-transparent';
         }
     };
 
@@ -88,7 +85,7 @@ export const Button = ({
             type={form ? form : 'button'}
             onClick={render().onClick}
             disabled={disabled}
-            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} border-[1.5px] 2xl:border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
+            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (
                 <div
