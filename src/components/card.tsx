@@ -52,7 +52,7 @@ export const Card = ({
                 >
                     {tabs && !header && (
                         <div className="text-center mb-2 lg:mb-3 font-semibold">
-                            <Tab.List className={`flex items-center gap-2`}>
+                            <Tab.List className={`flex items-center gap-1 2xl:gap-1.5`}>
                                 {tabs.map((tab, i) => (
                                     <Tab
                                         key={`tabs-${i}`}

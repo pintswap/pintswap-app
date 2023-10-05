@@ -108,7 +108,7 @@ export const SelectCoin = ({
                         {type !== 'fulfill' && <MdExpandMore />}
                     </span>
                 }
-                modalClass={`w-full !max-w-xl`}
+                modalClass={`w-full !max-w-lg`}
                 state={disabled ? false : modalOpen}
                 setState={disabled ? () => {} : setModalOpen}
             >

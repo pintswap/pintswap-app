@@ -35,13 +35,25 @@ export const Button = ({
     const renderType = () => {
         switch (type) {
             case 'wallet':
-                return `bg-gradient-to-tr from-accent-light to-primary !border-0`;
+                return `bg-gradient-to-tr from-accent-light to-primary`;
             case 'outline':
-                return 'bg-gray-900 disabled:border-primary-disabled';
+                return 'bg-neutral-900 disabled:border-primary-disabled';
             case 'transparent':
-                return '!border-0 !bg-transparent hover:text-neutral-300 !p-0';
+                return '!bg-transparent hover:text-neutral-300 !p-0';
             default:
                 return 'bg-primary-regular hover:bg-primary-hover disabled:bg-primary-disabled disabled:text-neutral-400 disabled:border-primary-disabled';
+        }
+    };
+
+    const renderBorder = () => {
+        switch (type) {
+            case 'wallet':
+            case 'transparent':
+                return 'border-transparent';
+            case 'outline':
+                return 'border-accent hover:border-accent-light';
+            default:
+                return 'border-primary-regular hover:border-primary-hover';
         }
     };
 
@@ -70,21 +82,19 @@ export const Button = ({
         };
     };
 
-    const borderStyle =
-        type === 'wallet' ? `border-0` : `border-primary-regular hover:border-primary-hover`;
-    const paddingStyle = type === 'wallet' ? `p-0.5` : `px-2 py-1 lg:px-3 lg:py-1.5`;
+    const paddingStyle = type === 'wallet' ? `` : `px-2 py-1 lg:px-3 lg:py-1.5`;
     return (
         <button
             type={form ? form : 'button'}
             onClick={render().onClick}
             disabled={disabled}
-            className={`${className} ${renderType()} ${borderStyle} ${paddingStyle} rounded shadow disabled:cursor-not-allowed transition duration-200 border-2 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
+            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} border-[1.5px] 2xl:border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (
                 <div
-                    className={`px-2 py-1 lg:px-3 lg:py-1.5 flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800 back rounded-sm transition duration-200 group relative`}
+                    className={`px-2 py-1 lg:px-3 lg:py-1.5 flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 back rounded transition duration-200 group relative`}
                 >
-                    <div className="absolute inset-0 h-0 w-0 transition-all duration-[250ms] ease-out group-hover:h-full group-hover:w-full bg-gradient-to-tr from-gray-800 via-gray-900 to-gray-900"></div>
+                    <div className="absolute h-0 w-0 transition-all duration-150 ease-out group-hover:h-full group-hover:w-full bg-gradient-to-tr from-neutral-900 via-neutral-900 to-neutral-900 rounded"></div>
                     <span className="relative">{render().text}</span>
                 </div>
             ) : (

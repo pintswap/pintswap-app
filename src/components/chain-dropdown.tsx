@@ -22,7 +22,7 @@ export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
         <Button
             onClick={() => (openChainModal ? openChainModal() : {})}
             className={`whitespace-nowrap text-md`}
-            type={'wallet'}
+            type={'outline'}
         >
             <img
                 src={`/networks/${getNetworkName()}.svg`}

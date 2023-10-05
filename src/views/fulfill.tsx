@@ -21,7 +21,7 @@ export const FulfillView = () => {
 
     return (
         <>
-            <div className="flex flex-col gap-4 md:gap-6 max-w-xl mx-auto">
+            <div className="flex flex-col gap-4 md:gap-6 max-w-lg mx-auto">
                 <div className="flex items-center justify-between">
                     <TransitionModal
                         button={
