@@ -84,7 +84,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                 />
                             </button>
                         </TooltipWrapper>
-                        <span className="text-sm text-neutral-500">{APP_VERSION}</span>
+                        <span className="text-xs 2xl:text-sm text-neutral-500">{APP_VERSION}</span>
                     </div>
                 </div>
                 <div

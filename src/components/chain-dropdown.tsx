@@ -1,7 +1,7 @@
 import { Button } from './button';
 import { useChainModal } from '@rainbow-me/rainbowkit';
 import { getNetwork } from '@wagmi/core';
-import { DEFAULT_NETWORK } from '../utils';
+import { MdChevronRight } from 'react-icons/md';
 
 type IChainDropdown = {
     size?: number;
@@ -22,14 +22,21 @@ export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
         <Button
             onClick={() => (openChainModal ? openChainModal() : {})}
             className={`whitespace-nowrap text-md`}
-            type={'outline'}
+            type={'transparent'}
         >
-            <img
-                src={`/networks/${getNetworkName()}.svg`}
-                alt={`${getNetworkName()} network`}
-                height={size}
-                width={size}
-            />
+            <span className="flex items-center group">
+                <img
+                    src={`/networks/${getNetworkName()}.svg`}
+                    className="group-hover:!fill-neutral-300"
+                    alt={`${getNetworkName()} network`}
+                    height={size}
+                    width={size}
+                />
+                <MdChevronRight
+                    className="rotate-90 group-hover:-translate-y-0.5 group-hover:text-neutral-300 transition-all duration-150 ease-out"
+                    size={18}
+                />
+            </span>
         </Button>
     );
 };

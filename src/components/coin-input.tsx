@@ -82,7 +82,7 @@ export const CoinInput = ({
                 <small>
                     {max && (
                         <button
-                            className="p-0.5 text-primary hover:text-primary-hover transition duration-100"
+                            className="p-0.5 group text-neutral-400"
                             onClick={() => {
                                 const amount = {
                                     currentTarget: {
@@ -95,7 +95,10 @@ export const CoinInput = ({
                                 onAmountChange(amount as any);
                             }}
                         >
-                            MAX: <SmartPrice price={balance?.data?.formatted || '0'} />
+                            MAX:{' '}
+                            <span className="text-primary group-hover:text-primary-hover transition duration-100">
+                                <SmartPrice price={balance?.data?.formatted || '0'} />
+                            </span>
                         </button>
                     )}
                 </small>
