@@ -7,7 +7,7 @@ import {
     FulfillView,
     PeerOrderbookView,
     AccountView,
-    PairsView,
+    MarketsView,
     PeersView,
     PairListView,
     PeerTickerOrderbookView,
@@ -45,7 +45,7 @@ function App() {
             <Base loading={pintswap.loading}>
                 <Routes>
                     <Route path="/swap" element={<SwapView />} />
-                    <Route path="/markets" element={<PairsView />} />
+                    <Route path="/markets" element={<MarketsView />} />
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
 

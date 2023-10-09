@@ -76,7 +76,9 @@ export const Navbar = () => {
                                 }}
                             >
                                 {i === 0 && (
-                                    <span className="text-sm text-neutral-500">{APP_VERSION}</span>
+                                    <span className="text-xs 2xl:text-sm text-neutral-500">
+                                        {APP_VERSION}
+                                    </span>
                                 )}
                                 <span className="flex items-center gap-2">
                                     <ActiveText route={item.route || ''}>

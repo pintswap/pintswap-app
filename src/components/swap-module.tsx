@@ -45,6 +45,7 @@ export const SwapModule = ({
     };
     const determineButtonText = () => {
         if (type === 'fulfill') return 'Fulfill';
+        if (!trade.gets.token) return 'Select a Token';
         if (!isPublic) return 'Create Offer';
         return 'Swap';
     };
@@ -98,7 +99,7 @@ export const SwapModule = ({
                     id="swap-module-get"
                 />
                 <Button
-                    className="w-full rounded-lg !py-3"
+                    className="w-full rounded-lg !py-2.5"
                     disabled={disabled}
                     loadingText={determineLoadingText()}
                     loading={loading?.broadcast || loading?.fulfill || loading?.trade}
@@ -111,7 +112,9 @@ export const SwapModule = ({
             </div>
         );
     } else {
+        const [isReversing, setIsReversing] = useState(false);
         const reverse = () => {
+            setIsReversing(true);
             setTrade &&
                 trade.gives.token &&
                 trade.gets.token &&
@@ -119,6 +122,7 @@ export const SwapModule = ({
                     gets: trade.gives,
                     gives: trade.gets,
                 });
+            setTimeout(() => setIsReversing(false), 200);
         };
 
         useEffect(() => {
@@ -126,10 +130,12 @@ export const SwapModule = ({
         }, [trade]);
 
         useEffect(() => {
-            (async () =>
-                updateTrade && updateTrade('gets.amount', await getQuote(trade, eth)))().catch(
-                (err) => console.error(err),
-            );
+            (async () => {
+                const quote = await getQuote(trade, eth);
+                if (Number(quote) > 0 && updateTrade && !isReversing) {
+                    updateTrade('gets.amount', quote);
+                }
+            })().catch((err) => console.error(err));
         }, [trade.gets.token, trade.gives.token, trade.gives.amount]);
 
         return (
@@ -182,7 +188,7 @@ export const SwapModule = ({
                         type="fulfill"
                     />
                     <Button
-                        className="w-full rounded-lg !py-3"
+                        className="w-full rounded-lg !py-2.5"
                         disabled={disabled}
                         loadingText={determineLoadingText()}
                         loading={loading?.broadcast || loading?.fulfill || loading?.trade}

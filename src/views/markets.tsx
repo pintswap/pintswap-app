@@ -1,16 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Button, Card, GradientBorder, Header, Input } from '../components';
-import { useOffersContext, usePintswapContext } from '../stores';
-import { getTokenLogo } from '../utils/token';
-import { useSearch } from '../hooks';
+import { useOffersContext, usePricesContext } from '../stores';
+import { calculatePrices, useSearch } from '../hooks';
 
-export const PairsView = () => {
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+type IMarketProps = {
+    quote: string;
+    bases: string[];
+    low: number;
+    high: number;
+    liquidity: number; // TODO: show amount in USD amount
+    bid: boolean;
+    ask: boolean;
+};
+
+export const MarketsView = () => {
     const navigate = useNavigate();
     const { offersByChain, isLoading } = useOffersContext();
+    const { eth } = usePricesContext();
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
 
@@ -18,6 +25,38 @@ export const PairsView = () => {
 
     useEffect(() => {
         if (offersByChain.erc20) {
+            const uniqueMarkets: IMarketProps[] = [];
+            offersByChain.erc20.forEach((m) => {
+                const split = m.ticker.split('/');
+                const quoteToken = split[0];
+                const found = uniqueMarkets.find((u) => u.quote === quoteToken);
+                const price = Number(m.priceUsd);
+                if (found) {
+                    // If base asset not included in 'bases' list
+                    if (!found.bases.includes(split[1])) found.bases.push(split[1]);
+                    // Check for lower or higher price
+                    if (found.high < price) found.high = price;
+                    if (found.low > price) found.low = price;
+                    // Sum liquidity
+                    found.liquidity += price;
+                    // Check if bid or ask exists
+                    const isAsk = m.type === 'ask';
+                    if (isAsk) found.ask = true;
+                    else found.bid = true;
+                } else {
+                    const isAsk = m.type === 'ask';
+                    uniqueMarkets.push({
+                        quote: quoteToken,
+                        bases: [split[1]],
+                        low: price,
+                        high: price,
+                        liquidity: price,
+                        bid: !isAsk,
+                        ask: isAsk,
+                    });
+                }
+            });
+            console.log('unique markets', uniqueMarkets);
             setUniquePairs(Array.from(new Set(offersByChain.erc20.map((o) => o.ticker))));
         }
     }, [offersByChain.erc20]);

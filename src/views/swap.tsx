@@ -72,7 +72,7 @@ export const SwapView = () => {
 
     return (
         <>
-            <div className="flex flex-col max-w-xl mx-auto">
+            <div className="flex flex-col max-w-lg mx-auto">
                 <h2 className="view-header text-left">Swap</h2>
                 <Card
                     className="!py-4"
