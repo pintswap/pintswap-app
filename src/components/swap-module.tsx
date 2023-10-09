@@ -45,8 +45,8 @@ export const SwapModule = ({
     };
     const determineButtonText = () => {
         if (type === 'fulfill') return 'Fulfill';
-        if (!isPublic) return 'Create Offer';
         if (!trade.gets.token) return 'Select a Token';
+        if (!isPublic) return 'Create Offer';
         return 'Swap';
     };
 
