@@ -1,11 +1,11 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { ITokenProps, getTokenList } from '../utils';
+import { IMarketProps, ITokenProps, getTokenList } from '../utils';
 import { IUserDataProps, usePintswapContext } from '../stores';
 
 const isKeyInObjArray = (list: any[], key: string) =>
     list.some((obj) => Object.keys(obj).includes(key));
 
-export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => {
+export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[] | IMarketProps[]) => {
     const {
         pintswap: { chainId },
     } = usePintswapContext();
@@ -14,6 +14,7 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => 
     const determineType = () => {
         if (isKeyInObjArray(list, 'symbol')) return 'token';
         else if (isKeyInObjArray(list, 'bio')) return 'user';
+        else if (isKeyInObjArray(list, 'offers')) return 'markets';
         else return 'string';
     };
 
@@ -31,6 +32,11 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[]) => 
             results = (list as IUserDataProps[]).filter((el) => {
                 if (e.target.value === '') return list;
                 return el.name.toLowerCase().includes(e.target.value.toLowerCase());
+            });
+        } else if (determineType() === 'markets') {
+            results = (list as IMarketProps[]).filter((el) => {
+                if (e.target.value === '') return list;
+                return el.quote.toLowerCase().includes(e.target.value.toLowerCase());
             });
         } else {
             results = (list as string[]).filter((el) => {

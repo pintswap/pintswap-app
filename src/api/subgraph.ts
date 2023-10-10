@@ -1,8 +1,15 @@
-import { ethers, Signer } from 'ethers6';
+import { ethers, Signer, ZeroAddress } from 'ethers6';
 import { ENDPOINTS, formatPintswapTrade, toAddress } from '../utils';
 import { IOffer } from '@pintswap/sdk';
 
 const JSON_HEADER_POST = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
+const ETH_RES = {
+    id: ZeroAddress,
+    symbol: 'ETH',
+    name: 'Ethereum',
+    decimals: '18',
+    derivedETH: '1',
+};
 
 export async function getV3Token({
     address,
@@ -16,6 +23,7 @@ export async function getV3Token({
     tokenHourDatas: any[];
 }> {
     if (!address) return { token: undefined, tokenDayDatas: [], tokenHourDatas: [] };
+    if (address === ZeroAddress) return { token: ETH_RES, tokenDayDatas: [], tokenHourDatas: [] };
 
     const formattedAddress = ethers.getAddress(address);
     const buildParams = () => {
@@ -107,6 +115,7 @@ export async function getV2Token({
     tokenDayDatas: any[];
 }> {
     if (!address) return { token: undefined, tokenDayDatas: [] };
+    if (address === ZeroAddress) return { token: ETH_RES, tokenDayDatas: [] };
     const formattedAddress = ethers.getAddress(address).toLowerCase();
 
     const buildOptionalQuery = () => {

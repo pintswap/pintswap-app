@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Asset, Button, Card, GradientBorder, Header, Input } from '../components';
-import { useOffersContext, usePricesContext } from '../stores';
-import { calculatePrices, useSearch } from '../hooks';
+import { useOffersContext } from '../stores';
+import { useSearch } from '../hooks';
 
 type IMarketProps = {
     quote: string;
@@ -10,14 +10,13 @@ type IMarketProps = {
     low: number;
     high: number;
     liquidity: number; // TODO: show amount in USD amount
-    bid: boolean;
-    ask: boolean;
+    bids: number;
+    asks: number;
 };
 
 export const MarketsView = () => {
     const navigate = useNavigate();
     const { offersByChain, isLoading } = useOffersContext();
-    const { eth } = usePricesContext();
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
 
@@ -27,32 +26,37 @@ export const MarketsView = () => {
         if (offersByChain.erc20) {
             const uniqueMarkets: IMarketProps[] = [];
             offersByChain.erc20.forEach((m) => {
-                const split = m.ticker.split('/');
-                const quoteToken = split[0];
-                const found = uniqueMarkets.find((u) => u.quote === quoteToken);
-                const price = Number(m.priceUsd);
+                // TODO: eth is currently broken so this is ugly
+                // const split = m.ticker.split('/');
+                // const quoteToken = split[0];
+                // const found = uniqueMarkets.find((u) => u.quote === quoteToken);
+                // const price = parseFloat(m.priceUsd);
+                const found = uniqueMarkets.find((u) => u.quote === m.ticker);
+                const price = parseFloat(m.price);
+                const isAsk = m.type === 'ask';
                 if (found) {
                     // If base asset not included in 'bases' list
-                    if (!found.bases.includes(split[1])) found.bases.push(split[1]);
+                    // TODO: reimplement once ETH is fixed
+                    // if (!found.bases.includes(split[1])) found.bases.push(split[1]);
                     // Check for lower or higher price
                     if (found.high < price) found.high = price;
                     if (found.low > price) found.low = price;
                     // Sum liquidity
                     found.liquidity += price;
                     // Check if bid or ask exists
-                    const isAsk = m.type === 'ask';
-                    if (isAsk) found.ask = true;
-                    else found.bid = true;
+                    if (isAsk) found.asks += 1;
+                    else found.bids += 1;
                 } else {
-                    const isAsk = m.type === 'ask';
                     uniqueMarkets.push({
-                        quote: quoteToken,
-                        bases: [split[1]],
+                        // quote: quoteToken,
+                        // bases: [split[1]],
+                        quote: m.ticker,
+                        bases: [],
                         low: price,
                         high: price,
                         liquidity: price,
-                        bid: !isAsk,
-                        ask: isAsk,
+                        bids: isAsk ? 0 : 1,
+                        asks: isAsk ? 1 : 0,
                     });
                 }
             });

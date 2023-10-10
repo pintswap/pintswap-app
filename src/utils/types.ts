@@ -49,3 +49,14 @@ export type ITokenProps = {
     };
     balance?: string;
 };
+
+export type IMarketProps = {
+    quote: string;
+    bases: string[];
+    low: number;
+    high: number;
+    liquidity: number;
+    bids: number;
+    asks: number;
+    offers: number;
+};

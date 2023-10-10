@@ -1,24 +1,17 @@
-import { isAddress } from 'ethers6';
+import { formatUnits, isAddress } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { tryBoth } from '../api';
 import { DEFAULT_CHAINID, getTokenListBySymbol } from '../utils';
-import { usePricesContext } from '../stores';
 import { ITransfer } from '@pintswap/sdk';
 import { getNetwork } from '@wagmi/core';
+import { getEthPrice } from '../api/subgraph';
 
-export const calculatePrices = async ({
-    gives,
-    gets,
-    eth,
-}: {
-    gives?: ITransfer;
-    gets?: ITransfer;
-    eth?: string;
-}) => {
+export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets?: ITransfer }) => {
     const activeChainId = getNetwork()?.chain?.id || DEFAULT_CHAINID;
-    if (!gives?.token || !gets?.token || !gives?.amount || !gets?.amount || !eth)
+    if (!gives?.token || !gets?.token || !gives?.amount || !gets?.amount)
         return { eth: '0', usd: '0' };
     try {
+        const eth = await getEthPrice();
         const addressA = isAddress(gives?.token)
             ? gives?.token
             : getTokenListBySymbol(activeChainId)[gives?.token]?.address;
@@ -28,10 +21,15 @@ export const calculatePrices = async ({
         if (addressA && addressB) {
             const { token: aToken } = await tryBoth({ address: addressA });
             const { token: bToken } = await tryBoth({ address: addressB });
-
+            const aAmount = gives?.amount.startsWith('0x')
+                ? formatUnits(gives.amount, Number(aToken?.decimals || '18'))
+                : gives?.amount;
+            const bAmount = gets?.amount.startsWith('0x')
+                ? formatUnits(gets.amount, Number(bToken?.decimals || '18'))
+                : gets?.amount;
             const ethPrice =
-                (Number(gets?.amount) * Number(bToken.derivedETH)) /
-                (Number(gives?.amount) * Number(aToken.derivedETH));
+                (Number(bAmount) * Number(bToken.derivedETH)) /
+                (Number(aAmount) * Number(aToken.derivedETH));
             return {
                 eth: ethPrice.toString(),
                 usd: (ethPrice * Number(eth)).toString(),
@@ -54,18 +52,17 @@ export const calculatePrices = async ({
 export const renderPrices = async ({
     base,
     quote,
-    eth,
     gives,
     gets,
 }: {
     base?: string;
     quote?: string;
-    eth: string;
     gives?: ITransfer;
     gets?: ITransfer;
 }) => {
-    if (!base || !quote || !gives || !gets || !eth) return { usd: '0', eth: '0' };
-    switch (base?.toLowerCase()) {
+    if (!base || !quote || !gives || !gets) return { usd: '0', eth: '0' };
+    const eth = await getEthPrice();
+    switch (base?.trim().toLowerCase()) {
         case 'eth':
         case 'weth':
             return {
@@ -80,10 +77,10 @@ export const renderPrices = async ({
                 eth: (Number(quote) / Number(eth)).toString(),
             };
         default:
+            console.log('\n\noffer entering calculatePrices', { gives, gets });
             return await calculatePrices({
                 gives,
                 gets,
-                eth,
             });
     }
 };
@@ -99,7 +96,6 @@ export const usePrices = ({
     gives?: ITransfer;
     gets?: ITransfer;
 }) => {
-    const { eth } = usePricesContext();
     const [data, setData] = useState({ eth: '0', usd: '0' });
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
@@ -111,7 +107,6 @@ export const usePrices = ({
                 await renderPrices({
                     base: baseAsset,
                     quote: quotePrice,
-                    eth,
                     gives,
                     gets,
                 }),

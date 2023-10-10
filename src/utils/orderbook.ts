@@ -5,6 +5,7 @@ import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { calculatePrices } from '../hooks';
+import { getEthPrice } from '../api/subgraph';
 
 function givesBase(offer: any) {
     return {
@@ -120,7 +121,7 @@ export async function toFormatted(transfer: any, chainId: number) {
     };
 }
 
-export async function toLimitOrder(offer: any, chainId: number, eth?: string) {
+export async function toLimitOrder(offer: any, chainId: number) {
     const {
         pair: [base, trade],
         type,
@@ -131,16 +132,16 @@ export async function toLimitOrder(offer: any, chainId: number, eth?: string) {
     const price =
         Number(ethers.formatUnits(base.amount, baseDecimals)) /
         Number(ethers.formatUnits(trade.amount, tradeDecimals));
-    const prices = eth ? await calculatePrices({ ...offer, eth }) : { eth: '0', usd: '0' };
+    const prices = await calculatePrices({ ...offer });
     return {
         chainId: offer.chainId || 1,
-        price: String(price),
+        price: String(price || '0'),
         amount: ethers.formatUnits(trade.amount, tradeDecimals),
         type,
         ticker: await toTicker([base, trade], chainId),
         hash: hashOffer(offer),
-        priceUsd: prices.usd,
-        priceEth: prices.eth,
+        priceUsd: prices.usd || '0',
+        priceEth: prices.eth || '0',
     };
 }
 

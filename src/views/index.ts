@@ -9,3 +9,4 @@ export * from './pair-list';
 export * from './trade-search';
 export * from './peer-ticker-orderbook';
 export * from './fulfill-nft';
+export * from './markets-table';

@@ -12,6 +12,7 @@ import {
     PairListView,
     PeerTickerOrderbookView,
     TradeSearchView,
+    MarketsTableView,
 } from './views';
 import { FulfillNFTView } from './views/fulfill-nft';
 import { setFallbackWETH } from '@pintswap/sdk';
@@ -45,7 +46,7 @@ function App() {
             <Base loading={pintswap.loading}>
                 <Routes>
                     <Route path="/swap" element={<SwapView />} />
-                    <Route path="/markets" element={<MarketsView />} />
+                    <Route path="/markets" element={<MarketsTableView />} />
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
 

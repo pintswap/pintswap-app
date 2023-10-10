@@ -30,7 +30,8 @@ type IDataTableProps = {
         | 'bids'
         | 'manage'
         | 'peer-orderbook'
-        | 'history';
+        | 'history'
+        | 'markets';
     peer?: string;
     toolbar?: boolean;
     pagination?: boolean;
@@ -161,6 +162,8 @@ const CustomRow = (props: IDataTableProps) => {
             return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props } });
         }
         switch (type) {
+            case 'markets':
+                return navigate(`/markets/${firstCell.replaceAll('/', '-').toLowerCase()}`);
             case 'explore':
                 return navigate(`${url}fulfill/${firstCell}/${secondCell}`, {
                     state: { ...props },
@@ -267,6 +270,14 @@ const CustomRow = (props: IDataTableProps) => {
             // Address / MultiAddr
             return truncate(cell, charsShown);
         } else if (!isNaN(Number(cell))) {
+            if (type === 'markets' && String(cell).includes('.')) {
+                return (
+                    <span className="flex items-center gap-1">
+                        <small>$</small>
+                        <SmartPrice price={cell} />
+                    </span>
+                );
+            }
             // TODO: optimize and enable for all pairs, not just eth and stables
             let _cell: string;
             if (pair) {
@@ -326,7 +337,7 @@ const CustomRow = (props: IDataTableProps) => {
                 _cell = cell;
                 return <SmartPrice price={_cell} />;
             }
-        } else if (type === 'peer-orderbook' && cell.includes('/')) {
+        } else if ((type === 'peer-orderbook' || type === 'markets') && cell.includes('/')) {
             return (
                 <span className="flex items-center gap-1">
                     <Asset symbol={cell.split('/')[0]} size={20} />
