@@ -32,10 +32,10 @@ export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
                     height={size}
                     width={size}
                 />
-                <MdChevronRight
+                {/* <MdChevronRight
                     className="rotate-90 group-hover:-translate-y-0.5 group-hover:text-neutral-300 transition-all duration-150 ease-out"
                     size={18}
-                />
+                /> */}
             </span>
         </Button>
     );

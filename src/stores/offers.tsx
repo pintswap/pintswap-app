@@ -120,7 +120,8 @@ const toFlattened = memoize(
                         offerList.map(async (v: any) => ({
                             ...v,
                             peer: multiaddr,
-                            chainId: await detectTradeNetwork(v),
+                            chainId: 1,
+                            // chainId: await detectTradeNetwork(v),
                             hash: hashOffer(v),
                         })),
                     ),

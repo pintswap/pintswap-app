@@ -102,7 +102,8 @@ export const AccountView = () => {
             const tableDataRes = await Promise.all(
                 Array.from(userTrades, async (entry) => ({
                     hash: entry[0],
-                    chainId: await detectTradeNetwork(entry[1]),
+                    chainId: 1,
+                    // chainId: await detectTradeNetwork(entry[1]),
                     sending: await convertAmount(
                         'readable',
                         entry[1].gives.amount || '',
