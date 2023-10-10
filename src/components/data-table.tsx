@@ -171,7 +171,8 @@ const CustomRow = (props: IDataTableProps) => {
             case 'manage': {
                 toast.info('Copied offer share link', { autoClose: 2000 });
                 const found = userTrades.get(firstCell);
-                const offerChainId = found ? await detectTradeNetwork(found) : 1;
+                const offerChainId = 1;
+                // const offerChainId = found ? await detectTradeNetwork(found) : 1;
                 return navigator.clipboard.writeText(
                     `${BASE_URL}/#/fulfill/${
                         userData.name || module?.address || module?.peerId?.toB58String()

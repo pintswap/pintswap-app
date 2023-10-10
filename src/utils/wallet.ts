@@ -20,8 +20,10 @@ import merge from 'lodash.merge';
 const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '';
 
 const determineChains = () => {
-    if (TESTING) return [mainnet, arbitrum, hardhat];
-    return [mainnet, arbitrum];
+    // if (TESTING) return [mainnet, arbitrum, hardhat];
+    // return [mainnet, arbitrum];
+    if (TESTING) return [mainnet, hardhat];
+    return [mainnet];
 };
 
 export const { chains, provider } = configureChains(determineChains(), [publicProvider()]);
