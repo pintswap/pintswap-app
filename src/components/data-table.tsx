@@ -2,7 +2,7 @@ import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
 import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
 import { SpinnerLoader } from './spinner-loader';
-import { useWindowSize } from '../hooks';
+import { useSubgraph, useUsdPrice, useWindowSize } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
@@ -10,7 +10,16 @@ import { useOffersContext, usePintswapContext, usePricesContext, useUserContext 
 import { SmartPrice } from './smart-price';
 import { useParams } from 'react-router-dom';
 import { Asset } from './asset';
-import { BASE_URL, NETWORKS, truncate, muiCache, muiOptions, muiTheme } from '../utils';
+import {
+    BASE_URL,
+    NETWORKS,
+    truncate,
+    muiCache,
+    muiOptions,
+    muiTheme,
+    numberFormatter,
+    toAddress,
+} from '../utils';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
 import { TooltipWrapper } from './tooltip';
@@ -143,8 +152,9 @@ const CustomRow = (props: IDataTableProps) => {
     const { tableBreak } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
+    const usdPrice = useUsdPrice(type === 'markets' ? (data[0] as any).split('/')[0] : '');
 
-    const baseStyle = `text-left transition duration-200 border-y-[1px] border-neutral-800 ${
+    const baseStyle = `text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent sm:first:border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
     } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''}`;
 
@@ -259,11 +269,48 @@ const CustomRow = (props: IDataTableProps) => {
                         <MdOutlineOpenInNew size={14} />
                     </Button>
                 );
+            } else if (type === 'markets') {
+                return (
+                    <p className="flex items-center justify-end sm:justify-start gap-0.5">
+                        <span className="text-xs">$</span>
+                        {usdPrice ? (
+                            <span className="text-lg">
+                                <SmartPrice price={usdPrice} />
+                            </span>
+                        ) : (
+                            '-'
+                        )}
+                    </p>
+                );
             }
             return <></>;
         }
 
         const charsShown = tableBreak ? 4 : 5;
+        if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
+            const _cell = cell as any;
+            return (
+                <span className="flex items-center gap-2">
+                    <span className="text-lg flex items-center gap-0.5">
+                        <span className="text-xs">$</span>
+                        <SmartPrice price={_cell.best} />
+                    </span>
+                    <span className="flex-col hidden sm:flex">
+                        <span className="text-xs">
+                            <span className="text-neutral-400">Liquid:</span>{' '}
+                            {Number(_cell.sum) < 100 ? (
+                                <SmartPrice price={_cell.sum} />
+                            ) : (
+                                numberFormatter.format(_cell.sum)
+                            )}
+                        </span>
+                        <span className="text-xs">
+                            <span className="text-neutral-400">Offers:</span> {_cell.offers}
+                        </span>
+                    </span>
+                </span>
+            );
+        }
         if (
             typeof cell !== 'number' &&
             (cell?.startsWith('Q') || cell?.startsWith('0x') || cell?.startsWith('pint'))

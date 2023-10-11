@@ -53,10 +53,15 @@ export type ITokenProps = {
 export type IMarketProps = {
     quote: string;
     bases: string[];
-    low: number;
-    high: number;
-    liquidity: number;
-    bids: number;
-    asks: number;
+    buy: {
+        offers: number;
+        best: number;
+        sum: number;
+    };
+    sell: {
+        offers: number;
+        best: number;
+        sum: number;
+    };
     offers: number;
 };

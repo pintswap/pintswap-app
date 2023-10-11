@@ -82,3 +82,7 @@ export const dropdownItemClass = (active: boolean) =>
         active ? 'bg-neutral-900 text-neutral-200' : 'text-neutral-300',
         'flex items-center gap-2 px-4 py-2 text-sm transition duration-100 w-full',
     );
+
+export const numberFormatter = new Intl.NumberFormat('en-US', {
+    notation: 'compact',
+});
