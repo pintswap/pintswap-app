@@ -64,7 +64,6 @@ export const MarketsTableView = () => {
                         if (found.buy.sum < sum) found.buy.sum = sum;
                     } else {
                         found.sell.offers += 1;
-                        console.log('best', m);
                         if (found.sell.best < price) found.sell.best = price;
                         if (found.sell.sum < sum) found.sell.sum = sum;
                     }
