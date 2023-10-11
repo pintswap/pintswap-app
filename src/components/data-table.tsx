@@ -2,7 +2,7 @@ import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
 import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
 import { SpinnerLoader } from './spinner-loader';
-import { useWindowSize } from '../hooks';
+import { useSubgraph, useUsdPrice, useWindowSize } from '../hooks';
 import { useNavigate } from 'react-router-dom';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import { Button } from './button';
@@ -18,6 +18,7 @@ import {
     muiOptions,
     muiTheme,
     numberFormatter,
+    toAddress,
 } from '../utils';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
@@ -151,6 +152,8 @@ const CustomRow = (props: IDataTableProps) => {
     const { tableBreak } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
+    const usdPrice = useUsdPrice(type === 'markets' ? (data[0] as any).split('/')[0] : '');
+    console.log('usdPrice', usdPrice);
 
     const baseStyle = `text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent sm:first:border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
@@ -268,7 +271,18 @@ const CustomRow = (props: IDataTableProps) => {
                     </Button>
                 );
             } else if (type === 'markets') {
-                return <p className="text-right w-full">Coming Soon</p>;
+                return (
+                    <p className="flex items-center justify-end sm:justify-start gap-0.5">
+                        <span className="text-xs">$</span>
+                        {usdPrice ? (
+                            <span className="text-lg">
+                                <SmartPrice price={usdPrice} />
+                            </span>
+                        ) : (
+                            '-'
+                        )}
+                    </p>
+                );
             }
             return <></>;
         }
@@ -285,7 +299,11 @@ const CustomRow = (props: IDataTableProps) => {
                     <span className="flex-col hidden sm:flex">
                         <span className="text-xs">
                             <span className="text-neutral-400">Liquid:</span>{' '}
-                            {numberFormatter.format(_cell.sum)}
+                            {Number(_cell.sum) < 100 ? (
+                                <SmartPrice price={_cell.sum} />
+                            ) : (
+                                numberFormatter.format(_cell.sum)
+                            )}
                         </span>
                         <span className="text-xs">
                             <span className="text-neutral-400">Offers:</span> {_cell.offers}

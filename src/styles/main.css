@@ -2029,6 +2029,9 @@ html,
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
+.first\:border-transparent:first-child{
+  border-color: transparent;
+}
 .hover\:cursor-pointer:hover{
   cursor: pointer;
 }
@@ -2190,6 +2193,10 @@ html,
     display: block;
   }
 
+  .sm\:flex{
+    display: flex;
+  }
+
   .sm\:max-w-\[100px\]{
     max-width: 100px;
   }
@@ -2228,6 +2235,11 @@ html,
 
   .sm\:pr-20{
     padding-right: 5rem;
+  }
+
+  .sm\:first\:border-neutral-800:first-child{
+    --tw-border-opacity: 1;
+    border-color: rgb(38 38 38 / var(--tw-border-opacity));
   }
 }
 @media (min-width: 768px){

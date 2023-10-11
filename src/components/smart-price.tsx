@@ -1,4 +1,10 @@
-export function SmartPrice({ price }: { price: string | number }) {
+export function SmartPrice({
+    price,
+    type = 'default',
+}: {
+    price: string | number;
+    type?: 'usd' | 'default';
+}) {
     const _price = String(price);
     if (_price === 'N/A' && !_price) return <>-</>;
 
@@ -7,7 +13,7 @@ export function SmartPrice({ price }: { price: string | number }) {
     if (!mustReduce) {
         if (_price.includes('.')) {
             if (Number(price) > 1000000) return <>{_price.split('.')[0]}</>;
-            else if (Number(_price) > 1000) return <>{Number(_price).toFixed(2)}</>;
+            else if (Number(_price) > 100) return <>{Number(_price).toFixed(2)}</>;
         }
         return <>{_price.substring(0, 8)}</>;
     }
