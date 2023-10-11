@@ -131,6 +131,12 @@ export const MarketsTableView = () => {
                     data={list as IMarketProps[]}
                     loading={isLoading}
                     pagination
+                    options={{
+                        sortOrder: {
+                            name: 'quote',
+                            direction: 'asc',
+                        },
+                    }}
                 />
             </Card>
         </div>
