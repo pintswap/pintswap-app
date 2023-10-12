@@ -28,13 +28,13 @@ export const useDashNav = () => {
                   icon: <MdGroup size={ICON_SIZE} />,
                   tooltip: 'See who is currently online',
               },
-              {
-                  text: 'OTC',
-                  route: '/fulfill',
-                  disabled: false,
-                  icon: <MdShare size={ICON_SIZE} />,
-                  tooltip: 'Search for or accept an OTC trade',
-              },
+              //   {
+              //       text: 'OTC',
+              //       route: '/fulfill',
+              //       disabled: false,
+              //       icon: <MdShare size={ICON_SIZE} />,
+              //       tooltip: 'Search for or accept an OTC trade',
+              //   },
               {
                   text: 'Account',
                   route: '/account',

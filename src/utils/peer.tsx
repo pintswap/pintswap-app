@@ -1,6 +1,6 @@
 import { NFTPFP } from '@pintswap/sdk';
 import { IPintswapProps, IUserDataProps } from '../stores';
-import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA } from './constants';
+import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA, TESTING } from './constants';
 import { createFromB58String } from 'peer-id';
 
 export const peerCache: any = {};
@@ -38,6 +38,7 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
             else return peer;
         }
     } catch (err) {
+        if (TESTING) console.warn('#formatPeerName', err);
         return peer;
     }
 };
@@ -77,7 +78,9 @@ export const getFormattedPeer = async (
     type?: 'full' | 'minimal',
 ) => {
     try {
-        if (peerCache[peer]) return peerCache[peer];
+        if (peerCache[peer]) {
+            return peerCache[peer];
+        }
         const res = await getPeerData(ps, peer, type);
         const returnObj = {
             img: formatPeerImg(res.image),

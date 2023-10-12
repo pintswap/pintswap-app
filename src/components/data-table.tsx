@@ -221,6 +221,9 @@ const CustomRow = (props: IDataTableProps) => {
 
     const formatCell = (s: string) => {
         if (type === 'history' || type === 'manage') {
+            if (s.includes('/')) {
+                return <span>{s}</span>;
+            }
             const [amount, asset] = type === 'manage' ? s.split('  ') : s.split(' ');
             return (
                 <span className="flex items-center gap-1.5 justify-end">
@@ -274,7 +277,7 @@ const CustomRow = (props: IDataTableProps) => {
                     <p className="flex items-center justify-end sm:justify-start gap-0.5">
                         <span className="text-xs">$</span>
                         {usdPrice ? (
-                            <span className="text-lg">
+                            <span className="sm:text-lg">
                                 <SmartPrice price={usdPrice} />
                             </span>
                         ) : (
@@ -290,8 +293,8 @@ const CustomRow = (props: IDataTableProps) => {
         if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
             const _cell = cell as any;
             return (
-                <span className="flex items-center gap-2">
-                    <span className="text-lg flex items-center gap-0.5">
+                <span className="grid grid-cols-1 sm:grid-cols-2 items-center gap-2">
+                    <span className="sm:text-lg flex items-center gap-0.5">
                         <span className="text-xs">$</span>
                         <SmartPrice price={_cell.best} />
                     </span>
@@ -378,7 +381,10 @@ const CustomRow = (props: IDataTableProps) => {
                             text={NETWORKS[Number(cell)].name}
                             id={`account-datatable-${type}-${index}-${NETWORKS[Number(cell)].name}`}
                         >
-                            <img src={NETWORKS[Number(cell)].logo} height="18" width="18" />
+                            <span className="flex flex-row-reverse sm:flex-row items-center gap-2">
+                                <img src={NETWORKS[Number(cell)].logo} height="18" width="18" />
+                                <span>{NETWORKS[Number(cell)].name}</span>
+                            </span>
                         </TooltipWrapper>
                     );
                 // Display Big Number
@@ -419,15 +425,15 @@ const CustomRow = (props: IDataTableProps) => {
     } else {
         return (
             <tr
-                className={`${baseStyle} flex flex-col px-4 py-1 ${determineColor()}`}
+                className={`${baseStyle} grid grid-cols-1 px-4 py-1 ${determineColor()}`}
                 onClick={(e) => route(cells)}
             >
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-[1px] flex justify-between items-center text-sm`}
+                        className={`py-[1px] flex justify-between items-center`}
                     >
-                        <span className="text-gray-300 font-thin">{cols[i]}</span>
+                        <span className="text-gray-300 font-thin text-sm">{cols[i]}</span>
                         <span className={`${!cell ? 'w-full' : ''}`}>{determineCell(cell, i)}</span>
                     </td>
                 ))}

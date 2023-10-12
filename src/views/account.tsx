@@ -24,9 +24,11 @@ import { detectTradeNetwork } from '@pintswap/sdk';
 
 const columns = [
     {
-        name: 'hash',
-        label: 'Hash',
-        options: { sort: false },
+        name: 'timestamp',
+        label: 'Date',
+        options: {
+            sort: false,
+        },
     },
     {
         name: 'chainId',
@@ -56,8 +58,6 @@ const columns = [
 
 export const AccountView = () => {
     const subgraph = useSubgraph({});
-    // TODO: remove
-    console.log('subgraph?.data?.userHistory', subgraph?.data?.userHistory);
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { state } = useLocation();
@@ -77,7 +77,7 @@ export const AccountView = () => {
         loading,
     } = useUserContext();
     const { name, bio, img, privateKey, extension } = userData;
-
+    console.log('subgraph', subgraph);
     const [shallowForm, setShallowForm] = useState({ bio, name });
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);

@@ -141,6 +141,8 @@ export function UserStore(props: { children: ReactNode }) {
                 nameWExt = `${nameWExt}${userData.extension}`;
             }
             try {
+                const response = await module.registerName(nameWExt);
+                console.log('register name res', response);
                 if (useNft.address && useNft.id && ethers.isAddress(useNft.address)) {
                     const { imageBlob } = await fetchNFT({
                         token: useNft.address,
@@ -152,7 +154,6 @@ export function UserStore(props: { children: ReactNode }) {
                         setUserData({ ...userData, img: buff });
                     }
                 }
-                await module.registerName(nameWExt);
                 // Save private key
                 if (psUser && userData.privateKey && userData.privateKey.length > 50) {
                     module.signer = new ethers.Wallet(userData.privateKey).connect(
