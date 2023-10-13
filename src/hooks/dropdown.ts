@@ -1,6 +1,6 @@
 import { MouseEvent, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IDropdownMenuItemsProps } from '../components';
+import { IDropdownMenuItemsProps } from '../ui/components';
 
 export const useDropdown = (
     items: IDropdownMenuItemsProps[],

@@ -19,6 +19,6 @@
         "jsx": "react-jsx",
         "noFallthroughCasesInSwitch": true
     },
-    "include": ["src"],
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
     "exclude": ["node_modules", "lib"]
 }

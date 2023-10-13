@@ -89,6 +89,13 @@ export const MIN_ABIS = {
             stateMutability: 'view',
             type: 'function',
         },
+        {
+            constant: true,
+            inputs: [{ name: '', type: 'uint256' }],
+            name: 'tokenURI',
+            outputs: [{ name: '', type: 'string' }],
+            type: 'function',
+        },
     ],
     ERC20: [
         {

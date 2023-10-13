@@ -1,7 +1,19 @@
 {
     "name": "pintswap-app",
-    "version": "0.1.0",
+    "version": "2.0.0-beta",
     "private": true,
+    "homepage": "https://app.pintswap.exchange",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/pintswap/pintswap-app"
+    },
+    "keywords": [
+        "pintswap",
+        "app",
+        "defi",
+        "dex"
+    ],
     "scripts": {
         "start": "yarn build:css && react-app-rewired start",
         "dev": "REACT_APP_DEV=1 GENERATE_SOURCEMAP=false BROWSER=none yarn start",
@@ -32,6 +44,7 @@
         "ethers6": "npm:ethers@^6.3.0",
         "jimp": "^0.22.7",
         "lodash.merge": "^4.6.2",
+        "module-alias": "^2.2.3",
         "mui-datatables": "^4.3.0",
         "pica": "^9.0.1",
         "react": "^18.2.0",

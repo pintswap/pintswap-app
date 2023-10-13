@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { usePintswapContext } from '../stores/pintswap';
 import { useParams, useLocation } from 'react-router-dom';
-import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
+import { DEFAULT_PROGRESS, IOrderProgressProps } from '../ui/components/progress-indicator';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
 import { useNetworkContext, useOffersContext, useUserContext } from '../stores';

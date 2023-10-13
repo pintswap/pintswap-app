@@ -1,7 +1,6 @@
 import { NFTPFP } from '@pintswap/sdk';
 import { IPintswapProps, IUserDataProps } from '../stores';
 import { BASE_AVATAR_URL, DEFAULT_AVATAR, EMPTY_USER_DATA, TESTING } from './constants';
-import { createFromB58String } from 'peer-id';
 
 export const peerCache: any = {};
 

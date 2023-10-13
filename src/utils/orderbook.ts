@@ -5,7 +5,6 @@ import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { calculatePrices } from '../hooks';
-import { getEthPrice } from '../api/subgraph';
 
 function givesBase(offer: any) {
     return {
