@@ -235,7 +235,7 @@ export const useTrade = () => {
                 (el) => el.hash?.toLowerCase() === params.hash,
             );
             if (found) {
-                setTrade({ gets: found.gets, gives: found.gives });
+                setTrade(found.raw);
                 return;
             }
 

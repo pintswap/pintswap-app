@@ -65,3 +65,17 @@ export type IMarketProps = {
     };
     offers: number;
 };
+
+export type IOfferProps = {
+    amount: string;
+    chainId: number;
+    hash: string;
+    multiAddr?: string;
+    peer: string;
+    price: string;
+    ticker: string;
+    type: string;
+    priceUsd: string;
+    priceEth: string;
+    raw: IOffer;
+};

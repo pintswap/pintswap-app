@@ -1,6 +1,6 @@
 import { BigNumberish, ethers, Signer } from 'ethers6';
 import { groupBy } from 'lodash';
-import { hashOffer } from '@pintswap/sdk';
+import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
@@ -120,7 +120,7 @@ export async function toFormatted(transfer: any, chainId: number) {
     };
 }
 
-export async function toLimitOrder(offer: any, chainId: number) {
+export async function toLimitOrder(offer: IOffer | any, chainId: number) {
     const {
         pair: [base, trade],
         type,
@@ -141,6 +141,7 @@ export async function toLimitOrder(offer: any, chainId: number) {
         hash: hashOffer(offer),
         priceUsd: prices.usd || '0',
         priceEth: prices.eth || '0',
+        raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
     };
 }
 

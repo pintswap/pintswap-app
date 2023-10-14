@@ -45,73 +45,8 @@ const columns = [
 ];
 
 export const MarketsTableView = () => {
-    const { offersByChain, isLoading } = useOffersContext();
-    const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
+    const { uniqueMarkets, isLoading } = useOffersContext();
     const { query, list, handleChange } = useSearch(uniqueMarkets);
-
-    useEffect(() => {
-        if (offersByChain.erc20) {
-            const _uniqueMarkets: IMarketProps[] = [];
-            offersByChain.erc20.forEach((m) => {
-                const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
-                const price = parseFloat(m.price);
-                const sum = parseFloat(m.amount);
-                const isAsk = m.type === 'ask';
-                if (found) {
-                    found.offers += 1;
-                    if (isAsk) {
-                        found.buy.offers += 1;
-                        if (found.buy.best > price) found.buy.best = price;
-                        if (found.buy.sum < sum) found.buy.sum = sum;
-                    } else {
-                        found.sell.offers += 1;
-                        if (found.sell.best < price) found.sell.best = price;
-                        if (found.sell.sum < sum) found.sell.sum = sum;
-                    }
-                } else {
-                    if (isAsk) {
-                        _uniqueMarkets.push({
-                            // quote: quoteToken,
-                            // bases: [split[1]],
-                            quote: m.ticker,
-                            bases: [],
-                            buy: {
-                                offers: 1,
-                                sum: sum,
-                                best: price,
-                            },
-                            sell: {
-                                offers: 0,
-                                sum: 0,
-                                best: 0,
-                            },
-                            offers: 1,
-                        });
-                    } else {
-                        _uniqueMarkets.push({
-                            // quote: quoteToken,
-                            // bases: [split[1]],
-                            quote: m.ticker,
-                            bases: [],
-                            buy: {
-                                offers: 0,
-                                sum: 0,
-                                best: 0,
-                            },
-                            sell: {
-                                offers: 1,
-                                sum: sum,
-                                best: price,
-                            },
-                            offers: 1,
-                        });
-                    }
-                }
-            });
-            console.log('Unique markets:', _uniqueMarkets);
-            setUniqueMarkets(_uniqueMarkets);
-        }
-    }, [offersByChain.erc20]);
 
     return (
         <div className="flex flex-col">

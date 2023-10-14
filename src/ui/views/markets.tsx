@@ -64,7 +64,6 @@ export const MarketsView = () => {
                     });
                 }
             });
-            console.log('unique markets', uniqueMarkets);
             setUniquePairs(Array.from(new Set(offersByChain.erc20.map((o) => o.ticker))));
         }
     }, [offersByChain.erc20]);
