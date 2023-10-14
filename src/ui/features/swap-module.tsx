@@ -45,13 +45,23 @@ export const SwapModule = ({
     };
     const determineButtonText = () => {
         if (type === 'fulfill') return 'Fulfill';
+        if (type === 'nft') {
+            if (nft && nft.amount === '0') return 'Cannot verify NFT ownership';
+            if (!nft) return 'Enter NFT contract address';
+        }
         if (!trade.gets.token) return 'Select a Token';
         if (!isPublic) return 'Create Offer';
-        if (nft && nft.amount === '0') return 'Cannot verify NFT ownership';
         return 'Swap';
     };
 
     if (type === 'nft') {
+        const handleNftChange = (n: INFTProps) => {
+            if (updateTrade) {
+                updateTrade('gives.token', n.token);
+                updateTrade('gives.tokenId', String(n.tokenId));
+            }
+        };
+
         useEffect(() => {
             (async () => {
                 const { gives } = trade;
@@ -73,33 +83,16 @@ export const SwapModule = ({
 
         return (
             <div className="flex flex-col justify-center items-center gap-1.5">
-                {nft && (
-                    <div className="h-[180px] w-[180px] mx-auto overflow-hidden flex justify-center items-center">
-                        {nftLoading ? (
-                            <div className="bg-neutral-800 rounded-sm w-full h-full flex items-center justify-center">
-                                <SpinnerLoader />
-                            </div>
-                        ) : (
-                            <NFTDisplay nft={nft} show="img" />
-                        )}
-                    </div>
-                )}
-
                 <NFTInput
                     label="You give"
-                    onAddressChange={({ currentTarget }: any) =>
-                        updateTrade ? updateTrade('gives.token', currentTarget.value) : {}
-                    }
-                    onNftIdChange={({ currentTarget }: any) =>
-                        updateTrade ? updateTrade('gives.tokenId', currentTarget.value) : {}
-                    }
-                    value={trade.gives?.token}
+                    onNftSelect={handleNftChange}
+                    nftAddress={trade.gives?.token}
                     nftId={trade.gives?.tokenId}
+                    nft={nft}
+                    nftLoading={nftLoading}
                 />
                 <button
-                    className={`absolute p-1.5 bg-brand-dashboard rounded-lg cursor-default ${
-                        nft ? 'mt-32' : 'mb-14'
-                    }`}
+                    className={`absolute p-1.5 bg-brand-dashboard rounded-lg cursor-default mb-14`}
                 >
                     <div className="bg-neutral-800 p-1 rounded-md">
                         <MdArrowDownward />
@@ -119,7 +112,7 @@ export const SwapModule = ({
                     id="swap-module-get"
                 />
                 <Button
-                    className="w-full rounded-lg !py-2.5"
+                    className="w-full rounded-lg !py-2.5 mt-0.5"
                     disabled={disabled || nft?.amount === '0'}
                     loadingText={determineLoadingText()}
                     loading={loading?.broadcast || loading?.fulfill || loading?.trade}
@@ -181,7 +174,7 @@ export const SwapModule = ({
                     />
 
                     <button
-                        className="absolute p-1.5 bg-brand-dashboard hover:bg-black transition duration-150 rounded-lg"
+                        className="absolute p-1.5 bg-brand-dashboard hover:bg-black transition duration-150 rounded-lg mt-1"
                         onClick={reverse}
                     >
                         <div className="bg-neutral-800 p-1 rounded-md">

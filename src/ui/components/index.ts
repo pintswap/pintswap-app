@@ -26,3 +26,4 @@ export * from './gas';
 export * from './chain-dropdown';
 export * from './pagination';
 export * from './select-coin';
+export * from './select-nft';

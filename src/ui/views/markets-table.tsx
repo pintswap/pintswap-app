@@ -108,7 +108,7 @@ export const MarketsTableView = () => {
                     }
                 }
             });
-            console.log('unique markets', _uniqueMarkets);
+            console.log('Unique markets:', _uniqueMarkets);
             setUniqueMarkets(_uniqueMarkets);
         }
     }, [offersByChain.erc20]);

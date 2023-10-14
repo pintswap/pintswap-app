@@ -112,12 +112,12 @@ export const SelectCoin = ({
                         <div className="flex items-center justify-between">
                             <span>Select a token</span>
                             <button
-                                className="p-1 relative -mt-0.5 -mr-2"
+                                className="relative -mr-1 p-1 rounded-full bg-neutral-800 transition duration-150 hover:scale-105"
                                 onClick={() => setModalOpen(false)}
                             >
                                 <MdClose
-                                    size={24}
-                                    className="hover:text-neutral-300 transition duration-100"
+                                    size={16}
+                                    className="text-neutral-400 transition duration-100"
                                 />
                             </button>
                         </div>

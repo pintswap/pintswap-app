@@ -73,7 +73,6 @@ export const AccountView = () => {
         loading,
     } = useUserContext();
     const { name, bio, img, privateKey, extension } = userData;
-    console.log('subgraph', subgraph);
     const [shallowForm, setShallowForm] = useState({ bio, name });
     const [isEditing, setIsEditing] = useState(false);
     const [tableData, setTableData] = useState<any[]>([]);
@@ -245,62 +244,67 @@ export const AccountView = () => {
                                 )}
                             </div>
                             <div className="grid grid-cols-1 gap-3 lg:gap-2 lg:flex-auto">
-                                <div className="flex items-end w-full flex-grow">
+                                <div>
                                     <Input
                                         value={
-                                            isEditing
-                                                ? name
-                                                : name.includes('.drip')
-                                                ? name
-                                                : truncate(name)
+                                            ''
+                                            // isEditing
+                                            //     ? name
+                                            //     : name.includes('.drip')
+                                            //     ? name
+                                            //     : truncate(name)
                                         }
                                         onChange={updateName}
                                         type="text"
                                         title="Username"
                                         enableStateCss
+                                        // disabled={!isEditing || loading}
+                                        disabled
+                                        placeholder={isEditing ? 'Coming soon!' : 'No username'}
+                                        max={50}
+                                        // className={`!rounded-r-none`}
+                                    />
+                                    {/* {isEditing && (
+                                            <DropdownInput
+                                                state={extension}
+                                                type="input-ext"
+                                                wrapperClass="!w-fit"
+                                                disabled
+                                            />
+                                        )} */}
+                                </div>
+                                <div>
+                                    <Input
+                                        value={bio}
+                                        onChange={updateBio}
+                                        type="text"
+                                        title="Bio"
+                                        enableStateCss
+                                        disabled={!isEditing || loading}
+                                        placeholder={isEditing ? 'Start typing here...' : 'No bio'}
+                                        max={100}
+                                    />
+                                </div>
+                                <div>
+                                    <Input
+                                        value={
+                                            (!isEditing &&
+                                                ((privateKey && privateKey.replace(/\w/g, '*')) ||
+                                                    '')) ||
+                                            privateKey ||
+                                            ''
+                                        }
+                                        onChange={updatePrivateKey}
+                                        type="password"
+                                        title="Private Key"
+                                        enableStateCss
                                         disabled={!isEditing || loading}
                                         placeholder={
-                                            isEditing ? 'Start typing here...' : 'No username'
+                                            isEditing ? 'Start typing here...' : 'No private key'
                                         }
-                                        max={50}
-                                        className={`!rounded-r-none`}
+                                        max={100}
                                     />
-                                    {isEditing && (
-                                        <DropdownInput
-                                            state={extension}
-                                            type="input-ext"
-                                            wrapperClass="!w-fit"
-                                        />
-                                    )}
                                 </div>
-                                <Input
-                                    value={bio}
-                                    onChange={updateBio}
-                                    type="text"
-                                    title="Bio"
-                                    enableStateCss
-                                    disabled={!isEditing || loading}
-                                    placeholder={isEditing ? 'Start typing here...' : 'No bio'}
-                                    max={100}
-                                />
-                                <Input
-                                    value={
-                                        (!isEditing &&
-                                            ((privateKey && privateKey.replace(/\w/g, '*')) ||
-                                                '')) ||
-                                        privateKey ||
-                                        ''
-                                    }
-                                    onChange={updatePrivateKey}
-                                    type="password"
-                                    title="Private Key"
-                                    enableStateCss
-                                    disabled={!isEditing || loading}
-                                    placeholder={
-                                        isEditing ? 'Start typing here...' : 'No private key'
-                                    }
-                                    max={100}
-                                />
                             </div>
                         </div>
                         <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">

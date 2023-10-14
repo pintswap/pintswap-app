@@ -73,6 +73,7 @@ export const Avatar = ({
               img: DEFAULT_AVATAR,
               bio: '',
               name: '',
+              address: '',
               active: false,
               loading: true,
           };
@@ -87,6 +88,7 @@ export const Avatar = ({
                 const returnObj = {
                     ...found,
                     active: isUser ? userData.active : found.active,
+                    address: await formatPeerName(pintswap, peerName, true),
                     privateKey: isUser ? userData.privateKey : found.privateKey,
                     img,
                     loading: false,
@@ -104,12 +106,14 @@ export const Avatar = ({
                     ...formattedPeer,
                     active: isUser ? userData.active : formattedPeer.active,
                     name: await formatPeerName(pintswap, peerName),
+                    address: await formatPeerName(pintswap, peerName, true),
                     privateKey: isUser ? userData.privateKey : formattedPeer.privateKey,
                     img,
                     loading: false,
                 };
-                if (peer === module?.address) {
+                if (isUser) {
                     setUserData({
+                        name: returnObj.name === module.address ? '' : returnObj.name,
                         ...returnObj,
                         ...module.userData,
                     });

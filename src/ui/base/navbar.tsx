@@ -69,11 +69,12 @@ export const Navbar = () => {
                             <button
                                 className={`w-full flex gap-2 items-center ${
                                     i === 0 ? 'justify-between' : 'justify-end'
-                                } px-4 py-2`}
+                                } px-4 py-2 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed`}
                                 onClick={() => {
                                     navigate(`${item.route}`);
                                     setIsMobileOpen(false);
                                 }}
+                                disabled={item.text === 'NFTs'}
                             >
                                 {i === 0 && (
                                     <span className="text-xs 2xl:text-sm text-neutral-500">

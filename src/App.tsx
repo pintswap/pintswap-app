@@ -19,6 +19,7 @@ import {
     MarketsTableView,
     SwapView,
     FulfillNFTView,
+    NFTsTableView,
 } from './ui/views';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -43,6 +44,7 @@ function App() {
                 <Routes>
                     <Route path="/swap" element={<SwapView />} />
                     <Route path="/markets" element={<MarketsTableView />} />
+                    <Route path="/nfts" element={<NFTsTableView />} />
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
 

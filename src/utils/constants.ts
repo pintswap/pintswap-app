@@ -164,6 +164,7 @@ export const EMPTY_USER_DATA: IUserDataProps = {
     img: '',
     bio: '',
     name: '',
+    address: '',
     offers: [],
     privateKey: '',
     active: false,

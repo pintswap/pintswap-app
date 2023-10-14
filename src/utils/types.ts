@@ -10,17 +10,17 @@ export type ERC20Offer = BaseOffer | Pick<BaseOffer, 'token' | 'amount'>;
 export type ERC721Offer = BaseOffer | Pick<BaseOffer, 'token' | 'tokenId'>;
 
 export type INFTProps = {
-    attributes: any[];
-    background_color: string;
-    external_url: string;
+    attributes?: any[];
+    background_color?: string;
+    external_url?: string;
     image: string;
     name: string;
     description: string;
     amount?: string;
     token: string;
     tokenId: string | number;
-    imageBlob: Blob | MediaSource;
-    hash: string;
+    imageBlob?: Blob | MediaSource;
+    hash?: string;
 };
 
 export type IFillProps = {

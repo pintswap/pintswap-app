@@ -21,6 +21,7 @@ export type IUserDataProps = {
     img: NFTPFP | Buffer | string;
     bio: string;
     name: string;
+    address: string;
     offers?: any[];
     privateKey?: string;
     extension?: string;
@@ -189,12 +190,15 @@ export function UserStore(props: { children: ReactNode }) {
                 setUserData({
                     ...userData,
                     name,
+                    address: module.address,
                     bio: module.userData.bio,
                     img: module.userData.image,
                 });
             }
         })().catch((err) => console.error(err));
     }, [module?.address, module?.userData]);
+
+    console.log('userData', userData);
 
     /**
      * Gets user's token holdings (used only for select token dropdown button component)

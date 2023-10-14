@@ -11,3 +11,4 @@ export * from './peer-ticker-orderbook';
 export * from './fulfill-nft';
 export * from './markets-table';
 export * from './swap';
+export * from './nfts-table';

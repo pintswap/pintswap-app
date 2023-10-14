@@ -39,6 +39,7 @@
         "@types/react-dom": "^18.0.11",
         "@types/react-icons": "^3.0.0",
         "@types/websocket": "^1.0.5",
+        "alchemy-sdk": "^2.10.1",
         "copy-to-clipboard": "^3.3.3",
         "ethers": "^5.7.2",
         "ethers6": "npm:ethers@^6.3.0",

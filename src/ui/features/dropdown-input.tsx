@@ -65,9 +65,11 @@ export const DropdownInput = ({
         <div
             className={`flex flex-col gap-1 justify-end w-full ${wrapperClass ? wrapperClass : ''}`}
         >
-            <div className="flex justify-between items-center text-xs md:text-sm">
-                {title && <p className="flex justify-between items-baseline w-full">{title}</p>}
-            </div>
+            {title && (
+                <div className="flex justify-between items-center text-xs md:text-sm">
+                    <p className="flex justify-between items-baseline w-full">{title}</p>
+                </div>
+            )}
             <Menu as="div" className="relative inline-block text-left">
                 <Menu.Button
                     className={`inline-flex w-full overflow-x-hidden ${
@@ -81,9 +83,10 @@ export const DropdownInput = ({
                     } ${type === 'input-ext' ? 'rounded-r' : 'rounded'}`}
                     disabled={disabled}
                 >
-                    {!disabled && (
-                        <MdChevronRight className="h-5 w-5 rotate-90 " aria-hidden="true" />
-                    )}
+                    <MdChevronRight
+                        className={`h-5 w-5 rotate-90 ${disabled ? 'text-transparent' : ''}`}
+                        aria-hidden="true"
+                    />
                     {state ? (
                         isToken && ethers.isAddress(query) ? (
                             unknownToken.symbol

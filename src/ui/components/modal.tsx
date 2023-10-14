@@ -11,6 +11,7 @@ type IModalProps = {
     modalClass?: string;
     state?: boolean;
     setState?: React.Dispatch<React.SetStateAction<boolean>>;
+    buttonClass?: string;
 };
 
 export function TransitionModal({
@@ -20,6 +21,7 @@ export function TransitionModal({
     modalClass,
     state,
     setState,
+    buttonClass,
 }: IModalProps) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => (setState ? setState(true) : setOpen(true));
@@ -32,7 +34,10 @@ export function TransitionModal({
                     {typeof button === 'string' ? (
                         <Button onClick={handleOpen}>{button}</Button>
                     ) : (
-                        <button onClick={handleOpen} className="cursor-pointer w-fit">
+                        <button
+                            onClick={handleOpen}
+                            className={`cursor-pointer  w-fit ${buttonClass || ''}`}
+                        >
                             {button}
                         </button>
                     )}

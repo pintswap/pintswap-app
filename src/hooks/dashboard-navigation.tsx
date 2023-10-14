@@ -1,5 +1,5 @@
 import { useAccount } from 'wagmi';
-import { MdGroup, MdLineAxis, MdShare, MdTagFaces, MdSwapHoriz } from 'react-icons/md';
+import { MdGroup, MdLineAxis, MdImage, MdTagFaces, MdSwapHoriz } from 'react-icons/md';
 
 export const useDashNav = () => {
     const { address } = useAccount();
@@ -20,6 +20,13 @@ export const useDashNav = () => {
                   disabled: false,
                   icon: <MdLineAxis size={ICON_SIZE} />,
                   tooltip: 'See available pairs',
+              },
+              {
+                  text: 'NFTs',
+                  route: '/nfts',
+                  disabled: false,
+                  icon: <MdImage size={ICON_SIZE} />,
+                  tooltip: 'Coming soon!',
               },
               {
                   text: 'Peers',
@@ -57,6 +64,13 @@ export const useDashNav = () => {
                   disabled: false,
                   icon: <MdLineAxis size={ICON_SIZE} />,
                   tooltip: 'See available pairs',
+              },
+              {
+                  text: 'NFTs',
+                  route: '/nfts',
+                  disabled: false,
+                  icon: <MdImage size={ICON_SIZE} />,
+                  tooltip: 'Coming soon!',
               },
               {
                   text: 'Peers',

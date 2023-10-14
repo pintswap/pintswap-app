@@ -1,85 +1,115 @@
-import { ChangeEventHandler, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useWindowSize } from '../../hooks';
-import { getName, getTotalSupply } from '../../utils';
+import { INFTProps, alchemy, truncate } from '../../utils';
 import { usePintswapContext } from '../../stores';
+import { SelectNFT, SpinnerLoader } from '../components';
+import { NFTDisplay } from './nft-display';
+import { useAccount } from 'wagmi';
+import { MdExpandMore } from 'react-icons/md';
 
 type INFTInput = {
     label?: string;
-    value?: string;
-    onAddressChange: ChangeEventHandler<HTMLInputElement>;
+    nftAddress?: string;
+    onNftSelect: any;
     nftId?: string;
     disabled?: boolean;
-    id?: string;
-    onNftIdChange?: any;
+    nftLoading?: boolean;
+    nft?: INFTProps | null;
+    type?: 'owner';
 };
 
 export const NFTInput = ({
     label,
-    value,
-    onAddressChange,
-    onNftIdChange,
+    nftAddress,
+    onNftSelect,
     nftId,
     disabled,
-    id,
+    nftLoading,
+    nft,
+    type = 'owner',
 }: INFTInput) => {
+    const { address } = useAccount();
     const {
         pintswap: { chainId },
     } = usePintswapContext();
     const { width, breakpoints } = useWindowSize();
-    const [invalid, setInvalid] = useState('');
-    const [meta, setMeta] = useState({ name: '', totalSupply: '' });
+    const [dropdownItems, setDropdownItems] = useState<INFTProps[]>([]);
+    const [modalOpen, setModalOpen] = useState(false);
+
+    const handleSelected = (e: any) => {
+        onNftSelect(e);
+        setModalOpen(false);
+    };
+
     useEffect(() => {
-        if (value) {
-            if (nftId) {
-                (async () => {
-                    const promises = await Promise.all([
-                        await getName(value, chainId),
-                        await getTotalSupply(value, chainId),
-                    ]);
-                    setMeta({
-                        totalSupply: promises[1],
-                        name: promises[0],
-                    });
-                    if (promises[1] === '0' && promises[0] === '0')
-                        setInvalid('Error finding contract');
-                })().catch((err) => {
-                    console.error(err);
-                    setInvalid('Error finding contract');
-                });
+        (async () => {
+            if (address && type === 'owner') {
+                const res = await alchemy.nft.getNftsForOwner(address);
+                console.log('res', res);
+                if (res && res.ownedNfts?.length) {
+                    setDropdownItems(
+                        res.ownedNfts.map((n) => ({
+                            image: n.media?.length
+                                ? n?.media[0]?.gateway
+                                : n.tokenUri?.gateway || n.tokenUri?.raw || '',
+                            tokenId: n.tokenId,
+                            name: n.title,
+                            totalSupply: n.contract.totalSupply || '',
+                            token: n.contract.address,
+                            amount: String(n.balance),
+                            description: n.description,
+                        })),
+                    );
+                }
             }
-        }
-    }, [value, nftId]);
+        })().catch((err) => console.error(err));
+    }, []);
+
     return (
         <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black">
             {label && <span className="text-xs text-gray-400">{label}</span>}
-            <div className="flex justify-between items-center gap-4 pt-4 pb-1">
-                <input
-                    className="text-lg outline-none ring-0 bg-neutral-900 remove-arrow min-w-0 truncate w-full py-0.5"
-                    placeholder={width > breakpoints.sm ? 'Contract Address' : 'Address'}
-                    type="string"
-                    onChange={onAddressChange}
-                    value={value}
-                    disabled={disabled}
-                    id={id}
-                />
-                <input
-                    className="text-lg outline-none ring-0 bg-neutral-900 min-w-0 w-fit max-w-[80px] sm:max-w-[100px] !text-right py-0.5"
-                    placeholder={'NFT ID'}
-                    type="number"
-                    onChange={onNftIdChange}
-                    value={nftId}
-                    disabled={disabled}
-                    id={`${id}-id`}
+            <div>
+                <SelectNFT
+                    modalOpen={modalOpen}
+                    setModalOpen={setModalOpen}
+                    selected={nft}
+                    setSelected={handleSelected}
+                    items={dropdownItems}
+                    button={
+                        <div
+                            className={`flex justify-between items-center gap-4 pt-4 pb-1 transition duration-150 ${
+                                !nft
+                                    ? 'text-gray-400 hover:text-gray-200'
+                                    : 'hover:text-neutral-300 '
+                            }`}
+                        >
+                            <span className="text-lg text-left w-full py-0.5">
+                                {nftAddress
+                                    ? truncate(nftAddress, 6)
+                                    : `Click to select ${width > breakpoints.sm ? 'NFT' : ''}`}
+                            </span>
+                            <span className="text-lg cursor-pointer outline-none ring-0 bg-neutral-900 min-w-0 w-fit max-w-[80px] sm:max-w-[100px] !text-right py-0.5 pr-1.5">
+                                {nftId || <MdExpandMore />}
+                            </span>
+                        </div>
+                    }
                 />
             </div>
-            <div className="w-full flex justify-between items-center">
-                <small
-                    className={`${
-                        invalid ? 'text-red-400' : 'text-gray-400'
-                    } flex items-center gap-0.5`}
-                >
-                    {invalid || meta.name === '0' ? invalid : meta.name || '-'}
+            <div className="w-full flex items-center gap-2">
+                <small className={`text-gray-400 flex items-center gap-0.5`}>
+                    {nft?.name || '-'}
                 </small>
+                <div className="flex justify-center items-center w-[18px] h-[18px] overflow-hidden rounded-sm">
+                    {nftLoading ? (
+                        <div className="bg-neutral-800 rounded-sm w-full h-full flex items-center justify-center">
+                            <SpinnerLoader size={'10px'} />
+                        </div>
+                    ) : nft ? (
+                        <NFTDisplay nft={nft} show="img" />
+                    ) : (
+                        <></>
+                    )}
+                </div>
             </div>
         </div>
     );
