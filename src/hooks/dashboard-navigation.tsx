@@ -19,7 +19,7 @@ export const useDashNav = () => {
                   route: '/markets',
                   disabled: false,
                   icon: <MdLineAxis size={ICON_SIZE} />,
-                  tooltip: 'See available pairs',
+                  tooltip: 'See available PintSwap pairs',
               },
               {
                   text: 'NFTs',
@@ -63,7 +63,7 @@ export const useDashNav = () => {
                   route: '/markets',
                   disabled: false,
                   icon: <MdLineAxis size={ICON_SIZE} />,
-                  tooltip: 'See available pairs',
+                  tooltip: 'See available PintSwap pairs',
               },
               {
                   text: 'NFTs',

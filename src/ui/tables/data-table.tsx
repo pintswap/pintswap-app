@@ -24,8 +24,9 @@ import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
 import { TooltipWrapper, Asset, SmartPrice, Button, SpinnerLoader } from '../components';
 import { MdOutlineOpenInNew } from 'react-icons/md';
+import { MarketsRow } from './markets-row';
 
-type IDataTableProps = {
+export type IDataTableProps = {
     title?: string;
     data: (object | number[] | string[])[];
     columns: MUIDataTableColumnDef[];
@@ -66,6 +67,29 @@ export const DataTable = (props: IDataTableProps) => {
         trade,
         activeRow,
     } = props;
+
+    // TODO: complete
+    const determineRow = (rowIndex: number) => {
+        const renderProps = {
+            key: `data-table-row-${rowIndex}`,
+            columns: columns.map((col: any) => col.label),
+            data,
+            loading,
+            type: type,
+            peer: peer,
+            getRow: getRow,
+            activeRow: activeRow,
+            trade: trade,
+            column: rowIndex,
+        };
+        switch (type) {
+            case 'markets':
+                return <MarketsRow {...renderProps} />;
+            default:
+                return <CustomRow {...renderProps} />;
+        }
+    };
+
     return (
         <CacheProvider value={muiCache}>
             <ThemeProvider theme={muiTheme()}>
@@ -98,7 +122,7 @@ export const DataTable = (props: IDataTableProps) => {
                                 }}
                             />
                         ),
-                        pagination: pagination,
+                        pagination,
                         textLabels: {
                             body: {
                                 noMatch: loading ? (
