@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Card, Header, Input } from '../components';
 import { DataTable } from '../tables';
 import { useOffersContext } from '../../stores';

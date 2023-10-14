@@ -54,12 +54,12 @@ export type IMarketProps = {
     quote: string;
     bases: string[];
     buy: {
-        offers: number;
+        offers: IOffer[];
         best: number;
         sum: number;
     };
     sell: {
-        offers: number;
+        offers: IOffer[];
         best: number;
         sum: number;
     };

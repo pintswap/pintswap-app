@@ -332,7 +332,7 @@ const CustomRow = (props: IDataTableProps) => {
                             )}
                         </span>
                         <span className="text-xs">
-                            <span className="text-neutral-400">Offers:</span> {_cell.offers}
+                            <span className="text-neutral-400">Offers:</span> {_cell.offers.length}
                         </span>
                     </span>
                 </span>

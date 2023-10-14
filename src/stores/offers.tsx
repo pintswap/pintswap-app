@@ -221,11 +221,11 @@ export function OffersStore(props: { children: ReactNode }) {
                 if (found) {
                     found.offers += 1;
                     if (isAsk) {
-                        found.buy.offers += 1;
+                        found.buy.offers = [...found.buy.offers, m.raw];
                         if (found.buy.best > price) found.buy.best = price;
                         if (found.buy.sum < sum) found.buy.sum = sum;
                     } else {
-                        found.sell.offers += 1;
+                        found.sell.offers = [...found.sell.offers, m.raw];
                         if (found.sell.best < price) found.sell.best = price;
                         if (found.sell.sum < sum) found.sell.sum = sum;
                     }
@@ -237,12 +237,12 @@ export function OffersStore(props: { children: ReactNode }) {
                             quote: m.ticker,
                             bases: [],
                             buy: {
-                                offers: 1,
+                                offers: [m.raw],
                                 sum: sum,
                                 best: price,
                             },
                             sell: {
-                                offers: 0,
+                                offers: [],
                                 sum: 0,
                                 best: 0,
                             },
@@ -255,12 +255,12 @@ export function OffersStore(props: { children: ReactNode }) {
                             quote: m.ticker,
                             bases: [],
                             buy: {
-                                offers: 0,
+                                offers: [],
                                 sum: 0,
                                 best: 0,
                             },
                             sell: {
-                                offers: 1,
+                                offers: [m.raw],
                                 sum: sum,
                                 best: price,
                             },
