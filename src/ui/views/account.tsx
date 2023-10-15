@@ -119,7 +119,7 @@ export const AccountView = () => {
 
     const TABS = ['Profile', 'Offers', 'History'];
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3 sm:gap-4 2xl:gap-6">
             <div className="flex items-center justify-between">
                 <TransitionModal
                     button={
