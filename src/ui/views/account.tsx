@@ -11,11 +11,24 @@ import {
 } from '../components';
 import { Avatar, DropdownInput } from '../features';
 import { DataTable } from '../tables';
-import { useOffersContext, useUserContext, usePintswapContext } from '../../stores';
+import {
+    useOffersContext,
+    useUserContext,
+    usePintswapContext,
+    GAS_PRICE_MULTIPLIER,
+    makeGetGasPrice,
+} from '../../stores';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { formatPeerImg, truncate, convertAmount } from '../../utils';
-import { useSubgraph, useWindowSize } from '../../hooks';
+import {
+    formatPeerImg,
+    truncate,
+    convertAmount,
+    TESTING,
+    fetchNFT,
+    savePintswap,
+} from '../../utils';
+import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
 
 const columns = [
@@ -59,38 +72,23 @@ export const AccountView = () => {
     const { state } = useLocation();
     const { pintswap } = usePintswapContext();
     const { userTrades } = useOffersContext();
+    const { userData, toggleActive } = useUserContext();
     const {
-        updateBio,
-        updateImg,
-        updateName,
+        shallowForm,
+        updateShallow,
         handleSave,
-        updatePrivateKey,
-        userData,
-        toggleActive,
+        handleCancel,
         useNft,
-        toggleUseNft,
         setUseNft,
-        loading,
-    } = useUserContext();
-    const { name, bio, img, privateKey, extension } = userData;
-    const [shallowForm, setShallowForm] = useState({ bio, name });
-    const [isEditing, setIsEditing] = useState(false);
+        isLoading,
+        isEditing,
+        setIsEditing,
+        isError,
+        imgFile,
+        toggleUseNft,
+    } = useAccountForm();
+
     const [tableData, setTableData] = useState<any[]>([]);
-    const [imgFile, setImgFile] = useState('');
-
-    const handleUpdate = async (e: any) => {
-        e.preventDefault();
-        await handleSave();
-        setShallowForm({ bio: userData.bio, name: userData.name });
-        setIsEditing(false);
-    };
-
-    const handleCancel = (e: any) => {
-        e.preventDefault();
-        updateBio({ target: { value: shallowForm.bio } });
-        updateName({ target: { value: shallowForm.name } });
-        setIsEditing(false);
-    };
 
     useEffect(() => {
         (async () => {
@@ -173,7 +171,7 @@ export const AccountView = () => {
                                                     type="text"
                                                     title="Address"
                                                     placeholder={'Start typing here'}
-                                                    disabled={loading}
+                                                    disabled={isLoading}
                                                     max={50}
                                                 />
                                                 <Input
@@ -184,7 +182,7 @@ export const AccountView = () => {
                                                     type="number"
                                                     title="ID"
                                                     placeholder={'Start typing here'}
-                                                    disabled={loading}
+                                                    disabled={isLoading}
                                                 />
                                             </div>
                                         ) : (
@@ -193,16 +191,11 @@ export const AccountView = () => {
                                                     type="file"
                                                     name="profile-image"
                                                     accept=".jpg, .jpeg, .png"
-                                                    onChange={(e) => {
-                                                        if (
-                                                            e.target.files?.length &&
-                                                            e.target.files[0].name
-                                                        )
-                                                            setImgFile(e.target.files[0].name);
-                                                        updateImg(e);
-                                                    }}
+                                                    onChange={async (e) =>
+                                                        await updateShallow('img', e)
+                                                    }
                                                     className="absolute bg-transparent rounded h-[250px] w-[250px] text-transparent z-50 hover:cursor-pointer text-center"
-                                                    src={formatPeerImg(img)}
+                                                    src={formatPeerImg(shallowForm.img)}
                                                 />
                                                 <span className="absolute h-[254px] w-[254px] -translate-x-0.5 translate-y-0.5">
                                                     <span className="flex justify-center items-center h-full w-full -top-1 relative rounded bg-[rgba(0,0,0,0.6)] text-center text-xs p-4">
@@ -217,11 +210,13 @@ export const AccountView = () => {
                                                         )}
                                                     </span>
                                                 </span>
-                                                <Avatar
-                                                    size={250}
-                                                    peer={pintswap?.module?.address}
-                                                    imgShape="square"
-                                                />
+                                                <div className="w-[250px] h-[250px] flex justify-center items-center rounded-sm">
+                                                    <img
+                                                        src={formatPeerImg(shallowForm.img)}
+                                                        alt="account profile picture"
+                                                        className="object-cover h-full w-full"
+                                                    />
+                                                </div>
                                             </div>
                                         )}
                                         <Button
@@ -230,7 +225,7 @@ export const AccountView = () => {
                                             }`}
                                             type="transparent"
                                             onClick={toggleUseNft}
-                                            disabled={loading}
+                                            disabled={isLoading}
                                         >
                                             Use {useNft.using ? 'File' : 'NFT'}
                                         </Button>
@@ -254,7 +249,9 @@ export const AccountView = () => {
                                             //     ? name
                                             //     : truncate(name)
                                         }
-                                        onChange={updateName}
+                                        onChange={async ({ target }) =>
+                                            await updateShallow('name', target.value)
+                                        }
                                         type="text"
                                         title="Username"
                                         enableStateCss
@@ -275,12 +272,14 @@ export const AccountView = () => {
                                 </div>
                                 <div>
                                     <Input
-                                        value={bio}
-                                        onChange={updateBio}
+                                        value={shallowForm.bio}
+                                        onChange={async ({ target }) =>
+                                            await updateShallow('bio', target.value)
+                                        }
                                         type="text"
                                         title="Bio"
                                         enableStateCss
-                                        disabled={!isEditing || loading}
+                                        disabled={!isEditing || isLoading}
                                         placeholder={isEditing ? 'Start typing here...' : 'No bio'}
                                         max={100}
                                     />
@@ -289,16 +288,19 @@ export const AccountView = () => {
                                     <Input
                                         value={
                                             (!isEditing &&
-                                                ((privateKey && privateKey.replace(/\w/g, '*')) ||
+                                                ((shallowForm.privateKey &&
+                                                    shallowForm.privateKey.replace(/\w/g, '*')) ||
                                                     '')) ||
-                                            privateKey ||
+                                            shallowForm.privateKey ||
                                             ''
                                         }
-                                        onChange={updatePrivateKey}
+                                        onChange={async ({ target }) =>
+                                            await updateShallow('privateKey', target.value)
+                                        }
                                         type="password"
                                         title="Private Key"
                                         enableStateCss
-                                        disabled={!isEditing || loading}
+                                        disabled={!isEditing || isLoading}
                                         placeholder={
                                             isEditing ? 'Start typing here...' : 'No private key'
                                         }
@@ -307,7 +309,14 @@ export const AccountView = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
+                        <div className="flex justify-between items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
+                            <div>
+                                {isError && (
+                                    <span className="text-red-400">
+                                        Error occured while saving data
+                                    </span>
+                                )}
+                            </div>
                             {!isEditing ? (
                                 <Button
                                     onClick={() => setIsEditing(true)}
@@ -321,7 +330,7 @@ export const AccountView = () => {
                                     <Button form="reset" onClick={handleCancel} type="transparent">
                                         Cancel
                                     </Button>
-                                    <Button form="submit" onClick={handleUpdate} loading={loading}>
+                                    <Button form="submit" onClick={handleSave} loading={isLoading}>
                                         Save
                                     </Button>
                                 </>

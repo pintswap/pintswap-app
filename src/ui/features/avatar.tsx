@@ -132,6 +132,15 @@ export const Avatar = ({
         if (module) getter();
     }, [peer, module, peerData.name, peersData.length]);
 
+    useEffect(() => {
+        setPeerData({
+            ...peerData,
+            name: userData.name,
+            bio: userData.bio,
+            img: userData.img,
+        });
+    }, [userData.name, userData.bio, userData.img]);
+
     if (type === 'clickable') {
         return (
             <div className={`${loading ? 'animate-pulse' : ''}`}>

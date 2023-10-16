@@ -1,7 +1,6 @@
 import {
     createContext,
     Dispatch,
-    EventHandler,
     ReactNode,
     SetStateAction,
     useContext,
@@ -9,10 +8,8 @@ import {
     useState,
 } from 'react';
 import { usePintswapContext } from './pintswap';
-import { EMPTY_USER_DATA, fetchNFT, savePintswap } from '../utils';
-import { ethers } from 'ethers6';
+import { EMPTY_USER_DATA } from '../utils';
 import { NFTPFP } from '@pintswap/sdk';
-import { GAS_PRICE_MULTIPLIER, makeGetGasPrice } from './pintswap';
 import { getTokenBalances } from '../api';
 import { useAccount } from 'wagmi';
 
@@ -29,12 +26,6 @@ export type IUserDataProps = {
     loading: boolean;
 };
 
-type IUseNftProps = {
-    using: boolean;
-    address: string;
-    id: string;
-};
-
 export type ITokenResProps = {
     symbol: string;
     address: string;
@@ -45,17 +36,7 @@ export type ITokenResProps = {
 export type IUserStoreProps = {
     tokenHoldings: ITokenResProps[];
     userData: IUserDataProps;
-    useNft: IUseNftProps;
-    loading: boolean;
-    updateBio: (e: any) => void;
-    updateName: (e: any) => void;
-    updateImg: (e: any) => void;
-    updatePrivateKey: (e: any) => void;
-    handleSave: () => Promise<void>;
-    updateExt: (e: any) => void;
     toggleActive: () => void;
-    toggleUseNft: () => void;
-    setUseNft: Dispatch<SetStateAction<any>>;
     setUserData: Dispatch<SetStateAction<IUserDataProps>>;
 };
 
@@ -66,28 +47,16 @@ const DEFAULT_USE_NFT = { using: false, address: '', id: '' };
 const UserContext = createContext<IUserStoreProps>({
     tokenHoldings: [],
     userData: EMPTY_USER_DATA,
-    useNft: DEFAULT_USE_NFT,
-    loading: false,
-    updateBio(e) {},
-    updateName(e) {},
-    updateImg(e) {},
-    handleSave: async () => {},
-    updatePrivateKey(e) {},
-    updateExt(e) {},
     toggleActive() {},
-    toggleUseNft() {},
-    setUseNft() {},
     setUserData() {},
 });
 
 // Wrapper
 export function UserStore(props: { children: ReactNode }) {
     const { address } = useAccount();
-    const psUser = localStorage.getItem('_pintUser');
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const [userData, setUserData] = useState<IUserDataProps>(EMPTY_USER_DATA);
-    const [useNft, setUseNft] = useState(DEFAULT_USE_NFT);
     const [loading, setLoading] = useState(false);
     const [tokenHoldings, setTokenHoldings] = useState<ITokenResProps[]>([]);
 
@@ -95,81 +64,6 @@ export function UserStore(props: { children: ReactNode }) {
         if (!userData.active) module?.startPublishingOffers(60000);
         else module?.startPublishingOffers(60000).stop();
         setUserData({ ...userData, active: !userData.active });
-    }
-
-    function toggleUseNft() {
-        if (!useNft.using) setUseNft({ ...useNft, using: true });
-        else setUseNft({ ...useNft, using: false });
-    }
-
-    function updateExt(e: any) {
-        console.log(e);
-    }
-
-    async function updateImg(e: any) {
-        if (module) {
-            const image = (e.target.files as any)[0] ?? null;
-            const _buff = Buffer.from(await image.arrayBuffer());
-            module.setImage(_buff);
-            setUserData({ ...userData, img: _buff });
-        }
-    }
-
-    function updateBio(e: any) {
-        if (module) {
-            setUserData({ ...userData, bio: e.target.value });
-        }
-    }
-
-    function updatePrivateKey(e: any) {
-        if (module) {
-            setUserData({ ...userData, privateKey: e.target.value });
-        }
-    }
-
-    function updateName(e: any) {
-        setUserData({ ...userData, name: `${e.target.value}` });
-    }
-
-    async function handleSave() {
-        setLoading(true);
-        if (module) {
-            module.setBio(userData.bio);
-            savePintswap(module);
-            // Save name with extension
-            let nameWExt = `${userData.name}`;
-            if (!nameWExt.includes('.drip')) {
-                nameWExt = `${nameWExt}${userData.extension}`;
-            }
-            try {
-                const response = await module.registerName(nameWExt);
-                console.log('register name res', response);
-                if (useNft.address && useNft.id && ethers.isAddress(useNft.address)) {
-                    const { imageBlob } = await fetchNFT({
-                        token: useNft.address,
-                        tokenId: useNft.id,
-                    });
-                    if (imageBlob) {
-                        const buff = Buffer.from(await (imageBlob as Blob).arrayBuffer());
-                        module.setImage(buff);
-                        setUserData({ ...userData, img: buff });
-                    }
-                }
-                // Save private key
-                if (psUser && userData.privateKey && userData.privateKey.length > 50) {
-                    module.signer = new ethers.Wallet(userData.privateKey).connect(
-                        module.signer.provider,
-                    );
-                    module.signer.provider.getGasPrice = makeGetGasPrice(
-                        module.signer.provider,
-                        GAS_PRICE_MULTIPLIER,
-                    );
-                }
-            } catch (err) {
-                console.error(`#handleSave:`, err);
-            }
-        }
-        setLoading(false);
     }
 
     /*
@@ -214,17 +108,7 @@ export function UserStore(props: { children: ReactNode }) {
         <UserContext.Provider
             value={{
                 userData,
-                updateBio,
-                updateName,
-                updateImg,
-                handleSave,
-                updatePrivateKey,
-                updateExt,
                 toggleActive,
-                useNft,
-                toggleUseNft,
-                setUseNft,
-                loading,
                 setUserData,
                 tokenHoldings,
             }}
