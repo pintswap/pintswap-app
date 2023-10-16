@@ -145,7 +145,6 @@ export const SwapModule = ({
         useEffect(() => {
             (async () => {
                 const quote = await getQuote(trade, eth);
-                console.log('quote', quote, trade);
                 if (Number(quote) > 0 && updateTrade && !isReversing) {
                     updateTrade('gets.amount', quote);
                 } else if (Number(quote) === 0 && updateTrade) {

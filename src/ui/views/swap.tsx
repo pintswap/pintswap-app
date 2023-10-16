@@ -146,6 +146,7 @@ export const SwapView = () => {
                                     className="pointer-events-none"
                                     type="text"
                                     value={createTradeLink()}
+                                    disabled
                                 />
                             </CopyClipboard>
                         </div>

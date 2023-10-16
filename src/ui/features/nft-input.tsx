@@ -45,7 +45,6 @@ export const NFTInput = ({
         (async () => {
             if (address && type === 'owner') {
                 const res = await alchemy.nft.getNftsForOwner(address);
-                console.log('res', res);
                 if (res && res.ownedNfts?.length) {
                     setDropdownItems(
                         res.ownedNfts.map((n) => ({

@@ -245,11 +245,16 @@ export async function getDecimals(token: string, chainId: number) {
 
 export async function convertAmount(
     to: 'hex' | 'number' | 'readable',
-    amount: string,
+    amount: string, // could be token id
     token: string,
     chainId: number,
+    isNft?: boolean,
 ) {
     let output;
+    if (isNft && to === 'readable') {
+        output = formatUnits(amount, 0);
+        return `${(await getTokenAttributes(token, chainId, 'symbol')) || ''} ${output} NFT`;
+    }
     if (to === 'hex') {
         if (amount.startsWith('0x')) output = amount;
         else output = toBeHex(parseUnits(amount, (await getDecimals(token, chainId)) || 18));
@@ -258,7 +263,7 @@ export async function convertAmount(
             output = formatUnits(amount, (await getDecimals(token, chainId)) || 18);
         else output = amount;
     }
-    if (TESTING) console.log('#convertAmount:', { amount, token, output });
+    // if (TESTING) console.log('#convertAmount:', { amount, token, output });
     return to === 'readable'
         ? `${output}  ${(await getTokenAttributes(token, chainId, 'symbol')) || ''}`
         : output;

@@ -140,7 +140,7 @@ export function OffersStore(props: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(true);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
-        setUserTrades(userTrades.set(hash, tradeProps));
+        setUserTrades(new Map(userTrades.set(hash, tradeProps)));
     };
 
     const deleteTrade = (hash: string) => {

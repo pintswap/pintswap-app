@@ -183,14 +183,14 @@ export function matchOffers(offers: any[], amount: BigNumberish) {
                 const remaining = toFill - filled;
                 if (remaining <= 0) return r;
                 filled += getsAmount;
-                if (TESTING)
-                    console.log(
-                        '#matchOffers',
-                        '\nRemaining:',
-                        remaining,
-                        '\ngetsAmount:',
-                        getsAmount,
-                    );
+                // if (TESTING)
+                //     console.log(
+                //         '#matchOffers',
+                //         '\nRemaining:',
+                //         remaining,
+                //         '\ngetsAmount:',
+                //         getsAmount,
+                //     );
                 if (remaining >= getsAmount) {
                     r.push({
                         amount: getsAmount,

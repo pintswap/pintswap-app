@@ -207,11 +207,11 @@ const CustomRow = (props: IDataTableProps) => {
                 const found = userTrades.get(firstCell);
                 const offerChainId = 1;
                 // const offerChainId = found ? await detectTradeNetwork(found) : 1;
-                return navigator.clipboard.writeText(
-                    `${BASE_URL}/#/fulfill/${
-                        userData.name || module?.address || module?.peerId?.toB58String()
-                    }/${firstCell}/${offerChainId}`,
-                );
+                url = `${BASE_URL}/#/fulfill/${
+                    userData.name || module?.address || module?.peerId?.toB58String()
+                }`;
+                if (cells[2].includes(' NFT')) url = `${url}/nft`;
+                return navigator.clipboard.writeText(`${url}/${firstCell}/${offerChainId}`);
             }
             case 'history':
                 return window.open(`${NETWORKS[chainId].explorer}/tx/${firstCell}`, '_blank');
@@ -245,6 +245,13 @@ const CustomRow = (props: IDataTableProps) => {
 
     const formatCell = (s: string) => {
         if (type === 'history' || type === 'manage') {
+            if (s.includes(' NFT')) {
+                return (
+                    <span className="flex items-center gap-1.5 justify-end">
+                        <span>{s}</span>
+                    </span>
+                );
+            }
             if (s.includes('/')) {
                 return <span>{s}</span>;
             }
@@ -282,7 +289,7 @@ const CustomRow = (props: IDataTableProps) => {
             if (type === 'manage') {
                 return (
                     <Button
-                        className="text-red-400 hover:text-red-500 w-full text-right"
+                        className="!text-red-400 hover:!text-red-500 w-full text-right"
                         type="transparent"
                         onClick={(e) => handleDelete(e, cells[0])}
                     >

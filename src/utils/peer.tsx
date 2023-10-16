@@ -37,7 +37,7 @@ export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?:
             else return peer;
         }
     } catch (err) {
-        if (TESTING) console.warn('#formatPeerName', err);
+        // if (TESTING) console.warn('#formatPeerName', err);
         return peer;
     }
 };

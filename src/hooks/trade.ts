@@ -121,14 +121,15 @@ export const useTrade = () => {
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent, isPublic = true) => {
         e.preventDefault();
-        if (TESTING) console.log('#broadcastTrade: TradeObj', await buildTradeObj(trade));
         if (module) {
             try {
                 const offer = await buildTradeObj(trade);
-                module.broadcastOffer(await buildTradeObj(trade));
+                if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
+                module.broadcastOffer(offer);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 savePintswap(module);
                 if (isPublic && !userData.active) toggleActive();
+                addTrade(hashOffer(offer), offer);
             } catch (err) {
                 console.error(err);
             }
@@ -429,7 +430,6 @@ export const useTrade = () => {
                         multiAddr: module && module.peerId && module.address,
                         orderHash: hash,
                     });
-                    addTrade(hash, await buildTradeObj(trade));
                     updateSteps('Fulfill');
                 };
                 module.on('pintswap/trade/broadcast', broadcastListener);

@@ -1,4 +1,4 @@
-import { ethers } from 'ethers6';
+import { ethers, formatUnits } from 'ethers6';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
     Button,
@@ -18,7 +18,41 @@ import { formatPeerImg, convertAmount } from '../../utils';
 import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
 
-const columns = [
+const activeColumns = [
+    {
+        name: 'hash',
+        label: 'Hash',
+        options: {
+            sort: false,
+        },
+    },
+    {
+        name: 'chainId',
+        label: 'Chain',
+    },
+    {
+        name: 'sending',
+        label: 'Sending',
+        options: {
+            sort: false,
+            setCellHeaderProps: () => ({ align: 'right' }),
+        },
+    },
+    {
+        name: 'receiving',
+        label: 'Receiving',
+        options: {
+            sort: false,
+            setCellHeaderProps: () => ({ align: 'right' }),
+        },
+    },
+    {
+        name: '',
+        label: '',
+    },
+];
+
+const historyColumns = [
     {
         name: 'timestamp',
         label: 'Date',
@@ -77,26 +111,39 @@ export const AccountView = () => {
 
     const [tableData, setTableData] = useState<any[]>([]);
 
+    console.log('userTrades', tableData);
+
     useEffect(() => {
         (async () => {
             const tableDataRes = await Promise.all(
-                Array.from(userTrades, async (entry) => ({
-                    hash: entry[0],
-                    chainId: 1,
-                    // chainId: await detectTradeNetwork(entry[1]),
-                    sending: await convertAmount(
-                        'readable',
-                        entry[1].gives.amount || '',
-                        entry[1].gives.token,
-                        pintswap.chainId,
-                    ),
-                    receiving: await convertAmount(
-                        'readable',
-                        entry[1].gets.amount || '',
-                        entry[1].gets.token,
-                        pintswap.chainId,
-                    ),
-                })),
+                Array.from(userTrades, async (entry) => {
+                    const isSendingNft = entry[1].gives?.tokenId ? true : false;
+                    const isReceivingNft = entry[1].gets?.tokenId ? true : false;
+                    return {
+                        hash: entry[0],
+                        chainId: 1,
+                        // chainId: await detectTradeNetwork(entry[1]),
+                        sending: await convertAmount(
+                            'readable',
+                            isSendingNft
+                                ? formatUnits(entry[1].gives.tokenId || '', 0)
+                                : entry[1].gives.amount || '',
+                            entry[1].gives.token,
+                            pintswap.chainId,
+                            isSendingNft,
+                        ),
+                        receiving: await convertAmount(
+                            'readable',
+                            isReceivingNft
+                                ? formatUnits(entry[1].gets.tokenId || '', 0)
+                                : entry[1].gets.amount || '',
+                            entry[1].gets.token,
+                            pintswap.chainId,
+                            isReceivingNft,
+                        ),
+                        isNftOffer: isSendingNft,
+                    };
+                }),
             );
             setTableData(tableDataRes);
         })().catch((err) => console.error(err));
@@ -326,11 +373,16 @@ export const AccountView = () => {
                     </form>
                 </Tab.Panel>
                 <Tab.Panel>
-                    <DataTable columns={columns} data={tableData} type="manage" toolbar={false} />
+                    <DataTable
+                        columns={activeColumns}
+                        data={tableData}
+                        type="manage"
+                        toolbar={false}
+                    />
                 </Tab.Panel>
                 <Tab.Panel>
                     <DataTable
-                        columns={columns}
+                        columns={historyColumns}
                         data={subgraph?.data?.userHistory || []}
                         toolbar={false}
                         type="history"
