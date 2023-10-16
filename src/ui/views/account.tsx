@@ -9,25 +9,12 @@ import {
     TooltipWrapper,
     TransitionModal,
 } from '../components';
-import { Avatar, DropdownInput } from '../features';
+import { Avatar } from '../features';
 import { DataTable } from '../tables';
-import {
-    useOffersContext,
-    useUserContext,
-    usePintswapContext,
-    GAS_PRICE_MULTIPLIER,
-    makeGetGasPrice,
-} from '../../stores';
+import { useOffersContext, useUserContext, usePintswapContext } from '../../stores';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import {
-    formatPeerImg,
-    truncate,
-    convertAmount,
-    TESTING,
-    fetchNFT,
-    savePintswap,
-} from '../../utils';
+import { formatPeerImg, convertAmount } from '../../utils';
 import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
 
