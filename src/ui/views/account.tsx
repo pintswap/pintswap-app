@@ -352,9 +352,9 @@ export const AccountView = () => {
                 </Tab.Panel>
             </Card>
 
-            <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-row gap-4 justify-center items-center">
                 <Button onClick={() => navigate('/swap')} className="sm:max-w-lg sm:self-center">
-                    Create Order
+                    Create Offer
                 </Button>
                 <TooltipWrapper
                     text={

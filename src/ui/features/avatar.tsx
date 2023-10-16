@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../../stores';
 import {
     DEFAULT_AVATAR,
+    formatPeerImg,
     formatPeerName,
     getFormattedPeer,
     getPeerImg,
