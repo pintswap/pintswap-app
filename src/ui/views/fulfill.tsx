@@ -3,6 +3,8 @@ import { PageStatus, TransitionModal, Card } from '../components';
 import { Avatar, SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import { useAccount } from 'wagmi';
+import { useEffect } from 'react';
+import { updateToast } from '../../utils';
 
 export const FulfillView = () => {
     const { address } = useAccount();
@@ -19,6 +21,10 @@ export const FulfillView = () => {
             !address
         );
     };
+
+    useEffect(() => {
+        if (steps[2].status === 'current') updateToast('swapping', 'success');
+    }, [steps[2].status]);
 
     return (
         <>
@@ -54,7 +60,7 @@ export const FulfillView = () => {
                     </Tab.Panel>
                 </Card>
             </div>
-            <Transition
+            {/* <Transition
                 show={steps[2].status === 'current'}
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
@@ -65,7 +71,7 @@ export const FulfillView = () => {
                 className="flex flex-col justify-center items-center text-center"
             >
                 <PageStatus type="success" />
-            </Transition>
+            </Transition> */}
         </>
     );
 };

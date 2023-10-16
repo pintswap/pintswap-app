@@ -10,7 +10,7 @@ import {
 import { SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import React, { useEffect, useState } from 'react';
-import { BASE_URL } from '../../utils';
+import { BASE_URL, updateToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -69,6 +69,10 @@ export const SwapView = () => {
             }
         })().catch((err) => (module && module.logger.error(err)) || console.error(err));
     }, [order]);
+
+    useEffect(() => {
+        if (steps[2].status === 'current') updateToast('swapping', 'success');
+    }, [steps[2].status]);
 
     return (
         <>
@@ -164,7 +168,7 @@ export const SwapView = () => {
                 </Card>
             </TransitionModal>
 
-            <Transition
+            {/* <Transition
                 show={steps[2].status === 'current'}
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
@@ -175,7 +179,7 @@ export const SwapView = () => {
                 className="flex flex-col justify-center items-center text-center"
             >
                 <PageStatus type="success" />
-            </Transition>
+            </Transition> */}
         </>
     );
 };

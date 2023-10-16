@@ -326,8 +326,14 @@ const CustomRow = (props: IDataTableProps) => {
             return (
                 <span className="grid grid-cols-1 sm:grid-cols-2 items-center gap-2">
                     <span className="sm:text-lg flex items-center gap-0.5">
-                        <span className="text-xs">$</span>
-                        <SmartPrice price={_cell.best} />
+                        {_cell.offers.length ? (
+                            <>
+                                <span className="text-xs">$</span>
+                                <SmartPrice price={_cell.best} />
+                            </>
+                        ) : (
+                            <span>-</span>
+                        )}
                     </span>
                     <span className="flex-col hidden sm:flex">
                         <span className="text-xs">

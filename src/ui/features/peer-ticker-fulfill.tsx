@@ -12,7 +12,14 @@ import {
     SmartPrice,
 } from '../components';
 import { useAccount } from 'wagmi';
-import { BASE_URL, toLimitOrder, formattedFromTransfer, matchOffers, TESTING } from '../../utils';
+import {
+    BASE_URL,
+    toLimitOrder,
+    formattedFromTransfer,
+    matchOffers,
+    TESTING,
+    updateToast,
+} from '../../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
 import { usePintswapContext } from '../../stores';
@@ -114,6 +121,10 @@ export const PeerTickerFulfill = ({
         })().catch((err) => console.error(err));
     }, [matchInputs]);
 
+    useEffect(() => {
+        if (steps[2].status === 'current') updateToast('swapping', 'success');
+    }, [steps[2].status]);
+
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
@@ -202,7 +213,7 @@ export const PeerTickerFulfill = ({
                     </CopyClipboard>
                 </Transition>
             </div>
-            <Transition
+            {/* <Transition
                 show={steps[2].status === 'current'}
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
@@ -213,7 +224,7 @@ export const PeerTickerFulfill = ({
                 className="flex flex-col justify-center items-center text-center"
             >
                 <PageStatus type="success" />
-            </Transition>
+            </Transition> */}
         </>
     );
 };
