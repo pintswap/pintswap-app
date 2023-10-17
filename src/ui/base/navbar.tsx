@@ -55,13 +55,13 @@ export const Navbar = () => {
 
             <Transition
                 show={isMobileOpen}
-                enter="transform transition ease-in-out duration-500"
+                enter="transform transition ease-in-out duration-400"
                 enterFrom="-translate-y-[100vw]"
                 enterTo="translate-y-0"
-                leave="transform transition ease-in-out duration-500"
+                leave="transform transition ease-in-out duration-400"
                 leaveFrom="translate-y-0"
                 leaveTo="-translate-y-[100vw]"
-                className="absolute z-20 right-0 top-[54px]"
+                className="absolute z-20 right-0 top-[50px]"
             >
                 <ul className="flex flex-col w-screen bg-brand-dashboard shadow-md p-2 items-start">
                     {NAV_ITEMS.map((item, i) => (
@@ -103,10 +103,10 @@ export const Navbar = () => {
 
             <Transition
                 show={isMobileOpen}
-                enter="transition-opacity ease-in-out duration-500 delay-100"
+                enter="transition-opacity ease-in-out duration-400 delay-100"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="transition-opacity ease-in-out duration-400"
+                leave="transition-opacity ease-in-out duration-300"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
                 className={`fixed bottom-0 left-0 w-screen h-full flex flex-grow z-10`}
