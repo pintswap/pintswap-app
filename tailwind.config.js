@@ -13,7 +13,7 @@ module.exports = {
             },
             screens: {
                 '3xl': '1920px',
-                'mui': '900px'
+                mui: '900px',
             },
             colors: {
                 brand: {
