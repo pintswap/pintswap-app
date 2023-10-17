@@ -346,12 +346,12 @@ export const useTrade = () => {
             case 0:
                 if (module) savePintswap(module);
                 console.log('#makerListener: taker approving trade');
-                toast('Taker is approving transaction...');
+                toast('Taker is approving transaction');
                 toast.loading('Swapping...', { toastId: 'swapping' });
                 break;
             case 1:
                 console.log('#makerListener: taker approved trade');
-                toast('Taker approved transaction!');
+                // toast('Taker approved transaction!');
                 break;
             case 2:
                 console.log('#makerListener: swap is complete');
