@@ -2391,10 +2391,6 @@ html,
     justify-content: flex-start;
   }
 
-  .mui\:justify-center{
-    justify-content: center;
-  }
-
   .mui\:first\:border-neutral-800:first-child{
     --tw-border-opacity: 1;
     border-color: rgb(38 38 38 / var(--tw-border-opacity));

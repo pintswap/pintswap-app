@@ -22,7 +22,7 @@ import {
 } from '../../utils';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
-import { TooltipWrapper, Asset, SmartPrice, Button, SpinnerLoader } from '../components';
+import { TooltipWrapper, Asset, SmartPrice, Button, SpinnerLoader, Skeleton } from '../components';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { MarketsRow } from './markets-row';
 
@@ -95,7 +95,16 @@ export const DataTable = (props: IDataTableProps) => {
             <ThemeProvider theme={muiTheme()}>
                 <MUIDataTable
                     title={title}
-                    data={data}
+                    data={
+                        loading
+                            ? [1, 2, 3, 4].map((c) =>
+                                  Object.assign(
+                                      {},
+                                      columns.map((col: any) => ({ [col.name]: '' })),
+                                  ),
+                              )
+                            : data
+                    }
                     columns={columns}
                     options={{
                         ...muiOptions,
@@ -125,11 +134,7 @@ export const DataTable = (props: IDataTableProps) => {
                         pagination,
                         textLabels: {
                             body: {
-                                noMatch: loading ? (
-                                    <SpinnerLoader className={'justify-start mui:justify-center'} />
-                                ) : (
-                                    <div className="py-4">No data available</div>
-                                ),
+                                noMatch: <div className="py-4">No data available</div>,
                             },
                         },
                         customRowRender: (data, dataIndex, rowIndex) => {
@@ -176,7 +181,9 @@ const CustomRow = (props: IDataTableProps) => {
     const { tableBreak } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
-    const usdPrice = useUsdPrice(type === 'markets' ? (data[0] as any).split('/')[0] : '');
+    const usdPrice = useUsdPrice(
+        type === 'markets' && !loading ? (data[0] as any).split('/')[0] : '',
+    );
 
     const baseStyle = `text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent mui:first:border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
@@ -441,6 +448,7 @@ const CustomRow = (props: IDataTableProps) => {
             return formatCell(cell);
         }
     };
+
     // Desktop
     if (tableBreak) {
         return (
@@ -453,7 +461,15 @@ const CustomRow = (props: IDataTableProps) => {
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
                         className={`py-2 px-4`}
                     >
-                        {determineCell(cell, i)}
+                        {!loading ? (
+                            determineCell(cell, i)
+                        ) : (
+                            <Skeleton rounding="rounded" loading>
+                                <span className={location.hash === '#/markets' ? 'text-lg' : ''}>
+                                    -
+                                </span>
+                            </Skeleton>
+                        )}
                     </td>
                 ))}
             </tr>
@@ -471,7 +487,20 @@ const CustomRow = (props: IDataTableProps) => {
                         className={`py-[1px] flex justify-between items-center`}
                     >
                         <span className="text-gray-300 font-thin text-sm">{cols[i]}</span>
-                        <span className={`${!cell ? 'w-full' : ''}`}>{determineCell(cell, i)}</span>
+                        <span className={`${!cell ? 'w-full' : ''}`}>
+                            {!loading ? (
+                                determineCell(cell, i)
+                            ) : (
+                                <Skeleton
+                                    rounding="rounded"
+                                    loading
+                                    maxW="max-w-[120px] w-[120px]"
+                                    wrapperClass="flex justify-end"
+                                >
+                                    -
+                                </Skeleton>
+                            )}
+                        </span>
                     </td>
                 ))}
             </tr>

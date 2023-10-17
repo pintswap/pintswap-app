@@ -42,7 +42,7 @@ export const PairListView = () => {
     } = usePintswapContext();
     const { width, breakpoints } = useWindowSize();
     const { pathname } = useLocation();
-    const { offersByChain } = useOffersContext();
+    const { offersByChain, isLoading } = useOffersContext();
     const [pairOrders, setPairOrders] = useState({ bids: [], asks: [] });
     const pair = pathname.split('/')[2].toUpperCase().replace('-', ' / ');
 
@@ -90,7 +90,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.asks}
-                            loading={loading}
+                            loading={loading || isLoading}
                             toolbar={false}
                             options={{
                                 sortOrder: {
@@ -110,7 +110,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.bids}
-                            loading={loading}
+                            loading={loading || isLoading}
                             toolbar={false}
                             options={{
                                 sortOrder: {
@@ -130,7 +130,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.asks}
-                            loading={loading}
+                            loading={loading || isLoading}
                             toolbar={false}
                             options={{
                                 sortOrder: {
@@ -147,7 +147,7 @@ export const PairListView = () => {
                             type="explore"
                             columns={columns}
                             data={pairOrders.bids}
-                            loading={loading}
+                            loading={loading || isLoading}
                             toolbar={false}
                             options={{
                                 sortOrder: {

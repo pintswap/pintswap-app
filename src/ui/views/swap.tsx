@@ -73,7 +73,10 @@ export const SwapView = () => {
     useEffect(() => {
         if (steps[2].status === 'current') {
             updateToast('swapping', 'success');
-            const timeout = setTimeout(() => clearTrade(), 5000);
+            const timeout = setTimeout(() => {
+                setIsModalOpen(false);
+                clearTrade();
+            }, 5000);
             return () => clearTimeout(timeout);
         }
     }, [steps[2].status]);
