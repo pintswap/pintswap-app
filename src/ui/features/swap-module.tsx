@@ -47,7 +47,7 @@ export const SwapModule = ({
         if (type === 'fulfill') return 'Fulfill';
         if (type === 'nft') {
             if (nft && nft.amount === '0') return 'Cannot verify NFT ownership';
-            if (!nft) return 'Enter NFT contract address';
+            if (!nft) return 'Select NFT';
         }
         if (!trade.gets.token) return 'Select a Token';
         if (!isPublic) return 'Create Offer';

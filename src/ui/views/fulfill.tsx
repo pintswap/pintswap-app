@@ -5,10 +5,12 @@ import { useTrade } from '../../hooks';
 import { useAccount } from 'wagmi';
 import { useEffect } from 'react';
 import { updateToast } from '../../utils';
+import { useNavigate } from 'react-router-dom';
 
 export const FulfillView = () => {
     const { address } = useAccount();
-    const { fulfillTrade, loading, trade, steps, order } = useTrade();
+    const navigate = useNavigate();
+    const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade();
 
     const isButtonDisabled = () => {
         return (
@@ -23,7 +25,13 @@ export const FulfillView = () => {
     };
 
     useEffect(() => {
-        if (steps[2].status === 'current') updateToast('swapping', 'success');
+        if (steps[2].status === 'current') {
+            updateToast('swapping', 'success');
+            const timeout = setTimeout(() => {
+                navigate('/');
+            }, 5000);
+            return () => clearTimeout(timeout);
+        }
     }, [steps[2].status]);
 
     return (
