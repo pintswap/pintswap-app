@@ -231,7 +231,7 @@ export function OffersStore(props: { children: ReactNode }) {
                     }
                 } else {
                     if (isAsk) {
-                        _uniqueMarkets.push({
+                        const formatted = {
                             // quote: quoteToken,
                             // bases: [split[1]],
                             quote: m.ticker,
@@ -247,9 +247,10 @@ export function OffersStore(props: { children: ReactNode }) {
                                 best: 0,
                             },
                             offers: 1,
-                        });
+                        };
+                        _uniqueMarkets.push(formatted);
                     } else {
-                        _uniqueMarkets.push({
+                        const formatted = {
                             // quote: quoteToken,
                             // bases: [split[1]],
                             quote: m.ticker,
@@ -257,7 +258,7 @@ export function OffersStore(props: { children: ReactNode }) {
                             buy: {
                                 offers: [],
                                 sum: 0,
-                                best: 0,
+                                best: price + 10,
                             },
                             sell: {
                                 offers: [m.raw],
@@ -265,7 +266,8 @@ export function OffersStore(props: { children: ReactNode }) {
                                 best: price,
                             },
                             offers: 1,
-                        });
+                        };
+                        _uniqueMarkets.push(formatted);
                     }
                 }
             });

@@ -1,6 +1,7 @@
 import { Button } from './button';
 import { useChainModal } from '@rainbow-me/rainbowkit';
 import { getNetwork } from '@wagmi/core';
+import { useAccount } from 'wagmi';
 
 type IChainDropdown = {
     size?: number;
@@ -8,12 +9,14 @@ type IChainDropdown = {
 
 export const ChainDropdown = ({ size = 24 }: IChainDropdown) => {
     const { openChainModal } = useChainModal();
+    const { address } = useAccount();
     const getNetworkName = () => {
         if (getNetwork()?.chain && !getNetwork()?.chain?.unsupported) {
             const formattedNetworkName = getNetwork().chain?.name?.toLowerCase();
             if (formattedNetworkName?.includes(' ')) return formattedNetworkName.split(' ')[0];
             return formattedNetworkName;
         }
+        if (!address) return 'ethereum';
         return 'unknown';
     };
 
