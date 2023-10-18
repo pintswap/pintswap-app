@@ -1,11 +1,13 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { IMarketProps, ITokenProps, getTokenList } from '../utils';
+import { IMarketProps, INFTProps, ITokenProps, getTokenList } from '../utils';
 import { IUserDataProps, usePintswapContext } from '../stores';
 
 const isKeyInObjArray = (list: any[], key: string) =>
     list.some((obj) => Object.keys(obj).includes(key));
 
-export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[] | IMarketProps[]) => {
+export const useSearch = (
+    list: string[] | ITokenProps[] | IUserDataProps[] | IMarketProps[] | INFTProps[],
+) => {
     const {
         pintswap: { chainId },
     } = usePintswapContext();
@@ -15,6 +17,7 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[] | IM
         if (isKeyInObjArray(list, 'symbol')) return 'token';
         else if (isKeyInObjArray(list, 'bio')) return 'user';
         else if (isKeyInObjArray(list, 'offers')) return 'markets';
+        else if (isKeyInObjArray(list, 'tokenId')) return 'nft';
         else return 'string';
     };
 
@@ -28,7 +31,7 @@ export const useSearch = (list: string[] | ITokenProps[] | IUserDataProps[] | IM
                 if (e.target.value === '') return getTokenList(chainId);
                 return el.symbol.toLowerCase().includes(e.target.value.toLowerCase());
             });
-        } else if (determineType() === 'user') {
+        } else if (determineType() === 'user' || determineType() === 'nft') {
             results = (list as IUserDataProps[]).filter((el) => {
                 if (e.target.value === '') return list;
                 return el.name.toLowerCase().includes(e.target.value.toLowerCase());

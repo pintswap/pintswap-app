@@ -10,7 +10,7 @@ import {
 import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
 import { memoize } from 'lodash';
-import { toLimitOrder, TESTING, defer, getSymbol } from '../utils';
+import { toLimitOrder, TESTING, defer, getSymbol, IMarketProps, IOfferProps } from '../utils';
 import { ethers } from 'ethers6';
 import { detectTradeNetwork, hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
@@ -22,22 +22,9 @@ export type IOffersStoreProps = {
     deleteTrade: (hash: string) => void;
     setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     isLoading: boolean;
-    allOffers: Record<'nft' | 'erc20', any[]>;
-    offersByChain: Record<
-        'nft' | 'erc20',
-        {
-            amount: string;
-            chainId: number;
-            hash: string;
-            multiAddr?: string;
-            peer: string;
-            price: string;
-            ticker: string;
-            type: string;
-            priceUsd: string;
-            priceEth: string;
-        }[]
-    >;
+    allOffers: Record<'nft' | 'erc20', IOfferProps[]>;
+    offersByChain: Record<'nft' | 'erc20', IOfferProps[]>;
+    uniqueMarkets: IMarketProps[];
 };
 
 // Context
@@ -49,6 +36,7 @@ const OffersContext = createContext<IOffersStoreProps>({
     allOffers: { nft: [], erc20: [] },
     offersByChain: { nft: [], erc20: [] },
     isLoading: false,
+    uniqueMarkets: [],
 });
 
 // Utils
@@ -140,18 +128,19 @@ export function OffersStore(props: { children: ReactNode }) {
     const { newNetwork } = useNetworkContext();
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
-    const [allOffers, setAllOffers] = useState<Record<'nft' | 'erc20', any[]>>({
+    const [allOffers, setAllOffers] = useState<Record<'nft' | 'erc20', IOfferProps[]>>({
         nft: [],
         erc20: [],
     });
-    const [offersByChain, setOffersByChain] = useState<Record<'nft' | 'erc20', any[]>>({
+    const [offersByChain, setOffersByChain] = useState<Record<'nft' | 'erc20', IOfferProps[]>>({
         nft: [],
         erc20: [],
     });
+    const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
-        setUserTrades(userTrades.set(hash, tradeProps));
+        setUserTrades(new Map(userTrades.set(hash, tradeProps)));
     };
 
     const deleteTrade = (hash: string) => {
@@ -193,6 +182,7 @@ export function OffersStore(props: { children: ReactNode }) {
         }
     };
 
+    // Listen for orderbook
     useEffect(() => {
         if (module) {
             module.on('/pubsub/orderbook-update', listener);
@@ -201,6 +191,7 @@ export function OffersStore(props: { children: ReactNode }) {
         return () => {};
     }, [module]);
 
+    // When orderbook updates, update offersByChain
     useEffect(() => {
         setOffersByChain({
             erc20: filterByChain(allOffers.erc20, chainId),
@@ -208,6 +199,7 @@ export function OffersStore(props: { children: ReactNode }) {
         });
     }, [allOffers.erc20, chainId]);
 
+    // Request all offers again (just in case)
     useEffect(() => {
         if (newNetwork) {
             (async () => {
@@ -216,6 +208,71 @@ export function OffersStore(props: { children: ReactNode }) {
             })().catch((err) => console.error(err));
         }
     }, [newNetwork]);
+
+    // Get unique ERC20 markets
+    useEffect(() => {
+        if (offersByChain.erc20) {
+            const _uniqueMarkets: IMarketProps[] = [];
+            offersByChain.erc20.forEach((m) => {
+                const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
+                const price = parseFloat(m.price);
+                const sum = parseFloat(m.amount);
+                const isAsk = m.type === 'ask';
+                if (found) {
+                    found.offers += 1;
+                    if (isAsk) {
+                        found.buy.offers = [...found.buy.offers, m.raw];
+                        if (found.buy.best > price) found.buy.best = price;
+                        if (found.buy.sum < sum) found.buy.sum = sum;
+                    } else {
+                        found.sell.offers = [...found.sell.offers, m.raw];
+                        if (found.sell.best < price) found.sell.best = price;
+                        if (found.sell.sum < sum) found.sell.sum = sum;
+                    }
+                } else {
+                    if (isAsk) {
+                        _uniqueMarkets.push({
+                            // quote: quoteToken,
+                            // bases: [split[1]],
+                            quote: m.ticker,
+                            bases: [],
+                            buy: {
+                                offers: [m.raw],
+                                sum: sum,
+                                best: price,
+                            },
+                            sell: {
+                                offers: [],
+                                sum: 0,
+                                best: 0,
+                            },
+                            offers: 1,
+                        });
+                    } else {
+                        _uniqueMarkets.push({
+                            // quote: quoteToken,
+                            // bases: [split[1]],
+                            quote: m.ticker,
+                            bases: [],
+                            buy: {
+                                offers: [],
+                                sum: 0,
+                                best: 0,
+                            },
+                            sell: {
+                                offers: [m.raw],
+                                sum: sum,
+                                best: price,
+                            },
+                            offers: 1,
+                        });
+                    }
+                }
+            });
+            console.log('Unique markets:', _uniqueMarkets);
+            setUniqueMarkets(_uniqueMarkets);
+        }
+    }, [offersByChain.erc20]);
 
     return (
         <OffersContext.Provider
@@ -227,6 +284,7 @@ export function OffersStore(props: { children: ReactNode }) {
                 deleteTrade,
                 offersByChain,
                 isLoading,
+                uniqueMarkets,
             }}
         >
             {props.children}

@@ -705,8 +705,8 @@ html,
 .top-1\/2{
   top: 50%;
 }
-.top-\[54px\]{
-  top: 54px;
+.top-\[50px\]{
+  top: 50px;
 }
 .\!z-50{
   z-index: 50 !important;
@@ -741,6 +741,9 @@ html,
   margin-top: 3px;
   margin-bottom: 3px;
 }
+.-mr-1{
+  margin-right: -0.25rem;
+}
 .-mr-2{
   margin-right: -0.5rem;
 }
@@ -753,8 +756,8 @@ html,
 .mb-0{
   margin-bottom: 0px;
 }
-.mb-16{
-  margin-bottom: 4rem;
+.mb-14{
+  margin-bottom: 3.5rem;
 }
 .mb-2{
   margin-bottom: 0.5rem;
@@ -849,6 +852,9 @@ html,
 .h-96{
   height: 24rem;
 }
+.h-\[18px\]{
+  height: 18px;
+}
 .h-\[20px\]{
   height: 20px;
 }
@@ -860,6 +866,9 @@ html,
 }
 .h-\[2px\]{
   height: 2px;
+}
+.h-\[30px\]{
+  height: 30px;
 }
 .h-\[50vh\]{
   height: 50vh;
@@ -882,8 +891,8 @@ html,
 .max-h-\[60vh\]{
   max-height: 60vh;
 }
-.max-h-\[calc\(100vh-60px\)\]{
-  max-height: calc(100vh - 60px);
+.max-h-screen{
+  max-height: 100vh;
 }
 .min-h-\[100px\]{
   min-height: 100px;
@@ -900,6 +909,9 @@ html,
 .\!w-fit{
   width: -moz-fit-content !important;
   width: fit-content !important;
+}
+.\!w-full{
+  width: 100% !important;
 }
 .w-0{
   width: 0px;
@@ -931,6 +943,12 @@ html,
 .w-8{
   width: 2rem;
 }
+.w-\[120px\]{
+  width: 120px;
+}
+.w-\[18px\]{
+  width: 18px;
+}
 .w-\[20px\]{
   width: 20px;
 }
@@ -939,6 +957,9 @@ html,
 }
 .w-\[254px\]{
   width: 254px;
+}
+.w-\[30px\]{
+  width: 30px;
 }
 .w-\[42px\]{
   width: 42px;
@@ -967,6 +988,9 @@ html,
 }
 .\!max-w-lg{
   max-width: 32rem !important;
+}
+.max-w-\[120px\]{
+  max-width: 120px;
 }
 .max-w-\[160px\]{
   max-width: 160px;
@@ -1304,6 +1328,12 @@ html,
 .rounded{
   border-radius: 0.25rem;
 }
+.rounded-2xl{
+  border-radius: 1rem;
+}
+.rounded-3xl{
+  border-radius: 1.5rem;
+}
 .rounded-\[1px\]{
   border-radius: 1px;
 }
@@ -1318,6 +1348,9 @@ html,
 }
 .rounded-sm{
   border-radius: 0.125rem;
+}
+.rounded-xl{
+  border-radius: 0.75rem;
 }
 .\!rounded-r-none{
   border-top-right-radius: 0px !important;
@@ -1335,8 +1368,8 @@ html,
   border-top-left-radius: 0.5rem;
   border-top-right-radius: 0.5rem;
 }
-.rounded-tl-3xl{
-  border-top-left-radius: 1.5rem;
+.rounded-tl-2xl{
+  border-top-left-radius: 1rem;
 }
 .border{
   border-width: 1px;
@@ -1704,6 +1737,12 @@ html,
 .pl-4{
   padding-left: 1rem;
 }
+.pr-1{
+  padding-right: 0.25rem;
+}
+.pr-1\.5{
+  padding-right: 0.375rem;
+}
 .pr-2{
   padding-right: 0.5rem;
 }
@@ -1788,6 +1827,10 @@ html,
 .\!text-neutral-100{
   --tw-text-opacity: 1 !important;
   color: rgb(245 245 245 / var(--tw-text-opacity)) !important;
+}
+.\!text-red-400{
+  --tw-text-opacity: 1 !important;
+  color: rgb(248 113 113 / var(--tw-text-opacity)) !important;
 }
 .text-accent-light{
   --tw-text-opacity: 1;
@@ -2032,6 +2075,11 @@ html,
 .first\:border-transparent:first-child{
   border-color: transparent;
 }
+.hover\:scale-105:hover{
+  --tw-scale-x: 1.05;
+  --tw-scale-y: 1.05;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
 .hover\:cursor-pointer:hover{
   cursor: pointer;
 }
@@ -2085,9 +2133,17 @@ html,
 .hover\:fill-neutral-300:hover{
   fill: #d4d4d4;
 }
+.hover\:\!text-red-500:hover{
+  --tw-text-opacity: 1 !important;
+  color: rgb(239 68 68 / var(--tw-text-opacity)) !important;
+}
 .hover\:text-brand-purple:hover{
   --tw-text-opacity: 1;
   color: rgb(79 70 229 / var(--tw-text-opacity));
+}
+.hover\:text-gray-200:hover{
+  --tw-text-opacity: 1;
+  color: rgb(229 231 235 / var(--tw-text-opacity));
 }
 .hover\:text-neutral-300:hover{
   --tw-text-opacity: 1;
@@ -2100,10 +2156,6 @@ html,
 .hover\:text-primary-hover:hover{
   --tw-text-opacity: 1;
   color: rgb(116 34 232 / var(--tw-text-opacity));
-}
-.hover\:text-red-500:hover{
-  --tw-text-opacity: 1;
-  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 .hover\:underline:hover{
   text-decoration-line: underline;
@@ -2155,12 +2207,20 @@ html,
   --tw-text-opacity: 1;
   color: rgb(163 163 163 / var(--tw-text-opacity));
 }
+.disabled\:text-neutral-500:disabled{
+  --tw-text-opacity: 1;
+  color: rgb(115 115 115 / var(--tw-text-opacity));
+}
 .disabled\:hover\:cursor-not-allowed:hover:disabled{
   cursor: not-allowed;
 }
 .disabled\:hover\:bg-neutral-800:hover:disabled{
   --tw-bg-opacity: 1;
   background-color: rgb(38 38 38 / var(--tw-bg-opacity));
+}
+.disabled\:hover\:text-neutral-500:hover:disabled{
+  --tw-text-opacity: 1;
+  color: rgb(115 115 115 / var(--tw-text-opacity));
 }
 .group:hover .group-hover\:h-full{
   height: 100%;
@@ -2229,6 +2289,10 @@ html,
     justify-content: flex-end;
   }
 
+  .sm\:gap-4{
+    gap: 1rem;
+  }
+
   .sm\:self-center{
     align-self: center;
   }
@@ -2239,6 +2303,11 @@ html,
 
   .sm\:pr-20{
     padding-right: 5rem;
+  }
+
+  .sm\:text-lg{
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 
   .sm\:first\:border-neutral-800:first-child{
@@ -2319,6 +2388,29 @@ html,
     line-height: 1.25rem;
   }
 }
+@media (min-width: 900px){
+
+  .mui\:flex{
+    display: flex;
+  }
+
+  .mui\:grid-cols-2{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mui\:flex-row{
+    flex-direction: row;
+  }
+
+  .mui\:justify-start{
+    justify-content: flex-start;
+  }
+
+  .mui\:first\:border-neutral-800:first-child{
+    --tw-border-opacity: 1;
+    border-color: rgb(38 38 38 / var(--tw-border-opacity));
+  }
+}
 @media (min-width: 1024px){
 
   .lg\:absolute{
@@ -2354,10 +2446,6 @@ html,
     display: flex;
   }
 
-  .lg\:max-h-\[calc\(100vh-72px\)\]{
-    max-height: calc(100vh - 72px);
-  }
-
   .lg\:max-w-\[350px\]{
     max-width: 350px;
   }
@@ -2372,14 +2460,6 @@ html,
 
   .lg\:grid-cols-3{
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
-  .lg\:flex-row{
-    flex-direction: row;
-  }
-
-  .lg\:justify-center{
-    justify-content: center;
   }
 
   .lg\:gap-2{
@@ -2433,6 +2513,11 @@ html,
   .lg\:py-3{
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
+  }
+
+  .lg\:py-5{
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
   }
 
   .lg\:pl-6{
@@ -2531,6 +2616,10 @@ html,
 
   .\32xl\:gap-1\.5{
     gap: 0.375rem;
+  }
+
+  .\32xl\:gap-6{
+    gap: 1.5rem;
   }
 
   .\32xl\:px-24{

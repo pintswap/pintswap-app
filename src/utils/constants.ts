@@ -6,7 +6,7 @@ import { ethers } from 'ethers6';
 import { ITokenProps } from './types';
 
 // COMMON
-export const APP_VERSION = 'v2.0 BETA';
+export const APP_VERSION = 'v2.1 BETA';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
 export const BASE_URL: string = window.location.origin;
 export const WS_URL: string = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
@@ -89,6 +89,13 @@ export const MIN_ABIS = {
             stateMutability: 'view',
             type: 'function',
         },
+        {
+            constant: true,
+            inputs: [{ name: '', type: 'uint256' }],
+            name: 'tokenURI',
+            outputs: [{ name: '', type: 'string' }],
+            type: 'function',
+        },
     ],
     ERC20: [
         {
@@ -157,6 +164,7 @@ export const EMPTY_USER_DATA: IUserDataProps = {
     img: '',
     bio: '',
     name: '',
+    address: '',
     offers: [],
     privateKey: '',
     active: false,

@@ -8,3 +8,4 @@ export * from './search';
 export * from './subgraph';
 export * from './prices';
 export * from './usd-price';
+export * from './account';

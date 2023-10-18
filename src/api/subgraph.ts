@@ -249,12 +249,7 @@ export async function getQuote(
     ethPrice: string,
     type?: 'conservative' | 'exact',
 ): Promise<string> {
-    if (
-        trade.gives.amount &&
-        trade.gives.token &&
-        trade.gets.token &&
-        (!trade.gets.amount || Number(trade.gets.amount) === 0)
-    ) {
+    if (trade.gives.amount && trade.gives.token && trade.gets.token) {
         let givesEthPrice: string;
         if ((trade.gives.token === 'ETH' || trade.gives.token === 'WETH') && ethPrice) {
             givesEthPrice = trade.gives.amount;
@@ -273,5 +268,5 @@ export async function getQuote(
         if (type === 'exact') return quote.toString();
         return (Math.round(quote * 9990) / 10000).toString(); // round down to nearest 4 decimal places
     }
-    return '';
+    return '0';
 }

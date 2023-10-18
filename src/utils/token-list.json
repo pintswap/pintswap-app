@@ -44,11 +44,35 @@
         },
         {
             "chainId": 1,
+            "address": "0x320eD4c7243E35A00F9Ca30a1aE60929d15eAE37",
+            "name": "The Blox Project",
+            "symbol": "BLOX",
+            "decimals": 18,
+            "logoURI": "https://www.dextools.io/resources/tokens/logos/ether/0x320ed4c7243e35a00f9ca30a1ae60929d15eae37.png?1697499881757"
+        },
+        {
+            "chainId": 1,
             "address": "0xFa4bAa6951B6Ee382e9ff9AF2D523278b99ca6D0",
             "name": "House",
             "symbol": "HOUSE",
             "decimals": 18,
             "logoURI": "https://assets.coingecko.com/coins/images/31202/large/hm_icon_200x200.png"
+        },
+        {
+            "chainId": 1,
+            "address": "0x3e8203E0b1D56984AbC66f183A8d0b1A09a7E607",
+            "name": "Liquid Protocol",
+            "symbol": "LP",
+            "decimals": 9,
+            "logoURI": "https://assets.coingecko.com/coins/images/32078/standard/5000x5000.png?1696530875"
+        },
+        {
+            "chainId": 1,
+            "address": "0x5dCD6272C3cbb250823F0b7e6C618bce11B21f90",
+            "name": "Pear Swap",
+            "symbol": "PEAR",
+            "decimals": 18,
+            "logoURI": "https://assets.coingecko.com/coins/images/30409/standard/9zYlZj3H_400x400.jpg?1696529298"
         },
         {
             "chainId": 1,

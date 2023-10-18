@@ -1,6 +1,10 @@
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { Base } from './base';
+import { Base } from './ui/base';
 import { usePintswapContext } from './stores';
+import { ToastContainer } from 'react-toastify';
+import { detectPermit } from '@pintswap/sdk/lib/detect-permit';
+import { useSigner } from 'wagmi';
+import { cryptoFromSeed, Pintswap, setFallbackWETH } from '@pintswap/sdk';
 import {
     ExploreView,
     CreateView,
@@ -13,17 +17,11 @@ import {
     PeerTickerOrderbookView,
     TradeSearchView,
     MarketsTableView,
-} from './views';
-import { FulfillNFTView } from './views/fulfill-nft';
-import { setFallbackWETH } from '@pintswap/sdk';
-import { ToastContainer } from 'react-toastify';
-import { Pintswap } from '@pintswap/sdk';
-import { detectPermit } from '@pintswap/sdk/lib/detect-permit';
-
-import { useAccount, useSigner } from 'wagmi';
+    SwapView,
+    FulfillNFTView,
+    NFTsTableView,
+} from './ui/views';
 import 'react-toastify/dist/ReactToastify.css';
-import { cryptoFromSeed } from '@pintswap/sdk/lib/p2p';
-import { SwapView } from './views/swap';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -33,7 +31,6 @@ setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
 function App() {
     const { pintswap } = usePintswapContext();
-    const { address } = useAccount();
     const { data: signer } = useSigner();
     (window as any).signer = signer;
     if (!(window as any).pintswap && pintswap.module) {
@@ -47,6 +44,7 @@ function App() {
                 <Routes>
                     <Route path="/swap" element={<SwapView />} />
                     <Route path="/markets" element={<MarketsTableView />} />
+                    <Route path="/nfts" element={<NFTsTableView />} />
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
 

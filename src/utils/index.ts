@@ -12,6 +12,7 @@ export * from './wallet';
 export * from './format';
 export * from './math';
 export * from './cache';
+export * from './alchemy';
 
 export function defer() {
     let resolve,

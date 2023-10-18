@@ -1,8 +1,8 @@
 import fetch from 'cross-fetch';
-import { ethers } from 'ethers6';
+import { ethers, getAddress, isAddress } from 'ethers6';
 import { providerFromChainId } from './provider';
 import { INFTProps } from './types';
-import { DEFAULT_CHAINID, TESTING } from './constants';
+import { DEFAULT_CHAINID, MIN_ABIS, TESTING } from './constants';
 
 const IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 
@@ -25,17 +25,13 @@ export const hashNftIdentifier = ({ token, tokenId }: any) => {
 };
 
 export async function fetchNFT(
-    { token, tokenId, chainId }: any,
+    { token, tokenId, chainId, owner }: any,
     txHash?: string,
 ): Promise<INFTProps> {
     const hash = hashNftIdentifier({ token, tokenId });
     if (nftCache[hash]) return nftCache[hash];
     chainId = chainId || DEFAULT_CHAINID;
-    const contract = new ethers.Contract(
-        token,
-        ['function tokenURI(uint256) view returns (string)'],
-        providerFromChainId(chainId || 1),
-    );
+    const contract = new ethers.Contract(token, MIN_ABIS.NFT, providerFromChainId(chainId || 1));
     const uri = await contract.tokenURI(tokenId);
     let nft;
     try {
@@ -46,6 +42,10 @@ export async function fetchNFT(
     nft.imageBlob = await (await fetch(toGateway(nft.image), { method: 'GET' })).blob();
     nft.tokenId = tokenId;
     nft.token = token;
+    if (owner && isAddress(owner)) {
+        const balance = (await contract.balanceOf(getAddress(owner))).toString();
+        nft.amount = balance;
+    }
     if (txHash) nft.hash = txHash;
     nftCache[hash] = nft;
     if (TESTING) console.log('#fetchNFT:', nft);

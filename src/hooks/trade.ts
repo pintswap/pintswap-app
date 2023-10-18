@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { usePintswapContext } from '../stores/pintswap';
 import { useParams, useLocation } from 'react-router-dom';
-import { DEFAULT_PROGRESS, IOrderProgressProps } from '../components/progress-indicator';
+import { DEFAULT_PROGRESS, IOrderProgressProps } from '../ui/components/progress-indicator';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
 import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
@@ -121,14 +121,15 @@ export const useTrade = () => {
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent, isPublic = true) => {
         e.preventDefault();
-        if (TESTING) console.log('#broadcastTrade: TradeObj', await buildTradeObj(trade));
         if (module) {
             try {
                 const offer = await buildTradeObj(trade);
-                module.broadcastOffer(await buildTradeObj(trade));
+                if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
+                module.broadcastOffer(offer);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 savePintswap(module);
                 if (isPublic && !userData.active) toggleActive();
+                addTrade(hashOffer(offer), offer);
             } catch (err) {
                 console.error(err);
             }
@@ -235,7 +236,7 @@ export const useTrade = () => {
                 (el) => el.hash?.toLowerCase() === params.hash,
             );
             if (found) {
-                setTrade({ gets: found.gets, gives: found.gives });
+                setTrade(found.raw);
                 return;
             }
 
@@ -345,12 +346,12 @@ export const useTrade = () => {
             case 0:
                 if (module) savePintswap(module);
                 console.log('#makerListener: taker approving trade');
-                toast('Taker is approving transaction...');
+                toast('Taker is approving transaction');
                 toast.loading('Swapping...', { toastId: 'swapping' });
                 break;
             case 1:
                 console.log('#makerListener: taker approved trade');
-                toast('Taker approved transaction!');
+                // toast('Taker approved transaction!');
                 break;
             case 2:
                 console.log('#makerListener: swap is complete');
@@ -429,7 +430,6 @@ export const useTrade = () => {
                         multiAddr: module && module.peerId && module.address,
                         orderHash: hash,
                     });
-                    addTrade(hash, await buildTradeObj(trade));
                     updateSteps('Fulfill');
                 };
                 module.on('pintswap/trade/broadcast', broadcastListener);

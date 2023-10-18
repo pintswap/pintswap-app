@@ -1,11 +1,10 @@
 import { BigNumberish, ethers, Signer } from 'ethers6';
 import { groupBy } from 'lodash';
-import { hashOffer } from '@pintswap/sdk';
+import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { calculatePrices } from '../hooks';
-import { getEthPrice } from '../api/subgraph';
 
 function givesBase(offer: any) {
     return {
@@ -121,7 +120,7 @@ export async function toFormatted(transfer: any, chainId: number) {
     };
 }
 
-export async function toLimitOrder(offer: any, chainId: number) {
+export async function toLimitOrder(offer: IOffer | any, chainId: number) {
     const {
         pair: [base, trade],
         type,
@@ -142,6 +141,7 @@ export async function toLimitOrder(offer: any, chainId: number) {
         hash: hashOffer(offer),
         priceUsd: prices.usd || '0',
         priceEth: prices.eth || '0',
+        raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
     };
 }
 
@@ -183,14 +183,14 @@ export function matchOffers(offers: any[], amount: BigNumberish) {
                 const remaining = toFill - filled;
                 if (remaining <= 0) return r;
                 filled += getsAmount;
-                if (TESTING)
-                    console.log(
-                        '#matchOffers',
-                        '\nRemaining:',
-                        remaining,
-                        '\ngetsAmount:',
-                        getsAmount,
-                    );
+                // if (TESTING)
+                //     console.log(
+                //         '#matchOffers',
+                //         '\nRemaining:',
+                //         remaining,
+                //         '\ngetsAmount:',
+                //         getsAmount,
+                //     );
                 if (remaining >= getsAmount) {
                     r.push({
                         amount: getsAmount,
