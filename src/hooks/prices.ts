@@ -1,7 +1,7 @@
 import { formatUnits, isAddress } from 'ethers6';
 import { useEffect, useState } from 'react';
 import { tryBoth } from '../api';
-import { DEFAULT_CHAINID, getTokenListBySymbol } from '../utils';
+import { DEFAULT_CHAINID, getTokenListBySymbol, priceCache } from '../utils';
 import { ITransfer } from '@pintswap/sdk';
 import { getNetwork } from '@wagmi/core';
 import { getEthPrice } from '../api/subgraph';
@@ -10,6 +10,10 @@ export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets
     const activeChainId = getNetwork()?.chain?.id || DEFAULT_CHAINID;
     if (!gives?.token || !gets?.token || !gives?.amount || !gets?.amount)
         return { eth: '0', usd: '0' };
+    if (priceCache[1][`${gives.token}-${gets.token}`])
+        return priceCache[1][`${gives.token}-${gets.token}`];
+
+    let returnObj;
     try {
         const eth = await getEthPrice();
         const addressA = isAddress(gives?.token)
@@ -30,16 +34,19 @@ export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets
             const ethPrice =
                 (Number(bAmount) * Number(bToken.derivedETH)) /
                 (Number(aAmount) * Number(aToken.derivedETH));
-            return {
+            returnObj = {
                 eth: ethPrice.toString(),
                 usd: (ethPrice * Number(eth)).toString(),
             };
         } else {
-            return {
+            returnObj = {
                 eth: '0',
                 usd: '0',
             };
         }
+        if (!priceCache[1][`${gives.token}-${gets.token}`])
+            priceCache[1][`${gives.token}-${gets.token}`] = returnObj;
+        return returnObj;
     } catch (err) {
         console.error('#calculatePrices', err);
         return {

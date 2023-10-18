@@ -197,7 +197,7 @@ export function OffersStore(props: { children: ReactNode }) {
             erc20: filterByChain(allOffers.erc20, chainId),
             nft: filterByChain(allOffers.nft, chainId),
         });
-    }, [allOffers.erc20, chainId]);
+    }, [allOffers.erc20.length, chainId]);
 
     // Request all offers again (just in case)
     useEffect(() => {
@@ -274,7 +274,7 @@ export function OffersStore(props: { children: ReactNode }) {
             console.log('Unique markets:', _uniqueMarkets);
             setUniqueMarkets(_uniqueMarkets);
         }
-    }, [offersByChain.erc20]);
+    }, [offersByChain.erc20.length]);
 
     return (
         <OffersContext.Provider
