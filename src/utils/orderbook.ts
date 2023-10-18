@@ -5,6 +5,7 @@ import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { calculatePrices } from '../hooks';
+import { IOfferProps } from './types';
 
 function givesBase(offer: any) {
     return {
@@ -120,7 +121,9 @@ export async function toFormatted(transfer: any, chainId: number) {
     };
 }
 
-export async function toLimitOrder(offer: IOffer | any, chainId: number) {
+export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffers: IOfferProps[]) {
+    const found = allOffers.find((o) => o.hash === hashOffer(offer));
+    if (found) return found;
     const {
         pair: [base, trade],
         type,

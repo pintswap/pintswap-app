@@ -5,6 +5,7 @@ import {
     SetStateAction,
     useContext,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
@@ -136,7 +137,7 @@ export function OffersStore(props: { children: ReactNode }) {
         nft: [],
         erc20: [],
     });
-    const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
+    // const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
@@ -170,7 +171,9 @@ export function OffersStore(props: { children: ReactNode }) {
             const flattenedNftTrades = await toFlattened(grouped.nft);
             const mappedPairs = (
                 await Promise.all(
-                    flattenedPairs.map(async (v: any) => await toLimitOrder(v, chainId)),
+                    flattenedPairs.map(
+                        async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
+                    ),
                 )
             ).map((v, i) => ({
                 ...v,
@@ -210,7 +213,7 @@ export function OffersStore(props: { children: ReactNode }) {
     }, [newNetwork]);
 
     // Get unique ERC20 markets
-    useEffect(() => {
+    const uniqueMarkets = useMemo(() => {
         if (offersByChain.erc20) {
             const _uniqueMarkets: IMarketProps[] = [];
             offersByChain.erc20.forEach((m) => {
@@ -272,7 +275,9 @@ export function OffersStore(props: { children: ReactNode }) {
                 }
             });
             console.log('Unique markets:', _uniqueMarkets);
-            setUniqueMarkets(_uniqueMarkets);
+            return _uniqueMarkets;
+        } else {
+            return [];
         }
     }, [offersByChain.erc20.length]);
 

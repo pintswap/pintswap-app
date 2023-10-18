@@ -22,7 +22,7 @@ import {
 } from '../../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
-import { usePintswapContext } from '../../stores';
+import { useOffersContext, usePintswapContext } from '../../stores';
 import { usePrices, useTrade } from '../../hooks';
 
 export const PeerTickerFulfill = ({
@@ -36,6 +36,7 @@ export const PeerTickerFulfill = ({
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
+    const { allOffers } = useOffersContext();
     const { fulfillTrade, loading, trade, steps, order, error, fill, setFill, isButtonDisabled } =
         useTrade();
     const [limitOrder, setLimitOrder] = useState<any>({
@@ -91,6 +92,7 @@ export const PeerTickerFulfill = ({
                         },
                     },
                     chainId,
+                    allOffers.erc20,
                 )) as any;
                 if (TESTING)
                     console.log('tradeType:', tradeType, '\nmatch:', match, '\nlimit:', limit);
