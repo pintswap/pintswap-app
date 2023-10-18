@@ -1,5 +1,5 @@
 import { ethers, Signer, ZeroAddress } from 'ethers6';
-import { ENDPOINTS, formatPintswapTrade, toAddress } from '../utils';
+import { ENDPOINTS, formatPintswapTrade, priceCache, toAddress } from '../utils';
 import { IOffer } from '@pintswap/sdk';
 
 const JSON_HEADER_POST = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
@@ -177,6 +177,7 @@ export async function getManyV2Tokens(addresses: string[]): Promise<any[]> {
 }
 
 export async function getEthPrice(): Promise<string> {
+    if (priceCache[1][ZeroAddress]) return priceCache[1][ZeroAddress];
     const response = await fetch(ENDPOINTS['uniswap']['v3'], {
         ...JSON_HEADER_POST,
         body: JSON.stringify({
@@ -190,6 +191,7 @@ export async function getEthPrice(): Promise<string> {
     const {
         data: { bundles },
     } = await response.json();
+    if (!priceCache[1][ZeroAddress]) priceCache[1][ZeroAddress] = bundles[0].ethPriceUSD;
     return bundles[0].ethPriceUSD;
 }
 

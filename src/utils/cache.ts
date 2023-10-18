@@ -36,3 +36,11 @@ export const nameCache: Record<number, Record<string, string>> = {
     137: {},
     8453: {},
 };
+
+export const priceCache: Record<number, Record<string, any>> = {
+    1: {},
+    42161: {},
+    10: {},
+    137: {},
+    8453: {},
+};

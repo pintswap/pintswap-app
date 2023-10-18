@@ -13,6 +13,7 @@ export * from './format';
 export * from './math';
 export * from './cache';
 export * from './alchemy';
+export * from './react-query';
 
 export function defer() {
     let resolve,

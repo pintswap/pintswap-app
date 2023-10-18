@@ -152,7 +152,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
             }
             setLoading(false);
         })().catch((err) => console.error(err));
-    }, [module, peerTrades, order.multiAddr]);
+    }, [peerTrades.size, module, order.multiAddr]);
 
     const filteredNfts = useMemo(
         () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)),

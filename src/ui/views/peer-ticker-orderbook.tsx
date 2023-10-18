@@ -126,8 +126,6 @@ export const PeerTickerOrderbookView = () => {
 
     const peer = state?.peer ? state.peer : multiaddr;
 
-    const ordersShown = 10;
-
     return (
         <div className="flex flex-col">
             <div className="grid grid-cols-2 lg:grid-cols-3 items-center justify-between mb-4 md:mb-6">
@@ -212,11 +210,10 @@ export const PeerTickerOrderbookView = () => {
                         <DataTable
                             type="bids"
                             columns={columns}
-                            data={bidLimitOrders.slice(0, ordersShown)}
-                            loading={loading}
+                            data={bidLimitOrders}
+                            loading={loading && bidLimitOrders.length === 0}
                             toolbar={false}
                             peer={order.multiAddr}
-                            pagination={false}
                             getRow={onClickRow}
                             options={{
                                 sortOrder: {
@@ -231,11 +228,11 @@ export const PeerTickerOrderbookView = () => {
                         <DataTable
                             type="asks"
                             columns={columns}
-                            data={askLimitOrders.slice(0, ordersShown)}
-                            loading={loading}
+                            data={askLimitOrders}
+                            loading={loading && askLimitOrders.length === 0}
                             toolbar={false}
                             peer={order.multiAddr}
-                            pagination={false}
+                            pagination={true}
                             getRow={onClickRow}
                             options={{
                                 sortOrder: {
