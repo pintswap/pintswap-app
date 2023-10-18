@@ -176,7 +176,12 @@ export function PintswapStore(props: { children: ReactNode }) {
 
     // Initialize Pintswap unless just network switch
     useEffect(() => {
-        if (!pintswap.module || newAddress) initialize();
+        if (
+            !pintswap.module ||
+            newAddress ||
+            pintswap?.module?.signer?.address === '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199'
+        )
+            initialize();
     }, [signer, address]);
 
     // On chain change, reset any toasts
