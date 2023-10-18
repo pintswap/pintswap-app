@@ -12,6 +12,14 @@
     "tokens": [
         {
             "chainId": 1,
+            "address": "0x58fB30A61C218A3607e9273D52995a49fF2697Ee",
+            "name": "PintSwap",
+            "symbol": "PINT",
+            "decimals": 18,
+            "logoURI": "https://i.ibb.co/VmhyTxM/PINT.png"
+        },
+        {
+            "chainId": 1,
             "address": "0x8d008CAC1a5CB08aC962b1e34E977B79ABEee88D",
             "name": "Pepe Analytics",
             "symbol": "PEPEAI",
