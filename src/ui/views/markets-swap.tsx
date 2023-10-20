@@ -48,7 +48,7 @@ export const MarketsSwapView = () => {
     const { pair, multiaddr } = useParams();
     const quote = pair?.split('-')[0] || '';
     const base = pair?.split('-')[1] || '';
-    const { setOrder, trade, setTrade, displayTradeObj, fulfillTrade, loading } = useTrade();
+    const { setOrder, trade, setTrade, displayTradeObj, fulfillTrade, loading, steps } = useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
 
@@ -113,23 +113,7 @@ export const MarketsSwapView = () => {
         ];
     };
 
-    useEffect(() => {
-        if (quote && base && trade.gets.token === '') {
-            setDisplayedTrade({
-                gives: {
-                    token: base,
-                    amount: '',
-                },
-                gets: {
-                    token: quote,
-                    amount: '',
-                },
-            });
-        }
-        console.log('peerOffers', peerOffers());
-    }, [offersByChain.erc20.length]);
-
-    useEffect(() => {
+    const renderEmptyTrade = () => {
         if (isBuy) {
             setDisplayedTrade({
                 gives: {
@@ -153,7 +137,33 @@ export const MarketsSwapView = () => {
                 },
             });
         }
+    };
+
+    useEffect(() => {
+        if (quote && base && trade.gets.token === '') {
+            setDisplayedTrade({
+                gives: {
+                    token: base,
+                    amount: '',
+                },
+                gets: {
+                    token: quote,
+                    amount: '',
+                },
+            });
+        }
+        console.log('peerOffers', peerOffers());
+    }, [offersByChain.erc20.length]);
+
+    useEffect(() => {
+        renderEmptyTrade();
     }, [isBuy]);
+
+    useEffect(() => {
+        if (steps[2].status === 'current' && !trade.gives.amount && !trade.gets.amount) {
+            renderEmptyTrade();
+        }
+    }, [steps[2].status]);
 
     return (
         <>
