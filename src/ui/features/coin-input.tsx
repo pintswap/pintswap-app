@@ -72,7 +72,7 @@ export const CoinInput = ({
             <div className="w-full flex justify-between items-center">
                 <small className="text-gray-400 flex items-center gap-0.5">
                     <span>$</span>
-                    <Skeleton loading={isLoading}>
+                    <Skeleton loading={isLoading} innerClass="!px-1">
                         <SmartPrice
                             price={
                                 Number(value) > 0 && asset

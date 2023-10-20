@@ -13,6 +13,7 @@ type ISkeletonProps = {
         | 'rounded-3xl';
     maxW?: `max-w${string}`;
     wrapperClass?: string;
+    innerClass?: string;
 };
 
 export const Skeleton = ({
@@ -21,13 +22,14 @@ export const Skeleton = ({
     rounding = 'rounded-full',
     maxW,
     wrapperClass,
+    innerClass,
 }: ISkeletonProps) => {
     return (
         <div role="status" className={`${loading ? 'animate-pulse' : ''} ${wrapperClass || ''}`}>
             <div
                 className={`${rounding} ${maxW || ''} px-2 ${
                     loading ? 'bg-neutral-800 text-transparent' : ''
-                }`}
+                } ${innerClass || ''}`}
             >
                 {children}
             </div>

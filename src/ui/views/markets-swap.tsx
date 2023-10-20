@@ -58,7 +58,7 @@ export const MarketsSwapView = () => {
         );
         if (multiaddr) offers = offers.filter((el) => el.peer === multiaddr);
         const bids = offers.filter((el) => el.type === 'bid');
-        const asks = offers.filter((el) => el.type !== 'ask');
+        const asks = offers.filter((el) => el.type === 'ask');
         return {
             bids,
             asks,
@@ -74,7 +74,6 @@ export const MarketsSwapView = () => {
                 : {},
         };
     };
-    console.log('peerOffers', peerOffers());
 
     const onClickRow = async (row: any) => {
         const [tradeType, price, amount, sum] = row;
@@ -84,12 +83,10 @@ export const MarketsSwapView = () => {
         );
         if (found) {
             setOrder({ multiAddr: found.peer, orderHash: found.hash });
-            setTrade(found.raw);
             const displayOffer = await displayTradeObj(found.raw);
-            const correctSide = isBuy
-                ? displayOffer
-                : { gives: displayOffer.gets, gets: displayOffer.gives };
+            const correctSide = { gives: displayOffer.gets, gets: displayOffer.gives };
             setDisplayedTrade(correctSide);
+            setTrade(displayOffer);
         }
     };
 

@@ -165,11 +165,16 @@ export const useTrade = () => {
                     );
                     // If standard swap
                 } else {
-                    if (TESTING)
-                        console.log('#fulfillTrade - Trade Obj:', await buildTradeObj(offer));
-                    module.createTrade(multiAddr, await buildTradeObj(offer));
+                    const builtTrade = await buildTradeObj(offer);
+                    if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
+                    const events = module.createTrade(multiAddr, builtTrade);
+                    console.log('events', events);
                 }
-                toast.loading('Swapping...', { toastId: 'swapping' });
+                const displayable = await displayTradeObj(offer);
+                toast.loading(
+                    `Swapping\n${displayable.gets.token} for ${displayable.gives.token}`,
+                    { toastId: 'swapping', className: 'text-sm' },
+                );
             } catch (err) {
                 console.error(err);
                 setError(true);
