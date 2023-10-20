@@ -19,6 +19,8 @@ import {
     IMarketProps,
     IOfferProps,
     updateToast,
+    IOrderbookProps,
+    reverseSymbolCache,
 } from '../utils';
 import { ethers } from 'ethers6';
 import { detectTradeNetwork, hashOffer, isERC20Transfer } from '@pintswap/sdk';
@@ -53,7 +55,7 @@ const OffersContext = createContext<IOffersStoreProps>({
 // Utils
 (window as any).discoveryDeferred = defer();
 
-const maybeResolveName = async (name: string, pintswap: any) => {
+const maybeResolveName = (name: string, pintswap: any) => {
     // TODO: fix later
     return name;
     // try {
@@ -66,11 +68,11 @@ const maybeResolveName = async (name: string, pintswap: any) => {
 const resolveNames = async (m: any, pintswap: any) => {
     const flattened = [...m.entries()] as any;
     return new Map(
-        await Promise.all(
-            flattened.map(async ([key, orders]: any[]) => {
-                return [await maybeResolveName(key, pintswap), orders];
-            }),
-        ),
+        // await Promise.all(
+        flattened.map(([key, orders]: any[]) => {
+            return [maybeResolveName(key, pintswap), orders];
+        }),
+        // ),
     );
 };
 
@@ -271,7 +273,7 @@ export function OffersStore(props: { children: ReactNode }) {
     useQuery({
         queryKey: ['unique-markets'],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 15,
+        refetchInterval: 1000 * 8,
         enabled: !!module && module.peers.size > 0,
     });
     useEffect(() => {

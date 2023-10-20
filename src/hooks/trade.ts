@@ -3,9 +3,8 @@ import { usePintswapContext } from '../stores/pintswap';
 import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../ui/components/progress-indicator';
 import { hashOffer, IOffer } from '@pintswap/sdk';
-import { ToastItem, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
-import { toBeHex } from 'ethers6';
 import {
     savePintswap,
     updateToast,
@@ -22,6 +21,7 @@ import {
 } from '../utils';
 import { ethers } from 'ethers';
 import { useSwitchNetwork } from 'wagmi';
+import { toBeHex } from 'ethers6';
 
 export const useTrade = () => {
     const params = useParams();
@@ -147,8 +147,8 @@ export const useTrade = () => {
             try {
                 // Determine multiaddr
                 let multiAddr = order.multiAddr;
-                if (multiAddr.match(/\.drip$/))
-                    multiAddr = await module.resolveName(order.multiAddr);
+                // if (multiAddr.match(/\.drip$/))
+                //     multiAddr = await module.resolveName(order.multiAddr);
 
                 // If NFT swap
                 if (window.location.hash.match('nft') && params.hash) {
@@ -195,8 +195,8 @@ export const useTrade = () => {
         // If multiaddr
         if (params.multiaddr) {
             let resolved = params.multiaddr;
-            if (params.multiaddr.match(/\.drip$/) && module)
-                resolved = await module.resolveName(params.multiaddr);
+            // if (params.multiaddr.match(/\.drip$/) && module)
+            //     resolved = await module.resolveName(params.multiaddr);
             if (TESTING)
                 console.log('#getTrades - Args:', {
                     resolved,

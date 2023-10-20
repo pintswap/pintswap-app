@@ -22,6 +22,8 @@ export type IPintswapStoreProps = {
     initializePintswapFromSigner?: any;
     setPeer?: any;
     setPintswap?: any;
+    initialLoad?: boolean;
+    setInitialLoad?: any;
 };
 
 // Context
@@ -89,6 +91,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     const localPsUser = localStorage.getItem('_pintUser');
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
+    const [initialLoad, setInitialLoad] = useState(true);
     const { pathname } = useLocation();
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
@@ -110,7 +113,6 @@ export function PintswapStore(props: { children: ReactNode }) {
             if (TESTING) console.log('noWalletInitPs:', noWalletInitPs);
             return mergeUserData(noWalletInitPs, pintswap.module);
         } else {
-            // if(!pathname.includes('fulfill')) await new Promise((res, rej) => setTimeout(res, 2000))
             if (typeof localPsUser === 'string') {
                 const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), signer);
                 if (TESTING) console.log('psFromLocal:', psFromLocal);
@@ -226,6 +228,8 @@ export function PintswapStore(props: { children: ReactNode }) {
                     ...pintswap,
                     chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
                 },
+                initialLoad,
+                setInitialLoad,
                 initializePintswapFromSigner: async ({ signer }: any) =>
                     await initializePintswapFromSigner({ pintswap, setPintswap, signer }),
                 setPintswap,
