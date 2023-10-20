@@ -11,6 +11,7 @@ type ICardProps = {
     defaultTab?: string;
     onTabChange?: any;
     bg?: string;
+    selectedTab?: string;
 };
 
 export const Card = ({
@@ -23,6 +24,7 @@ export const Card = ({
     defaultTab,
     onTabChange,
     bg,
+    selectedTab,
 }: ICardProps) => {
     const backgroundColor = bg
         ? bg
@@ -46,6 +48,13 @@ export const Card = ({
                     tabs?.findIndex((el) => el?.toLowerCase() === defaultTab?.toLowerCase()) || 0
                 }
                 onChange={onTabChange}
+                selectedIndex={
+                    selectedTab
+                        ? tabs?.findIndex(
+                              (el) => el?.toLowerCase() === selectedTab?.toLowerCase(),
+                          ) || 0
+                        : undefined
+                }
             >
                 <div
                     className={`flex flex-col ${backgroundColor} pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}

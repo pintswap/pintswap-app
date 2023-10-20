@@ -21,25 +21,27 @@ export const getPeerImg = async (ps: IPintswapProps, peer: string | IUserDataPro
 };
 
 export const formatPeerName = async (ps: IPintswapProps, peer: string, inverse?: boolean) => {
-    const { module } = ps;
-    try {
-        if (inverse) {
-            if (peer.includes('.drip')) {
-                const b58 = await module?.resolveName(peer);
-                return b58 ? b58 : peer;
-            } else {
-                return peer;
-            }
-        } else {
-            if (peer.includes('.drip')) return peer;
-            const name = await module?.resolveName(peer);
-            if (name) return name;
-            else return peer;
-        }
-    } catch (err) {
-        // if (TESTING) console.warn('#formatPeerName', err);
-        return peer;
-    }
+    // TODO: remove this after fix
+    return peer;
+    // const { module } = ps;
+    // try {
+    //     if (inverse) {
+    //         if (peer.includes('.drip')) {
+    //             const b58 = await module?.resolveName(peer);
+    //             return b58 ? b58 : peer;
+    //         } else {
+    //             return peer;
+    //         }
+    //     } else {
+    //         if (peer.includes('.drip')) return peer;
+    //         const name = await module?.resolveName(peer);
+    //         if (name) return name;
+    //         else return peer;
+    //     }
+    // } catch (err) {
+    //     // if (TESTING) console.warn('#formatPeerName', err);
+    //     return peer;
+    // }
 };
 
 export async function getPeerData(ps: IPintswapProps, peer: string, type?: 'full' | 'minimal') {

@@ -1,7 +1,7 @@
 import { ChangeEventHandler, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { toAddress } from '../../utils';
-import { SmartPrice, SelectCoin } from '../components';
+import { SmartPrice, SelectCoin, Skeleton } from '../components';
 import { usePintswapContext } from '../../stores';
 import { useSubgraph } from '../../hooks';
 
@@ -15,6 +15,7 @@ type ICoinInput = {
     disabled?: boolean;
     type?: 'swap' | 'fulfill';
     id?: string;
+    maxAmount?: string;
 };
 
 export const CoinInput = ({
@@ -27,6 +28,7 @@ export const CoinInput = ({
     disabled,
     type = 'swap',
     id,
+    maxAmount,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const { address } = useAccount();
@@ -36,7 +38,7 @@ export const CoinInput = ({
     const balance = useBalance(
         asset === 'ETH' ? { address } : { token: toAddress(asset || '', chainId) as any, address },
     );
-    const { data } = useSubgraph({
+    const { data, isLoading } = useSubgraph({
         address: toAddress(asset, chainId),
     });
 
@@ -70,13 +72,15 @@ export const CoinInput = ({
             <div className="w-full flex justify-between items-center">
                 <small className="text-gray-400 flex items-center gap-0.5">
                     <span>$</span>
-                    <SmartPrice
-                        price={
-                            Number(value) > 0 && asset
-                                ? Number(value) * Number(data?.usdPrice || '0')
-                                : '0.00'
-                        }
-                    />
+                    <Skeleton loading={isLoading} innerClass="!px-1">
+                        <SmartPrice
+                            price={
+                                Number(value) > 0 && asset
+                                    ? Number(value) * Number(data?.usdPrice || '0')
+                                    : '0.00'
+                            }
+                        />
+                    </Skeleton>
                 </small>
                 <small>
                     {max && (
@@ -86,9 +90,9 @@ export const CoinInput = ({
                                 const amount = {
                                     currentTarget: {
                                         value:
-                                            value === balance?.data?.formatted
+                                            value === maxAmount || balance?.data?.formatted
                                                 ? '0'
-                                                : balance?.data?.formatted,
+                                                : maxAmount || balance?.data?.formatted,
                                     },
                                 };
                                 onAmountChange(amount as any);
@@ -96,7 +100,7 @@ export const CoinInput = ({
                         >
                             MAX:{' '}
                             <span className="text-primary group-hover:text-primary-hover transition duration-100">
-                                <SmartPrice price={balance?.data?.formatted || '0'} />
+                                <SmartPrice price={maxAmount || balance?.data?.formatted || '0'} />
                             </span>
                         </button>
                     )}

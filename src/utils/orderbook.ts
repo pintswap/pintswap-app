@@ -4,8 +4,9 @@ import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
-import { calculatePrices } from '../hooks';
+import { calculatePrices, getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
+import { getEthPrice } from '../api';
 
 function givesBase(offer: any) {
     return {
@@ -131,19 +132,23 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
     const [baseDecimals, tradeDecimals] = await Promise.all(
         [base, trade].map(async (v) => await getDecimals(v.address, chainId)),
     );
-    const price =
-        Number(ethers.formatUnits(base.amount, baseDecimals)) /
-        Number(ethers.formatUnits(trade.amount, tradeDecimals));
-    const prices = await calculatePrices({ ...offer });
+    const amount = ethers.formatUnits(trade.amount, tradeDecimals);
+    const eth = await getEthPrice();
+    const usdPrice = await getUsdPrice(trade.address, eth);
+    // const price =
+    //     (Number(ethers.formatUnits(base.amount, baseDecimals)) /
+    //     Number(ethers.formatUnits(trade.amount, tradeDecimals)));
+    const usdTotal = Number(usdPrice) * Number(amount);
+    const price = Number(usdTotal) / Number(amount);
     return {
         chainId: offer.chainId || 1,
-        price: String(price || '0'),
-        amount: ethers.formatUnits(trade.amount, tradeDecimals),
+        price: String(price) || '0',
+        amount,
         type,
         ticker: await toTicker([base, trade], chainId),
         hash: hashOffer(offer),
-        priceUsd: prices.usd || '0',
-        priceEth: prices.eth || '0',
+        priceUsd: usdTotal.toString(),
+        priceEth: (usdTotal * Number(eth)).toString(),
         raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
     };
 }

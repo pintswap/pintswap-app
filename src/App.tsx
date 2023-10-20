@@ -20,8 +20,10 @@ import {
     SwapView,
     FulfillNFTView,
     NFTsTableView,
+    MarketsSwapView,
 } from './ui/views';
 import 'react-toastify/dist/ReactToastify.css';
+import { useEffect, useState } from 'react';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -32,15 +34,21 @@ setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 function App() {
     const { pintswap } = usePintswapContext();
     const { data: signer } = useSigner();
+    const [mockLoading, setMockLoading] = useState(true);
     (window as any).signer = signer;
     if (!(window as any).pintswap && pintswap.module) {
         (window as any).pintswap = pintswap.module;
         (window as any).pintswap.logger.info = () => {};
     }
 
+    useEffect(() => {
+        const timeout = setTimeout(() => setMockLoading(false), 1000);
+        return () => clearTimeout(timeout);
+    }, []);
+
     return (
         <>
-            <Base loading={pintswap.loading}>
+            <Base loading={mockLoading}>
                 <Routes>
                     <Route path="/swap" element={<SwapView />} />
                     <Route path="/markets" element={<MarketsTableView />} />
@@ -48,12 +56,12 @@ function App() {
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/account" element={<AccountView />} />
 
-                    <Route path="/markets/:pair" element={<PairListView />} />
+                    <Route path="/markets/:pair" element={<MarketsSwapView />} />
                     {/* <Route path="/markets/:pair/:multiaddr" element={<PeerTickerOrderbookView />} /> */}
 
                     <Route path="/peers" element={<PeersView />} />
                     <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
-                    <Route path="/peers/:multiaddr/:view" element={<PeerOrderbookView />} />
+                    <Route path="/peers/:multiaddr/:pair" element={<MarketsSwapView />} />
 
                     {/* <Route path="/:multiaddr" element={<PeerOrderbookView />} />
                     <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} /> */}

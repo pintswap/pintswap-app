@@ -36,7 +36,7 @@ export const updateToast = (
                 <ToastStatus
                     status="error"
                     transaction={hash}
-                    message={`${String(msg).slice(0, 100)}...`}
+                    message={`${String(msg).slice(0, 100)}`}
                 />
             ),
             type: 'error',

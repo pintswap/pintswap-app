@@ -21,6 +21,7 @@ type ISwapModule = {
     type?: 'swap' | 'fulfill' | 'nft';
     setTrade?: React.Dispatch<React.SetStateAction<IOffer>>;
     isPublic?: boolean;
+    max?: string;
 };
 
 export const SwapModule = ({
@@ -32,6 +33,7 @@ export const SwapModule = ({
     type = 'swap',
     isPublic = true,
     setTrade,
+    max,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -167,6 +169,7 @@ export const SwapModule = ({
                         }
                         asset={trade.gives?.token}
                         max={type === 'swap'}
+                        maxAmount={max}
                         disabled={type === 'fulfill'}
                         type={type}
                         id="swap-module-give"

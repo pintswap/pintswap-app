@@ -1,13 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, GradientBorder, Header, Input } from '../components';
 import { Avatar } from '../features';
-import { IUserDataProps, usePeersContext } from '../../stores';
+import { IUserDataProps, useOffersContext, usePeersContext } from '../../stores';
 import { useSearch } from '../../hooks';
 import { useMemo } from 'react';
 
 export const PeersView = () => {
     const navigate = useNavigate();
     const { peersData, peersLoading, peersError } = usePeersContext();
+    const { isLoading } = useOffersContext();
     const { query, list, handleChange } = useSearch(peersData);
 
     const memoizedList = useMemo(() => list, [list]);
