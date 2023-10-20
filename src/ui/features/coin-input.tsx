@@ -47,6 +47,11 @@ export const CoinInput = ({
         setOpen(false);
     }
 
+    function determineMax() {
+        if (maxAmount) return maxAmount;
+        return balance?.data?.formatted;
+    }
+
     return (
         <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black">
             {label && <span className="text-xs text-gray-400">{label}</span>}
@@ -89,10 +94,7 @@ export const CoinInput = ({
                             onClick={() => {
                                 const amount = {
                                     currentTarget: {
-                                        value:
-                                            value === maxAmount || balance?.data?.formatted
-                                                ? '0'
-                                                : maxAmount || balance?.data?.formatted,
+                                        value: value === determineMax() ? '0' : determineMax(),
                                     },
                                 };
                                 onAmountChange(amount as any);
@@ -100,7 +102,7 @@ export const CoinInput = ({
                         >
                             MAX:{' '}
                             <span className="text-primary group-hover:text-primary-hover transition duration-100">
-                                <SmartPrice price={maxAmount || balance?.data?.formatted || '0'} />
+                                <SmartPrice price={determineMax() || '0'} />
                             </span>
                         </button>
                     )}
