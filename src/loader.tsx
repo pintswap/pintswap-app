@@ -18,27 +18,27 @@ import { ReactQueryProvider, chains, RainbowKitProvider, wagmiClient, walletThem
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
-    <ReactQueryProvider>
-        <WagmiConfig client={wagmiClient}>
-            <ThemeStore>
-                <RainbowKitProvider chains={chains} theme={walletTheme}>
-                    <NetworkStore>
-                        <PintswapStore>
-                            <PricesStore>
-                                <OffersStore>
-                                    <UserStore>
-                                        <PeersStore>
-                                            <HashRouter>
+    <HashRouter>
+        <ReactQueryProvider>
+            <WagmiConfig client={wagmiClient}>
+                <ThemeStore>
+                    <RainbowKitProvider chains={chains} theme={walletTheme}>
+                        <NetworkStore>
+                            <PintswapStore>
+                                <PricesStore>
+                                    <OffersStore>
+                                        <UserStore>
+                                            <PeersStore>
                                                 <App />
-                                            </HashRouter>
-                                        </PeersStore>
-                                    </UserStore>
-                                </OffersStore>
-                            </PricesStore>
-                        </PintswapStore>
-                    </NetworkStore>
-                </RainbowKitProvider>
-            </ThemeStore>
-        </WagmiConfig>
-    </ReactQueryProvider>,
+                                            </PeersStore>
+                                        </UserStore>
+                                    </OffersStore>
+                                </PricesStore>
+                            </PintswapStore>
+                        </NetworkStore>
+                    </RainbowKitProvider>
+                </ThemeStore>
+            </WagmiConfig>
+        </ReactQueryProvider>
+    </HashRouter>,
 );

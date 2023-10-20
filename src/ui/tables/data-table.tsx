@@ -1,7 +1,7 @@
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
 import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
-import { useUsdPrice, useWindowSize } from '../../hooks';
+import { getUsdPrice, useUsdPrice, useWindowSize } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import {
@@ -25,6 +25,7 @@ import { toast } from 'react-toastify';
 import { TooltipWrapper, Asset, SmartPrice, Button, SpinnerLoader, Skeleton } from '../components';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { MarketsRow } from './markets-row';
+import { useQuery } from '@tanstack/react-query';
 
 export type IDataTableProps = {
     title?: string;
@@ -181,9 +182,13 @@ const CustomRow = (props: IDataTableProps) => {
     const { tableBreak } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
-    const usdPrice = useUsdPrice(
-        type === 'markets' && !loading ? (data[0] as any).split('/')[0] : '',
-    );
+
+    const { data: usdPrice } = useQuery({
+        queryKey: [`price-${(data[0] as any)?.split('/')[0]}`],
+        queryFn: () => getUsdPrice((data[0] as any)?.split('/')[0], eth),
+        enabled: !!(data[0] as any)?.split('/')[0] && cols[3] === 'Market',
+        refetchInterval: 1000 * 30,
+    });
 
     const baseStyle = `text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent mui:first:border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
@@ -198,10 +203,10 @@ const CustomRow = (props: IDataTableProps) => {
         const firstCell = cells[0];
         const secondCell = cells[1];
         let url = '/';
-        if (pair) {
-            const [trade, base] = pair.split('-').map((v) => v.toUpperCase());
-            return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props } });
-        }
+        // if (pair) {
+        //     const [trade, base] = pair.split('-').map((v) => v.toUpperCase());
+        //     return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props } });
+        // }
         switch (type) {
             case 'markets':
                 return navigate(`/markets/${firstCell.replaceAll('/', '-').toLowerCase()}`);
@@ -222,8 +227,14 @@ const CustomRow = (props: IDataTableProps) => {
             }
             case 'history':
                 return window.open(`${NETWORKS[chainId].explorer}/tx/${firstCell}`, '_blank');
-            case 'peer-orderbook':
-                return navigate(`/${peer}/${firstCell}`);
+            case 'peer-orderbook': {
+                const [quote, base] = firstCell.split('/');
+                console.log(quote.toLowerCase());
+                console.log(base.toLowerCase());
+                return navigate(
+                    `/peers/${peer}/${quote.toLowerCase().trim()}-${base.toLowerCase().trim()}`,
+                );
+            }
             case 'pairs':
                 url = `${url}pairs`;
                 break;
@@ -365,7 +376,10 @@ const CustomRow = (props: IDataTableProps) => {
             // Address / MultiAddr
             return truncate(cell, charsShown);
         } else if (!isNaN(Number(cell))) {
-            if (type === 'markets' && String(cell).includes('.')) {
+            if (
+                (type === 'markets' && String(cell).includes('.')) ||
+                ((type === 'asks' || type === 'bids') && (index === 0 || index === 2))
+            ) {
                 return (
                     <span className="flex items-center gap-1">
                         <small>$</small>

@@ -7,6 +7,7 @@ import { getNetwork } from '@wagmi/core';
 import { toast } from 'react-toastify';
 import { useNetworkContext } from './network';
 import { useChainModal } from '@rainbow-me/rainbowkit';
+import { useLocation } from 'react-router-dom';
 
 // Types
 export type IPintswapProps = {
@@ -88,6 +89,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     const localPsUser = localStorage.getItem('_pintUser');
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
+    const { pathname } = useLocation();
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
@@ -98,7 +100,7 @@ export function PintswapStore(props: { children: ReactNode }) {
 
     // Determine PintSwap module source
     const determinePsModule = async () => {
-        if (!signer && !address) {
+        if (!signer) {
             const noWalletInitPs = await Pintswap.initialize({
                 awaitReceipts: false,
                 signer: new ethers.Wallet(
@@ -106,12 +108,13 @@ export function PintswapStore(props: { children: ReactNode }) {
                 ).connect(new ethers.InfuraProvider('mainnet')),
             });
             if (TESTING) console.log('noWalletInitPs:', noWalletInitPs);
-            return noWalletInitPs;
+            return mergeUserData(noWalletInitPs, pintswap.module);
         } else {
+            // if(!pathname.includes('fulfill')) await new Promise((res, rej) => setTimeout(res, 2000))
             if (typeof localPsUser === 'string') {
                 const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), signer);
                 if (TESTING) console.log('psFromLocal:', psFromLocal);
-                return psFromLocal;
+                return mergeUserData(psFromLocal, pintswap.module);
             } else {
                 if (signer) {
                     const psFromPass = (await Pintswap.fromPassword({
@@ -123,7 +126,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 } else {
                     const initPs = await Pintswap.initialize({ awaitReceipts: false, signer });
                     if (TESTING) console.log('initPs:', initPs);
-                    return initPs;
+                    return mergeUserData(initPs, pintswap.module);
                 }
             }
         }
@@ -134,13 +137,8 @@ export function PintswapStore(props: { children: ReactNode }) {
         const ps: Pintswap = await new Promise((resolve, reject) => {
             (async () => {
                 try {
-                    // Stop exisiting node if there is one started
-                    if (pintswap.module?.isStarted() && pintswap.module) {
-                        await pintswap.module.stopNode();
-                        if (TESTING) console.log('Stopped previous node');
-                    }
-
                     const ps = await determinePsModule();
+                    setPintswap({ ...pintswap, module: ps });
                     if (ps?.signer?.provider) {
                         ps.signer.provider.getGasPrice = makeGetGasPrice(
                             ps.signer.provider,
@@ -151,9 +149,14 @@ export function PintswapStore(props: { children: ReactNode }) {
                     ps.on('pintswap/node/status', (s: any) => {
                         if (TESTING) console.log('Node emitting', s);
                     });
+                    // Stop exisiting node if there is one started
+                    if (pintswap.module?.isStarted() && pintswap.module) {
+                        if (TESTING) console.log('Stopped previous node');
+                        await pintswap.module.stopNode();
+                    }
                     // Start node
-                    await ps.startNode();
                     if (TESTING) console.log('Starting new node');
+                    await ps.startNode();
                     // Subscribe to peer
                     ps.on('peer:discovery', async (peer: any) => {
                         (window as any).discoveryDeferred.resolve(peer);
@@ -163,6 +166,19 @@ export function PintswapStore(props: { children: ReactNode }) {
                     resolve(ps);
                 } catch (err) {
                     console.warn('#initialize:', err);
+                    if (TESTING) console.log('noWalletInitPs:', pintswap.module);
+                    (window as any).ps = pintswap.module;
+                    if (!pintswap.module?.isStarted() && pintswap.module) {
+                        // Start node
+                        await pintswap?.module?.startNode();
+                        if (TESTING) console.log('Starting new node');
+                    }
+                    // Subscribe to peer
+                    pintswap?.module?.on('peer:discovery', async (peer: any) => {
+                        (window as any).discoveryDeferred.resolve(peer);
+                    });
+                    // Subscribe to pubsub
+                    await pintswap.module?.subscribeOffers();
                     setPintswap({ ...pintswap, loading: false });
                 }
             })().catch(reject);
@@ -182,7 +198,7 @@ export function PintswapStore(props: { children: ReactNode }) {
             pintswap?.module?.signer?.address === '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199'
         )
             initialize();
-    }, [signer, address]);
+    }, [signer, address, newAddress]);
 
     // On chain change, reset any toasts
     useEffect(() => {

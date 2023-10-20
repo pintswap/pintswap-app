@@ -3,7 +3,7 @@ import { usePintswapContext } from '../stores/pintswap';
 import { useParams, useLocation } from 'react-router-dom';
 import { DEFAULT_PROGRESS, IOrderProgressProps } from '../ui/components/progress-indicator';
 import { hashOffer, IOffer } from '@pintswap/sdk';
-import { toast } from 'react-toastify';
+import { ToastItem, toast } from 'react-toastify';
 import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
 import { toBeHex } from 'ethers6';
 import {
@@ -359,6 +359,7 @@ export const useTrade = () => {
                 shallow.delete(order.orderHash);
                 setUserTrades(shallow);
                 shallow = userTrades;
+                clearTrade();
                 updateToast('swapping', 'success');
                 break;
         }
@@ -388,6 +389,7 @@ export const useTrade = () => {
                 setLoading({ ...loading, fulfill: false });
                 shallow.delete(order.orderHash);
                 setUserTrades(shallow);
+                clearTrade();
                 updateToast('swapping', 'success');
                 break;
         }
@@ -396,6 +398,7 @@ export const useTrade = () => {
     const makerTradeListener = (trade: any) => {
         trade.on('error', (e: any) => {
             if (module) {
+                // toast.error('Error occured')
                 module.logger.error(e);
                 savePintswap(module);
             }
@@ -405,7 +408,7 @@ export const useTrade = () => {
     useEffect(() => {
         if (module) {
             if (!isMaker && !isOnActive)
-                toast.loading('Connecting to peer...', { toastId: 'findPeer' });
+                toast.update('findPeer', { render: 'Connecting to peer...' });
             module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);
@@ -458,5 +461,7 @@ export const useTrade = () => {
         clearTrade,
         isButtonDisabled,
         peerTrades,
+        displayTradeObj,
+        setOrder,
     };
 };

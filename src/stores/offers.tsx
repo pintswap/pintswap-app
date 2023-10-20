@@ -11,10 +11,20 @@ import {
 import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
 import { memoize } from 'lodash';
-import { toLimitOrder, TESTING, defer, getSymbol, IMarketProps, IOfferProps } from '../utils';
+import {
+    toLimitOrder,
+    TESTING,
+    defer,
+    getSymbol,
+    IMarketProps,
+    IOfferProps,
+    updateToast,
+} from '../utils';
 import { ethers } from 'ethers6';
 import { detectTradeNetwork, hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
+import { toast } from 'react-toastify';
+import { useQuery } from '@tanstack/react-query';
 
 // Types
 export type IOffersStoreProps = {
@@ -44,11 +54,13 @@ const OffersContext = createContext<IOffersStoreProps>({
 (window as any).discoveryDeferred = defer();
 
 const maybeResolveName = async (name: string, pintswap: any) => {
-    try {
-        return await pintswap.resolveName(name);
-    } catch (e) {
-        return name;
-    }
+    // TODO: fix later
+    return name;
+    // try {
+    //     return await pintswap.resolveName(name);
+    // } catch (e) {
+    //     return name;
+    // }
 };
 
 const resolveNames = async (m: any, pintswap: any) => {
@@ -119,12 +131,79 @@ const toFlattened = memoize(
         ),
 );
 
+// Get unique ERC20 markets
+const getUniqueMarkets = (offers: any, setMarkets: Dispatch<SetStateAction<IMarketProps[]>>) => {
+    if (offers.length) {
+        const _uniqueMarkets: IMarketProps[] = [];
+        offers.forEach((m: any) => {
+            const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
+            const price = parseFloat(m.price);
+            const sum = parseFloat(m.amount);
+            const isAsk = m.type === 'ask';
+            if (found) {
+                found.offers += 1;
+                if (isAsk) {
+                    found.buy.offers = [...found.buy.offers, m.raw];
+                    if (found.buy.best > price) found.buy.best = price;
+                    if (found.buy.sum < sum) found.buy.sum = sum;
+                } else {
+                    found.sell.offers = [...found.sell.offers, m.raw];
+                    if (found.sell.best < price) found.sell.best = price;
+                    if (found.sell.sum < sum) found.sell.sum = sum;
+                }
+            } else {
+                if (isAsk) {
+                    const formatted = {
+                        // quote: quoteToken,
+                        // bases: [split[1]],
+                        quote: m.ticker,
+                        bases: [],
+                        buy: {
+                            offers: [m.raw],
+                            sum: sum,
+                            best: price,
+                        },
+                        sell: {
+                            offers: [],
+                            sum: 0,
+                            best: 0,
+                        },
+                        offers: 1,
+                    };
+                    _uniqueMarkets.push(formatted);
+                } else {
+                    const formatted = {
+                        // quote: quoteToken,
+                        // bases: [split[1]],
+                        quote: m.ticker,
+                        bases: [],
+                        buy: {
+                            offers: [],
+                            sum: 0,
+                            best: price,
+                        },
+                        sell: {
+                            offers: [m.raw],
+                            sum: sum,
+                            best: price,
+                        },
+                        offers: 1,
+                    };
+                    _uniqueMarkets.push(formatted);
+                }
+            }
+        });
+        if (TESTING) console.log('Unique markets:', _uniqueMarkets);
+        setMarkets(_uniqueMarkets);
+    }
+};
+
 const filterByChain = (arr: any[], chainId: number) => arr.filter((el) => el.chainId === chainId);
 
 // Wrapper
 export function OffersStore(props: { children: ReactNode }) {
     const {
-        pintswap: { module, chainId },
+        pintswap: { module, chainId, loading },
     } = usePintswapContext();
     const { newNetwork } = useNetworkContext();
 
@@ -137,7 +216,7 @@ export function OffersStore(props: { children: ReactNode }) {
         nft: [],
         erc20: [],
     });
-    // const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
+    const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const addTrade = (hash: string, tradeProps: IOffer) => {
@@ -156,15 +235,14 @@ export function OffersStore(props: { children: ReactNode }) {
     };
 
     // Get Active Trades
-    const listener = async () => {
+    const getPublicOrderbook = async () => {
+        if (TESTING) console.log('Fetching public orderbook');
         if ((module?.peers.size as any) > 0) {
-            let signer: any;
-            if (module?.signer?.provider) {
-                signer = module.signer;
-            } else {
-                signer = new ethers.InfuraProvider('mainnet');
-            }
+            if (!offersByChain.erc20.length && !uniqueMarkets.length)
+                toast.update('findOffers', { render: 'Getting peer offers' });
             const availablePeers = (await resolveNames(module?.peers as any, module as any)) as any;
+            if (!offersByChain.erc20.length)
+                updateToast('findOffers', 'success', 'Returning peer offers');
             const grouped = groupByType(availablePeers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
@@ -180,16 +258,29 @@ export function OffersStore(props: { children: ReactNode }) {
                 peer: flattenedPairs[i].peer,
                 multiAddr: flattenedPairs[i].multiAddr,
             }));
-            setAllOffers({ nft: flattenedNftTrades, erc20: mappedPairs });
+            const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
+            setAllOffers(returnObj);
+            getUniqueMarkets(mappedPairs, setUniqueMarkets);
             setIsLoading(false);
+            return returnObj;
         }
+        return { nft: [], erc20: [] };
     };
 
     // Listen for orderbook
+    useQuery({
+        queryKey: ['unique-markets'],
+        queryFn: getPublicOrderbook,
+        refetchInterval: 1000 * 15,
+        enabled: !!module && module.peers.size > 0,
+    });
     useEffect(() => {
         if (module) {
-            module.on('/pubsub/orderbook-update', listener);
-            return () => module.removeListener('/pubsub/orderbook-update', listener);
+            if (!allOffers.erc20.length) {
+                toast.loading('Connecting to P2P network', { toastId: 'findOffers' });
+            }
+            module.once('/pubsub/orderbook-update', getPublicOrderbook);
+            return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);
         }
         return () => {};
     }, [module]);
@@ -207,79 +298,10 @@ export function OffersStore(props: { children: ReactNode }) {
         if (newNetwork) {
             (async () => {
                 setIsLoading(true);
-                await listener();
+                await getPublicOrderbook();
             })().catch((err) => console.error(err));
         }
     }, [newNetwork]);
-
-    // Get unique ERC20 markets
-    const uniqueMarkets = useMemo(() => {
-        if (offersByChain.erc20) {
-            const _uniqueMarkets: IMarketProps[] = [];
-            offersByChain.erc20.forEach((m) => {
-                const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
-                const price = parseFloat(m.price);
-                const sum = parseFloat(m.amount);
-                const isAsk = m.type === 'ask';
-                if (found) {
-                    found.offers += 1;
-                    if (isAsk) {
-                        found.buy.offers = [...found.buy.offers, m.raw];
-                        if (found.buy.best > price) found.buy.best = price;
-                        if (found.buy.sum < sum) found.buy.sum = sum;
-                    } else {
-                        found.sell.offers = [...found.sell.offers, m.raw];
-                        if (found.sell.best < price) found.sell.best = price;
-                        if (found.sell.sum < sum) found.sell.sum = sum;
-                    }
-                } else {
-                    if (isAsk) {
-                        const formatted = {
-                            // quote: quoteToken,
-                            // bases: [split[1]],
-                            quote: m.ticker,
-                            bases: [],
-                            buy: {
-                                offers: [m.raw],
-                                sum: sum,
-                                best: price,
-                            },
-                            sell: {
-                                offers: [],
-                                sum: 0,
-                                best: 0,
-                            },
-                            offers: 1,
-                        };
-                        _uniqueMarkets.push(formatted);
-                    } else {
-                        const formatted = {
-                            // quote: quoteToken,
-                            // bases: [split[1]],
-                            quote: m.ticker,
-                            bases: [],
-                            buy: {
-                                offers: [],
-                                sum: 0,
-                                best: price + 10,
-                            },
-                            sell: {
-                                offers: [m.raw],
-                                sum: sum,
-                                best: price,
-                            },
-                            offers: 1,
-                        };
-                        _uniqueMarkets.push(formatted);
-                    }
-                }
-            });
-            console.log('Unique markets:', _uniqueMarkets);
-            return _uniqueMarkets;
-        } else {
-            return [];
-        }
-    }, [offersByChain.erc20.length]);
 
     return (
         <OffersContext.Provider

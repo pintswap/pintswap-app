@@ -211,7 +211,7 @@ export const PeerTickerOrderbookView = () => {
                             type="bids"
                             columns={columns}
                             data={bidLimitOrders}
-                            loading={loading && bidLimitOrders.length === 0}
+                            loading={loading}
                             toolbar={false}
                             peer={order.multiAddr}
                             getRow={onClickRow}
@@ -229,10 +229,10 @@ export const PeerTickerOrderbookView = () => {
                             type="asks"
                             columns={columns}
                             data={askLimitOrders}
-                            loading={loading && askLimitOrders.length === 0}
+                            loading={loading}
                             toolbar={false}
                             peer={order.multiAddr}
-                            pagination={true}
+                            pagination={false}
                             getRow={onClickRow}
                             options={{
                                 sortOrder: {

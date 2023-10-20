@@ -89,7 +89,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </div>
                 </div>
                 <div
-                    className={`max-h-screen overflow-y-auto w-full p-6 lg:p-8 xl:px-12 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
+                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-6 lg:p-8 xl:px-12 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
                 >
                     <main className="mx-auto pb-2">{children}</main>
                 </div>

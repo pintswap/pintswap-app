@@ -111,8 +111,6 @@ export const AccountView = () => {
 
     const [tableData, setTableData] = useState<any[]>([]);
 
-    console.log('userTrades', tableData);
-
     useEffect(() => {
         (async () => {
             const tableDataRes = await Promise.all(
