@@ -5,25 +5,13 @@ import {
     SetStateAction,
     useContext,
     useEffect,
-    useMemo,
     useState,
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
 import { memoize } from 'lodash';
-import {
-    toLimitOrder,
-    TESTING,
-    defer,
-    getSymbol,
-    IMarketProps,
-    IOfferProps,
-    updateToast,
-    IOrderbookProps,
-    reverseSymbolCache,
-} from '../utils';
-import { ethers } from 'ethers6';
-import { detectTradeNetwork, hashOffer, isERC20Transfer } from '@pintswap/sdk';
+import { toLimitOrder, TESTING, defer, IMarketProps, IOfferProps, updateToast } from '../utils';
+import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';

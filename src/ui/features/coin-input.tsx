@@ -4,6 +4,7 @@ import { toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton } from '../components';
 import { usePintswapContext } from '../../stores';
 import { useSubgraph } from '../../hooks';
+import { ZeroAddress } from 'ethers6';
 
 type ICoinInput = {
     label?: string;
@@ -36,7 +37,9 @@ export const CoinInput = ({
         pintswap: { chainId },
     } = usePintswapContext();
     const balance = useBalance(
-        asset === 'ETH' ? { address } : { token: toAddress(asset || '', chainId) as any, address },
+        asset?.toUpperCase() === 'ETH'
+            ? { address }
+            : { token: toAddress(asset || '', chainId) as any, address },
     );
     const { data, isLoading } = useSubgraph({
         address: toAddress(asset, chainId),

@@ -52,9 +52,10 @@ export const PeerOrderbookView = () => {
     useEffect(() => {
         (async () => {
             if (multiaddr && pintswap && pintswap.module) {
-                if (multiaddr.match('.drip'))
-                    setResolved(await pintswap.module.resolveName(multiaddr));
-                else setResolved(multiaddr);
+                // if (multiaddr.match('.drip'))
+                //     setResolved(await pintswap.module.resolveName(multiaddr));
+                // else
+                setResolved(multiaddr);
             }
         })().catch((err) => console.error(err));
     }, [multiaddr, pintswap.module]);

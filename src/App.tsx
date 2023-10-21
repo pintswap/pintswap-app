@@ -6,14 +6,11 @@ import { detectPermit } from '@pintswap/sdk/lib/detect-permit';
 import { useSigner } from 'wagmi';
 import { cryptoFromSeed, Pintswap, setFallbackWETH } from '@pintswap/sdk';
 import {
-    ExploreView,
     CreateView,
     FulfillView,
     PeerOrderbookView,
     AccountView,
-    MarketsView,
     PeersView,
-    PairListView,
     PeerTickerOrderbookView,
     TradeSearchView,
     MarketsTableView,

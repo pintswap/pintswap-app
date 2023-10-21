@@ -74,13 +74,13 @@ export function UserStore(props: { children: ReactNode }) {
         (async () => {
             if (module) {
                 let name = '';
-                try {
-                    name = await module.resolveName(module.address);
-                } catch (err) {
-                    console.warn(
-                        `#setUserData useEffect: no names found for multiAddr ${module?.address}`,
-                    );
-                }
+                // try {
+                //     name = await module.resolveName(module.address);
+                // } catch (err) {
+                //     console.warn(
+                //         `#setUserData useEffect: no names found for multiAddr ${module?.address}`,
+                //     );
+                // }
                 setUserData({
                     ...userData,
                     name,

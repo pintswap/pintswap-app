@@ -61,8 +61,8 @@ export const SwapView = () => {
             setResolvedName(order.multiAddr);
             if (module) {
                 try {
-                    const dripName = await module.resolveName(module.peerId.toB58String());
-                    setResolvedName(dripName ? dripName : module.address);
+                    // const dripName = await module.resolveName(module.peerId.toB58String());
+                    setResolvedName(module.address);
                 } catch (e) {
                     module && module.logger.error(e);
                 }
