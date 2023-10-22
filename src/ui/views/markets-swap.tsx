@@ -3,7 +3,7 @@ import { DataTable } from '../tables';
 import { Avatar, SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import { useLocation, useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { EMPTY_TRADE, NETWORKS, toAddress, truncate } from '../../utils';
 import { useOffersContext, usePintswapContext } from '../../stores';
@@ -52,13 +52,14 @@ export const MarketsSwapView = () => {
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
 
-    const peerOffers = () => {
+    const peerOffers = useMemo(() => {
         let offers = offersByChain.erc20.filter(
             (el) => el.ticker.toLowerCase() === `${quote?.toLowerCase()}/${base?.toLowerCase()}`,
         );
         if (multiaddr) offers = offers.filter((el) => el.peer === multiaddr);
         const bids = offers.filter((el) => el.type === 'bid');
         const asks = offers.filter((el) => el.type === 'ask');
+        if (!asks.length) setIsBuy(false);
         return {
             bids,
             asks,
@@ -66,19 +67,19 @@ export const MarketsSwapView = () => {
                 ? bids.reduce((prev, curr) =>
                       Number(prev.amount) > Number(curr.amount) ? prev : curr,
                   )
-                : {},
+                : undefined,
             maxAsk: asks.length
                 ? asks.reduce((prev, curr) =>
                       Number(prev.amount) > Number(curr.amount) ? prev : curr,
                   )
-                : {},
+                : undefined,
         };
-    };
+    }, [offersByChain.erc20]);
 
     const onClickRow = async (row: any) => {
         const [tradeType, price, amount, sum] = row;
         // const { index } = row;
-        const found = peerOffers()[isBuy ? 'asks' : 'bids'].find(
+        const found = peerOffers[isBuy ? 'asks' : 'bids'].find(
             (el) => el.amount === amount && el.price === price,
         );
         if (found) {
@@ -152,7 +153,7 @@ export const MarketsSwapView = () => {
                 },
             });
         }
-        console.log('peerOffers', peerOffers());
+        console.log('peerOffers', peerOffers);
     }, [offersByChain.erc20.length]);
 
     useEffect(() => {
@@ -220,7 +221,7 @@ export const MarketsSwapView = () => {
                             <DataTable
                                 type="bids"
                                 columns={columns}
-                                data={peerOffers().bids}
+                                data={peerOffers.bids}
                                 loading={isLoading}
                                 toolbar={false}
                                 pagination={true}
@@ -238,7 +239,7 @@ export const MarketsSwapView = () => {
                             <DataTable
                                 type="asks"
                                 columns={columns}
-                                data={peerOffers().asks}
+                                data={peerOffers.asks}
                                 loading={isLoading}
                                 toolbar={false}
                                 getRow={onClickRow}

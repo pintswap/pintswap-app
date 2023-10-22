@@ -39,7 +39,7 @@ function App() {
     }
 
     useEffect(() => {
-        const timeout = setTimeout(() => setMockLoading(false), 1000);
+        const timeout = setTimeout(() => setMockLoading(false), 2000);
         return () => clearTimeout(timeout);
     }, []);
 

@@ -28,21 +28,27 @@ import {
 
 export function toAddress(symbolOrAddress?: string, chainId = 1): string {
     if (!symbolOrAddress) return '';
-    if (symbolOrAddress === ZeroAddress || symbolOrAddress.toUpperCase() === 'ETH')
-        return ZeroAddress;
-    const token = getTokenListBySymbol(chainId)[symbolOrAddress];
+    const capSymbolOrAddress = symbolOrAddress.startsWith('0x')
+        ? symbolOrAddress
+        : symbolOrAddress.toUpperCase();
+    if (capSymbolOrAddress === ZeroAddress || capSymbolOrAddress === 'ETH') return ZeroAddress;
+    const token = getTokenListBySymbol(chainId)[capSymbolOrAddress];
     if (token) return getAddress(token.address);
     if (
-        String(symbolOrAddress).substr(0, 2) !== '0x' &&
-        reverseSymbolCache[chainId][symbolOrAddress]
+        String(capSymbolOrAddress).substr(0, 2) !== '0x' &&
+        reverseSymbolCache[chainId][capSymbolOrAddress]
     )
-        return getAddress(reverseSymbolCache[chainId][symbolOrAddress]);
-    if (symbolOrAddress?.startsWith('0x')) return getAddress(symbolOrAddress);
+        return getAddress(reverseSymbolCache[chainId][capSymbolOrAddress]);
+    if (capSymbolOrAddress?.startsWith('0x')) return getAddress(capSymbolOrAddress);
     return '';
 }
 
 export function fromAddress(symbolOrAddress: string, chainId: number): string {
-    return (getTokenListByAddress(chainId)[symbolOrAddress] || { address: symbolOrAddress }).symbol;
+    const capSymbolOrAddress = symbolOrAddress.startsWith('0x')
+        ? symbolOrAddress
+        : symbolOrAddress.toUpperCase();
+    return (getTokenListByAddress(chainId)[capSymbolOrAddress] || { address: capSymbolOrAddress })
+        .symbol;
 }
 
 export async function toTicker(pair: any, chainId?: number) {
