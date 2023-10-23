@@ -304,6 +304,13 @@ export function OffersStore(props: { children: ReactNode }) {
         }
     }, [newNetwork]);
 
+    // Get user trades if any exist
+    useEffect(() => {
+        if (module) {
+            setUserTrades(module.offers);
+        }
+    }, [module]);
+
     return (
         <OffersContext.Provider
             value={{

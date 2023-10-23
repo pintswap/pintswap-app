@@ -156,7 +156,7 @@ export const useTrade = () => {
     // Fulfill trade
     const fulfillTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
-        // setLoading({ ...loading, fulfill: true });
+        setLoading({ ...loading, fulfill: true });
         if (module) {
             // Determine correct offer
             let offer = trade;
