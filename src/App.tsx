@@ -6,14 +6,11 @@ import { detectPermit } from '@pintswap/sdk/lib/detect-permit';
 import { useSigner } from 'wagmi';
 import { cryptoFromSeed, Pintswap, setFallbackWETH } from '@pintswap/sdk';
 import {
-    ExploreView,
     CreateView,
     FulfillView,
     PeerOrderbookView,
     AccountView,
-    MarketsView,
     PeersView,
-    PairListView,
     PeerTickerOrderbookView,
     TradeSearchView,
     MarketsTableView,
@@ -42,7 +39,7 @@ function App() {
     }
 
     useEffect(() => {
-        const timeout = setTimeout(() => setMockLoading(false), 1000);
+        const timeout = setTimeout(() => setMockLoading(false), 2000);
         return () => clearTimeout(timeout);
     }, []);
 
@@ -76,7 +73,7 @@ function App() {
                         element={<FulfillNFTView />}
                     />
 
-                    <Route path="*" element={<Navigate to={'/swap'} />} />
+                    <Route path="*" element={<Navigate to={'/markets'} />} />
                 </Routes>
             </Base>
 

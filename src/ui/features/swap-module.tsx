@@ -22,6 +22,7 @@ type ISwapModule = {
     setTrade?: React.Dispatch<React.SetStateAction<IOffer>>;
     isPublic?: boolean;
     max?: string;
+    autoQuote?: boolean;
 };
 
 export const SwapModule = ({
@@ -34,6 +35,7 @@ export const SwapModule = ({
     isPublic = true,
     setTrade,
     max,
+    autoQuote = true,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -53,6 +55,7 @@ export const SwapModule = ({
         }
         if (!trade.gets.token) return 'Select a Token';
         if (!isPublic) return 'Create Offer';
+        if (!autoQuote) return 'Place Limit Order';
         return 'Swap';
     };
 
@@ -145,14 +148,16 @@ export const SwapModule = ({
         }, [trade]);
 
         useEffect(() => {
-            (async () => {
-                const quote = await getQuote(trade, eth);
-                if (Number(quote) > 0 && updateTrade && !isReversing) {
-                    updateTrade('gets.amount', quote);
-                } else if (Number(quote) === 0 && updateTrade) {
-                    updateTrade('gets.amount', '');
-                }
-            })().catch((err) => console.error(err));
+            if (autoQuote) {
+                (async () => {
+                    const quote = await getQuote(trade, eth);
+                    if (Number(quote) > 0 && updateTrade && !isReversing) {
+                        updateTrade('gets.amount', quote);
+                    } else if (Number(quote) === 0 && updateTrade) {
+                        updateTrade('gets.amount', '');
+                    }
+                })().catch((err) => console.error(err));
+            }
         }, [trade.gets.token, trade.gives.token, trade.gives.amount]);
 
         return (

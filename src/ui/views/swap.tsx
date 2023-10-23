@@ -61,8 +61,8 @@ export const SwapView = () => {
             setResolvedName(order.multiAddr);
             if (module) {
                 try {
-                    const dripName = await module.resolveName(module.peerId.toB58String());
-                    setResolvedName(dripName ? dripName : module.address);
+                    // const dripName = await module.resolveName(module.peerId.toB58String());
+                    setResolvedName(module.address);
                 } catch (e) {
                     module && module.logger.error(e);
                 }
@@ -84,11 +84,11 @@ export const SwapView = () => {
     return (
         <>
             <div className="flex flex-col max-w-lg mx-auto">
-                <h2 className="view-header text-left">Swap</h2>
+                <h2 className="view-header text-left">Create Offer</h2>
                 <Card
                     className="!py-4"
                     type="tabs"
-                    tabs={['ERC20', 'NFT']}
+                    tabs={['ERC20', 'NFT', 'LIMIT']}
                     onTabChange={clearTrade}
                 >
                     <div className="mb-3">
@@ -125,6 +125,18 @@ export const SwapView = () => {
                             onClick={handleSwap}
                             loading={loading}
                             isPublic={isPublic}
+                        />
+                    </Tab.Panel>
+                    <Tab.Panel>
+                        <SwapModule
+                            trade={trade}
+                            updateTrade={updateTrade}
+                            disabled={isButtonDisabled()}
+                            onClick={handleSwap}
+                            loading={loading}
+                            setTrade={setTrade}
+                            isPublic={isPublic}
+                            autoQuote={false}
                         />
                     </Tab.Panel>
                 </Card>

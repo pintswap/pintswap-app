@@ -23,6 +23,23 @@ import { ethers } from 'ethers';
 import { useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
 
+function stringify(obj: any) {
+    let cache: any = [];
+    let str = JSON.stringify(obj, function (key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.indexOf(value) !== -1 || value === window) {
+                // Circular reference found, discard key
+                return;
+            }
+            // Store value in our collection
+            cache.push(value);
+        }
+        return value;
+    });
+    cache = null; // reset the cache
+    return str;
+}
+
 export const useTrade = () => {
     const params = useParams();
     const { switchNetwork } = useSwitchNetwork();
@@ -143,42 +160,73 @@ export const useTrade = () => {
         if (module) {
             // Determine correct offer
             let offer = trade;
-
             try {
                 // Determine multiaddr
                 let multiAddr = order.multiAddr;
                 // if (multiAddr.match(/\.drip$/))
                 //     multiAddr = await module.resolveName(order.multiAddr);
 
-                // If NFT swap
+                let tradeForWorker;
                 if (window.location.hash.match('nft') && params.hash) {
+                    // NFT
                     const nftTrade = userTrades.get(params.hash) || peerTrades.get(params.hash);
                     if (TESTING) console.log('#fulfillTrade - NFT Trade:', nftTrade);
-                    module.createTrade(multiAddr, nftTrade);
-                    toast.info('Do not leave the app until swap is complete.', { autoClose: 8000 });
-                    // If peer orderbook swap
+                    tradeForWorker = { type: 'nft', trade: nftTrade };
                 } else if (params.base && params.trade) {
+                    // Batch Trade
                     if (TESTING) console.log('#fulfillTrade - Fill:', fill);
-                    module.createBatchTrade(
-                        multiAddr,
-                        fill.fill.map((v: any) => ({ offer: v.offer, amount: toBeHex(v.amount) })),
-                    );
-                    // If standard swap
+                    tradeForWorker = {
+                        type: 'batch',
+                        trade: fill.fill.map((v: any) => ({
+                            offer: v.offer,
+                            amount: toBeHex(v.amount),
+                        })),
+                    };
                 } else {
+                    // Standard
                     const builtTrade = await buildTradeObj(offer);
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
-                    const events = module.createTrade(multiAddr, builtTrade);
-                    console.log('events', events);
+                    tradeForWorker = { type: 'default', trade: builtTrade };
                 }
+
+                // Set loading
                 const displayable = await displayTradeObj(offer);
                 toast.loading(
                     `Swapping\n${displayable.gets.token} for ${displayable.gives.token}`,
                     { toastId: 'swapping', className: 'text-sm' },
                 );
+
+                // Pass off to web worker
+                // const worker = new Worker(new URL('../workers/trade.worker.ts', import.meta.url));
+                // tradeForWorker = { ...tradeForWorker, module, peer: multiAddr };
+                // console.log('passing to web worker', stringify(tradeForWorker));
+                // worker.postMessage(stringify(tradeForWorker)); // TODO
+                // worker.onerror = (err) => {
+                //     console.error('#fulfillTrade - Error:', err);
+                //     if (String(err).toLowerCase().includes('user rejected')) {
+                //         updateToast('swapping', 'error', 'User rejected signature');
+                //     } else {
+                //         updateToast('swapping', 'error', 'Error occured while swapping');
+                //     }
+                // };
+                // worker.addEventListener('message', (event) => console.log(event.data));
+
+                // TEMP
+                switch (tradeForWorker.type) {
+                    case 'batch':
+                        module.createBatchTrade(multiAddr, tradeForWorker.trade);
+                        break;
+                    case 'nft':
+                        module.createTrade(multiAddr, tradeForWorker.trade);
+                        break;
+                    default:
+                        module.createTrade(multiAddr, tradeForWorker.trade);
+                        break;
+                }
             } catch (err) {
                 console.error(err);
                 setError(true);
-                updateToast('swapping', 'error');
+                updateToast('swapping', 'error', 'Error occured while swapping');
             }
         }
     };

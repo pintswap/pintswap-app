@@ -5,7 +5,6 @@ import {
     SetStateAction,
     useContext,
     useEffect,
-    useMemo,
     useState,
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
@@ -15,15 +14,14 @@ import {
     toLimitOrder,
     TESTING,
     defer,
-    getSymbol,
     IMarketProps,
     IOfferProps,
     updateToast,
     IOrderbookProps,
+    getSymbol,
     reverseSymbolCache,
 } from '../utils';
-import { ethers } from 'ethers6';
-import { detectTradeNetwork, hashOffer, isERC20Transfer } from '@pintswap/sdk';
+import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
@@ -134,17 +132,17 @@ const toFlattened = memoize(
 );
 
 // Get unique ERC20 markets
-const getUniqueMarkets = (offers: any, setMarkets: Dispatch<SetStateAction<IMarketProps[]>>) => {
+const getUniqueMarkets = (offers: any[]) => {
     if (offers.length) {
         const _uniqueMarkets: IMarketProps[] = [];
         offers.forEach((m: any) => {
             const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
             const price = parseFloat(m.price);
             const sum = parseFloat(m.amount);
-            const isAsk = m.type === 'ask';
+            const isBuy = m.type === 'bid';
             if (found) {
                 found.offers += 1;
-                if (isAsk) {
+                if (!isBuy) {
                     found.buy.offers = [...found.buy.offers, m.raw];
                     if (found.buy.best > price) found.buy.best = price;
                     if (found.buy.sum < sum) found.buy.sum = sum;
@@ -154,7 +152,7 @@ const getUniqueMarkets = (offers: any, setMarkets: Dispatch<SetStateAction<IMark
                     if (found.sell.sum < sum) found.sell.sum = sum;
                 }
             } else {
-                if (isAsk) {
+                if (!isBuy) {
                     const formatted = {
                         // quote: quoteToken,
                         // bases: [split[1]],
@@ -196,8 +194,9 @@ const getUniqueMarkets = (offers: any, setMarkets: Dispatch<SetStateAction<IMark
             }
         });
         if (TESTING) console.log('Unique markets:', _uniqueMarkets);
-        setMarkets(_uniqueMarkets);
+        return _uniqueMarkets;
     }
+    return [];
 };
 
 const filterByChain = (arr: any[], chainId: number) => arr.filter((el) => el.chainId === chainId);
@@ -262,7 +261,7 @@ export function OffersStore(props: { children: ReactNode }) {
             }));
             const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
             setAllOffers(returnObj);
-            getUniqueMarkets(mappedPairs, setUniqueMarkets);
+            setUniqueMarkets(getUniqueMarkets(mappedPairs));
             setIsLoading(false);
             return returnObj;
         }
@@ -304,6 +303,13 @@ export function OffersStore(props: { children: ReactNode }) {
             })().catch((err) => console.error(err));
         }
     }, [newNetwork]);
+
+    // Get user trades if any exist
+    useEffect(() => {
+        if (module) {
+            setUserTrades(module.offers);
+        }
+    }, [module]);
 
     return (
         <OffersContext.Provider

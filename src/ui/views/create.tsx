@@ -61,13 +61,13 @@ export const CreateView = () => {
     useEffect(() => {
         (async () => {
             setResolvedName(order.multiAddr);
-            if (pintswap.module) {
-                try {
-                    setResolvedName(await pintswap.module.resolveName(order.multiAddr));
-                } catch (e) {
-                    pintswap.module.logger.error(e);
-                }
-            }
+            // if (pintswap.module) {
+            //     try {
+            //         setResolvedName(await pintswap.module.resolveName(order.multiAddr));
+            //     } catch (e) {
+            //         pintswap.module.logger.error(e);
+            //     }
+            // }
         })().catch(
             (err) => (pintswap.module && pintswap.module.logger.error(err)) || console.error(err),
         );

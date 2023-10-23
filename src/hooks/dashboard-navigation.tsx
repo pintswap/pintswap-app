@@ -8,18 +8,18 @@ export const useDashNav = () => {
     const NAV_ITEMS = address
         ? [
               {
-                  text: 'Swap',
-                  route: '/swap',
-                  disabled: false,
-                  icon: <MdSwapHoriz size={ICON_SIZE} />,
-                  tooltip: 'Automatically swap tokens',
-              },
-              {
                   text: 'Markets',
                   route: '/markets',
                   disabled: false,
                   icon: <MdLineAxis size={ICON_SIZE} />,
                   tooltip: 'See available PintSwap pairs',
+              },
+              {
+                  text: 'Create',
+                  route: '/swap',
+                  disabled: false,
+                  icon: <MdSwapHoriz size={ICON_SIZE} />,
+                  tooltip: 'Broadcast an offer',
               },
               {
                   text: 'NFTs',
@@ -52,18 +52,18 @@ export const useDashNav = () => {
           ]
         : [
               {
-                  text: 'Swap',
-                  route: '/swap',
-                  disabled: false,
-                  icon: <MdSwapHoriz size={ICON_SIZE} />,
-                  tooltip: 'Automatically swap tokens',
-              },
-              {
                   text: 'Markets',
                   route: '/markets',
                   disabled: false,
                   icon: <MdLineAxis size={ICON_SIZE} />,
                   tooltip: 'See available PintSwap pairs',
+              },
+              {
+                  text: 'Create',
+                  route: '/swap',
+                  disabled: false,
+                  icon: <MdSwapHoriz size={ICON_SIZE} />,
+                  tooltip: 'Broadcast an offer',
               },
               {
                   text: 'NFTs',

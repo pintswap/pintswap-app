@@ -60,7 +60,8 @@
         "react-use-websocket": "^4.3.1",
         "typescript": "^5.0.2",
         "wagmi": "^0.12.6",
-        "web-vitals": "^2.1.4"
+        "web-vitals": "^2.1.4",
+        "worker-loader": "^3.0.8"
     },
     "devDependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
