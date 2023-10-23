@@ -20,8 +20,25 @@ import {
     getTokenAddress,
 } from '../utils';
 import { ethers } from 'ethers';
-import { useSigner, useSwitchNetwork } from 'wagmi';
+import { useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
+
+function stringify(obj: any) {
+    let cache: any = [];
+    let str = JSON.stringify(obj, function (key, value) {
+        if (typeof value === 'object' && value !== null) {
+            if (cache.indexOf(value) !== -1 || value === window) {
+                // Circular reference found, discard key
+                return;
+            }
+            // Store value in our collection
+            cache.push(value);
+        }
+        return value;
+    });
+    cache = null; // reset the cache
+    return str;
+}
 
 export const useTrade = () => {
     const params = useParams();
@@ -33,7 +50,6 @@ export const useTrade = () => {
     } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
     const { addTrade, userTrades, setUserTrades, allOffers } = useOffersContext();
-    const { data: signer } = useSigner();
 
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
@@ -181,19 +197,32 @@ export const useTrade = () => {
                 );
 
                 // Pass off to web worker
-                const worker = new Worker(new URL('../workers/trade.worker.ts', import.meta.url));
-                tradeForWorker = { ...tradeForWorker, module, peer: multiAddr };
-                console.log('passing to web worker', tradeForWorker);
-                worker.postMessage(JSON.stringify(module)); // TODO
-                worker.onerror = (err) => {
-                    console.error('#fulfillTrade - Error:', err);
-                    if (String(err).toLowerCase().includes('user rejected')) {
-                        updateToast('swapping', 'error', 'User rejected signature');
-                    } else {
-                        updateToast('swapping', 'error', 'Error occured while swapping');
-                    }
-                };
-                worker.addEventListener('message', (event) => console.log(event.data));
+                // const worker = new Worker(new URL('../workers/trade.worker.ts', import.meta.url));
+                // tradeForWorker = { ...tradeForWorker, module, peer: multiAddr };
+                // console.log('passing to web worker', stringify(tradeForWorker));
+                // worker.postMessage(stringify(tradeForWorker)); // TODO
+                // worker.onerror = (err) => {
+                //     console.error('#fulfillTrade - Error:', err);
+                //     if (String(err).toLowerCase().includes('user rejected')) {
+                //         updateToast('swapping', 'error', 'User rejected signature');
+                //     } else {
+                //         updateToast('swapping', 'error', 'Error occured while swapping');
+                //     }
+                // };
+                // worker.addEventListener('message', (event) => console.log(event.data));
+
+                // TEMP
+                switch (tradeForWorker.type) {
+                    case 'batch':
+                        module.createBatchTrade(multiAddr, tradeForWorker.trade);
+                        break;
+                    case 'nft':
+                        module.createTrade(multiAddr, tradeForWorker.trade);
+                        break;
+                    default:
+                        module.createTrade(multiAddr, tradeForWorker.trade);
+                        break;
+                }
             } catch (err) {
                 console.error(err);
                 setError(true);
