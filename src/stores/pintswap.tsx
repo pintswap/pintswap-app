@@ -113,7 +113,7 @@ export function PintswapStore(props: { children: ReactNode }) {
             if (TESTING) console.log('noWalletInitPs:', noWalletInitPs);
             return mergeUserData(noWalletInitPs, pintswap.module);
         } else {
-            if (typeof localPsUser === 'string') {
+            if (localPsUser !== null) {
                 const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), signer);
                 if (TESTING) console.log('psFromLocal:', psFromLocal);
                 return mergeUserData(psFromLocal, pintswap.module);
