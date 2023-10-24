@@ -17,9 +17,6 @@ import {
     IMarketProps,
     IOfferProps,
     updateToast,
-    IOrderbookProps,
-    getSymbol,
-    reverseSymbolCache,
     savePintswap,
 } from '../utils';
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
@@ -274,6 +271,7 @@ export function OffersStore(props: { children: ReactNode }) {
             setAllOffers(returnObj);
             setUniqueMarkets(getUniqueMarkets(mappedPairs));
             setIsLoading(false);
+            if (TESTING) console.log('#getPublicOrderbook - Offers:', returnObj);
             return returnObj;
         }
         return { nft: [], erc20: [] };
@@ -288,9 +286,8 @@ export function OffersStore(props: { children: ReactNode }) {
     });
     useEffect(() => {
         if (module) {
-            if (!allOffers.erc20.length) {
+            if (!allOffers.erc20.length)
                 toast.loading('Connecting to P2P network', { toastId: 'findOffers' });
-            }
             module.once('/pubsub/orderbook-update', getPublicOrderbook);
             return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);
         }

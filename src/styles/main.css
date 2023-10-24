@@ -2227,6 +2227,10 @@ body {
   --tw-text-opacity: 1;
   color: rgb(116 34 232 / var(--tw-text-opacity));
 }
+.hover\:text-red-500:hover {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
 .hover\:underline:hover {
   text-decoration-line: underline;
 }

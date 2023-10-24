@@ -1,13 +1,11 @@
 import { Card, Header, Input } from '../components';
 import { DataTable } from '../tables';
 import { useOffersContext } from '../../stores';
-import { useSearch } from '../../hooks';
-import { IMarketProps } from '../../utils';
 
 const columns = [
     {
-        name: 'quote',
-        label: 'Ticker',
+        name: 'asset',
+        label: 'Asset',
         options: {
             filter: false,
             sort: true,
@@ -15,8 +13,8 @@ const columns = [
         },
     },
     {
-        name: 'buy',
-        label: 'Buy',
+        name: 'pending',
+        label: 'Pending Rewards',
         options: {
             filter: false,
             sort: true,
@@ -24,8 +22,8 @@ const columns = [
         },
     },
     {
-        name: 'sell',
-        label: 'Sell',
+        name: 'walletStaked',
+        label: 'Staked',
         options: {
             filter: false,
             sort: true,
@@ -33,8 +31,17 @@ const columns = [
         },
     },
     {
-        name: 'market',
-        label: 'Market',
+        name: 'apr',
+        label: 'APR',
+        options: {
+            filter: false,
+            sort: true,
+            sortThirdClickReset: true,
+        },
+    },
+    {
+        name: 'totalStaked',
+        label: 'Total Staked',
         options: {
             filter: false,
             sort: true,
@@ -47,27 +54,37 @@ const columns = [
     },
 ];
 
-export const MarketsTableView = () => {
+const MOCK_DATA = [
+    {
+        asset: 'PINT',
+        address: '0x0',
+        pending: '0',
+        walletStaked: '0',
+        apr: '0',
+        totalStaked: '100',
+    },
+];
+
+export const StakingView = () => {
     const { uniqueMarkets, isLoading } = useOffersContext();
-    const { query, list, handleChange } = useSearch(uniqueMarkets);
 
     return (
         <div className="flex flex-col">
             <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
-                <Header breadcrumbs={[{ text: 'Markets', link: '/markets' }]}>Explore</Header>
-                <Input
+                <Header>Staking</Header>
+                {/* <Input
                     value={query}
                     onChange={handleChange}
                     type="search"
                     wrapperClass="max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px]"
                     noSpace
-                />
+                /> */}
             </div>
             <Card>
                 <DataTable
-                    type="markets"
+                    type="staking"
                     columns={columns}
-                    data={list as IMarketProps[]}
+                    data={MOCK_DATA}
                     loading={isLoading}
                     pagination
                     options={{
