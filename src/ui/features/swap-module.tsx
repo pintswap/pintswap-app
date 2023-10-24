@@ -23,6 +23,7 @@ type ISwapModule = {
     isPublic?: boolean;
     max?: string;
     autoQuote?: boolean;
+    percentDiff?: boolean;
 };
 
 export const SwapModule = ({
@@ -36,6 +37,7 @@ export const SwapModule = ({
     setTrade,
     max,
     autoQuote = true,
+    percentDiff,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -201,6 +203,7 @@ export const SwapModule = ({
                         disabled={type === 'fulfill'}
                         type={type}
                         id="swap-module-get"
+                        trade={percentDiff ? trade : undefined}
                     />
                 </div>
 

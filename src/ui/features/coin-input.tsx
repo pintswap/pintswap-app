@@ -1,10 +1,11 @@
-import { ChangeEventHandler, useState } from 'react';
+import { ChangeEventHandler, useEffect, useMemo, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { toAddress } from '../../utils';
-import { SmartPrice, SelectCoin, Skeleton } from '../components';
-import { usePintswapContext } from '../../stores';
-import { useSubgraph } from '../../hooks';
+import { convertAmount, percentChange, percentFormatter, toAddress } from '../../utils';
+import { SmartPrice, SelectCoin, Skeleton, Percent } from '../components';
+import { usePintswapContext, usePricesContext } from '../../stores';
+import { getUsdPrice, useSubgraph } from '../../hooks';
 import { ZeroAddress } from 'ethers6';
+import { IOffer } from '@pintswap/sdk';
 
 type ICoinInput = {
     label?: string;
@@ -17,6 +18,7 @@ type ICoinInput = {
     type?: 'swap' | 'fulfill';
     id?: string;
     maxAmount?: string;
+    trade?: IOffer;
 };
 
 export const CoinInput = ({
@@ -30,12 +32,15 @@ export const CoinInput = ({
     type = 'swap',
     id,
     maxAmount,
+    trade,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
+    const [percent, setPercent] = useState('0');
     const { address } = useAccount();
     const {
         pintswap: { chainId },
     } = usePintswapContext();
+    const { eth } = usePricesContext();
     const balance = useBalance(
         asset?.toUpperCase() === 'ETH'
             ? { address }
@@ -54,6 +59,29 @@ export const CoinInput = ({
         if (maxAmount) return maxAmount;
         return balance?.data?.formatted;
     }
+
+    function renderInputUsd() {
+        return Number(value) > 0 && asset
+            ? (Number(value) * Number(data?.usdPrice || '0')).toString()
+            : '0.00';
+    }
+
+    useEffect(() => {
+        if (
+            trade &&
+            trade.gives?.token &&
+            trade.gives?.amount &&
+            asset &&
+            value &&
+            value.length > 1
+        ) {
+            (async () => {
+                const usdPrice = await getUsdPrice(trade.gives.token, eth);
+                const actualAmount = Number(trade.gives.amount) * Number(usdPrice);
+                setPercent(percentChange(renderInputUsd(), actualAmount));
+            })().catch((err) => console.error(err));
+        }
+    }, [value, asset]);
 
     return (
         <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black">
@@ -80,14 +108,15 @@ export const CoinInput = ({
             <div className="w-full flex justify-between items-center">
                 <small className="text-gray-400 flex items-center gap-0.5">
                     <span>$</span>
-                    <Skeleton loading={isLoading} innerClass="!px-1">
-                        <SmartPrice
-                            price={
-                                Number(value) > 0 && asset
-                                    ? Number(value) * Number(data?.usdPrice || '0')
-                                    : '0.00'
-                            }
-                        />
+                    <Skeleton loading={isLoading && Number(value) !== 0} innerClass="!px-1">
+                        <span className="flex items-center gap-1">
+                            <SmartPrice price={renderInputUsd()} />
+                            {trade &&
+                                !isLoading &&
+                                value &&
+                                trade.gives.amount &&
+                                trade.gives.token && <Percent value={percent} parentheses />}
+                        </span>
                     </Skeleton>
                 </small>
                 <small>

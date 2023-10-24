@@ -86,3 +86,10 @@ export const dropdownItemClass = (active: boolean) =>
 export const numberFormatter = new Intl.NumberFormat('en-US', {
     notation: 'compact',
 });
+
+export const percentFormatter = new Intl.NumberFormat('en-US', {
+    style: 'percent',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    notation: 'compact',
+});

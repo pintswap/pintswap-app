@@ -193,7 +193,6 @@ const getUniqueMarkets = (offers: any[]) => {
                 }
             }
         });
-        if (TESTING) console.log('Unique markets:', _uniqueMarkets);
         return _uniqueMarkets;
     }
     return [];
@@ -237,7 +236,6 @@ export function OffersStore(props: { children: ReactNode }) {
 
     // Get Active Trades
     const getPublicOrderbook = async () => {
-        if (TESTING) console.log('Fetching public orderbook');
         if ((module?.peers.size as any) > 0) {
             if (!offersByChain.erc20.length && !uniqueMarkets.length)
                 toast.update('findOffers', { render: 'Getting peer offers' });

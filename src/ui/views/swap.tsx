@@ -137,6 +137,7 @@ export const SwapView = () => {
                             setTrade={setTrade}
                             isPublic={isPublic}
                             autoQuote={false}
+                            percentDiff
                         />
                     </Tab.Panel>
                 </Card>
