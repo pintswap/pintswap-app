@@ -2,12 +2,12 @@ import { ethers, Signer } from 'ethers6';
 import { DEFAULT_CHAINID } from './constants';
 
 const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_KEY || '';
-const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_KEY || '';
+const LLAMA_NODES_KEY = process.env.REACT_APP_LLAMA_NODES_KEY || '';
 
 export function providerFromChainId(chainId: number | string) {
     switch (Number(chainId)) {
         case 1:
-            return new ethers.AlchemyProvider('mainnet', ALCHEMY_API_KEY);
+            return new ethers.JsonRpcProvider(`https://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`);
         case 137:
             return new ethers.InfuraProvider('polygon', INFURA_PROJECT_ID);
         case 42161:

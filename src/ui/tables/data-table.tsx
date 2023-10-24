@@ -1,7 +1,7 @@
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
 import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
-import { getUsdPrice, useUsdPrice, useWindowSize } from '../../hooks';
+import { getUsdPrice, useStaking, useUsdPrice, useWindowSize } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import {
@@ -42,7 +42,8 @@ export type IDataTableProps = {
         | 'manage'
         | 'peer-orderbook'
         | 'history'
-        | 'markets';
+        | 'markets'
+        | 'staking';
     peer?: string;
     toolbar?: boolean;
     pagination?: boolean;
@@ -182,6 +183,7 @@ const CustomRow = (props: IDataTableProps) => {
     const { tableBreak } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
+    const { handleDeposit, handleWithdraw } = useStaking();
 
     const { data: usdPrice } = useQuery({
         queryKey: [`price-${(data[0] as any)?.split('/')[0]}`],
@@ -190,9 +192,13 @@ const CustomRow = (props: IDataTableProps) => {
         refetchInterval: 1000 * 30,
     });
 
-    const baseStyle = `text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent mui:first:border-neutral-800 ${
-        loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
-    } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''}`;
+    const hasHoverState = `${
+        type === 'staking' || loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
+    }`;
+
+    const baseStyle = `${hasHoverState} text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent mui:first:border-neutral-800 ${
+        activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''
+    }`;
 
     const handleDelete = (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
@@ -208,6 +214,8 @@ const CustomRow = (props: IDataTableProps) => {
         //     return navigate(`${url}${cells[0]}/${trade}/${base}`, { state: { ...props } });
         // }
         switch (type) {
+            case 'staking':
+                return console.log('open staking modal');
             case 'markets':
                 return navigate(`/markets/${firstCell.replaceAll('/', '-').toLowerCase()}`);
             case 'explore':
@@ -262,7 +270,9 @@ const CustomRow = (props: IDataTableProps) => {
     };
 
     const formatCell = (s: string) => {
-        if (type === 'history' || type === 'manage') {
+        if (type === 'staking') {
+            return <Asset symbol={s} />;
+        } else if (type === 'history' || type === 'manage') {
             if (s.includes(' NFT')) {
                 return (
                     <span className="flex items-center gap-1.5 justify-end">
@@ -333,6 +343,25 @@ const CustomRow = (props: IDataTableProps) => {
                             '-'
                         )}
                     </p>
+                );
+            } else if (type === 'staking') {
+                return (
+                    <div className="flex justify-end items-center">
+                        <Button
+                            className="w-fit text-right"
+                            type="outline"
+                            onClick={(e) => console.log(e, cells[0])}
+                        >
+                            Deposit
+                        </Button>
+                        <Button
+                            className="w-fit text-right"
+                            type="outline"
+                            onClick={(e) => console.log(e, cells[0])}
+                        >
+                            Withdraw
+                        </Button>
+                    </div>
                 );
             }
             return <></>;
