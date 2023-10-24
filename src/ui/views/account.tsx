@@ -92,7 +92,7 @@ export const AccountView = () => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { pintswap } = usePintswapContext();
-    const { userTrades } = useOffersContext();
+    const { userTrades, deleteAllTrades } = useOffersContext();
     const { userData, toggleActive } = useUserContext();
     const {
         shallowForm,
@@ -110,6 +110,7 @@ export const AccountView = () => {
     } = useAccountForm();
 
     const [tableData, setTableData] = useState<any[]>([]);
+    const [currentTab, setCurrentTab] = useState(0);
 
     useEffect(() => {
         (async () => {
@@ -175,7 +176,23 @@ export const AccountView = () => {
                     </Skeleton>
                 </div>
             </div>
-            <Card tabs={TABS} defaultTab={state?.tab && state?.tab} type="tabs">
+            <Card
+                tabs={TABS}
+                defaultTab={state?.tab && state?.tab}
+                type="tabs"
+                rightButton={
+                    currentTab === 1 &&
+                    !!pintswap.module?.offers.size && (
+                        <button
+                            onClick={deleteAllTrades}
+                            className="text-red-400 transition duration-150 hover:text-red-500"
+                        >
+                            Cancel All
+                        </button>
+                    )
+                }
+                onTabChange={(i: number) => setCurrentTab(i)}
+            >
                 <Tab.Panel>
                     <form>
                         <div

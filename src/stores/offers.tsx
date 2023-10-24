@@ -37,6 +37,7 @@ export type IOffersStoreProps = {
     allOffers: Record<'nft' | 'erc20', IOfferProps[]>;
     offersByChain: Record<'nft' | 'erc20', IOfferProps[]>;
     uniqueMarkets: IMarketProps[];
+    deleteAllTrades: () => void;
 };
 
 // Context
@@ -49,6 +50,7 @@ const OffersContext = createContext<IOffersStoreProps>({
     offersByChain: { nft: [], erc20: [] },
     isLoading: false,
     uniqueMarkets: [],
+    deleteAllTrades: () => {},
 });
 
 // Utils
@@ -225,13 +227,22 @@ export function OffersStore(props: { children: ReactNode }) {
     };
 
     const deleteTrade = (hash: string) => {
-        const foundTrade = userTrades.get(hash);
+        const foundTrade = module?.offers.get(hash);
         if (foundTrade && module) {
             if (TESTING) console.log('#deleteTrade - Hash:', hash);
-            module.offers.delete(hashOffer(foundTrade));
+            module.offers.delete(hash);
             const shallow = new Map(userTrades);
             shallow.delete(hash);
             setUserTrades(shallow);
+            savePintswap(module);
+        }
+    };
+
+    const deleteAllTrades = (e?: any) => {
+        e && e.preventDefault();
+        if (module) {
+            module.offers.forEach((val, key) => module.offers.delete(key));
+            setUserTrades(new Map());
             savePintswap(module);
         }
     };
@@ -322,6 +333,7 @@ export function OffersStore(props: { children: ReactNode }) {
                 offersByChain,
                 isLoading,
                 uniqueMarkets,
+                deleteAllTrades,
             }}
         >
             {props.children}

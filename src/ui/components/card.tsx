@@ -12,6 +12,7 @@ type ICardProps = {
     onTabChange?: any;
     bg?: string;
     selectedTab?: string;
+    rightButton?: ReactNode;
 };
 
 export const Card = ({
@@ -25,6 +26,7 @@ export const Card = ({
     onTabChange,
     bg,
     selectedTab,
+    rightButton,
 }: ICardProps) => {
     const backgroundColor = bg
         ? bg
@@ -60,8 +62,8 @@ export const Card = ({
                     className={`flex flex-col ${backgroundColor} pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
                 >
                     {tabs && !header && (
-                        <div className="text-center mb-2 lg:mb-3 font-semibold">
-                            <Tab.List className={`flex items-center gap-1 2xl:gap-1.5`}>
+                        <div className="flex items-center justify-between text-center mb-2 lg:mb-3 font-semibold">
+                            <Tab.List className={`flex items-center j gap-1 2xl:gap-1.5`}>
                                 {tabs.map((tab, i) => (
                                     <Tab
                                         key={`tabs-${i}`}
@@ -81,6 +83,7 @@ export const Card = ({
                                     </Tab>
                                 ))}
                             </Tab.List>
+                            {rightButton && rightButton}
                         </div>
                     )}
                     <div className={`w-full ${scroll ? 'overflow-y-auto max-h-[60vh]' : ''}`}>
