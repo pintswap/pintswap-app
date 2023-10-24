@@ -40,9 +40,6 @@ export type IUserStoreProps = {
     setUserData: Dispatch<SetStateAction<IUserDataProps>>;
 };
 
-// Utils
-const DEFAULT_USE_NFT = { using: false, address: '', id: '' };
-
 // Context
 const UserContext = createContext<IUserStoreProps>({
     tokenHoldings: [],
@@ -57,7 +54,6 @@ export function UserStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const [userData, setUserData] = useState<IUserDataProps>(EMPTY_USER_DATA);
-    const [loading, setLoading] = useState(false);
     const [tokenHoldings, setTokenHoldings] = useState<ITokenResProps[]>([]);
 
     function toggleActive(e?: any) {

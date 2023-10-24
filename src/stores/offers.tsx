@@ -20,6 +20,7 @@ import {
     IOrderbookProps,
     getSymbol,
     reverseSymbolCache,
+    savePintswap,
 } from '../utils';
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
@@ -36,6 +37,7 @@ export type IOffersStoreProps = {
     allOffers: Record<'nft' | 'erc20', IOfferProps[]>;
     offersByChain: Record<'nft' | 'erc20', IOfferProps[]>;
     uniqueMarkets: IMarketProps[];
+    deleteAllTrades: () => void;
 };
 
 // Context
@@ -48,6 +50,7 @@ const OffersContext = createContext<IOffersStoreProps>({
     offersByChain: { nft: [], erc20: [] },
     isLoading: false,
     uniqueMarkets: [],
+    deleteAllTrades: () => {},
 });
 
 // Utils
@@ -193,7 +196,6 @@ const getUniqueMarkets = (offers: any[]) => {
                 }
             }
         });
-        if (TESTING) console.log('Unique markets:', _uniqueMarkets);
         return _uniqueMarkets;
     }
     return [];
@@ -225,19 +227,28 @@ export function OffersStore(props: { children: ReactNode }) {
     };
 
     const deleteTrade = (hash: string) => {
-        const foundTrade = userTrades.get(hash);
+        const foundTrade = module?.offers.get(hash);
         if (foundTrade && module) {
             if (TESTING) console.log('#deleteTrade - Hash:', hash);
-            module.offers.delete(hashOffer(foundTrade));
+            module.offers.delete(hash);
             const shallow = new Map(userTrades);
             shallow.delete(hash);
             setUserTrades(shallow);
+            savePintswap(module);
+        }
+    };
+
+    const deleteAllTrades = (e?: any) => {
+        e && e.preventDefault();
+        if (module) {
+            module.offers.forEach((val, key) => module.offers.delete(key));
+            setUserTrades(new Map());
+            savePintswap(module);
         }
     };
 
     // Get Active Trades
     const getPublicOrderbook = async () => {
-        if (TESTING) console.log('Fetching public orderbook');
         if ((module?.peers.size as any) > 0) {
             if (!offersByChain.erc20.length && !uniqueMarkets.length)
                 toast.update('findOffers', { render: 'Getting peer offers' });
@@ -322,6 +333,7 @@ export function OffersStore(props: { children: ReactNode }) {
                 offersByChain,
                 isLoading,
                 uniqueMarkets,
+                deleteAllTrades,
             }}
         >
             {props.children}
