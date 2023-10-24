@@ -41,10 +41,6 @@ const columns = [
             sortThirdClickReset: true,
         },
     },
-    {
-        name: '',
-        label: '',
-    },
 ];
 
 export const MarketsTableView = () => {
