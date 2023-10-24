@@ -20,6 +20,7 @@ import {
     IOrderbookProps,
     getSymbol,
     reverseSymbolCache,
+    savePintswap,
 } from '../utils';
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
@@ -231,6 +232,7 @@ export function OffersStore(props: { children: ReactNode }) {
             const shallow = new Map(userTrades);
             shallow.delete(hash);
             setUserTrades(shallow);
+            savePintswap(module);
         }
     };
 
