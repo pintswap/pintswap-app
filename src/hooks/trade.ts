@@ -144,9 +144,9 @@ export const useTrade = () => {
                 if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
                 module.broadcastOffer(offer);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
-                savePintswap(module);
+                await savePintswap(module);
                 if (isPublic && !userData.active) toggleActive();
-                addTrade(hashOffer(offer), offer);
+                await addTrade(hashOffer(offer), offer);
             } catch (err) {
                 console.error(err);
             }
@@ -397,7 +397,7 @@ export const useTrade = () => {
         let shallow = new Map(userTrades);
         switch (step) {
             case 0:
-                if (module) savePintswap(module);
+                // if (module) savePintswap(module);
                 console.log('#makerListener: taker approving trade');
                 toast('Taker is approving transaction');
                 toast.loading('Swapping...', { toastId: 'swapping' });
@@ -453,7 +453,7 @@ export const useTrade = () => {
             if (module) {
                 // toast.error('Error occured')
                 module.logger.error(e);
-                savePintswap(module);
+                // savePintswap(module);
             }
         });
     };

@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { useSigner, useAccount, useNetwork } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
-import { DEFAULT_CHAINID, defer, TESTING } from '../utils';
+import { DEFAULT_CHAINID, defer, savePintswap, TESTING } from '../utils';
 import { getNetwork } from '@wagmi/core';
 import { toast } from 'react-toastify';
 import { useNetworkContext } from './network';
@@ -88,7 +88,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const { newAddress, newNetwork } = useNetworkContext();
-    const localPsUser = localStorage.getItem('_pintUser');
+    const localPsUser = localStorage.getItem(`_pintUser${address ? `-${address}` : ''}`);
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
     const [initialLoad, setInitialLoad] = useState(true);
@@ -100,7 +100,6 @@ export function PintswapStore(props: { children: ReactNode }) {
         error: false,
         chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
     });
-
     // Determine PintSwap module source
     const determinePsModule = async () => {
         if (!signer) {
@@ -123,10 +122,12 @@ export function PintswapStore(props: { children: ReactNode }) {
                         signer: signer,
                         password: await signer?.getAddress(),
                     } as any)) as Pintswap;
+                    savePintswap(psFromPass);
                     if (TESTING) console.log('psFromPass:', psFromPass);
                     return mergeUserData(psFromPass, pintswap.module);
                 } else {
                     const initPs = await Pintswap.initialize({ awaitReceipts: false, signer });
+                    savePintswap(initPs);
                     if (TESTING) console.log('initPs:', initPs);
                     return mergeUserData(initPs, pintswap.module);
                 }

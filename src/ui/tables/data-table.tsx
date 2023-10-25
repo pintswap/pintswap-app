@@ -200,9 +200,9 @@ const CustomRow = (props: IDataTableProps) => {
         activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''
     }`;
 
-    const handleDelete = (e: SyntheticEvent, hash: string) => {
+    const handleDelete = async (e: SyntheticEvent, hash: string) => {
         e.stopPropagation();
-        deleteTrade(hash);
+        await deleteTrade(hash);
     };
 
     const route = async (cells: string[]) => {
@@ -319,7 +319,7 @@ const CustomRow = (props: IDataTableProps) => {
                     <Button
                         className="!text-red-400 hover:!text-red-500 w-full text-right"
                         type="transparent"
-                        onClick={(e) => handleDelete(e, cells[0])}
+                        onClick={async (e) => await handleDelete(e, cells[0])}
                     >
                         Cancel
                     </Button>
