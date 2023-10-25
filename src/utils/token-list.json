@@ -16,7 +16,7 @@
             "name": "PintSwap",
             "symbol": "PINT",
             "decimals": 18,
-            "logoURI": "https://i.ibb.co/VmhyTxM/PINT.png"
+            "logoURI": "/tokens/PINT.png"
         },
         {
             "chainId": 1,
