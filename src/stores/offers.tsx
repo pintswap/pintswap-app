@@ -17,9 +17,6 @@ import {
     IMarketProps,
     IOfferProps,
     updateToast,
-    IOrderbookProps,
-    getSymbol,
-    reverseSymbolCache,
     savePintswap,
 } from '../utils';
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
@@ -30,27 +27,27 @@ import { useQuery } from '@tanstack/react-query';
 // Types
 export type IOffersStoreProps = {
     userTrades: Map<string, IOffer>;
-    addTrade: (hash: string, { gives, gets }: IOffer) => void;
-    deleteTrade: (hash: string) => void;
+    addTrade: (hash: string, { gives, gets }: IOffer) => Promise<void>;
+    deleteTrade: (hash: string) => Promise<void>;
     setUserTrades: Dispatch<SetStateAction<Map<string, IOffer>>>;
     isLoading: boolean;
     allOffers: Record<'nft' | 'erc20', IOfferProps[]>;
     offersByChain: Record<'nft' | 'erc20', IOfferProps[]>;
     uniqueMarkets: IMarketProps[];
-    deleteAllTrades: () => void;
+    deleteAllTrades: () => Promise<void>;
 };
 
 // Context
 const OffersContext = createContext<IOffersStoreProps>({
     userTrades: new Map(),
-    addTrade(hash, { gives, gets }) {},
-    deleteTrade(hash) {},
+    async addTrade(hash, { gives, gets }) {},
+    async deleteTrade(hash) {},
     setUserTrades: () => {},
     allOffers: { nft: [], erc20: [] },
     offersByChain: { nft: [], erc20: [] },
     isLoading: false,
     uniqueMarkets: [],
-    deleteAllTrades: () => {},
+    deleteAllTrades: async () => {},
 });
 
 // Utils
@@ -222,11 +219,12 @@ export function OffersStore(props: { children: ReactNode }) {
     const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const addTrade = (hash: string, tradeProps: IOffer) => {
+    const addTrade = async (hash: string, tradeProps: IOffer) => {
         setUserTrades(new Map(userTrades.set(hash, tradeProps)));
+        module && (await savePintswap(module));
     };
 
-    const deleteTrade = (hash: string) => {
+    const deleteTrade = async (hash: string) => {
         const foundTrade = module?.offers.get(hash);
         if (foundTrade && module) {
             if (TESTING) console.log('#deleteTrade - Hash:', hash);
@@ -234,16 +232,16 @@ export function OffersStore(props: { children: ReactNode }) {
             const shallow = new Map(userTrades);
             shallow.delete(hash);
             setUserTrades(shallow);
-            savePintswap(module);
+            await savePintswap(module);
         }
     };
 
-    const deleteAllTrades = (e?: any) => {
+    const deleteAllTrades = async (e?: any) => {
         e && e.preventDefault();
         if (module) {
             module.offers.forEach((val, key) => module.offers.delete(key));
             setUserTrades(new Map());
-            savePintswap(module);
+            await savePintswap(module);
         }
     };
 
@@ -274,6 +272,7 @@ export function OffersStore(props: { children: ReactNode }) {
             setAllOffers(returnObj);
             setUniqueMarkets(getUniqueMarkets(mappedPairs));
             setIsLoading(false);
+            if (TESTING) console.log('#getPublicOrderbook - Offers:', returnObj);
             return returnObj;
         }
         return { nft: [], erc20: [] };
@@ -283,14 +282,13 @@ export function OffersStore(props: { children: ReactNode }) {
     useQuery({
         queryKey: ['unique-markets'],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 8,
+        refetchInterval: 1000 * 10,
         enabled: !!module && module.peers.size > 0,
     });
     useEffect(() => {
         if (module) {
-            if (!allOffers.erc20.length) {
+            if (!allOffers.erc20.length)
                 toast.loading('Connecting to P2P network', { toastId: 'findOffers' });
-            }
             module.once('/pubsub/orderbook-update', getPublicOrderbook);
             return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);
         }

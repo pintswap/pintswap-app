@@ -2,6 +2,7 @@ import { ethers, Signer } from 'ethers6';
 import { DEFAULT_CHAINID } from './constants';
 
 const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_KEY || '';
+const LLAMA_NODES_KEY = process.env.REACT_APP_LLAMA_NODES_KEY || '';
 const ALCHEMY_API_KEY = process.env.REACT_APP_ALCHEMY_KEY || '';
 
 export function providerFromChainId(chainId: number | string) {

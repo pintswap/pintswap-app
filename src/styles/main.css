@@ -1,7 +1,7 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
 
-/* ! tailwindcss v3.3.3 | MIT License | https://tailwindcss.com */
+/* ! tailwindcss v3.3.5 | MIT License | https://tailwindcss.com */
 
 /*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
@@ -2226,6 +2226,10 @@ body {
 .hover\:text-primary-hover:hover {
   --tw-text-opacity: 1;
   color: rgb(116 34 232 / var(--tw-text-opacity));
+}
+.hover\:text-red-500:hover {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
 }
 .hover\:underline:hover {
   text-decoration-line: underline;

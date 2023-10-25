@@ -7,10 +7,12 @@ import {
 } from '../stores';
 import { Wallet, isAddress } from 'ethers6';
 import { fetchNFT, savePintswap } from '../utils';
+import { useAccount } from 'wagmi';
 
 const DEFAULT_USE_NFT = { using: false, address: '', id: '' };
 
 export const useAccountForm = () => {
+    const { address } = useAccount();
     const { pintswap } = usePintswapContext();
     const { userData, setUserData } = useUserContext();
 
@@ -80,7 +82,10 @@ export const useAccountForm = () => {
                 }
                 // Private Key
                 if (privateKey && hasEdited.includes('privateKey')) {
-                    if (localStorage.getItem('_pintUser') && privateKey.length > 50) {
+                    const localPsUser = localStorage.getItem(
+                        `_pintUser${address ? `-${address}` : ''}`,
+                    );
+                    if (localPsUser && privateKey.length > 50) {
                         module.signer = new Wallet(privateKey).connect(module.signer.provider);
                         module.signer.provider.getGasPrice = makeGetGasPrice(
                             module.signer.provider,
@@ -89,7 +94,7 @@ export const useAccountForm = () => {
                     }
                 }
                 // Module
-                savePintswap(module);
+                await savePintswap(module);
                 setUserData({ ...userData, name, img, privateKey, bio });
             } catch (err) {
                 setIsError(true);
