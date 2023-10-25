@@ -92,7 +92,6 @@ export function PintswapStore(props: { children: ReactNode }) {
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
     const [initialLoad, setInitialLoad] = useState(true);
-    const { pathname } = useLocation();
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
@@ -112,26 +111,27 @@ export function PintswapStore(props: { children: ReactNode }) {
             if (TESTING) console.log('noWalletInitPs:', noWalletInitPs);
             return mergeUserData(noWalletInitPs, pintswap.module);
         } else {
-            if (localPsUser !== null) {
-                const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), signer);
-                if (TESTING) console.log('psFromLocal:', psFromLocal);
-                return mergeUserData(psFromLocal, pintswap.module);
+            // TODO: fix
+            // if (localPsUser !== null) {
+            //     const psFromLocal = await Pintswap.fromObject(JSON.parse(localPsUser), signer);
+            //     if (TESTING) console.log('psFromLocal:', psFromLocal);
+            //     return mergeUserData(psFromLocal, pintswap.module);
+            // } else {
+            if (signer) {
+                const psFromPass = (await Pintswap.fromPassword({
+                    signer: signer,
+                    password: await signer?.getAddress(),
+                } as any)) as Pintswap;
+                savePintswap(psFromPass);
+                if (TESTING) console.log('psFromPass:', psFromPass);
+                return mergeUserData(psFromPass, pintswap.module);
             } else {
-                if (signer) {
-                    const psFromPass = (await Pintswap.fromPassword({
-                        signer: signer,
-                        password: await signer?.getAddress(),
-                    } as any)) as Pintswap;
-                    savePintswap(psFromPass);
-                    if (TESTING) console.log('psFromPass:', psFromPass);
-                    return mergeUserData(psFromPass, pintswap.module);
-                } else {
-                    const initPs = await Pintswap.initialize({ awaitReceipts: false, signer });
-                    savePintswap(initPs);
-                    if (TESTING) console.log('initPs:', initPs);
-                    return mergeUserData(initPs, pintswap.module);
-                }
+                const initPs = await Pintswap.initialize({ awaitReceipts: false, signer });
+                savePintswap(initPs);
+                if (TESTING) console.log('initPs:', initPs);
+                return mergeUserData(initPs, pintswap.module);
             }
+            // }
         }
     };
 
