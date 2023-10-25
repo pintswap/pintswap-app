@@ -36,6 +36,30 @@
         },
         {
             "chainId": 1,
+            "address": "0xff836a5821e69066c87e268bc51b849fab94240c",
+            "name": "Real Smurf Cat",
+            "symbol": "шайлушай",
+            "decimals": 18,
+            "logoURI": "https://assets.coingecko.com/coins/images/31751/standard/pfp2.png?1696530570"
+        },
+        {
+            "chainId": 1,
+            "address": "0x72e4f9f808c49a2a61de9c5896298920dc4eeea9",
+            "name": "HarryPotterObamaSonic10Inu",
+            "symbol": "BITCOIN",
+            "decimals": 18,
+            "logoURI": "https://assets.coingecko.com/coins/images/30323/standard/hpos10i_logo_casino_night-dexview.png?1696529224"
+        },
+        {
+            "chainId": 1,
+            "address": "0x76e222b07c53d28b89b0bac18602810fc22b49a8",
+            "name": "Joe Coin",
+            "symbol": "JOE",
+            "decimals": 18,
+            "logoURI": "https://assets.coingecko.com/coins/images/32333/standard/joe.png?1697452551"
+        },
+        {
+            "chainId": 1,
             "address": "0x4e47951508fd4a4126f8ff9cf5e6fa3b7cc8e073",
             "name": "Fluid",
             "symbol": "FLUID",
