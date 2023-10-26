@@ -7,7 +7,7 @@ type IButtonProps = {
     children: ReactNode | string;
     onClick?: MouseEventHandler<HTMLButtonElement>;
     className?: string;
-    type?: 'outline' | 'primary' | 'transparent' | 'wallet';
+    type?: 'outline' | 'primary' | 'transparent' | 'wallet' | 'outline-secondary';
     disabled?: boolean;
     loading?: boolean;
     loadingText?: string;
@@ -36,6 +36,7 @@ export const Button = ({
             case 'wallet':
                 return `bg-gradient-to-tr to-accent-light from-primary`;
             case 'outline':
+            case 'outline-secondary':
                 return 'bg-neutral-900 disabled:border-primary-disabled';
             case 'transparent':
                 return '!bg-transparent !text-neutral-100 hover:text-neutral-300 hover:fill-neutral-300 !p-0';
@@ -48,6 +49,8 @@ export const Button = ({
         switch (type) {
             case 'outline':
                 return 'border-accent-light hover:border-accent';
+            case 'outline-secondary':
+                return 'border-primary-light hover:border-primary-hover';
             default:
                 return 'border-transparent';
         }

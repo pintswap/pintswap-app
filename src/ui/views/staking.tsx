@@ -1,58 +1,7 @@
-import { Card, Header, Input } from '../components';
-import { DataTable } from '../tables';
+import { Asset, Button, Card, Header, Input, TextDisplay } from '../components';
 import { useOffersContext } from '../../stores';
-
-const columns = [
-    {
-        name: 'asset',
-        label: 'Asset',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'pending',
-        label: 'Pending Rewards',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'walletStaked',
-        label: 'Staked',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'apr',
-        label: 'APR',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'totalStaked',
-        label: 'Total Staked',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: '',
-        label: '',
-    },
-];
+import { CoinInput } from '../features';
+import { useWindowSize } from '../../hooks';
 
 const MOCK_DATA = [
     {
@@ -66,10 +15,10 @@ const MOCK_DATA = [
 ];
 
 export const StakingView = () => {
-    const { uniqueMarkets, isLoading } = useOffersContext();
+    const { width, breakpoints } = useWindowSize();
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col max-w-5xl mx-auto">
             <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
                 <Header>Staking</Header>
                 {/* <Input
@@ -81,19 +30,57 @@ export const StakingView = () => {
                 /> */}
             </div>
             <Card>
-                <DataTable
-                    type="staking"
-                    columns={columns}
-                    data={MOCK_DATA}
-                    loading={isLoading}
-                    pagination
-                    options={{
-                        sortOrder: {
-                            name: 'quote',
-                            direction: 'asc',
-                        },
-                    }}
-                />
+                <div className="flex flex-col gap-2">
+                    <div className="grid grid-cols-4 sm:grid-cols-5 py-2 gap-y-3 sm:gap-2">
+                        <Asset size={32} symbol="PINT" fontSize="text-lg" />
+                        <TextDisplay
+                            label="APR"
+                            value="7.36%"
+                            size="text-lg sm:text-xl"
+                            align="right"
+                        />
+                        <TextDisplay
+                            label={width < breakpoints.sm ? 'Staked' : 'Total Staked'}
+                            value="$13M"
+                            size="text-lg sm:text-xl"
+                            align="right"
+                        />
+                        <TextDisplay
+                            label="Deposited"
+                            value="$100"
+                            size="text-lg sm:text-xl"
+                            align="right"
+                        />
+                        <div className="col-span-4 sm:col-span-1 flex justify-end">
+                            <Button
+                                type="outline-secondary"
+                                checkNetwork
+                                className="w-full sm:w-fit flex self-end justify-self-end"
+                            >
+                                Withdraw All
+                            </Button>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <CoinInput
+                            onAmountChange={() => {}}
+                            label="Stake"
+                            asset="PINT"
+                            customButton={<Button checkNetwork>Deposit</Button>}
+                        />
+                        <CoinInput
+                            onAmountChange={() => {}}
+                            label="Total Rewards"
+                            asset="PINT"
+                            customButton={
+                                <Button type="outline" checkNetwork>
+                                    Redeem
+                                </Button>
+                            }
+                            disabled
+                        />
+                    </div>
+                </div>
             </Card>
         </div>
     );

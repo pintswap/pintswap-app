@@ -52,7 +52,7 @@ function App() {
                     <Route path="/markets" element={<MarketsTableView />} />
                     <Route path="/nfts" element={<NFTsTableView />} />
                     <Route path="/create" element={<CreateView />} />
-                    {/* <Route path="/staking" element={<StakingView />} /> */}
+                    <Route path="/staking" element={<StakingView />} />
                     <Route path="/account" element={<AccountView />} />
 
                     <Route path="/markets/:pair" element={<MarketsSwapView />} />

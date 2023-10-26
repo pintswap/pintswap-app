@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useEffect, useMemo, useState } from 'react';
+import { ChangeEventHandler, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { convertAmount, percentChange, percentFormatter, toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton, Percent } from '../components';
@@ -19,6 +19,8 @@ type ICoinInput = {
     id?: string;
     maxAmount?: string;
     trade?: IOffer;
+    noSelect?: boolean;
+    customButton?: ReactNode;
 };
 
 export const CoinInput = ({
@@ -33,6 +35,8 @@ export const CoinInput = ({
     id,
     maxAmount,
     trade,
+    noSelect,
+    customButton,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
@@ -101,8 +105,10 @@ export const CoinInput = ({
                     onAssetClick={clickAndClose}
                     modalOpen={open}
                     setModalOpen={setOpen}
-                    disabled={disabled}
+                    disabled={disabled || noSelect}
                     type={type}
+                    noSelect={noSelect}
+                    customButton={customButton}
                 />
             </div>
             <div className="w-full flex justify-between items-center">

@@ -34,13 +34,13 @@ export const useDashNav = () => {
             icon: <MdGroup size={ICON_SIZE} />,
             tooltip: 'See who is currently online',
         },
-        // {
-        //     text: 'Staking',
-        //     route: '/staking',
-        //     disabled: false,
-        //     icon: <MdLock size={ICON_SIZE} />,
-        //     tooltip: 'Stake your PINT for passive rewards',
-        // },
+        {
+            text: 'Staking',
+            route: '/staking',
+            disabled: false,
+            icon: <MdLock size={ICON_SIZE} />,
+            tooltip: 'Stake your PINT for passive rewards',
+        },
     ];
 
     if (address)
