@@ -41,9 +41,20 @@ export const StakingView = () => {
                 <div className="flex flex-col">
                     <Header>Staking</Header>
                     <div className="flex items-center gap-1.5">
-                        <MdInfoOutline className="text-yellow-400" />
+                        <div className="min-w-8">
+                            <MdInfoOutline className="text-yellow-400" />
+                        </div>
                         <span className="text-sm text-gray-400">
-                            Staking rewards redemptions are currently unavailable.
+                            Vault rewards are currently unavailable until the trading engine is
+                            fully integrated. Read more{' '}
+                            <a
+                                href="https://iron.pyrosec.gg/pintswap-litepaper.pdf"
+                                target="_blank"
+                                rel="noreferrer"
+                                className="underline"
+                            >
+                                here in section 3 of the litepaper.
+                            </a>
                         </span>
                     </div>
                 </div>
