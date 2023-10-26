@@ -3,6 +3,7 @@ import { useOffersContext } from '../../stores';
 import { CoinInput } from '../features';
 import { useStaking, useWindowSize } from '../../hooks';
 import { numberFormatter, percentFormatter } from '../../utils';
+import { MdInfo, MdInfoOutline } from 'react-icons/md';
 
 const MOCK_DATA = [
     {
@@ -37,7 +38,15 @@ export const StakingView = () => {
     return (
         <div className="flex flex-col max-w-5xl mx-auto">
             <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
-                <Header>Staking</Header>
+                <div className="flex flex-col">
+                    <Header>Staking</Header>
+                    <div className="flex items-center gap-1.5">
+                        <MdInfoOutline className="text-yellow-400" />
+                        <span className="text-sm text-gray-400">
+                            Staking rewards redemptions are currently unavailable.
+                        </span>
+                    </div>
+                </div>
                 {/* <Input
                     value={query}
                     onChange={handleChange}
@@ -49,7 +58,7 @@ export const StakingView = () => {
             <Card>
                 <div className="flex flex-col gap-2">
                     <div className="grid grid-cols-4 sm:grid-cols-5 py-2 gap-y-3 sm:gap-2">
-                        <Asset size={32} symbol="PINT" fontSize="text-lg" />
+                        <Asset size={32} symbol="PINT" subSymbol="sipPINT" fontSize="text-lg" />
                         <TextDisplay
                             label="APR"
                             value={percentFormatter.format(Number(apr))}
@@ -74,7 +83,9 @@ export const StakingView = () => {
                                 type="outline-secondary"
                                 checkNetwork
                                 className="w-full sm:w-fit flex self-end justify-self-end"
-                                disabled={isLoading}
+                                disabled={
+                                    isLoading || !userDeposited || Number(userDeposited) === 0
+                                }
                             >
                                 Withdraw All
                             </Button>

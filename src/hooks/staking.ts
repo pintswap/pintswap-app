@@ -1,5 +1,5 @@
 import { Contract, formatEther, parseEther } from 'ethers6';
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount, useBlockNumber, useSigner } from 'wagmi';
 import { CONTRACTS, providerFromChainId, updateToast } from '../utils';
 import { erc4626ABI, erc20ABI } from 'wagmi';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 export const useStaking = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
+    const { data: block } = useBlockNumber();
 
     const [depositInput, setDepositInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -83,6 +84,10 @@ export const useStaking = () => {
 
     async function handleDeposit(e: any) {
         e.preventDefault();
+        if (Number(depositInput) === 0 || !depositInput) {
+            toast.info('Deposit input cannot be empty');
+            return;
+        }
         setIsLoading(true);
         const amount = parseEther(depositInput);
         toast.loading('Waiting for approval', { toastId: 'deposit-vault' });
@@ -136,8 +141,6 @@ export const useStaking = () => {
     async function previewRedeem() {
         return (await sipPINT.previewRedeem()).toString();
     }
-
-    console.log('userData', userData.data);
 
     return {
         handleDeposit,
