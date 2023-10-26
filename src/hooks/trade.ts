@@ -157,6 +157,12 @@ export const useTrade = () => {
     const fulfillTrade = async (e: React.SyntheticEvent) => {
         e.preventDefault();
         setLoading({ ...loading, fulfill: true });
+
+        // Set loading
+        toast.loading(`Initiating trade. Please do not refresh the page.`, {
+            toastId: 'swapping',
+            className: 'text-sm',
+        });
         if (module) {
             // Determine correct offer
             let offer = trade;
@@ -188,13 +194,6 @@ export const useTrade = () => {
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
                     tradeForWorker = { type: 'default', trade: builtTrade };
                 }
-
-                // Set loading
-                const displayable = await displayTradeObj(offer);
-                toast.loading(
-                    `Swapping\n${displayable.gets.token} for ${displayable.gives.token}`,
-                    { toastId: 'swapping', className: 'text-sm' },
-                );
 
                 // Pass off to web worker
                 // const worker = new Worker(new URL('../workers/trade.worker.ts', import.meta.url));
@@ -418,7 +417,8 @@ export const useTrade = () => {
         }
     };
 
-    const takerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+    const takerListener = async (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+        const [quote, base] = params.pair ? params.pair.split('-') : ['', ''];
         let shallow = new Map(userTrades);
         switch (step) {
             case 0:
@@ -426,13 +426,22 @@ export const useTrade = () => {
                 break;
             case 1:
                 console.log('#takerListener: taker approving token swap');
+                toast.update('swapping', { render: `Waiting for approval`, className: 'text-sm' });
                 break;
             case 2:
                 console.log('#takerListener: approved token swap');
+                toast.update('swapping', { render: `Building transaction`, className: 'text-sm' });
                 break;
-            case 3:
+            case 3: {
                 console.log('#takerListener: building transaction');
+                toast.update('swapping', {
+                    render: `Swapping ${trade.gets.token || quote.toUpperCase()} ${
+                        trade.gets.token ? 'for' : ''
+                    } ${trade.gives.token}`,
+                    className: 'text-sm',
+                });
                 break;
+            }
             case 4:
                 console.log('#takerListener: transaction built');
                 break;

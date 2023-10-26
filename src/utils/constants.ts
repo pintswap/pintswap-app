@@ -25,11 +25,6 @@ export const NETWORKS: Record<number, Record<'explorer' | 'logo' | 'name', strin
         logo: '/networks/arbitrum.svg',
         name: 'Arbitrum',
     },
-    // 10: {
-    //     explorer: 'https://optimistic.etherscan.io',
-    //     logo: '/networks/optimism.svg',
-    //     name: 'Optimism'
-    // }
 };
 
 // ENDPOINTS
@@ -41,6 +36,19 @@ export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> =
     pintswap: {
         eth: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-eth',
         arb: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-arb',
+    },
+};
+
+// CONTRACTS
+export const CONTRACTS = {
+    mainnet: {
+        WOCK: '0xcB72ed407Cdb97a7161a2b567b5f50B55585Ee6b',
+        WOCKRedeem: '0x8a20b541aacc05f824f67532de995e3687431499',
+        TRIS: '0x0055485fCa054D165fc0C7D836459722436544c1',
+        TRISRedeem: '0xfef8205d4c472fe0442fc1026acc34e6d88e438c',
+        PINT: '0x58fB30A61C218A3607e9273D52995a49fF2697Ee',
+        OPPS: '0xd665F1153599e8F799b2514069dF4481d3bcb043',
+        sipPINT: '0x1e8352e5d5e9ef7a68432a39118082653e8a9758',
     },
 };
 

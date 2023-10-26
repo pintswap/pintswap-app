@@ -8,6 +8,7 @@ type IAssetProps = {
     loading?: boolean;
     fontSize?: `text-${string}`;
     position?: 'left' | 'right';
+    subSymbol?: string;
 };
 
 export const Asset = ({
@@ -17,6 +18,7 @@ export const Asset = ({
     size = 25,
     fontSize = 'text-md',
     position = 'left',
+    subSymbol,
 }: IAssetProps) => {
     const {
         pintswap: { module, chainId },
@@ -75,7 +77,12 @@ export const Asset = ({
                         height={size}
                         className="rounded-full"
                     />
-                    <span className={fontSize}>{assetProps()?.symbol}</span>
+                    <div className="flex flex-col">
+                        <span className={`${fontSize} ${subSymbol ? 'leading-tight' : ''}`}>
+                            {assetProps()?.symbol}
+                        </span>
+                        {subSymbol && <span className="text-xs text-gray-400">{subSymbol}</span>}
+                    </div>
                 </>
             )}
         </div>

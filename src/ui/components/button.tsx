@@ -7,7 +7,7 @@ type IButtonProps = {
     children: ReactNode | string;
     onClick?: MouseEventHandler<HTMLButtonElement>;
     className?: string;
-    type?: 'outline' | 'primary' | 'transparent' | 'wallet';
+    type?: 'outline' | 'primary' | 'transparent' | 'wallet' | 'outline-secondary';
     disabled?: boolean;
     loading?: boolean;
     loadingText?: string;
@@ -36,6 +36,7 @@ export const Button = ({
             case 'wallet':
                 return `bg-gradient-to-tr to-accent-light from-primary`;
             case 'outline':
+            case 'outline-secondary':
                 return 'bg-neutral-900 disabled:border-primary-disabled';
             case 'transparent':
                 return '!bg-transparent !text-neutral-100 hover:text-neutral-300 hover:fill-neutral-300 !p-0';
@@ -47,7 +48,9 @@ export const Button = ({
     const renderBorder = () => {
         switch (type) {
             case 'outline':
-                return 'border-accent-light hover:border-accent';
+                return 'border-accent-light hover:border-accent disabled:border-accent-light';
+            case 'outline-secondary':
+                return 'border-primary-light hover:border-primary-hover';
             default:
                 return 'border-transparent';
         }
@@ -84,7 +87,7 @@ export const Button = ({
             type={form ? form : 'button'}
             onClick={render().onClick}
             disabled={disabled}
-            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
+            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} disabled:opacity-70 border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (
                 <div

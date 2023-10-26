@@ -9,7 +9,7 @@ import {
     NETWORKS,
     balanceTokenSort,
 } from '../../utils';
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { ethers } from 'ethers6';
 import { usePintswapContext, useUserContext } from '../../stores';
@@ -24,6 +24,8 @@ type ISelectCoin = {
     disabled?: boolean;
     type?: 'swap' | 'fulfill';
     loading?: boolean;
+    noSelect?: boolean;
+    customButton?: ReactNode;
 };
 
 export const SelectCoin = ({
@@ -34,6 +36,8 @@ export const SelectCoin = ({
     disabled,
     type = 'swap',
     loading,
+    noSelect,
+    customButton,
 }: ISelectCoin) => {
     const {
         pintswap: { module, chainId },
@@ -62,50 +66,55 @@ export const SelectCoin = ({
 
     return (
         <>
+            {customButton && customButton}
             <TransitionModal
                 button={
-                    <span
-                        className={`transition duration-100 flex items-center gap-1 flex-none rounded-full p-1 min-w-max ${
-                            asset || type === 'fulfill'
-                                ? `bg-neutral-600 ${
-                                      disabled && type !== 'fulfill' ? '' : 'hover:bg-neutral-500'
-                                  }`
-                                : `bg-primary  ${disabled ? '' : 'hover:bg-primary-hover'}`
-                        } ${type === 'fulfill' ? 'pr-2.5' : ''}`}
-                    >
-                        {asset ? (
-                            type === 'fulfill' ? (
-                                <TooltipWrapper
-                                    text={toAddress(asset, chainId)}
-                                    id={`select-coin-${type}-${asset}-${chainId}`}
-                                >
-                                    <a
-                                        href={`${NETWORKS[chainId].explorer}/token/${toAddress(
-                                            asset,
-                                            chainId,
-                                        )}`}
-                                        target="_blank"
-                                        rel="noreferrer"
+                    !customButton && (
+                        <span
+                            className={`transition duration-100 flex items-center gap-1 flex-none rounded-full p-1 min-w-max ${
+                                asset || type === 'fulfill'
+                                    ? `bg-neutral-600 ${
+                                          disabled && type !== 'fulfill' && !noSelect
+                                              ? ''
+                                              : 'hover:bg-neutral-500'
+                                      }`
+                                    : `bg-primary  ${disabled ? '' : 'hover:bg-primary-hover'}`
+                            } ${type === 'fulfill' || noSelect ? 'pr-2.5' : ''}`}
+                        >
+                            {asset ? (
+                                type === 'fulfill' ? (
+                                    <TooltipWrapper
+                                        text={toAddress(asset, chainId)}
+                                        id={`select-coin-${type}-${asset}-${chainId}`}
                                     >
-                                        <Asset symbol={asset} />
-                                    </a>
-                                </TooltipWrapper>
+                                        <a
+                                            href={`${NETWORKS[chainId].explorer}/token/${toAddress(
+                                                asset,
+                                                chainId,
+                                            )}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            <Asset symbol={asset} />
+                                        </a>
+                                    </TooltipWrapper>
+                                ) : (
+                                    <Asset symbol={asset} />
+                                )
+                            ) : type === 'fulfill' || loading ? (
+                                <span className="pl-2">Loading</span>
                             ) : (
-                                <Asset symbol={asset} />
-                            )
-                        ) : type === 'fulfill' || loading ? (
-                            <span className="pl-2">Loading</span>
-                        ) : (
-                            <span className="pl-2 flex items-center">
-                                Select<span className="hidden sm:block ml-[5px]">a token</span>
-                            </span>
-                        )}
-                        {type !== 'fulfill' && <MdExpandMore />}
-                    </span>
+                                <span className="pl-2 flex items-center">
+                                    Select<span className="hidden sm:block ml-[5px]">a token</span>
+                                </span>
+                            )}
+                            {type !== 'fulfill' && !noSelect && <MdExpandMore />}
+                        </span>
+                    )
                 }
                 modalClass={`w-full !max-w-lg`}
-                state={disabled ? false : modalOpen}
-                setState={disabled ? () => {} : setModalOpen}
+                state={disabled || type === 'fulfill' || noSelect ? false : modalOpen}
+                setState={disabled || type === 'fulfill' || noSelect ? () => {} : setModalOpen}
             >
                 <Card className="w-full border border-neutral-800">
                     <div className="flex flex-col gap-2 lg:gap-3">

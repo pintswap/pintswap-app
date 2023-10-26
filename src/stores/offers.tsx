@@ -272,7 +272,6 @@ export function OffersStore(props: { children: ReactNode }) {
             setAllOffers(returnObj);
             setUniqueMarkets(getUniqueMarkets(mappedPairs));
             setIsLoading(false);
-            if (TESTING) console.log('#getPublicOrderbook - Offers:', returnObj);
             return returnObj;
         }
         return { nft: [], erc20: [] };

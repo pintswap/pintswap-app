@@ -5,7 +5,7 @@ import { Button, Card, PageStatus, SpinnerLoader } from '../components';
 import { Avatar, NFTDisplay } from '../features';
 import { useTrade } from '../../hooks';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { INFTProps, toFormatted, fetchNFT } from '../../utils';
+import { INFTProps, toFormatted, fetchNFT, updateToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 
 export const FulfillNFTView = () => {
@@ -26,6 +26,7 @@ export const FulfillNFTView = () => {
     useEffect(() => {
         (async () => {
             if (offer) {
+                updateToast('loading-fulfill-nft', 'success', 'Connected to peer');
                 const n = await fetchNFT(offer.gives);
                 const cost = await toFormatted(offer.gets, chainId);
                 setLoading(false);
@@ -34,21 +35,28 @@ export const FulfillNFTView = () => {
         })().catch((err) => console.error(err));
     }, [offer]);
 
+    useEffect(() => {
+        toast.loading('Connecting to peer', { toastId: 'loading-fulfill-nft' });
+    }, []);
+
     const peer = state?.peer ? state.peer : multiaddr;
 
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
-            <div className="flex flex-col gap-4 md:gap-6">
+            <div className="flex flex-col gap-4 md:gap-6 max-w-3xl mx-auto">
                 <button onClick={() => navigate(`/${multiaddr}`)} className="w-fit text-left">
                     <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
                 </button>
                 <Card header={'Buy NFT'}>
-                    {loading ? (
-                        <SpinnerLoader height="min-h-96" />
-                    ) : (
-                        <NFTDisplay nft={nft} show="full" height="h-96" offer={offer} />
-                    )}
+                    <NFTDisplay
+                        nft={nft}
+                        show="full"
+                        height="h-auto sm:h-60"
+                        width="w-auto sm:w-60"
+                        offer={offer}
+                        loading={loading}
+                    />
                     <Button
                         checkNetwork
                         className="mt-6 w-full"

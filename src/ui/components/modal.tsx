@@ -34,12 +34,12 @@ export function TransitionModal({
                     {typeof button === 'string' ? (
                         <Button onClick={handleOpen}>{button}</Button>
                     ) : (
-                        <button
+                        <span
                             onClick={handleOpen}
                             className={`cursor-pointer  w-fit ${buttonClass || ''}`}
                         >
                             {button}
-                        </button>
+                        </span>
                     )}
                 </>
             )}
