@@ -66,11 +66,10 @@ export const SelectCoin = ({
 
     return (
         <>
+            {customButton && customButton}
             <TransitionModal
                 button={
-                    customButton ? (
-                        customButton
-                    ) : (
+                    !customButton && (
                         <span
                             className={`transition duration-100 flex items-center gap-1 flex-none rounded-full p-1 min-w-max ${
                                 asset || type === 'fulfill'

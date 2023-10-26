@@ -1,7 +1,8 @@
 import { Asset, Button, Card, Header, Input, TextDisplay } from '../components';
 import { useOffersContext } from '../../stores';
 import { CoinInput } from '../features';
-import { useWindowSize } from '../../hooks';
+import { useStaking, useWindowSize } from '../../hooks';
+import { numberFormatter, percentFormatter } from '../../utils';
 
 const MOCK_DATA = [
     {
@@ -16,6 +17,22 @@ const MOCK_DATA = [
 
 export const StakingView = () => {
     const { width, breakpoints } = useWindowSize();
+    const {
+        handleDeposit,
+        handleWithdraw,
+        handleInputChange,
+        handleRedeem,
+        depositInput,
+        apr,
+        availableToRedeem,
+        totalAssets,
+        totalSupply,
+        userDeposited,
+        previewDeposit,
+        previewRedeem,
+        previewWithdraw,
+        isLoading,
+    } = useStaking();
 
     return (
         <div className="flex flex-col max-w-5xl mx-auto">
@@ -35,27 +52,29 @@ export const StakingView = () => {
                         <Asset size={32} symbol="PINT" fontSize="text-lg" />
                         <TextDisplay
                             label="APR"
-                            value="7.36%"
+                            value={percentFormatter.format(Number(apr))}
                             size="text-lg sm:text-xl"
                             align="right"
                         />
                         <TextDisplay
                             label={width < breakpoints.sm ? 'Staked' : 'Total Staked'}
-                            value="$13M"
+                            value={numberFormatter.format(Number(totalAssets))}
                             size="text-lg sm:text-xl"
                             align="right"
                         />
                         <TextDisplay
                             label="Deposited"
-                            value="$100"
+                            value={numberFormatter.format(Number(userDeposited))}
                             size="text-lg sm:text-xl"
                             align="right"
                         />
                         <div className="col-span-4 sm:col-span-1 flex justify-end">
                             <Button
+                                onClick={handleWithdraw}
                                 type="outline-secondary"
                                 checkNetwork
                                 className="w-full sm:w-fit flex self-end justify-self-end"
+                                disabled={isLoading}
                             >
                                 Withdraw All
                             </Button>
@@ -63,17 +82,24 @@ export const StakingView = () => {
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <CoinInput
-                            onAmountChange={() => {}}
+                            onAmountChange={handleInputChange}
+                            value={depositInput}
                             label="Stake"
                             asset="PINT"
-                            customButton={<Button checkNetwork>Deposit</Button>}
+                            customButton={
+                                <Button disabled={isLoading} onClick={handleDeposit} checkNetwork>
+                                    Deposit
+                                </Button>
+                            }
+                            max
                         />
                         <CoinInput
                             onAmountChange={() => {}}
                             label="Total Rewards"
+                            value={availableToRedeem}
                             asset="PINT"
                             customButton={
-                                <Button type="outline" checkNetwork>
+                                <Button onClick={handleRedeem} disabled type="outline" checkNetwork>
                                     Redeem
                                 </Button>
                             }

@@ -48,7 +48,7 @@ export const Button = ({
     const renderBorder = () => {
         switch (type) {
             case 'outline':
-                return 'border-accent-light hover:border-accent';
+                return 'border-accent-light hover:border-accent disabled:border-accent-light';
             case 'outline-secondary':
                 return 'border-primary-light hover:border-primary-hover';
             default:
@@ -87,7 +87,7 @@ export const Button = ({
             type={form ? form : 'button'}
             onClick={render().onClick}
             disabled={disabled}
-            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
+            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} disabled:opacity-70 border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (
                 <div
