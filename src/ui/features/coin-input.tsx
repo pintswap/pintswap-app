@@ -1,10 +1,9 @@
-import { ChangeEventHandler, ReactNode, useEffect, useMemo, useState } from 'react';
+import { ChangeEventHandler, ReactNode, useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { convertAmount, percentChange, percentFormatter, toAddress } from '../../utils';
+import { percentChange, toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton, Percent } from '../components';
 import { usePintswapContext, usePricesContext } from '../../stores';
-import { getUsdPrice, useSubgraph } from '../../hooks';
-import { ZeroAddress } from 'ethers6';
+import { getUsdPrice, useSubgraph, useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
 
 type ICoinInput = {
@@ -50,9 +49,7 @@ export const CoinInput = ({
             ? { address }
             : { token: toAddress(asset || '', chainId) as any, address },
     );
-    const { data, isLoading } = useSubgraph({
-        address: toAddress(asset, chainId),
-    });
+    const usdPrice = useUsdPrice(asset);
 
     function clickAndClose(e: any) {
         onAssetClick(e);
@@ -66,7 +63,7 @@ export const CoinInput = ({
 
     function renderInputUsd() {
         return Number(value) > 0 && asset
-            ? (Number(value) * Number(data?.usdPrice || '0')).toString()
+            ? (Number(value) * Number(usdPrice || '0')).toString()
             : '0.00';
     }
 
@@ -114,11 +111,11 @@ export const CoinInput = ({
             <div className="w-full flex justify-between items-center">
                 <small className="text-gray-400 flex items-center gap-0.5">
                     <span>$</span>
-                    <Skeleton loading={isLoading && Number(value) !== 0} innerClass="!px-1">
+                    <Skeleton loading={!usdPrice && Number(value) !== 0} innerClass="!px-1">
                         <span className="flex items-center gap-1">
                             <SmartPrice price={renderInputUsd()} />
                             {trade &&
-                                !isLoading &&
+                                !usdPrice &&
                                 value &&
                                 trade.gives.amount &&
                                 trade.gives.token && <Percent value={percent} parentheses />}

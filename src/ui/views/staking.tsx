@@ -40,7 +40,7 @@ export const StakingView = () => {
             <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
                 <div className="flex flex-col">
                     <Header>Staking</Header>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 mt-1">
                         <div className="min-w-8">
                             <MdInfoOutline className="text-yellow-400" />
                         </div>
