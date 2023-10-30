@@ -77,6 +77,15 @@ export const useStaking = () => {
         refetchInterval: INTERVAL,
     });
 
+    async function getAllowance() {
+        const allowanceLeft = formatEther(
+            await (pint as any)
+                .connect(signer as any)
+                .allowance(address, CONTRACTS.mainnet.sipPINT),
+        );
+        return allowanceLeft;
+    }
+
     // UI Methods
     async function handleInputChange(e: any) {
         setDepositInput(e.currentTarget.value);
@@ -88,21 +97,32 @@ export const useStaking = () => {
             toast.info('Deposit input cannot be empty');
             return;
         }
-        setIsLoading(true);
-        const amount = parseEther(depositInput);
-        toast.loading('Waiting for approval', { toastId: 'deposit-vault' });
-        const approveTx = await (pint as any)
-            .connect(signer as any)
-            .approve(CONTRACTS.mainnet.sipPINT, amount);
-        toast.update('deposit-vault', { render: 'Approving PINT spend' });
-        await waitForTransaction({ hash: approveTx.hash });
-        toast.update('deposit-vault', { render: 'Waiting for signature' });
-        const tx = await (sipPINT as any).connect(signer as any).deposit(amount, address);
-        toast.update('deposit-vault', { render: `Depositing ${depositInput} PINT` });
-        await waitForTransaction({ hash: tx.hash });
-        updateToast('deposit-vault', 'success', 'Success', tx.hash);
-        setDepositInput('');
-        setIsLoading(false);
+        try {
+            setIsLoading(true);
+            const amount = parseEther(depositInput);
+            const allowance = await getAllowance();
+            if (Number(depositInput) > Number(allowance)) {
+                toast.loading('Waiting for approval', { toastId: 'deposit-vault' });
+                const approveTx = await (pint as any)
+                    .connect(signer as any)
+                    .approve(CONTRACTS.mainnet.sipPINT, amount);
+                toast.update('deposit-vault', { render: 'Approving PINT spend' });
+                await waitForTransaction({ hash: approveTx.hash });
+            } else {
+                toast.loading('Initiating deposit', { toastId: 'deposit-vault' });
+            }
+            toast.update('deposit-vault', { render: 'Waiting for signature' });
+            const tx = await (sipPINT as any).connect(signer as any).deposit(amount, address);
+            toast.update('deposit-vault', { render: `Depositing ${depositInput} PINT` });
+            await waitForTransaction({ hash: tx.hash });
+            updateToast('deposit-vault', 'success', 'Success', tx.hash);
+            setDepositInput('');
+            setIsLoading(false);
+        } catch (err) {
+            toast.dismiss('deposit-vault');
+            setIsLoading(false);
+            console.log(err);
+        }
     }
 
     async function previewDeposit(e: any) {
@@ -118,15 +138,24 @@ export const useStaking = () => {
             toast.info('Nothing to withdraw', { autoClose: 4000 });
             return;
         }
-        setIsLoading(true);
-        const amount = parseEther(userData.data.userBalance);
-        console.log('amount', amount);
-        toast.loading('Waiting for signature', { toastId: 'withdraw-vault' });
-        const tx = await (sipPINT as any).connect(signer as any).withdraw(amount, address, address);
-        toast.update('withdraw-vault', { render: `Withdrawing ${userData.data.userBalance} PINT` });
-        await waitForTransaction({ hash: tx.hash });
-        updateToast('withdraw-vault', 'success', 'Success', tx.hash);
-        setIsLoading(false);
+        try {
+            setIsLoading(true);
+            const amount = parseEther(userData.data.userBalance);
+            toast.loading('Waiting for signature', { toastId: 'withdraw-vault' });
+            const tx = await (sipPINT as any)
+                .connect(signer as any)
+                .withdraw(amount, address, address);
+            toast.update('withdraw-vault', {
+                render: `Withdrawing ${userData.data.userBalance} PINT`,
+            });
+            await waitForTransaction({ hash: tx.hash });
+            updateToast('withdraw-vault', 'success', 'Success', tx.hash);
+            setIsLoading(false);
+        } catch (err) {
+            toast.dismiss('withdraw-vault');
+            setIsLoading(false);
+            console.log(err);
+        }
     }
 
     async function previewWithdraw() {

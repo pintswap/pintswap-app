@@ -1,7 +1,7 @@
 import { Asset, Button, Card, Header, Input, TextDisplay } from '../components';
 import { useOffersContext } from '../../stores';
 import { CoinInput } from '../features';
-import { useStaking, useWindowSize } from '../../hooks';
+import { useStaking, useUsdPrice, useWindowSize } from '../../hooks';
 import { numberFormatter, percentFormatter } from '../../utils';
 import { MdInfo, MdInfoOutline } from 'react-icons/md';
 
@@ -34,6 +34,7 @@ export const StakingView = () => {
         previewWithdraw,
         isLoading,
     } = useStaking();
+    const price = useUsdPrice('PINT');
 
     return (
         <div className="flex flex-col max-w-5xl mx-auto">
@@ -75,18 +76,23 @@ export const StakingView = () => {
                             value={percentFormatter.format(Number(apr))}
                             size="text-lg sm:text-xl"
                             align="right"
+                            direction="vertical"
                         />
                         <TextDisplay
                             label={width < breakpoints.sm ? 'Staked' : 'Total Staked'}
                             value={numberFormatter.format(Number(totalAssets))}
                             size="text-lg sm:text-xl"
                             align="right"
+                            direction="vertical"
+                            usdValue={numberFormatter.format(Number(price) * Number(totalAssets))}
                         />
                         <TextDisplay
                             label="Deposited"
                             value={numberFormatter.format(Number(userDeposited))}
                             size="text-lg sm:text-xl"
                             align="right"
+                            direction="vertical"
+                            usdValue={numberFormatter.format(Number(price) * Number(userDeposited))}
                         />
                         <div className="col-span-4 sm:col-span-1 flex justify-end">
                             <Button
