@@ -36,6 +36,8 @@ export const StakingView = () => {
     } = useStaking();
     const price = useUsdPrice('PINT');
 
+    console.log('APR:', apr);
+
     return (
         <div className="flex flex-col max-w-5xl mx-auto">
             <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
@@ -94,17 +96,17 @@ export const StakingView = () => {
                             direction="vertical"
                             usdValue={numberFormatter.format(Number(price) * Number(userDeposited))}
                         />
-                        <div className="col-span-4 sm:col-span-1 flex justify-end">
+                        <div className="col-span-4 sm:col-span-1 flex justify-end items-center">
                             <Button
                                 onClick={handleWithdraw}
                                 type="outline-secondary"
                                 checkNetwork
-                                className="w-full sm:w-fit flex self-end justify-self-end"
+                                className="w-full sm:w-fit flex self-end justify-self-end self-center"
                                 disabled={
                                     isLoading || !userDeposited || Number(userDeposited) === 0
                                 }
                             >
-                                Withdraw All
+                                Withdraw
                             </Button>
                         </div>
                     </div>
@@ -127,7 +129,12 @@ export const StakingView = () => {
                             value={availableToRedeem}
                             asset="PINT"
                             customButton={
-                                <Button onClick={handleRedeem} disabled type="outline" checkNetwork>
+                                <Button
+                                    onClick={previewRedeem}
+                                    type="outline"
+                                    disabled={Number(availableToRedeem) < 1}
+                                    checkNetwork
+                                >
                                     Redeem
                                 </Button>
                             }
