@@ -1,6 +1,6 @@
 import { BigNumberish, Contract, formatEther, parseEther, Interface } from 'ethers6';
 import { useAccount, useBlockNumber, useSigner } from 'wagmi';
-import { CONTRACTS, alchemy, providerFromChainId, updateToast } from '../utils';
+import { CONTRACTS, alchemy, numberFormatter, providerFromChainId, updateToast } from '../utils';
 import { erc20ABI } from 'wagmi';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -92,7 +92,7 @@ export const useStaking = () => {
             const returnObj = {
                 totalAssets: formatEther(totalAssets).toString(),
                 totalSupply: formatEther(totalSupply).toString(),
-                apr: differencePercentChange,
+                apr: differencePercentChange / 365, // divided by 365 to get annual rate rather than daily
                 totalRewards: formatEther(currentDifference).toString(),
             };
             return returnObj;
@@ -109,7 +109,7 @@ export const useStaking = () => {
                 const shares = await sipPINT.balanceOf(address);
                 const maxRedeem = await sipPINT.previewRedeem(shares);
                 const availableToRedeem = (
-                    Math.floor(Number(formatEther(maxRedeem)) * 10000) / 10000
+                    Math.floor(Number(formatEther(maxRedeem)) * 1000) / 1000
                 ).toString();
                 const userBalance = formatEther(shares).toString();
                 return {
@@ -177,15 +177,17 @@ export const useStaking = () => {
             }
             toast.update('deposit-vault', { render: 'Waiting for signature' });
             const tx = await (sipPINT as any).connect(signer as any).deposit(amount, address);
-            toast.update('deposit-vault', { render: `Depositing ${depositInput} PINT` });
+            toast.update('deposit-vault', {
+                render: `Depositing ${numberFormatter.format(Number(depositInput))} PINT`,
+            });
             await waitForTransaction({ hash: tx.hash });
             updateToast('deposit-vault', 'success', 'Success', tx.hash);
             setDepositInput('');
             setIsLoading(false);
         } catch (err) {
-            toast.dismiss('deposit-vault');
+            updateToast('deposit-vault', 'error', 'Error occured when depositing');
             setIsLoading(false);
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -216,9 +218,9 @@ export const useStaking = () => {
             updateToast('withdraw-vault', 'success', 'Success', tx.hash);
             setIsLoading(false);
         } catch (err) {
-            toast.dismiss('withdraw-vault');
+            updateToast('withdraw-vault', 'error', 'Error occured when withdrawing');
             setIsLoading(false);
-            console.log(err);
+            console.error(err);
         }
     }
 
@@ -228,9 +230,6 @@ export const useStaking = () => {
 
     async function handleRedeem(e: any) {
         e.preventDefault();
-        // Handle redemptions
-        // 'function redeem(uint256 shares, address receiver, address owner) public returns (uint256 assets)',
-        e.preventDefault();
         if (!userData.data.availableToRedeem || Number(userData.data.availableToRedeem) === 0) {
             toast.info('Nothing to redeem', { autoClose: 4000 });
             return;
@@ -238,21 +237,23 @@ export const useStaking = () => {
         try {
             setIsLoading(true);
             const amount = parseEther(userData.data.availableToRedeem);
-            console.log('amount redeemed', amount, userData.data.availableToRedeem);
+            const realAmount = await sipPINT.balanceOf(address);
             toast.loading('Waiting for signature', { toastId: 'redeem-vault' });
             const tx = await (sipPINT as any)
                 .connect(signer as any)
-                .redeem(amount, address, address);
+                .redeem(realAmount, address, address);
             toast.update('redeem-vault', {
-                render: `Redeeming ${userData.data.availableToRedeem} PINT`,
+                render: `Redeeming ${numberFormatter.format(
+                    Number(userData.data.availableToRedeem),
+                )} PINT`,
             });
             await waitForTransaction({ hash: tx.hash });
             updateToast('redeem-vault', 'success', 'Success', tx.hash);
             setIsLoading(false);
         } catch (err) {
-            toast.dismiss('withdraw-vault');
+            updateToast('redeem-vault', 'error', 'Error occured when redeeming');
             setIsLoading(false);
-            console.log(err);
+            console.error(err);
         }
     }
 

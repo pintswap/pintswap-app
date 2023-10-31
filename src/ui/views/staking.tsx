@@ -112,7 +112,7 @@ export const StakingView = () => {
                         />
                         <CoinInput
                             onAmountChange={() => {}}
-                            label="Total Rewards"
+                            label="Redeemable"
                             value={availableToRedeem}
                             asset="PINT"
                             change={rewardsGenerated}
