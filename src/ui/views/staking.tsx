@@ -121,10 +121,9 @@ export const StakingView = () => {
                             asset="PINT"
                             customButton={
                                 <Button
-                                    onClick={previewRedeem}
+                                    onClick={handleRedeem}
                                     type="outline"
-                                    // disabled={Number(availableToRedeem) < 1}
-                                    disabled
+                                    disabled={Number(availableToRedeem) < 1 || isLoading}
                                     checkNetwork
                                 >
                                     Redeem

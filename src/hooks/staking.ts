@@ -11,7 +11,7 @@ export const useStaking = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const { data: currentBlock } = useBlockNumber();
-    const startingBlock = currentBlock ? currentBlock - 7150 : 0; // 50,000 blocks usually get mined in a 1 week
+    const startingBlock = currentBlock ? currentBlock - 7150 : 0; // 100,000 blocks usually get mined in 2 weeks
 
     const [depositInput, setDepositInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -106,19 +106,16 @@ export const useStaking = () => {
         const defaultReturn = { userBalance: '0', availableToRedeem: '0' };
         try {
             if (address) {
-                const promises = await Promise.all([sipPINT.balanceOf(address)]);
-                const [walletDeposit] = promises;
+                const promises = await Promise.all([
+                    sipPINT.balanceOf(address),
+                    sipPINT.maxRedeem(address),
+                ]);
+                const [walletDeposit, maxRedeem] = promises;
                 const userBalance = formatEther(walletDeposit).toString();
-                const { totalSupply, totalRewards } = vaultData.data;
-                const userVaultShare = Number(userBalance) / Number(totalSupply);
-                const redeemAmount = !isNaN(userVaultShare)
-                    ? Number(totalRewards) * userVaultShare
-                    : 0;
+
                 return {
                     userBalance,
-                    availableToRedeem: redeemAmount
-                        ? (Math.floor(redeemAmount * 1000) / 1000).toString()
-                        : '0',
+                    availableToRedeem: formatEther(maxRedeem - walletDeposit).toString(),
                 };
             }
             return defaultReturn;
@@ -201,19 +198,19 @@ export const useStaking = () => {
 
     async function handleWithdraw(e: any) {
         e.preventDefault();
-        if (!userData.data.userBalance || Number(userData.data.userBalance) === 0) {
+        if (!userData.data.availableToRedeem || Number(userData.data.availableToRedeem) === 0) {
             toast.info('Nothing to withdraw', { autoClose: 4000 });
             return;
         }
         try {
             setIsLoading(true);
-            const amount = parseEther(userData.data.userBalance);
+            const amount = parseEther(userData.data.availableToRedeem);
             toast.loading('Waiting for signature', { toastId: 'withdraw-vault' });
             const tx = await (sipPINT as any)
                 .connect(signer as any)
                 .withdraw(amount, address, address);
             toast.update('withdraw-vault', {
-                render: `Withdrawing ${userData.data.userBalance} PINT`,
+                render: `Withdrawing ${userData.data.availableToRedeem} PINT`,
             });
             await waitForTransaction({ hash: tx.hash });
             updateToast('withdraw-vault', 'success', 'Success', tx.hash);
@@ -232,6 +229,31 @@ export const useStaking = () => {
     async function handleRedeem(e: any) {
         e.preventDefault();
         // Handle redemptions
+        // 'function redeem(uint256 shares, address receiver, address owner) public returns (uint256 assets)',
+        e.preventDefault();
+        if (!userData.data.availableToRedeem || Number(userData.data.availableToRedeem) === 0) {
+            toast.info('Nothing to redeem', { autoClose: 4000 });
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const amount = parseEther(userData.data.availableToRedeem);
+            console.log('amount redeemed', amount, userData.data.availableToRedeem);
+            toast.loading('Waiting for signature', { toastId: 'redeem-vault' });
+            const tx = await (sipPINT as any)
+                .connect(signer as any)
+                .redeem(amount, address, address);
+            toast.update('redeem-vault', {
+                render: `Redeeming ${userData.data.availableToRedeem} PINT`,
+            });
+            await waitForTransaction({ hash: tx.hash });
+            updateToast('redeem-vault', 'success', 'Success', tx.hash);
+            setIsLoading(false);
+        } catch (err) {
+            toast.dismiss('withdraw-vault');
+            setIsLoading(false);
+            console.log(err);
+        }
     }
 
     async function previewRedeem() {
