@@ -41,7 +41,6 @@ export const StakingView = () => {
                             >
                                 here in section 3 of the litepaper.
                             </a>{' '}
-                            Redemptions will be enabled at Wednesday at 12AM UTC.
                         </span>
                     </div>
                 </div>
