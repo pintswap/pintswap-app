@@ -8,20 +8,16 @@ export const StakingView = () => {
     const { width, breakpoints } = useWindowSize();
     const {
         handleDeposit,
-        handleWithdraw,
         handleInputChange,
         handleRedeem,
         depositInput,
         apr,
         availableToRedeem,
         totalAssets,
-        totalSupply,
         userDeposited,
-        previewDeposit,
-        previewRedeem,
-        previewWithdraw,
         isLoading,
         dataLoading,
+        rewardsGenerated,
     } = useStaking();
     const price = useUsdPrice('0x58fB30A61C218A3607e9273D52995a49fF2697Ee');
 
@@ -59,7 +55,7 @@ export const StakingView = () => {
             </div>
             <Card>
                 <div className="flex flex-col gap-2">
-                    <div className="grid grid-cols-4 sm:grid-cols-5 py-2 gap-y-3 sm:gap-2">
+                    <div className="grid grid-cols-4 py-2 gap-y-3 sm:gap-2 px-2">
                         <Asset size={32} symbol="PINT" subSymbol="sipPINT" fontSize="text-lg" />
                         <TextDisplay
                             label="APR"
@@ -87,7 +83,7 @@ export const StakingView = () => {
                             usdValue={numberFormatter.format(Number(price) * Number(userDeposited))}
                             loading={dataLoading}
                         />
-                        <div className="col-span-4 sm:col-span-1 flex justify-end items-center">
+                        {/* <div className="col-span-4 sm:col-span-1 flex justify-end items-center">
                             <Button
                                 onClick={handleWithdraw}
                                 type="outline-secondary"
@@ -99,7 +95,7 @@ export const StakingView = () => {
                             >
                                 Withdraw
                             </Button>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <CoinInput
@@ -119,6 +115,7 @@ export const StakingView = () => {
                             label="Total Rewards"
                             value={availableToRedeem}
                             asset="PINT"
+                            change={rewardsGenerated}
                             customButton={
                                 <Button
                                     onClick={handleRedeem}
@@ -126,7 +123,7 @@ export const StakingView = () => {
                                     disabled={Number(availableToRedeem) < 1 || isLoading}
                                     checkNetwork
                                 >
-                                    Redeem
+                                    Withdraw All
                                 </Button>
                             }
                             disabled

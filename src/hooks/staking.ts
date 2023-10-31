@@ -103,19 +103,19 @@ export const useStaking = () => {
     }
 
     async function getVaultUserData() {
-        const defaultReturn = { userBalance: '0', availableToRedeem: '0' };
+        const defaultReturn = { userBalance: '0', availableToRedeem: '0', difference: '0' };
         try {
             if (address) {
-                const promises = await Promise.all([
-                    sipPINT.balanceOf(address),
-                    sipPINT.maxRedeem(address),
-                ]);
-                const [walletDeposit, maxRedeem] = promises;
-                const userBalance = formatEther(walletDeposit).toString();
-
+                const shares = await sipPINT.balanceOf(address);
+                const maxRedeem = await sipPINT.previewRedeem(shares);
+                const availableToRedeem = (
+                    Math.floor(Number(formatEther(maxRedeem)) * 10000) / 10000
+                ).toString();
+                const userBalance = formatEther(shares).toString();
                 return {
                     userBalance,
-                    availableToRedeem: formatEther(maxRedeem - walletDeposit).toString(),
+                    availableToRedeem,
+                    difference: formatEther(maxRedeem - shares).toString(),
                 };
             }
             return defaultReturn;
@@ -137,7 +137,7 @@ export const useStaking = () => {
         queryKey: ['sipPINT-user'],
         queryFn: getVaultUserData,
         enabled: !!address,
-        initialData: { userBalance: '0', availableToRedeem: '0' },
+        initialData: { userBalance: '0', availableToRedeem: '0', difference: '0' },
         refetchInterval: INTERVAL,
     });
 
@@ -272,6 +272,7 @@ export const useStaking = () => {
         totalAssets: vaultData.data.totalAssets,
         totalSupply: vaultData.data.totalSupply,
         userDeposited: userData.data.userBalance,
+        rewardsGenerated: userData.data.difference,
         apr: vaultData.data.apr,
         availableToRedeem: userData.data.availableToRedeem,
         handleInputChange,

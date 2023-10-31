@@ -20,6 +20,7 @@ type ICoinInput = {
     trade?: IOffer;
     noSelect?: boolean;
     customButton?: ReactNode;
+    change?: string;
 };
 
 export const CoinInput = ({
@@ -36,6 +37,7 @@ export const CoinInput = ({
     trade,
     noSelect,
     customButton,
+    change,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
@@ -114,6 +116,11 @@ export const CoinInput = ({
                     <Skeleton loading={!usdPrice && Number(value) !== 0} innerClass="!px-1">
                         <span className="flex items-center gap-1">
                             <SmartPrice price={renderInputUsd()} />
+                            {change && Number(change) > 1 && (
+                                <span className="text-xs text-green-400">
+                                    ( +{Number(change).toFixed(2)} {asset} )
+                                </span>
+                            )}
                             {trade &&
                                 !usdPrice &&
                                 value &&
