@@ -1,20 +1,8 @@
 import { Asset, Button, Card, Header, Input, TextDisplay } from '../components';
-import { useOffersContext } from '../../stores';
 import { CoinInput } from '../features';
 import { useStaking, useUsdPrice, useWindowSize } from '../../hooks';
 import { numberFormatter, percentFormatter } from '../../utils';
-import { MdInfo, MdInfoOutline } from 'react-icons/md';
-
-const MOCK_DATA = [
-    {
-        asset: 'PINT',
-        address: '0x0',
-        pending: '0',
-        walletStaked: '0',
-        apr: '0',
-        totalStaked: '100',
-    },
-];
+import { MdInfoOutline } from 'react-icons/md';
 
 export const StakingView = () => {
     const { width, breakpoints } = useWindowSize();
@@ -33,10 +21,9 @@ export const StakingView = () => {
         previewRedeem,
         previewWithdraw,
         isLoading,
+        dataLoading,
     } = useStaking();
-    const price = useUsdPrice('PINT');
-
-    console.log('APR:', apr);
+    const price = useUsdPrice('0x58fB30A61C218A3607e9273D52995a49fF2697Ee');
 
     return (
         <div className="flex flex-col max-w-5xl mx-auto">
@@ -48,8 +35,8 @@ export const StakingView = () => {
                             <MdInfoOutline className="text-yellow-400" />
                         </div>
                         <span className="text-sm text-gray-400">
-                            Vault rewards are currently unavailable until the trading engine is
-                            fully integrated. Read more{' '}
+                            Vault rewards are currently only accumalating token taxes until the
+                            trading engine is fully integrated. Read more{' '}
                             <a
                                 href="https://iron.pyrosec.gg/pintswap-litepaper.pdf"
                                 target="_blank"
@@ -57,7 +44,8 @@ export const StakingView = () => {
                                 className="underline"
                             >
                                 here in section 3 of the litepaper.
-                            </a>
+                            </a>{' '}
+                            Redemptions will be enabled at Wednesday at 12AM UTC.
                         </span>
                     </div>
                 </div>
@@ -79,6 +67,7 @@ export const StakingView = () => {
                             size="text-lg sm:text-xl"
                             align="right"
                             direction="vertical"
+                            loading={dataLoading}
                         />
                         <TextDisplay
                             label={width < breakpoints.sm ? 'Staked' : 'Total Staked'}
@@ -87,6 +76,7 @@ export const StakingView = () => {
                             align="right"
                             direction="vertical"
                             usdValue={numberFormatter.format(Number(price) * Number(totalAssets))}
+                            loading={dataLoading}
                         />
                         <TextDisplay
                             label="Deposited"
@@ -95,13 +85,14 @@ export const StakingView = () => {
                             align="right"
                             direction="vertical"
                             usdValue={numberFormatter.format(Number(price) * Number(userDeposited))}
+                            loading={dataLoading}
                         />
                         <div className="col-span-4 sm:col-span-1 flex justify-end items-center">
                             <Button
                                 onClick={handleWithdraw}
                                 type="outline-secondary"
                                 checkNetwork
-                                className="w-full sm:w-fit flex self-end justify-self-end self-center"
+                                className="w-full sm:w-fit flex justify-self-end self-center"
                                 disabled={
                                     isLoading || !userDeposited || Number(userDeposited) === 0
                                 }
@@ -132,7 +123,8 @@ export const StakingView = () => {
                                 <Button
                                     onClick={previewRedeem}
                                     type="outline"
-                                    disabled={Number(availableToRedeem) < 1}
+                                    // disabled={Number(availableToRedeem) < 1}
+                                    disabled
                                     checkNetwork
                                 >
                                     Redeem

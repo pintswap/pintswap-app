@@ -11,7 +11,7 @@ export const useStaking = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const { data: currentBlock } = useBlockNumber();
-    const yesterdayBlock = currentBlock ? currentBlock - 1150 : 0; // 7150 blocks usually get mined in a day
+    const startingBlock = currentBlock ? currentBlock - 7150 : 0; // 50,000 blocks usually get mined in a 1 week
 
     const [depositInput, setDepositInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -56,44 +56,38 @@ export const useStaking = () => {
             ]);
             const [totalAssets, totalSupply] = promises;
             const currentDifference: BigNumberish = totalAssets - totalSupply;
-            const apr = Number(formatEther(currentDifference)) / Number(formatEther(totalSupply));
 
-            // START: Get yesterday totals
-            let yesterdayDifference: BigNumberish = 0;
-            if (yesterdayBlock) {
-                const yesterdayTotalAssets = await providerFromChainId(1).call({
+            // START: Get starting totals
+            let startingDifference: BigNumberish = 0;
+            let differencePercentChange: number = 0;
+            if (startingBlock) {
+                const startingTotalAssets = await providerFromChainId(1).call({
                     to: CONTRACTS.mainnet.sipPINT,
                     data: new Interface([
                         'function totalAssets() view returns (uint256)',
                     ]).encodeFunctionData('totalAssets', []),
-                    blockTag: yesterdayBlock,
+                    blockTag: startingBlock,
                 });
-                const yesterdayTotalSupply = await providerFromChainId(1).call({
+                const startingTotalSupply = await providerFromChainId(1).call({
                     to: CONTRACTS.mainnet.sipPINT,
                     data: new Interface([
                         'function totalSupply() view returns (uint256)',
                     ]).encodeFunctionData('totalSupply', []),
-                    blockTag: yesterdayBlock,
+                    blockTag: startingBlock,
                 });
-                const readableYesterdayTotalAssets = new Interface([
+                const readableStartingTotalAssets = new Interface([
                     'function totalAssets() view returns (uint256)',
-                ]).decodeFunctionResult('totalAssets', yesterdayTotalAssets);
-                const readableYesterdayTotalSupply = new Interface([
+                ]).decodeFunctionResult('totalAssets', startingTotalAssets);
+                const readableStartingTotalSupply = new Interface([
                     'function totalSupply() view returns (uint256)',
-                ]).decodeFunctionResult('totalSupply', yesterdayTotalSupply);
-                yesterdayDifference =
-                    readableYesterdayTotalAssets[0] - readableYesterdayTotalSupply[0];
+                ]).decodeFunctionResult('totalSupply', startingTotalSupply);
+                startingDifference =
+                    readableStartingTotalAssets[0] - readableStartingTotalSupply[0];
             }
-            // END: get yesterday totals
-            console.log(
-                'totalAssets difference since yesterday:',
-                formatEther(currentDifference),
-                formatEther(yesterdayDifference),
-            );
-            const differencePercentChange =
-                (Number(formatEther(currentDifference)) -
-                    Number(formatEther(yesterdayDifference))) /
-                Number(formatEther(yesterdayDifference));
+            differencePercentChange =
+                (Number(formatEther(currentDifference)) - Number(formatEther(startingDifference))) /
+                Number(formatEther(startingDifference));
+            // END: get starting totals
 
             const returnObj = {
                 totalAssets: formatEther(totalAssets).toString(),
@@ -122,7 +116,9 @@ export const useStaking = () => {
                     : 0;
                 return {
                     userBalance,
-                    availableToRedeem: (Math.floor(redeemAmount * 1000) / 1000).toString(),
+                    availableToRedeem: redeemAmount
+                        ? (Math.floor(redeemAmount * 1000) / 1000).toString()
+                        : '0',
                 };
             }
             return defaultReturn;
@@ -259,5 +255,6 @@ export const useStaking = () => {
         handleInputChange,
         depositInput,
         isLoading,
+        dataLoading: userData.isLoading && vaultData.isLoading,
     };
 };
