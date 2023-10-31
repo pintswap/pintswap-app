@@ -49,7 +49,7 @@ export const CoinInput = ({
     const balance = useBalance(
         asset?.toUpperCase() === 'ETH'
             ? { address }
-            : { token: toAddress(asset || '', chainId) as any, address },
+            : { token: toAddress(asset || '', chainId) as any, address, watch: true },
     );
     const usdPrice = useUsdPrice(asset);
 
