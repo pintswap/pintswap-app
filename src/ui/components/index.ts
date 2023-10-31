@@ -27,4 +27,4 @@ export * from './chain-dropdown';
 export * from './pagination';
 export * from './select-coin';
 export * from './select-nft';
-export * from './percent';
+export * from './change-display';

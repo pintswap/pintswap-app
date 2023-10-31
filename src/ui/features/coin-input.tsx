@@ -1,7 +1,7 @@
 import { ChangeEventHandler, ReactNode, useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { percentChange, toAddress } from '../../utils';
-import { SmartPrice, SelectCoin, Skeleton, Percent } from '../components';
+import { SmartPrice, SelectCoin, Skeleton, ChangeDisplay } from '../components';
 import { usePintswapContext, usePricesContext } from '../../stores';
 import { getUsdPrice, useSubgraph, useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
@@ -125,7 +125,9 @@ export const CoinInput = ({
                                 !usdPrice &&
                                 value &&
                                 trade.gives.amount &&
-                                trade.gives.token && <Percent value={percent} parentheses />}
+                                trade.gives.token && (
+                                    <ChangeDisplay value={percent} parentheses percent />
+                                )}
                         </span>
                     </Skeleton>
                 </small>
