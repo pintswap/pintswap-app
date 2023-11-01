@@ -8,7 +8,6 @@ import { useMemo } from 'react';
 export const PeersView = () => {
     const navigate = useNavigate();
     const { peersData, peersLoading, peersError } = usePeersContext();
-    const { isLoading } = useOffersContext();
     const { query, list, handleChange } = useSearch(peersData);
 
     const memoizedList = useMemo(() => list, [list]);

@@ -2,7 +2,8 @@ import fetch from 'cross-fetch';
 import { ethers, getAddress, isAddress } from 'ethers6';
 import { providerFromChainId } from './provider';
 import { INFTProps } from './types';
-import { DEFAULT_CHAINID, MIN_ABIS, TESTING } from './constants';
+import { DEFAULT_CHAINID, TESTING } from './constants';
+import { MIN_ABIS } from './contracts';
 
 const IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 

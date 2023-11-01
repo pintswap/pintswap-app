@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useWindowSize } from '../../hooks';
-import { INFTProps, alchemy, truncate } from '../../utils';
+import { INFTProps, truncate } from '../../utils';
+import { alchemy } from '../../config';
 import { usePintswapContext } from '../../stores';
 import { SelectNFT, SpinnerLoader } from '../components';
 import { NFTDisplay } from './nft-display';

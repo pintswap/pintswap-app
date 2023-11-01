@@ -7,6 +7,9 @@ type IFormProps = {
     orderHash: string;
 };
 
+/**
+ * @deprecated
+ */
 export const TradeSearchView = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState<IFormProps>({ multiAddr: '', orderHash: '' });

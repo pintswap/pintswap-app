@@ -5,4 +5,8 @@ const config = {
     network: Network.ETH_MAINNET,
 };
 
+/**
+ * @deprecated
+ * Using llamaNodes now instead for RPC
+ */
 export const alchemy = new Alchemy(config);

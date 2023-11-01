@@ -26,7 +26,7 @@ export const ChangeDisplay = ({ value, parentheses, percent }: IChangeDisplay) =
             <span>
                 ({' '}
                 <span className={renderPercentColor()}>
-                    {percent ? percentFormatter.format(Number(value || '0')) : value || '0'}
+                    {percent ? percentFormatter().format(Number(value || '0')) : value || '0'}
                 </span>{' '}
                 )
             </span>
@@ -36,7 +36,7 @@ export const ChangeDisplay = ({ value, parentheses, percent }: IChangeDisplay) =
     return (
         <span>
             <span className={renderPercentColor()}>
-                {percent ? percentFormatter.format(Number(value || '0')) : value || '0'}
+                {percent ? percentFormatter().format(Number(value || '0')) : value || '0'}
             </span>
         </span>
     );

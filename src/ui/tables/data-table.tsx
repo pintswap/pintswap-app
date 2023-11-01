@@ -11,15 +11,8 @@ import {
     useUserContext,
 } from '../../stores';
 import { useParams } from 'react-router-dom';
-import {
-    BASE_URL,
-    NETWORKS,
-    truncate,
-    muiCache,
-    muiOptions,
-    muiTheme,
-    numberFormatter,
-} from '../../utils';
+import { BASE_URL, NETWORKS, truncate, numberFormatter } from '../../utils';
+import { muiCache, muiOptions, muiTheme } from '../../config';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
 import { TooltipWrapper, Asset, SmartPrice, Button, Skeleton } from '../components';
@@ -387,7 +380,7 @@ const CustomRow = (props: IDataTableProps) => {
                             {Number(_cell.sum) < 100 ? (
                                 <SmartPrice price={_cell.sum} />
                             ) : (
-                                numberFormatter.format(_cell.sum)
+                                numberFormatter().format(_cell.sum)
                             )}
                         </span>
                         <span className="text-xs">

@@ -39,6 +39,10 @@ const columns = [
     },
 ];
 
+/**
+ * @deprecated
+ * Markets Swap is used as current peer ticker orderbook page instead
+ */
 export const PeerTickerOrderbookView = () => {
     const { width, breakpoints } = useWindowSize();
     const {

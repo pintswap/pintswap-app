@@ -59,7 +59,7 @@ const columns = [
 
 /**
  * @deprecated
- * Pair List is used as current home page instead
+ * Markets table is used as current home page instead
  */
 export const ExploreView = () => {
     const { offersByChain } = useOffersContext();

@@ -11,10 +11,9 @@ import {
     PricesStore,
     NetworkStore,
 } from './stores';
-
 import './styles/tailwind.css';
 import 'react-tooltip/dist/react-tooltip.css';
-import { ReactQueryProvider, chains, RainbowKitProvider, wagmiClient, walletTheme } from './utils';
+import { ReactQueryProvider, chains, RainbowKitProvider, wagmiClient, walletTheme } from './config';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(

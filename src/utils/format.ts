@@ -83,14 +83,16 @@ export const dropdownItemClass = (active: boolean) =>
         'flex items-center gap-2 px-4 py-2 text-sm transition duration-100 w-full',
     );
 
-export const numberFormatter = new Intl.NumberFormat('en-US', {
-    notation: 'compact',
-    maximumFractionDigits: 3,
-});
+export const numberFormatter = (decimals = 3) =>
+    new Intl.NumberFormat('en-US', {
+        notation: 'compact',
+        maximumFractionDigits: decimals,
+    });
 
-export const percentFormatter = new Intl.NumberFormat('en-US', {
-    style: 'percent',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-    notation: 'compact',
-});
+export const percentFormatter = (decimals = 2) =>
+    new Intl.NumberFormat('en-US', {
+        style: 'percent',
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+        notation: 'compact',
+    });

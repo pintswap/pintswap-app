@@ -67,7 +67,7 @@ export const MarketsRow = (props: IDataTableProps) => {
                                 {Number(_cell.sum) < 100 ? (
                                     <SmartPrice price={_cell.sum} />
                                 ) : (
-                                    numberFormatter.format(_cell.sum)
+                                    numberFormatter().format(_cell.sum)
                                 )}
                             </span>
                             <span className="text-xs">
