@@ -1,6 +1,6 @@
 import { BigNumberish, Contract, formatEther, parseEther, Interface } from 'ethers6';
 import { useAccount, useBlockNumber, useSigner } from 'wagmi';
-import { CONTRACTS, alchemy, numberFormatter, providerFromChainId, updateToast } from '../utils';
+import { CONTRACTS, MIN_ABIS, numberFormatter, providerFromChainId, updateToast } from '../utils';
 import { erc20ABI } from 'wagmi';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
@@ -21,28 +21,7 @@ export const useStaking = () => {
 
     const sipPINT = new Contract(
         CONTRACTS.mainnet.sipPINT,
-        [
-            'function asset() public view returns (address)',
-            'function totalAssets() public view returns (uint256)',
-            'function convertToShares(uint256 assets) public view returns (uint256 shares)',
-            'function convertToAssets(uint256 shares) public view returns (uint256 assets)',
-            'function maxDeposit(address receiver) public view returns (uint256)',
-            'function previewDeposit(uint256 assets) public view returns (uint256)',
-            'function deposit(uint256 assets, address receiver) public returns (uint256 shares)',
-            'function maxMint(address receiver) public view returns (uint256)',
-            'function previewMint(uint256 shares) public view returns (uint256)',
-            'function mint(uint256 shares, address receiver) public returns (uint256 assets)',
-            'function maxWithdraw(address owner) public view returns (uint256)',
-            'function previewWithdraw(uint256 assets) public view returns (uint256)',
-            'function withdraw(uint256 assets, address receiver, address owner) public returns (uint256 shares)',
-            'function maxRedeem(address owner) public view returns (uint256)',
-            'function previewRedeem(uint256 shares) public view returns (uint256)',
-            'function redeem(uint256 shares, address receiver, address owner) public returns (uint256 assets)',
-            'function totalSupply() public view returns (uint256)',
-            'function balanceOf(address owner) public view returns (uint256)',
-            'function approve(address, uint256) returns (bool)',
-            'function allowance(address, address) view returns (uint256)',
-        ],
+        MIN_ABIS.ERC4626,
         providerFromChainId(1),
     );
 

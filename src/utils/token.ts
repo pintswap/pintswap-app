@@ -1,13 +1,5 @@
 import { ITransfer } from '@pintswap/sdk';
-import {
-    TESTING,
-    getTokenListByAddress,
-    getTokenListBySymbol,
-    getTokenList,
-    MIN_ABIS,
-} from './constants';
-import { maybeShorten } from './format';
-import { ITokenProps } from './types';
+import { TESTING, getTokenListByAddress, getTokenListBySymbol, getTokenList } from './constants';
 import {
     isAddress,
     getAddress,
@@ -25,6 +17,8 @@ import {
     totalSupplyCache,
     nameCache,
 } from './cache';
+import { ITokenProps } from './types';
+import { MIN_ABIS } from './contracts';
 
 export function toAddress(symbolOrAddress?: string, chainId = 1): string {
     if (!symbolOrAddress) return '';

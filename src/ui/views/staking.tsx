@@ -1,4 +1,4 @@
-import { Asset, Button, Card, Header, Input, TextDisplay } from '../components';
+import { Asset, Button, Card, Header, TextDisplay } from '../components';
 import { CoinInput } from '../features';
 import { useStaking, useUsdPrice, useWindowSize } from '../../hooks';
 import { numberFormatter, percentFormatter } from '../../utils';
@@ -44,13 +44,6 @@ export const StakingView = () => {
                         </span>
                     </div>
                 </div>
-                {/* <Input
-                    value={query}
-                    onChange={handleChange}
-                    type="search"
-                    wrapperClass="max-w-[200px] sm:max-w-[250px] md:max-w-[300px] lg:max-w-[350px]"
-                    noSpace
-                /> */}
             </div>
             <Card>
                 <div className="flex flex-col gap-2">
@@ -82,19 +75,6 @@ export const StakingView = () => {
                             usdValue={numberFormatter.format(Number(price) * Number(userDeposited))}
                             loading={dataLoading}
                         />
-                        {/* <div className="col-span-4 sm:col-span-1 flex justify-end items-center">
-                            <Button
-                                onClick={handleWithdraw}
-                                type="outline-secondary"
-                                checkNetwork
-                                className="w-full sm:w-fit flex justify-self-end self-center"
-                                disabled={
-                                    isLoading || !userDeposited || Number(userDeposited) === 0
-                                }
-                            >
-                                Withdraw
-                            </Button>
-                        </div> */}
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <CoinInput
