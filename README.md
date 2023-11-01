@@ -7,11 +7,8 @@ Frontend for PintSwap, the token swap protocol enabled by peer-to-peer networkin
 ## Table of Contents
 
 1. [Directory](https://github.com/pintswap/pintswap-app#directory)
-
 2. [Installation](https://github.com/pintswap/pintswap-app#installation)
-
 3. [Available Scripts](https://github.com/pintswap/pintswap-app#available-scripts)
-
 4. [Author](https://github.com/pintswap/pintswap-app#)
 
 
