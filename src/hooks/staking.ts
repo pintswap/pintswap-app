@@ -15,6 +15,7 @@ export const useStaking = () => {
 
     const [depositInput, setDepositInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
 
     // Contracts
     const pint = new Contract(CONTRACTS.mainnet.PINT, erc20ABI, providerFromChainId(1));
@@ -68,13 +69,13 @@ export const useStaking = () => {
                 Number(formatEther(startingDifference));
             // END: get starting totals
 
-            const returnObj = {
+            setInitialLoading(false);
+            return {
                 totalAssets: formatEther(totalAssets).toString(),
                 totalSupply: formatEther(totalSupply).toString(),
                 apr: differencePercentChange / 365, // divided by 365 to get annual rate rather than daily
                 totalRewards: formatEther(currentDifference).toString(),
             };
-            return returnObj;
         } catch (err) {
             console.error('#getVaultData:', err);
             return defaultReturn;
@@ -87,16 +88,25 @@ export const useStaking = () => {
             if (address) {
                 const shares = await sipPINT.balanceOf(address);
                 const maxRedeem = await sipPINT.previewRedeem(shares);
-                const availableToRedeem = (
-                    Math.floor(Number(formatEther(maxRedeem)) * 1000) / 1000
-                ).toString();
-                const userBalance = formatEther(shares).toString();
+                // const startingTotalAssets = await providerFromChainId(1).call({
+                //     to: CONTRACTS.mainnet.sipPINT,
+                //     data: new Interface([
+                //         'function totalAssets() view returns (uint256)',
+                //     ]).encodeFunctionData('totalAssets', []),
+                //     blockTag: startingBlock,
+                // });
+                // const readableStartingTotalAssets = new Interface([
+                //     'function totalAssets() view returns (uint256)',
+                // ]).decodeFunctionResult('totalAssets', startingTotalAssets);
                 return {
-                    userBalance,
-                    availableToRedeem,
+                    userBalance: formatEther(shares).toString(),
+                    availableToRedeem: (
+                        Math.floor(Number(formatEther(maxRedeem)) * 1000) / 1000
+                    ).toString(),
                     difference: formatEther(maxRedeem - shares).toString(),
                 };
             }
+            setInitialLoading(false);
             return defaultReturn;
         } catch (err) {
             console.log('#getVaultUserData:', err);
@@ -110,6 +120,7 @@ export const useStaking = () => {
         queryFn: getVaultData,
         initialData: { totalAssets: '0', totalSupply: '0', apr: '0', totalRewards: '0' },
         refetchInterval: INTERVAL,
+        enabled: !!startingBlock,
     });
 
     const userData = useQuery({
@@ -157,14 +168,14 @@ export const useStaking = () => {
             toast.update('deposit-vault', { render: 'Waiting for signature' });
             const tx = await (sipPINT as any).connect(signer as any).deposit(amount, address);
             toast.update('deposit-vault', {
-                render: `Depositing ${numberFormatter.format(Number(depositInput))} PINT`,
+                render: `Depositing ${numberFormatter().format(Number(depositInput))} PINT`,
             });
             await waitForTransaction({ hash: tx.hash });
             updateToast('deposit-vault', 'success', 'Success', tx.hash);
             setDepositInput('');
             setIsLoading(false);
         } catch (err) {
-            updateToast('deposit-vault', 'error', 'Error occured when depositing');
+            toast.dismiss();
             setIsLoading(false);
             console.error(err);
         }
@@ -197,7 +208,7 @@ export const useStaking = () => {
             updateToast('withdraw-vault', 'success', 'Success', tx.hash);
             setIsLoading(false);
         } catch (err) {
-            updateToast('withdraw-vault', 'error', 'Error occured when withdrawing');
+            toast.dismiss();
             setIsLoading(false);
             console.error(err);
         }
@@ -222,7 +233,7 @@ export const useStaking = () => {
                 .connect(signer as any)
                 .redeem(realAmount, address, address);
             toast.update('redeem-vault', {
-                render: `Redeeming ${numberFormatter.format(
+                render: `Redeeming ${numberFormatter().format(
                     Number(userData.data.availableToRedeem),
                 )} PINT`,
             });
@@ -230,7 +241,7 @@ export const useStaking = () => {
             updateToast('redeem-vault', 'success', 'Success', tx.hash);
             setIsLoading(false);
         } catch (err) {
-            updateToast('redeem-vault', 'error', 'Error occured when redeeming');
+            toast.dismiss();
             setIsLoading(false);
             console.error(err);
         }
@@ -258,6 +269,7 @@ export const useStaking = () => {
         handleInputChange,
         depositInput,
         isLoading,
-        dataLoading: userData.isLoading && vaultData.isLoading,
+        dataLoading: userData.isLoading || vaultData.isLoading || initialLoading,
+        userLoading: initialLoading,
     };
 };

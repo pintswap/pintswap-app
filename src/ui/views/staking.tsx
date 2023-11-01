@@ -6,6 +6,7 @@ import { MdInfoOutline } from 'react-icons/md';
 
 export const StakingView = () => {
     const { width, breakpoints } = useWindowSize();
+    const isMobile = width < breakpoints.sm;
     const {
         handleDeposit,
         handleInputChange,
@@ -18,6 +19,7 @@ export const StakingView = () => {
         isLoading,
         dataLoading,
         rewardsGenerated,
+        userLoading,
     } = useStaking();
     const price = useUsdPrice('0x58fB30A61C218A3607e9273D52995a49fF2697Ee');
 
@@ -47,11 +49,11 @@ export const StakingView = () => {
             </div>
             <Card>
                 <div className="flex flex-col gap-2">
-                    <div className="grid grid-cols-4 py-2 gap-y-3 sm:gap-2 px-2">
+                    <div className="grid grid-cols-4 py-2 gap-y-3 sm:gap-2 sm:px-2">
                         <Asset size={32} symbol="PINT" subSymbol="sipPINT" fontSize="text-lg" />
                         <TextDisplay
                             label="APR"
-                            value={percentFormatter.format(Number(apr))}
+                            value={percentFormatter(isMobile ? 1 : 2).format(Number(apr))}
                             size="text-lg sm:text-xl"
                             align="right"
                             direction="vertical"
@@ -59,21 +61,25 @@ export const StakingView = () => {
                         />
                         <TextDisplay
                             label={width < breakpoints.sm ? 'Staked' : 'Total Staked'}
-                            value={numberFormatter.format(Number(totalAssets))}
+                            value={numberFormatter(isMobile ? 1 : 3).format(Number(totalAssets))}
                             size="text-lg sm:text-xl"
                             align="right"
                             direction="vertical"
-                            usdValue={numberFormatter.format(Number(price) * Number(totalAssets))}
+                            usdValue={numberFormatter(isMobile ? 1 : 3).format(
+                                Number(price) * Number(totalAssets),
+                            )}
                             loading={dataLoading}
                         />
                         <TextDisplay
                             label="Deposited"
-                            value={numberFormatter.format(Number(userDeposited))}
+                            value={numberFormatter(isMobile ? 1 : 3).format(Number(userDeposited))}
                             size="text-lg sm:text-xl"
                             align="right"
                             direction="vertical"
-                            usdValue={numberFormatter.format(Number(price) * Number(userDeposited))}
-                            loading={dataLoading}
+                            usdValue={numberFormatter().format(
+                                Number(price) * Number(userDeposited),
+                            )}
+                            loading={dataLoading || userLoading}
                         />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
