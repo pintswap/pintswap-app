@@ -76,26 +76,20 @@ export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' 
                 }
             }
         })().catch((err) => console.error('#useSubgraph:', err));
-    }, [props?.address, props?.history, eth]);
+    }, [props?.address, props?.history, eth, address]);
 
     useEffect(() => {
         (async () => {
             if (address && module?.signer) {
                 updateRes('isLoading', true);
                 const userHistory = await getUserHistory(address, module.signer);
-                if (userHistory?.length) {
-                    setRes({
-                        ...res,
-                        isLoading: false,
-                        data: {
-                            ...res.data,
-                            userHistory,
-                        },
-                    });
-                }
+                let shallow = { ...res };
+                if (shallow.data && userHistory?.length) shallow.data.userHistory = userHistory;
+                shallow.isLoading = false;
+                setRes(shallow);
             }
         })().catch((err) => console.error(err));
-    }, [address, module?.signer, eth]);
+    }, [address, module?.signer]);
 
     return res;
 };

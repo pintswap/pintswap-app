@@ -1,7 +1,7 @@
 import { CacheProvider } from '@emotion/react';
 import { ThemeProvider } from '@mui/material/styles';
 import MUIDataTable, { MUIDataTableColumnDef, TableSearch } from 'mui-datatables';
-import { getUsdPrice, useStaking, useUsdPrice, useWindowSize } from '../../hooks';
+import { getUsdPrice, useWindowSize } from '../../hooks';
 import { useNavigate } from 'react-router-dom';
 import { Dispatch, SetStateAction, SyntheticEvent } from 'react';
 import {
@@ -22,7 +22,7 @@ import {
 } from '../../utils';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
-import { TooltipWrapper, Asset, SmartPrice, Button, SpinnerLoader, Skeleton } from '../components';
+import { TooltipWrapper, Asset, SmartPrice, Button, Skeleton } from '../components';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { MarketsRow } from './markets-row';
 import { useQuery } from '@tanstack/react-query';
@@ -183,7 +183,6 @@ const CustomRow = (props: IDataTableProps) => {
     const { tableBreak } = useWindowSize();
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
-    const { handleDeposit, handleWithdraw } = useStaking();
 
     const { data: usdPrice } = useQuery({
         queryKey: [`price-${(data[0] as any)?.split('/')[0]}`],

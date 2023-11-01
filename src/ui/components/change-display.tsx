@@ -1,11 +1,12 @@
 import { percentFormatter } from '../../utils';
 
-type IPercent = {
+type IChangeDisplay = {
     value: number | string | undefined;
     parentheses?: boolean;
+    percent?: boolean;
 };
 
-export const Percent = ({ value, parentheses }: IPercent) => {
+export const ChangeDisplay = ({ value, parentheses, percent }: IChangeDisplay) => {
     function renderPercentColor() {
         if (value) {
             const _percent = Number(value);
@@ -25,7 +26,7 @@ export const Percent = ({ value, parentheses }: IPercent) => {
             <span>
                 ({' '}
                 <span className={renderPercentColor()}>
-                    {percentFormatter.format(Number(value || '0'))}
+                    {percent ? percentFormatter.format(Number(value || '0')) : value || '0'}
                 </span>{' '}
                 )
             </span>
@@ -35,7 +36,7 @@ export const Percent = ({ value, parentheses }: IPercent) => {
     return (
         <span>
             <span className={renderPercentColor()}>
-                {percentFormatter.format(Number(value || '0'))}
+                {percent ? percentFormatter.format(Number(value || '0')) : value || '0'}
             </span>
         </span>
     );

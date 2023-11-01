@@ -1,10 +1,9 @@
-import { ChangeEventHandler, ReactNode, useEffect, useMemo, useState } from 'react';
+import { ChangeEventHandler, ReactNode, useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { convertAmount, percentChange, percentFormatter, toAddress } from '../../utils';
-import { SmartPrice, SelectCoin, Skeleton, Percent } from '../components';
+import { percentChange, toAddress } from '../../utils';
+import { SmartPrice, SelectCoin, Skeleton, ChangeDisplay } from '../components';
 import { usePintswapContext, usePricesContext } from '../../stores';
-import { getUsdPrice, useSubgraph } from '../../hooks';
-import { ZeroAddress } from 'ethers6';
+import { getUsdPrice, useSubgraph, useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
 
 type ICoinInput = {
@@ -21,6 +20,7 @@ type ICoinInput = {
     trade?: IOffer;
     noSelect?: boolean;
     customButton?: ReactNode;
+    change?: string;
 };
 
 export const CoinInput = ({
@@ -37,6 +37,7 @@ export const CoinInput = ({
     trade,
     noSelect,
     customButton,
+    change,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
@@ -48,11 +49,9 @@ export const CoinInput = ({
     const balance = useBalance(
         asset?.toUpperCase() === 'ETH'
             ? { address }
-            : { token: toAddress(asset || '', chainId) as any, address },
+            : { token: toAddress(asset || '', chainId) as any, address, watch: true },
     );
-    const { data, isLoading } = useSubgraph({
-        address: toAddress(asset, chainId),
-    });
+    const usdPrice = useUsdPrice(asset);
 
     function clickAndClose(e: any) {
         onAssetClick(e);
@@ -66,7 +65,7 @@ export const CoinInput = ({
 
     function renderInputUsd() {
         return Number(value) > 0 && asset
-            ? (Number(value) * Number(data?.usdPrice || '0')).toString()
+            ? (Number(value) * Number(usdPrice || '0')).toString()
             : '0.00';
     }
 
@@ -114,14 +113,21 @@ export const CoinInput = ({
             <div className="w-full flex justify-between items-center">
                 <small className="text-gray-400 flex items-center gap-0.5">
                     <span>$</span>
-                    <Skeleton loading={isLoading && Number(value) !== 0} innerClass="!px-1">
+                    <Skeleton loading={!usdPrice && Number(value) !== 0} innerClass="!px-1">
                         <span className="flex items-center gap-1">
                             <SmartPrice price={renderInputUsd()} />
+                            {change && Number(change) > 1 && (
+                                <span className="text-xs text-green-400">
+                                    ( +{Number(change).toFixed(2)} {asset} )
+                                </span>
+                            )}
                             {trade &&
-                                !isLoading &&
+                                !usdPrice &&
                                 value &&
                                 trade.gives.amount &&
-                                trade.gives.token && <Percent value={percent} parentheses />}
+                                trade.gives.token && (
+                                    <ChangeDisplay value={percent} parentheses percent />
+                                )}
                         </span>
                     </Skeleton>
                 </small>

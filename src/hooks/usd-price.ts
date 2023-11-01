@@ -27,16 +27,18 @@ export const getUsdPrice = async (asset: string, eth: string, setState?: any) =>
     }
 };
 
-export const useUsdPrice = (asset: string) => {
+export const useUsdPrice = (asset?: string) => {
     const { address } = useAccount();
     const { eth } = usePricesContext();
     const [res, setRes] = useState('-');
 
     useEffect(() => {
         (async () => {
-            await getUsdPrice(asset, eth, setRes);
+            if (asset) {
+                await getUsdPrice(asset, eth, setRes);
+            }
         })().catch((err) => console.error('#useSubgraph:', err));
-    }, [address, eth]);
+    }, [address, eth, asset]);
 
     return res;
 };
