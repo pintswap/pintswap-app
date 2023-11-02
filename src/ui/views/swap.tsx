@@ -88,7 +88,7 @@ export const SwapView = () => {
                 <Card
                     className="!py-4"
                     type="tabs"
-                    tabs={['ERC20', 'NFT', 'LIMIT']}
+                    tabs={['MARKET', 'LIMIT', 'NFT']}
                     onTabChange={clearTrade}
                 >
                     <div className="mb-3">
@@ -118,17 +118,6 @@ export const SwapView = () => {
                     </Tab.Panel>
                     <Tab.Panel>
                         <SwapModule
-                            type="nft"
-                            trade={trade}
-                            updateTrade={updateTrade}
-                            disabled={isButtonDisabled()}
-                            onClick={handleSwap}
-                            loading={loading}
-                            isPublic={isPublic}
-                        />
-                    </Tab.Panel>
-                    <Tab.Panel>
-                        <SwapModule
                             trade={trade}
                             updateTrade={updateTrade}
                             disabled={isButtonDisabled()}
@@ -138,6 +127,17 @@ export const SwapView = () => {
                             isPublic={isPublic}
                             autoQuote={false}
                             percentDiff
+                        />
+                    </Tab.Panel>
+                    <Tab.Panel>
+                        <SwapModule
+                            type="nft"
+                            trade={trade}
+                            updateTrade={updateTrade}
+                            disabled={isButtonDisabled()}
+                            onClick={handleSwap}
+                            loading={loading}
+                            isPublic={isPublic}
                         />
                     </Tab.Panel>
                 </Card>

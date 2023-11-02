@@ -2,6 +2,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { arbitrum, hardhat, mainnet } from 'wagmi/chains';
 import { TESTING } from '../utils/constants';
 import {
@@ -24,7 +25,14 @@ const determineChains = () => {
     return [mainnet];
 };
 
-export const { chains, provider } = configureChains(determineChains(), [publicProvider()]);
+export const { chains, provider } = configureChains(determineChains(), [
+    jsonRpcProvider({
+        rpc: (chain) => ({
+            http: `https://eth.llamarpc.com/rpc/${process.env.REACT_APP_LLAMA_NODES_KEY}`,
+        }),
+    }),
+    publicProvider(),
+]);
 
 export const connectors = connectorsForWallets([
     {

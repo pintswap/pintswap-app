@@ -15,7 +15,7 @@ export const useDashNav = () => {
         },
         {
             text: 'Create',
-            route: '/swap',
+            route: '/create',
             disabled: false,
             icon: <MdSwapHoriz size={ICON_SIZE} />,
             tooltip: 'Broadcast an offer',

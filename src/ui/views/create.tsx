@@ -29,6 +29,10 @@ const columns = [
     },
 ];
 
+/**
+ * @deprecated
+ * Swap module is new create module
+ */
 export const CreateView = () => {
     const {
         broadcastTrade,

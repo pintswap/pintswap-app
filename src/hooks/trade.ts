@@ -66,7 +66,7 @@ export const useTrade = () => {
     const [foundPeerOffers, setFoundPeerOffers] = useState(false);
 
     const isMaker = pathname === '/create';
-    const isOnActive = pathname === '/explore' || pathname === '/swap';
+    const isOnActive = pathname === '/explore' || pathname === '/create';
 
     const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
         if (!gets.token && !gives.token) return EMPTY_TRADE;

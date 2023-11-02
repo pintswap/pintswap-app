@@ -407,7 +407,7 @@ export const AccountView = () => {
             </Card>
 
             <div className="flex flex-row gap-4 justify-center items-center">
-                <Button onClick={() => navigate('/swap')} className="sm:max-w-lg sm:self-center">
+                <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
                     Create Offer
                 </Button>
                 <TooltipWrapper

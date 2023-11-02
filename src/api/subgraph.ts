@@ -268,7 +268,7 @@ export async function getQuote(
         const quote = Number(givesEthPrice) / Number(getsEthPrice);
         if (quote === 0) return '';
         if (type === 'exact') return quote.toString();
-        return (Math.round(quote * 9990) / 10000).toString(); // round down to nearest 4 decimal places
+        return (Math.round(quote * 10000) / 10000).toString(); // round down to nearest 4 decimal places
     }
     return '0';
 }

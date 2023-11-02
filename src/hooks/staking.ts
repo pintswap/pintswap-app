@@ -11,7 +11,7 @@ export const useStaking = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
     const { data: currentBlock } = useBlockNumber();
-    const startingBlock = currentBlock ? currentBlock - 7150 : 0; // 100,000 blocks usually get mined in 2 weeks
+    const startingBlock = currentBlock ? currentBlock - 35750 : 0; // 100,000 blocks usually get mined in 2 weeks
 
     const [depositInput, setDepositInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +73,7 @@ export const useStaking = () => {
             return {
                 totalAssets: formatEther(totalAssets).toString(),
                 totalSupply: formatEther(totalSupply).toString(),
-                apr: differencePercentChange / 365, // divided by 365 to get annual rate rather than daily
+                apr: differencePercentChange / 73, // divided by 365 to get annual rate rather than daily
                 totalRewards: formatEther(currentDifference).toString(),
             };
         } catch (err) {
