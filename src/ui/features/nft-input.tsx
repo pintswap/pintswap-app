@@ -63,7 +63,7 @@ export const NFTInput = ({
                 }
             }
         })().catch((err) => console.error(err));
-    }, []);
+    }, [address]);
 
     return (
         <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black">
