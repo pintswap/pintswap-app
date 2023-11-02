@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { tryBoth } from '../api';
 import { usePricesContext } from '../stores';
-import { useAccount } from 'wagmi';
 import { isAddress, getAddress, ZeroAddress } from 'ethers6';
 import { toAddress } from '../utils';
 
@@ -28,7 +27,6 @@ export const getUsdPrice = async (asset: string, eth: string, setState?: any) =>
 };
 
 export const useUsdPrice = (asset?: string) => {
-    const { address } = useAccount();
     const { eth } = usePricesContext();
     const [res, setRes] = useState('-');
 
@@ -38,7 +36,7 @@ export const useUsdPrice = (asset?: string) => {
                 await getUsdPrice(asset, eth, setRes);
             }
         })().catch((err) => console.error('#useSubgraph:', err));
-    }, [address, eth, asset]);
+    }, [eth, asset]);
 
     return res;
 };

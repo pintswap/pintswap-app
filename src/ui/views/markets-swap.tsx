@@ -153,7 +153,6 @@ export const MarketsSwapView = () => {
                 },
             });
         }
-        console.log('peerOffers', peerOffers);
     }, [offersByChain.erc20.length]);
 
     useEffect(() => {

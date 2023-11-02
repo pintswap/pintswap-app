@@ -4,7 +4,7 @@ import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
-import { calculatePrices, getUsdPrice } from '../hooks';
+import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
 import { getEthPrice } from '../api';
 
@@ -135,6 +135,7 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
     const eth = await getEthPrice();
     const usdPrice = await getUsdPrice(trade.address, eth);
+    // TODO: fix this to be ETH amount as denomination
     // const price =
     //     (Number(ethers.formatUnits(base.amount, baseDecimals)) /
     //     Number(ethers.formatUnits(trade.amount, tradeDecimals)));

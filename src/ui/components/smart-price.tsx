@@ -33,9 +33,9 @@ export function SmartPrice({
     }
 
     return (
-        <>
+        <span className="">
             0.0<sub>{zeroCount}</sub>
             {endingFour}
-        </>
+        </span>
     );
 }

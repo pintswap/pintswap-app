@@ -1,5 +1,11 @@
 import { ethers, Signer, ZeroAddress } from 'ethers6';
-import { ENDPOINTS, formatPintswapTrade, priceCache, toAddress } from '../utils';
+import {
+    ENDPOINTS,
+    formatPintswapTrade,
+    priceCache,
+    subgraphTokenCache,
+    toAddress,
+} from '../utils';
 import { IOffer } from '@pintswap/sdk';
 
 const JSON_HEADER_POST = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
@@ -159,11 +165,18 @@ export async function getV2Token({
 }
 
 export async function tryBoth(props: { address?: string; history?: 'day' | 'hour' }) {
-    if (!props) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
+    if (!props || !props.address) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
+    if (subgraphTokenCache[1][props.address]) return subgraphTokenCache[1][props.address];
     const v2Token = await getV2Token(props);
-    if (v2Token?.token) return v2Token;
+    if (v2Token?.token) {
+        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v2Token;
+        return v2Token;
+    }
     const v3Token = await getV3Token(props);
-    if (v3Token?.token) return v3Token;
+    if (v3Token?.token) {
+        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v3Token;
+        return v3Token;
+    }
     return { token: null };
 }
 

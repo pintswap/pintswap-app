@@ -181,7 +181,7 @@ const CustomRow = (props: IDataTableProps) => {
         queryKey: [`price-${(data[0] as any)?.split('/')[0]}`],
         queryFn: () => getUsdPrice((data[0] as any)?.split('/')[0], eth),
         enabled: !!(data[0] as any)?.split('/')[0] && cols[3] === 'Market',
-        refetchInterval: 1000 * 30,
+        refetchInterval: 1000 * 60,
     });
 
     const hasHoverState = `${

@@ -3,7 +3,7 @@ import { useAccount, useBalance } from 'wagmi';
 import { percentChange, toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton, ChangeDisplay } from '../components';
 import { usePintswapContext, usePricesContext } from '../../stores';
-import { getUsdPrice, useSubgraph, useUsdPrice } from '../../hooks';
+import { useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
 
 type ICoinInput = {
@@ -52,6 +52,7 @@ export const CoinInput = ({
             : { token: toAddress(asset || '', chainId) as any, address, watch: true },
     );
     const usdPrice = useUsdPrice(asset);
+    const givesUsdPrice = useUsdPrice(trade?.gives.token);
 
     function clickAndClose(e: any) {
         onAssetClick(e);
@@ -79,8 +80,7 @@ export const CoinInput = ({
             value.length > 1
         ) {
             (async () => {
-                const usdPrice = await getUsdPrice(trade.gives.token, eth);
-                const actualAmount = Number(trade.gives.amount) * Number(usdPrice);
+                const actualAmount = Number(trade.gives.amount) * Number(givesUsdPrice);
                 setPercent(percentChange(renderInputUsd(), actualAmount));
             })().catch((err) => console.error(err));
         }

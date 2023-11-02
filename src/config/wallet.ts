@@ -29,6 +29,7 @@ export const { chains, provider } = configureChains(determineChains(), [
     jsonRpcProvider({
         rpc: (chain) => ({
             http: `https://eth.llamarpc.com/rpc/${process.env.REACT_APP_LLAMA_NODES_KEY}`,
+            webSocket: `wss://eth.llamarpc.com/rpc/${process.env.REACT_APP_LLAMA_NODES_KEY}`,
         }),
     }),
     publicProvider(),
