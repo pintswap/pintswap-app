@@ -30,7 +30,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         return (
             <div className={`3xl:max-w-8xl 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 flex-grow`}>
                 <div className="flex flex-col justify-between bg-brand-dashboard p-4 py-6 pl-0 gap-2">
-                    <ul className={`flex flex-col gap-1 xl:gap-1.5`}>
+                    <ul className={`flex flex-col gap-1`}>
                         {NAV_ITEMS.map((el, i) => {
                             return (
                                 <li key={`sidebar-nav-${i}`}>
@@ -41,7 +41,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                     >
                                         <button
                                             onClick={() => navigate(el.route || '/')}
-                                            className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-1.5 2xl:py-2 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed`}
+                                            className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-1.5 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed`}
                                             disabled={el.text === 'NFTs'}
                                         >
                                             <ActiveText
@@ -89,7 +89,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </div>
                 </div>
                 <div
-                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-6 lg:p-8 xl:px-12 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
+                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-6 lg:px-8 xl:px-12 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
                 >
                     <main className="mx-auto pb-2">{children}</main>
                 </div>
