@@ -358,14 +358,14 @@ export const AccountView = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex justify-between items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
-                            <div>
-                                {isError && (
+                        <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
+                            {isError && (
+                                <div className="flex justify-start w-full">
                                     <span className="text-red-400">
                                         Error occured while saving data
                                     </span>
-                                )}
-                            </div>
+                                </div>
+                            )}
                             {!isEditing ? (
                                 <Button
                                     onClick={() => setIsEditing(true)}

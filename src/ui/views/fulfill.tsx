@@ -18,10 +18,6 @@ export const FulfillView = () => {
             : { token: toAddress(trade.gets.token || '', chain?.id) as any, address, watch: true },
     );
 
-    console.log(data);
-
-    console.log(trade);
-
     const isButtonDisabled = () => {
         return (
             !trade.gets?.amount ||

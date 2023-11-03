@@ -77,13 +77,16 @@ export function UserStore(props: { children: ReactNode }) {
                 //         `#setUserData useEffect: no names found for multiAddr ${module?.address}`,
                 //     );
                 // }
-                setUserData({
-                    ...userData,
-                    name,
-                    address: module.address,
-                    bio: module.userData.bio,
-                    img: module.userData.image,
-                });
+                const interval = setInterval(() => {
+                    setUserData({
+                        ...userData,
+                        name,
+                        address: module.address,
+                        bio: module.userData.bio,
+                        img: module.userData.image,
+                    });
+                }, 8 * 1000);
+                return () => clearInterval(interval);
             }
         })().catch((err) => console.error(err));
     }, [module?.address, module?.userData]);
