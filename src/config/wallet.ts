@@ -3,6 +3,7 @@ import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { arbitrum, hardhat, mainnet } from 'wagmi/chains';
 import { TESTING } from '../utils/constants';
 import {
@@ -26,6 +27,9 @@ const determineChains = () => {
 };
 
 export const { chains, provider } = configureChains(determineChains(), [
+    alchemyProvider({
+        apiKey: process.env.REACT_APP_ALCHEMY_KEY || '',
+    }),
     jsonRpcProvider({
         rpc: (chain) => ({
             http: `https://eth.llamarpc.com/rpc/${process.env.REACT_APP_LLAMA_NODES_KEY}`,

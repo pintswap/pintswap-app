@@ -19,7 +19,7 @@ export type IUserDataProps = {
     bio: string;
     name: string;
     address: string;
-    offers?: any[];
+    offers?: any;
     privateKey?: string;
     extension?: string;
     active: boolean;
@@ -77,13 +77,17 @@ export function UserStore(props: { children: ReactNode }) {
                 //         `#setUserData useEffect: no names found for multiAddr ${module?.address}`,
                 //     );
                 // }
+                setUserData({
+                    ...userData,
+                    name,
+                    address: module.address,
+                    bio: module.userData.bio,
+                    img: module.userData.image,
+                });
                 const interval = setInterval(() => {
                     setUserData({
                         ...userData,
-                        name,
-                        address: module.address,
-                        bio: module.userData.bio,
-                        img: module.userData.image,
+                        offers: module.offers,
                     });
                 }, 8 * 1000);
                 return () => clearInterval(interval);
