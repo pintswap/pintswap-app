@@ -19,7 +19,12 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
-const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '';
+const projectId =
+    process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '78ccad0d08b9ec965f59df86cc3e6a3c';
+const REACT_APP_LLAMA_NODES_KEY =
+    process.env.PROCESS_APP_LLAMA_NODES_KEY || '01HDHGP0YXWDYKRT37QQBDGST5';
+const REACT_APP_ALCHEMY_KEY =
+    process.env.REACT_APP_ALCHEMY_KEY || 'vwnSKKEvi4HqnhPObIph_5GENWoaMb8a';
 
 const determineChains = () => {
     if (TESTING) return [mainnet, hardhat];
@@ -28,12 +33,12 @@ const determineChains = () => {
 
 export const { chains, provider } = configureChains(determineChains(), [
     alchemyProvider({
-        apiKey: process.env.REACT_APP_ALCHEMY_KEY || '',
+        apiKey: REACT_APP_ALCHEMY_KEY || '',
     }),
     jsonRpcProvider({
         rpc: (chain) => ({
-            http: `https://eth.llamarpc.com/rpc/${process.env.REACT_APP_LLAMA_NODES_KEY}`,
-            webSocket: `wss://eth.llamarpc.com/rpc/${process.env.REACT_APP_LLAMA_NODES_KEY}`,
+            http: `https://eth.llamarpc.com/rpc/${REACT_APP_LLAMA_NODES_KEY}`,
+            webSocket: `wss://eth.llamarpc.com/rpc/${REACT_APP_LLAMA_NODES_KEY}`,
         }),
     }),
     publicProvider(),
