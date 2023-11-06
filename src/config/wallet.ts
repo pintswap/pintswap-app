@@ -32,14 +32,14 @@ const determineChains = () => {
 };
 
 export const { chains, provider } = configureChains(determineChains(), [
-    alchemyProvider({
-        apiKey: REACT_APP_ALCHEMY_KEY || '',
-    }),
     jsonRpcProvider({
         rpc: (chain) => ({
             http: `https://eth.llamarpc.com/rpc/${REACT_APP_LLAMA_NODES_KEY}`,
             webSocket: `wss://eth.llamarpc.com/rpc/${REACT_APP_LLAMA_NODES_KEY}`,
         }),
+    }),
+    alchemyProvider({
+        apiKey: REACT_APP_ALCHEMY_KEY || '',
     }),
     publicProvider(),
 ]);
