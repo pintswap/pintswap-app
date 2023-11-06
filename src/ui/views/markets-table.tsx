@@ -16,7 +16,7 @@ const columns = [
     },
     {
         name: 'buy',
-        label: 'Buy',
+        label: 'Buys',
         options: {
             filter: false,
             sort: true,
@@ -25,7 +25,7 @@ const columns = [
     },
     {
         name: 'sell',
-        label: 'Sell',
+        label: 'Sells',
         options: {
             filter: false,
             sort: true,
@@ -34,7 +34,7 @@ const columns = [
     },
     {
         name: 'market',
-        label: 'Market',
+        label: 'Price',
         options: {
             filter: false,
             sort: true,

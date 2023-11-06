@@ -451,11 +451,11 @@ export const useTrade = () => {
             case 5:
                 console.log('#takerLister: swap complete');
                 updateSteps('Complete'); // only for taker
+                updateToast('swapping', 'success', 'Swap successful', order.orderHash);
                 setLoading({ ...loading, fulfill: false });
-                shallow.delete(order.orderHash);
                 setUserTrades(shallow);
+                shallow.delete(order.orderHash);
                 clearTrade();
-                updateToast('swapping', 'success');
                 break;
         }
     };

@@ -363,8 +363,9 @@ const CustomRow = (props: IDataTableProps) => {
         if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
             const _cell = cell as any;
             return (
-                <span className="grid grid-cols-1 mui:grid-cols-2 items-center gap-2">
-                    <span className="sm:text-lg flex items-center gap-0.5">
+                <span className="grid grid-cols-1 mui:grid-cols-1 items-center gap-2">
+                    {/* TODO: fix trade prices */}
+                    {/* <span className="sm:text-lg flex items-center gap-0.5">
                         {_cell.offers.length ? (
                             <>
                                 <span className="text-xs">$</span>
@@ -373,7 +374,7 @@ const CustomRow = (props: IDataTableProps) => {
                         ) : (
                             <span>-</span>
                         )}
-                    </span>
+                    </span> */}
                     <span className="flex-col hidden mui:flex">
                         <span className="text-xs">
                             <span className="text-neutral-400">Liquid:</span>{' '}
