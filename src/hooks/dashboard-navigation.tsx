@@ -1,5 +1,13 @@
 import { useAccount } from 'wagmi';
-import { MdGroup, MdLineAxis, MdImage, MdTagFaces, MdSwapHoriz, MdLock } from 'react-icons/md';
+import {
+    MdGroup,
+    MdLineAxis,
+    MdImage,
+    MdTagFaces,
+    MdSwapHoriz,
+    MdLock,
+    MdCurrencyExchange,
+} from 'react-icons/md';
 
 export const useDashNav = () => {
     const { address } = useAccount();
@@ -12,6 +20,13 @@ export const useDashNav = () => {
             disabled: false,
             icon: <MdLineAxis size={ICON_SIZE} />,
             tooltip: 'See available PintSwap pairs',
+        },
+        {
+            text: 'Maker',
+            route: '/market-maker',
+            disabled: false,
+            icon: <MdCurrencyExchange size={ICON_SIZE} />,
+            tooltip: 'Make a Market',
         },
         {
             text: 'Create',

@@ -22,6 +22,7 @@ import {
 } from './ui/views';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
+import MarketMakerView from './ui/views/market-maker';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/create" element={<CreateView />} />
                     <Route path="/staking" element={<StakingView />} />
                     <Route path="/account" element={<AccountView />} />
+                    <Route path="/market-maker" element={<MarketMakerView />} />
 
                     <Route path="/markets/:pair" element={<MarketsSwapView />} />
                     {/* <Route path="/markets/:pair/:multiaddr" element={<PeerTickerOrderbookView />} /> */}
