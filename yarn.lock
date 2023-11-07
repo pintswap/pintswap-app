@@ -7261,9 +7261,9 @@ elliptic@6.5.4, elliptic@^6.5.3, elliptic@^6.5.4:
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-"emasm@git+https://github.com/kungfuflex/emasm.git":
+"emasm@https://github.com/kungfuflex/emasm":
   version "0.2.0"
-  resolved "git+https://github.com/kungfuflex/emasm.git#d662a391fa51c4c50561222a321de7d035c7831a"
+  resolved "https://github.com/kungfuflex/emasm#d662a391fa51c4c50561222a321de7d035c7831a"
 
 emittery@^0.10.2:
   version "0.10.2"
@@ -8000,9 +8000,9 @@ events@^3.0.0, events@^3.2.0, events@^3.3.0:
   resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
-"evmdis@git+https://github.com/kungfuflex/evmdis.git":
+"evmdis@https://github.com/kungfuflex/evmdis":
   version "0.1.0"
-  resolved "git+https://github.com/kungfuflex/evmdis.git#e33d82f8873a03ad4d802fc7023b1cf228558c53"
+  resolved "https://github.com/kungfuflex/evmdis#e33d82f8873a03ad4d802fc7023b1cf228558c53"
   dependencies:
     fs-extra "^7.0.1"
     yargs "^12.0.5"

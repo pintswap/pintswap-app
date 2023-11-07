@@ -22,14 +22,14 @@ export const useDashNav = () => {
             tooltip: 'See available PintSwap pairs',
         },
         {
-            text: 'Maker',
+            text: 'Make',
             route: '/market-maker',
             disabled: false,
             icon: <MdCurrencyExchange size={ICON_SIZE} />,
             tooltip: 'Make a Market',
         },
         {
-            text: 'Create',
+            text: 'Swap',
             route: '/swap',
             disabled: false,
             icon: <MdSwapHoriz size={ICON_SIZE} />,
