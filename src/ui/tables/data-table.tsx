@@ -181,7 +181,7 @@ const CustomRow = (props: IDataTableProps) => {
         queryKey: [`price-${(data[0] as any)?.split('/')[0]}`],
         queryFn: () => getUsdPrice((data[0] as any)?.split('/')[0], eth),
         enabled: !!(data[0] as any)?.split('/')[0] && cols[3] === 'Market',
-        refetchInterval: 1000 * 30,
+        refetchInterval: 1000 * 60,
     });
 
     const hasHoverState = `${
@@ -229,8 +229,6 @@ const CustomRow = (props: IDataTableProps) => {
                 return window.open(`${NETWORKS[chainId].explorer}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook': {
                 const [quote, base] = firstCell.split('/');
-                console.log(quote.toLowerCase());
-                console.log(base.toLowerCase());
                 return navigate(
                     `/peers/${peer}/${quote.toLowerCase().trim()}-${base.toLowerCase().trim()}`,
                 );
@@ -325,7 +323,7 @@ const CustomRow = (props: IDataTableProps) => {
                 );
             } else if (type === 'markets') {
                 return (
-                    <p className="flex items-center justify-end mui:justify-start gap-0.5">
+                    <p className="flex items-center justify-end gap-0.5">
                         <span className="text-xs">$</span>
                         {usdPrice ? (
                             <span className="sm:text-lg">
@@ -363,8 +361,9 @@ const CustomRow = (props: IDataTableProps) => {
         if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
             const _cell = cell as any;
             return (
-                <span className="grid grid-cols-1 mui:grid-cols-2 items-center gap-2">
-                    <span className="sm:text-lg flex items-center gap-0.5">
+                <span className="grid grid-cols-1 md:grid-cols-3 items-center gap-2">
+                    {/* TODO: fix trade prices */}
+                    <span className="sm:text-lg flex items-center gap-0.5 md:col-span-2 justify-end">
                         {_cell.offers.length ? (
                             <>
                                 <span className="text-xs">$</span>
@@ -397,12 +396,11 @@ const CustomRow = (props: IDataTableProps) => {
             // Address / MultiAddr
             return truncate(cell, charsShown);
         } else if (!isNaN(Number(cell))) {
-            if (
-                (type === 'markets' && String(cell).includes('.')) ||
-                ((type === 'asks' || type === 'bids') && (index === 0 || index === 2))
-            ) {
+            const isMarketPrice = type === 'markets' && String(cell).includes('.');
+            const isOrderbook = type === 'asks' || type === 'bids';
+            if (isMarketPrice || (isOrderbook && (index === 0 || index === 2))) {
                 return (
-                    <span className="flex items-center gap-1">
+                    <span className={`flex items-center gap-1`}>
                         <small>$</small>
                         <SmartPrice price={cell} />
                     </span>

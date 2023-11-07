@@ -24,6 +24,7 @@ type ISwapModule = {
     max?: string;
     autoQuote?: boolean;
     percentDiff?: boolean;
+    buttonText?: string;
 };
 
 export const SwapModule = ({
@@ -38,6 +39,7 @@ export const SwapModule = ({
     max,
     autoQuote = true,
     percentDiff,
+    buttonText,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -50,6 +52,7 @@ export const SwapModule = ({
         return 'Loading';
     };
     const determineButtonText = () => {
+        if (buttonText) return buttonText;
         if (type === 'fulfill') return 'Fulfill';
         if (type === 'nft') {
             if (nft && nft.amount === '0') return 'Cannot verify NFT ownership';

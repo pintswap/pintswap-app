@@ -21,19 +21,24 @@ import { ITokenProps } from './types';
 import { MIN_ABIS } from './contracts';
 
 export function toAddress(symbolOrAddress?: string, chainId = 1): string {
+    // If nothing
     if (!symbolOrAddress) return '';
-    const capSymbolOrAddress = symbolOrAddress.startsWith('0x')
-        ? symbolOrAddress
-        : symbolOrAddress.toUpperCase();
-    if (capSymbolOrAddress === ZeroAddress || capSymbolOrAddress === 'ETH') return ZeroAddress;
+    // If address
+    if (isAddress(symbolOrAddress)) {
+        if (symbolOrAddress === ZeroAddress) return ZeroAddress;
+        return getAddress(symbolOrAddress);
+    }
+    // Standardize if symbol
+    const capSymbolOrAddress = (symbolOrAddress as string).toUpperCase();
+    if (capSymbolOrAddress === 'ETH') return ZeroAddress;
+    // If in cache
+    if (reverseSymbolCache[chainId][capSymbolOrAddress])
+        return reverseSymbolCache[chainId][capSymbolOrAddress];
+    if (symbolCache[chainId][capSymbolOrAddress]) return symbolCache[chainId][capSymbolOrAddress];
+    // If in list
     const token = getTokenListBySymbol(chainId)[capSymbolOrAddress];
     if (token) return getAddress(token.address);
-    if (
-        String(capSymbolOrAddress).substr(0, 2) !== '0x' &&
-        reverseSymbolCache[chainId][capSymbolOrAddress]
-    )
-        return getAddress(reverseSymbolCache[chainId][capSymbolOrAddress]);
-    if (capSymbolOrAddress?.startsWith('0x')) return getAddress(capSymbolOrAddress);
+    // else return nothing
     return '';
 }
 

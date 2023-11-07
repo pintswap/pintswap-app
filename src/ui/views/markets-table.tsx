@@ -19,8 +19,10 @@ const columns = [
         label: 'Buy',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'center' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
     {
@@ -28,8 +30,10 @@ const columns = [
         label: 'Sell',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'center' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
     {
@@ -37,8 +41,10 @@ const columns = [
         label: 'Market',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'right' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
 ];
@@ -49,7 +55,7 @@ export const MarketsTableView = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
+            <div className="flex items-center justify-between mb-4 gap-6">
                 <Header breadcrumbs={[{ text: 'Markets', link: '/markets' }]}>Explore</Header>
                 <Input
                     value={query}

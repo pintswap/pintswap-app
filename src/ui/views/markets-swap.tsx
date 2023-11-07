@@ -153,7 +153,6 @@ export const MarketsSwapView = () => {
                 },
             });
         }
-        console.log('peerOffers', peerOffers);
     }, [offersByChain.erc20.length]);
 
     useEffect(() => {
@@ -169,7 +168,7 @@ export const MarketsSwapView = () => {
     return (
         <>
             <div className="flex flex-col">
-                <div className="flex items-center justify-between mb-4 md:mb-6">
+                <div className="flex items-center justify-between mb-4">
                     <Header breadcrumbs={renderBreadcrumbs()}>
                         {multiaddr ? 'Peer Orderbook' : 'Market Swap'}
                     </Header>

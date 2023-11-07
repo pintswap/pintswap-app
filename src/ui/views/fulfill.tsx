@@ -2,15 +2,21 @@ import { Tab, Transition } from '@headlessui/react';
 import { PageStatus, TransitionModal, Card } from '../components';
 import { Avatar, SwapModule } from '../features';
 import { useTrade } from '../../hooks';
-import { useAccount } from 'wagmi';
+import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { useEffect } from 'react';
-import { updateToast } from '../../utils';
+import { toAddress, updateToast } from '../../utils';
 import { useNavigate } from 'react-router-dom';
 
 export const FulfillView = () => {
     const { address } = useAccount();
     const navigate = useNavigate();
+    const { chain } = useNetwork();
     const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade();
+    const { data } = useBalance(
+        trade.gets.token?.toUpperCase() === 'ETH'
+            ? { address }
+            : { token: toAddress(trade.gets.token || '', chain?.id) as any, address, watch: true },
+    );
 
     const isButtonDisabled = () => {
         return (
@@ -20,8 +26,22 @@ export const FulfillView = () => {
             !trade.gives?.token ||
             loading.trade ||
             loading.fulfill ||
-            !address
+            !address ||
+            Number(data?.formatted) === 0
         );
+    };
+
+    const determineButtonText = () => {
+        if (loading.trade || loading.fulfill) return 'Loading';
+        if (
+            !trade.gets?.amount ||
+            !trade.gives?.amount ||
+            !trade.gets?.token ||
+            !trade.gives?.token
+        )
+            return 'Error loading trade';
+        if (Number(data?.formatted) === 0) return `Insufficient ${trade.gets.token} balance`;
+        return 'Fulfill';
     };
 
     useEffect(() => {
@@ -64,6 +84,7 @@ export const FulfillView = () => {
                             disabled={isButtonDisabled()}
                             onClick={fulfillTrade}
                             loading={loading}
+                            buttonText={determineButtonText()}
                         />
                     </Tab.Panel>
                 </Card>

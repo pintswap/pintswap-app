@@ -4,9 +4,9 @@ import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
-import { calculatePrices, getUsdPrice } from '../hooks';
+import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
-import { getEthPrice } from '../api';
+import { getEthPrice, getManyV2Tokens, getQuote, tryBoth } from '../api';
 
 function givesBase(offer: any) {
     return {
@@ -129,15 +129,13 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
         pair: [base, trade],
         type,
     } = orderTokens(offer, chainId);
-    const [baseDecimals, tradeDecimals] = await Promise.all(
-        [base, trade].map(async (v) => await getDecimals(v.address, chainId)),
+    const eth = await getEthPrice();
+    const tradeDecimals = Number(
+        (await tryBoth({ address: trade.address }))?.token?.decimals || '18',
     );
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
-    const eth = await getEthPrice();
+    // TODO: fix this to be ETH amount as denomination in order to show trade price, not market price
     const usdPrice = await getUsdPrice(trade.address, eth);
-    // const price =
-    //     (Number(ethers.formatUnits(base.amount, baseDecimals)) /
-    //     Number(ethers.formatUnits(trade.amount, tradeDecimals)));
     const usdTotal = Number(usdPrice) * Number(amount);
     const price = Number(usdTotal) / Number(amount);
     return {
@@ -147,7 +145,7 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
         type,
         ticker: await toTicker([base, trade], chainId),
         hash: hashOffer(offer),
-        priceUsd: usdTotal.toString(),
+        priceUsd: String(usdTotal),
         priceEth: (usdTotal * Number(eth)).toString(),
         raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
     };

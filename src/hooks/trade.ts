@@ -20,7 +20,7 @@ import {
     getTokenAddress,
 } from '../utils';
 import { ethers } from 'ethers';
-import { useSwitchNetwork } from 'wagmi';
+import { useSigner, useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
 
 function stringify(obj: any) {
@@ -43,6 +43,7 @@ function stringify(obj: any) {
 export const useTrade = () => {
     const params = useParams();
     const { switchNetwork } = useSwitchNetwork();
+    const { data: signer } = useSigner();
     const { newNetwork } = useNetworkContext();
     const { pathname } = useLocation();
     const {
@@ -66,7 +67,7 @@ export const useTrade = () => {
     const [foundPeerOffers, setFoundPeerOffers] = useState(false);
 
     const isMaker = pathname === '/create';
-    const isOnActive = pathname === '/explore' || pathname === '/swap';
+    const isOnActive = pathname === '/explore' || pathname === '/create';
 
     const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
         if (!gets.token && !gives.token) return EMPTY_TRADE;
@@ -142,6 +143,7 @@ export const useTrade = () => {
             try {
                 const offer = await buildTradeObj(trade);
                 if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
+                module.signer = signer;
                 module.broadcastOffer(offer);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 await savePintswap(module);
@@ -194,6 +196,7 @@ export const useTrade = () => {
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
                     tradeForWorker = { type: 'default', trade: builtTrade };
                 }
+                module.signer = signer;
 
                 // Pass off to web worker
                 // const worker = new Worker(new URL('../workers/trade.worker.ts', import.meta.url));
@@ -448,11 +451,11 @@ export const useTrade = () => {
             case 5:
                 console.log('#takerLister: swap complete');
                 updateSteps('Complete'); // only for taker
+                updateToast('swapping', 'success', 'Swap successful', order.orderHash);
                 setLoading({ ...loading, fulfill: false });
-                shallow.delete(order.orderHash);
                 setUserTrades(shallow);
+                shallow.delete(order.orderHash);
                 clearTrade();
-                updateToast('swapping', 'success');
                 break;
         }
     };

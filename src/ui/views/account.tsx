@@ -358,14 +358,14 @@ export const AccountView = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex justify-between items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
-                            <div>
-                                {isError && (
+                        <div className="flex justify-end items-center gap-3 lg:gap-5 mt-3 lg:mt-5">
+                            {isError && (
+                                <div className="flex justify-start w-full">
                                     <span className="text-red-400">
                                         Error occured while saving data
                                     </span>
-                                )}
-                            </div>
+                                </div>
+                            )}
                             {!isEditing ? (
                                 <Button
                                     onClick={() => setIsEditing(true)}
@@ -407,7 +407,7 @@ export const AccountView = () => {
             </Card>
 
             <div className="flex flex-row gap-4 justify-center items-center">
-                <Button onClick={() => navigate('/swap')} className="sm:max-w-lg sm:self-center">
+                <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
                     Create Offer
                 </Button>
                 <TooltipWrapper

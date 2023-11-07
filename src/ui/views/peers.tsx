@@ -14,7 +14,7 @@ export const PeersView = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
+            <div className="flex items-center justify-between mb-4 gap-6">
                 <Header breadcrumbs={[{ text: 'Peers', link: '/peers' }]}>Active Peers</Header>
                 <Input
                     value={query}

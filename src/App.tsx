@@ -48,22 +48,18 @@ function App() {
         <>
             <Base loading={mockLoading}>
                 <Routes>
-                    <Route path="/swap" element={<SwapView />} />
+                    <Route path="/create" element={<SwapView />} />
                     <Route path="/markets" element={<MarketsTableView />} />
                     <Route path="/nfts" element={<NFTsTableView />} />
-                    <Route path="/create" element={<CreateView />} />
                     <Route path="/staking" element={<StakingView />} />
                     <Route path="/account" element={<AccountView />} />
 
                     <Route path="/markets/:pair" element={<MarketsSwapView />} />
-                    {/* <Route path="/markets/:pair/:multiaddr" element={<PeerTickerOrderbookView />} /> */}
 
                     <Route path="/peers" element={<PeersView />} />
                     <Route path="/peers/:multiaddr" element={<PeerOrderbookView />} />
                     <Route path="/peers/:multiaddr/:pair" element={<MarketsSwapView />} />
 
-                    {/* <Route path="/:multiaddr" element={<PeerOrderbookView />} />
-                    <Route path="/:multiaddr/:view" element={<PeerOrderbookView />} /> */}
                     <Route path="/:multiaddr/:trade/:base" element={<PeerTickerOrderbookView />} />
 
                     <Route path="/fulfill" element={<TradeSearchView />} />
@@ -81,7 +77,7 @@ function App() {
 
             <ToastContainer
                 position="bottom-right"
-                autoClose={6000}
+                autoClose={5000}
                 hideProgressBar={false}
                 newestOnTop={false}
                 rtl={false}

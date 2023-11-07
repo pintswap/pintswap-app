@@ -19,7 +19,7 @@ export type IUserDataProps = {
     bio: string;
     name: string;
     address: string;
-    offers?: any[];
+    offers?: any;
     privateKey?: string;
     extension?: string;
     active: boolean;
@@ -84,6 +84,14 @@ export function UserStore(props: { children: ReactNode }) {
                     bio: module.userData.bio,
                     img: module.userData.image,
                 });
+                // const interval = setInterval(() => {
+                //     setUserData({
+                //         ...userData,
+                //         name,
+                //         offers: module.offers,
+                //     });
+                // }, 8 * 1000);
+                // return () => clearInterval(interval);
             }
         })().catch((err) => console.error(err));
     }, [module?.address, module?.userData]);
