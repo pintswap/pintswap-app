@@ -16,29 +16,35 @@ const columns = [
     },
     {
         name: 'buy',
-        label: 'Buys',
+        label: 'Buy',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'center' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
     {
         name: 'sell',
-        label: 'Sells',
+        label: 'Sell',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'center' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
     {
         name: 'market',
-        label: 'Price',
+        label: 'Market',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'right' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
 ];

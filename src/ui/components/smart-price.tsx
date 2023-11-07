@@ -4,6 +4,7 @@ export function SmartPrice({
 }: {
     price: string | number;
     type?: 'usd' | 'default';
+    align?: 'right' | 'left';
 }) {
     const _price = String(price);
     if (_price === 'N/A' && !_price) return <>-</>;

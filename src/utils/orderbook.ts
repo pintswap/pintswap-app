@@ -145,7 +145,7 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
         type,
         ticker: await toTicker([base, trade], chainId),
         hash: hashOffer(offer),
-        priceUsd: String(price),
+        priceUsd: String(usdTotal),
         priceEth: (usdTotal * Number(eth)).toString(),
         raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
     };
