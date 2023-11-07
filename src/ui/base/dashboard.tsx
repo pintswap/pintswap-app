@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi';
 import { useDashNav, useWindowSize } from '../../hooks';
 import { usePintswapContext, useUserContext } from '../../stores';
 import { APP_VERSION } from '../../utils';
+import { Transition } from '@headlessui/react';
 
 type IDashboardProps = {
     children: ReactNode;
@@ -15,7 +16,7 @@ const backgroundClass = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
     const { address } = useAccount();
-    const { userData } = useUserContext();
+    const { userData, offers } = useUserContext();
     const { width, breakpoints } = useWindowSize();
     const { NAV_ITEMS } = useDashNav();
     const {
@@ -57,15 +58,18 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                             );
                         })}
                     </ul>
-                    <div className="flex flex-col gap-2 pl-4 lg:pl-6">
-                        <Avatar
-                            peer={pintswap.module?.address}
-                            type="clickable"
-                            direction="vertical"
-                            align="left"
-                            withName
-                            truncated
-                        />
+                    <div className="flex flex-col gap-2 w-fit pl-4 lg:pl-6">
+                        <div className="flex flex-col">
+                            <Avatar
+                                peer={pintswap.module?.address}
+                                type="clickable"
+                                direction="vertical"
+                                align="left"
+                                withName
+                                truncated
+                            />
+                            <span className="text-xs">Open Offers: {offers}</span>
+                        </div>
                         <TooltipWrapper
                             id="dashboard-publish-offers"
                             text={

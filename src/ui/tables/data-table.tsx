@@ -47,22 +47,20 @@ export type IDataTableProps = {
     column?: number;
 };
 
-export const DataTable = (props: IDataTableProps) => {
-    const {
-        data,
-        columns,
-        title,
-        loading,
-        type,
-        peer,
-        toolbar,
-        pagination,
-        options,
-        getRow,
-        trade,
-        activeRow,
-    } = props;
-
+export const DataTable = ({
+    data,
+    columns,
+    title,
+    loading = false,
+    type,
+    peer,
+    toolbar,
+    pagination = true,
+    options,
+    getRow,
+    trade,
+    activeRow,
+}: IDataTableProps) => {
     // TODO: complete
     const determineRow = (rowIndex: number) => {
         const renderProps = {
@@ -441,7 +439,7 @@ const CustomRow = (props: IDataTableProps) => {
                     (index === 0 || type === 'peer-orderbook')
                 ) {
                     // Display USD value if possible
-                    if (_baseAsset.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
+                    if (_baseAsset.includes('eth')) _cell = Number(cell).toString();
                     else _cell = cell;
                     return (
                         <span className="flex items-center gap-1">

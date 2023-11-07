@@ -79,3 +79,26 @@ export type IOfferProps = {
     priceEth: string;
     raw: IOffer;
 };
+
+export type IUserHistoryItemProps = {
+    hash: string;
+    timestamp: string;
+    chainId: number;
+    pair: string;
+    maker: string;
+    taker: string;
+    gets: {
+        amount: string;
+        address: string;
+        symbol: string;
+        decimals: number;
+    };
+    gives: {
+        amount: string;
+        address: string;
+        symbol: string;
+        decimals: number;
+    };
+    sending: string;
+    receiving: string;
+};

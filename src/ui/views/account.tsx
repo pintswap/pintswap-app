@@ -14,7 +14,7 @@ import { DataTable } from '../tables';
 import { useOffersContext, useUserContext, usePintswapContext } from '../../stores';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { formatPeerImg, convertAmount } from '../../utils';
+import { formatPeerImg, convertAmount, IUserHistoryItemProps } from '../../utils';
 import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
 
@@ -86,6 +86,8 @@ const historyColumns = [
     },
 ];
 
+const TABS = ['Profile', 'Offers', 'History'];
+
 export const AccountView = () => {
     const subgraph = useSubgraph({});
     const { width } = useWindowSize();
@@ -93,7 +95,7 @@ export const AccountView = () => {
     const { state } = useLocation();
     const { pintswap } = usePintswapContext();
     const { userTrades, deleteAllTrades } = useOffersContext();
-    const { userData, toggleActive } = useUserContext();
+    const { userData, toggleActive, offers } = useUserContext();
     const {
         shallowForm,
         updateShallow,
@@ -148,7 +150,12 @@ export const AccountView = () => {
         })().catch((err) => console.error(err));
     }, [userTrades.size]);
 
-    const TABS = ['Profile', 'Offers', 'History'];
+    useEffect(() => {
+        if (state?.tab) {
+            setCurrentTab(TABS.indexOf(state?.tab));
+        }
+    }, [state?.tab]);
+
     return (
         <div className="flex flex-col gap-3 sm:gap-4 2xl:gap-6">
             <div className="flex items-center justify-between">
@@ -182,7 +189,7 @@ export const AccountView = () => {
                 type="tabs"
                 rightButton={
                     currentTab === 1 &&
-                    !!pintswap.module?.offers.size && (
+                    offers > 0 && (
                         <button
                             onClick={deleteAllTrades}
                             className="text-red-400 transition duration-150 hover:text-red-500"
@@ -398,7 +405,7 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <DataTable
                         columns={historyColumns}
-                        data={subgraph?.data?.userHistory || []}
+                        data={subgraph?.data?.userHistory as IUserHistoryItemProps[]}
                         toolbar={false}
                         type="history"
                         loading={subgraph.isLoading}

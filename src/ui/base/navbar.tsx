@@ -1,7 +1,14 @@
 import { Transition } from '@headlessui/react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ActiveText, AnimatedHamburger, ChainDropdown, Gas, Wallet } from '../../ui/components';
+import {
+    ActiveText,
+    AnimatedHamburger,
+    ChainDropdown,
+    DropdownMenu,
+    Gas,
+    Wallet,
+} from '../../ui/components';
 import { useDashNav, useWindowSize } from '../../hooks';
 import { APP_VERSION } from '../../utils/constants';
 import { useAccount } from 'wagmi';
@@ -35,6 +42,7 @@ export const Navbar = () => {
                             <div className="flex items-center gap-2">
                                 <Gas className="mr-2" units="gwei" />
                                 <ChainDropdown />
+                                {/* {address && <DropdownMenu buttonClass='mr-2' items={[{ text: "0x...01" }]} customIcon={<span>Open Offers</span>} />} */}
                                 <Wallet />
                             </div>
                         ) : (
