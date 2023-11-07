@@ -24,8 +24,10 @@ const columns = [
         label: 'Bid',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'right' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
     {
@@ -33,8 +35,10 @@ const columns = [
         label: 'Ask',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'right' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
 ];

@@ -442,7 +442,7 @@ const CustomRow = (props: IDataTableProps) => {
                     if (_baseAsset.includes('eth')) _cell = Number(cell).toString();
                     else _cell = cell;
                     return (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center justify-end gap-1">
                             <small>$</small>
                             <SmartPrice price={_cell} />
                         </span>
@@ -464,6 +464,12 @@ const CustomRow = (props: IDataTableProps) => {
                     );
                 // Display Big Number
                 _cell = cell;
+                if (type === 'peer-orderbook')
+                    return (
+                        <span className="flex items-center justify-end">
+                            <SmartPrice price={_cell} />
+                        </span>
+                    );
                 return <SmartPrice price={_cell} />;
             }
         } else if ((type === 'peer-orderbook' || type === 'markets') && cell.includes('/')) {
