@@ -257,7 +257,6 @@ export const useTrade = () => {
                 ? await module.getUserData(resolved)
                 : { offers: [] };
             if (offers?.length > 0 && !peerTrades?.size) {
-                if (TESTING) console.log('#getTrades - Offers:', offers);
                 await Promise.all(
                     offers.map(async (offer) => {
                         const tokens = [offer.gets?.token, offer.gives?.token];
@@ -272,8 +271,8 @@ export const useTrade = () => {
                     }),
                 );
                 _offers = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                setPeerTrades(_offers);
                 if (TESTING) console.log('#getTrades - Map:', _offers);
+                setPeerTrades(_offers);
                 updateToast('findPeer', 'success', 'Connected to peer!');
             }
         }

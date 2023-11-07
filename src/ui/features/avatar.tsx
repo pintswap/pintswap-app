@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../../stores';
 import {
     DEFAULT_AVATAR,
-    formatPeerImg,
     formatPeerName,
     getFormattedPeer,
     getPeerImg,
@@ -52,7 +51,7 @@ export const Avatar = ({
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const { userData, setUserData } = useUserContext();
-    const { peersData } = usePeersContext();
+    const { peersData, updatePeersData } = usePeersContext();
 
     const peerName = typeof peer === 'string' ? peer : peer?.name;
     const isUser = peerName === module?.address;
@@ -85,7 +84,10 @@ export const Avatar = ({
         if (module && peer && peerName) {
             const found = peersData.find((el) => el.name === peerName);
             if (found) {
-                const img = withImage ? await getPeerImg(pintswap, peer) : found.img;
+                const img =
+                    withImage && found.img === '/img/generic-avatar.jpg'
+                        ? await getPeerImg(pintswap, peer)
+                        : found.img;
                 const returnObj = {
                     ...found,
                     active: isUser ? userData.active : found.active,
@@ -94,6 +96,7 @@ export const Avatar = ({
                     img,
                     loading: false,
                 };
+                updatePeersData(returnObj);
                 return returnObj;
             }
             const formattedPeer = await getFormattedPeer(
