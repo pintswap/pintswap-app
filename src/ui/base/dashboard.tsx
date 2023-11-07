@@ -68,7 +68,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                 withName
                                 truncated
                             />
-                            <span className="text-xs">Open Offers: {offers}</span>
+                            <span className="text-xs text-neutral-400">Open Offers: {offers}</span>
                         </div>
                         <TooltipWrapper
                             id="dashboard-publish-offers"
