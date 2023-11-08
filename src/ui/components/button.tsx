@@ -1,7 +1,8 @@
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import { MouseEventHandler, ReactNode } from 'react';
+import { MouseEventHandler, ReactNode, useEffect, useState } from 'react';
 import { ImSpinner9 } from 'react-icons/im';
 import { useAccount, useNetwork } from 'wagmi';
+import { usePintswapContext } from '../../stores';
 
 type IButtonProps = {
     children: ReactNode | string;
@@ -30,6 +31,8 @@ export const Button = ({
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
     const { openConnectModal } = useConnectModal();
+    const [incorrectModule, setIncorrectModule] = useState(true);
+    const { signIfNecessary, isIncorrectSigner, pintswap } = usePintswapContext();
 
     const renderType = () => {
         switch (type) {
@@ -75,11 +78,23 @@ export const Button = ({
                 onClick: openChainModal,
             };
         }
+        if (incorrectModule && checkNetwork) {
+            return {
+                text: 'Signature Required',
+                onClick: signIfNecessary,
+            };
+        }
         return {
             text: children,
             onClick: onClick,
         };
     };
+
+    useEffect(() => {
+        (async () => setIncorrectModule(await isIncorrectSigner()))().catch((err) =>
+            console.error(err),
+        );
+    }, [pintswap.module]);
 
     const paddingStyle = type === 'wallet' ? `` : `px-2 py-1 lg:px-3 lg:py-1.5`;
     return (
