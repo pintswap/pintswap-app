@@ -11,11 +11,11 @@ import {
     useUserContext,
 } from '../../stores';
 import { useParams } from 'react-router-dom';
-import { BASE_URL, NETWORKS, truncate, numberFormatter } from '../../utils';
+import { BASE_URL, NETWORKS, truncate, numberFormatter, percentChange } from '../../utils';
 import { muiCache, muiOptions, muiTheme } from '../../config';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
-import { TooltipWrapper, Asset, SmartPrice, Button, Skeleton } from '../components';
+import { TooltipWrapper, Asset, SmartPrice, Button, Skeleton, ChangeDisplay } from '../components';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { MarketsRow } from './markets-row';
 import { useQuery } from '@tanstack/react-query';
@@ -175,10 +175,11 @@ const CustomRow = (props: IDataTableProps) => {
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
 
+    const isMarketsTable = cols[3] === 'Market' || cols[2] === 'Sell' || cols[1] === 'Buy';
     const { data: usdPrice } = useQuery({
         queryKey: [`price-${(data[0] as any)?.split('/')[0]}`],
         queryFn: () => getUsdPrice((data[0] as any)?.split('/')[0], eth),
-        enabled: !!(data[0] as any)?.split('/')[0] && cols[3] === 'Market',
+        enabled: !!(data[0] as any)?.split('/')[0] && isMarketsTable,
         refetchInterval: 1000 * 60,
     });
 
@@ -358,12 +359,20 @@ const CustomRow = (props: IDataTableProps) => {
         const charsShown = tableBreak ? 4 : 5;
         if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
             const _cell = cell as any;
+            const difference = percentChange(usdPrice, _cell.best);
             return (
                 <span className="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
-                    {/* TODO: fix trade prices */}
                     <span className="sm:text-lg flex items-center gap-0.5">
                         {_cell.offers.length ? (
                             <>
+                                <span className="mr-2 text-xs">
+                                    <ChangeDisplay
+                                        value={difference}
+                                        percent
+                                        market={index === 2 ? 'sell' : 'buy'}
+                                        opposite={index === 2}
+                                    />
+                                </span>
                                 <span className="text-xs">$</span>
                                 <SmartPrice price={_cell.best} />
                             </>

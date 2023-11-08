@@ -140,20 +140,20 @@ const getUniqueMarkets = (offers: any[]) => {
             const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
             const price = parseFloat(m.price);
             const sum = parseFloat(m.amount);
-            const isBuy = m.type === 'bid';
+            const isBuy = m.type === 'ask';
             if (found) {
                 found.offers += 1;
                 if (isBuy) {
                     found.buy.offers = [...found.buy.offers, m.raw];
-                    if (found.buy.best > price) found.buy.best = price;
+                    if (found.buy.best > price || found.buy.best === 0) found.buy.best = price;
                     if (found.buy.sum < sum) found.buy.sum = sum;
                 } else {
                     found.sell.offers = [...found.sell.offers, m.raw];
-                    if (found.sell.best < price) found.sell.best = price;
+                    if (found.sell.best < price || found.sell.best === 0) found.sell.best = price;
                     if (found.sell.sum < sum) found.sell.sum = sum;
                 }
             } else {
-                if (!isBuy) {
+                if (isBuy) {
                     const formatted = {
                         // quote: quoteToken,
                         // bases: [split[1]],
@@ -167,7 +167,7 @@ const getUniqueMarkets = (offers: any[]) => {
                         sell: {
                             offers: [],
                             sum: 0,
-                            best: price,
+                            best: 0,
                         },
                         offers: 1,
                     };
@@ -181,7 +181,7 @@ const getUniqueMarkets = (offers: any[]) => {
                         buy: {
                             offers: [],
                             sum: 0,
-                            best: price,
+                            best: 0,
                         },
                         sell: {
                             offers: [m.raw],
