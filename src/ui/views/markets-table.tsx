@@ -21,8 +21,6 @@ const columns = [
             filter: false,
             sort: false,
             sortThirdClickReset: true,
-            setCellHeaderProps: () => ({ align: 'center' }),
-            setCellProps: () => ({ align: 'right' }),
         },
     },
     {
@@ -32,8 +30,6 @@ const columns = [
             filter: false,
             sort: false,
             sortThirdClickReset: true,
-            setCellHeaderProps: () => ({ align: 'center' }),
-            setCellProps: () => ({ align: 'right' }),
         },
     },
     {

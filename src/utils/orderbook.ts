@@ -2,7 +2,7 @@ import { BigNumberish, ethers, Signer } from 'ethers6';
 import { groupBy } from 'lodash';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
-import { fromAddress, getDecimals, toAddress, toTicker } from './token';
+import { fromAddress, getDecimals, getSymbol, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
@@ -129,7 +129,34 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
         pair: [base, trade],
         type,
     } = orderTokens(offer, chainId);
+
     const eth = await getEthPrice();
+
+    // TESTING
+    const { gives, gets } = offer as IOffer;
+    const promises = await Promise.all([
+        tryBoth({ address: gives?.token }),
+        tryBoth({ address: gets?.token }),
+    ]);
+
+    const givesAmount = Number(
+        ethers.formatUnits(gives.amount || '', Number(promises[0].token.decimals)),
+    );
+    const getsAmount = Number(
+        ethers.formatUnits(gets.amount || '', Number(promises[1].token.decimals)),
+    );
+    const calculateExchangeRate = () => {
+        if (type === 'ask') {
+            return (
+                (getsAmount / givesAmount) * (Number(promises[1].token.derivedETH) * Number(eth))
+            );
+        } else {
+            return (
+                (givesAmount / getsAmount) * (Number(promises[0].token.derivedETH) * Number(eth))
+            );
+        }
+    };
+
     const tradeDecimals = Number(
         (await tryBoth({ address: trade.address }))?.token?.decimals || '18',
     );
@@ -140,7 +167,7 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
     const price = Number(usdTotal) / Number(amount);
     return {
         chainId: offer.chainId || 1,
-        price: String(price) || '0',
+        price: String(calculateExchangeRate()) || '0',
         amount,
         type,
         ticker: await toTicker([base, trade], chainId),

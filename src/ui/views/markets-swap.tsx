@@ -228,7 +228,7 @@ export const MarketsSwapView = () => {
                                 options={{
                                     sortOrder: {
                                         name: 'price',
-                                        direction: 'asc',
+                                        direction: 'desc',
                                     },
                                 }}
                                 // activeRow={activeIndex}
@@ -246,7 +246,7 @@ export const MarketsSwapView = () => {
                                 options={{
                                     sortOrder: {
                                         name: 'price',
-                                        direction: 'desc',
+                                        direction: 'asc',
                                     },
                                 }}
                                 // activeRow={activeIndex}

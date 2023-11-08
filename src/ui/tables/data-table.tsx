@@ -359,9 +359,9 @@ const CustomRow = (props: IDataTableProps) => {
         if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
             const _cell = cell as any;
             return (
-                <span className="grid grid-cols-1 md:grid-cols-3 items-center gap-2">
+                <span className="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
                     {/* TODO: fix trade prices */}
-                    <span className="sm:text-lg flex items-center gap-0.5 md:col-span-2 justify-end">
+                    <span className="sm:text-lg flex items-center gap-0.5">
                         {_cell.offers.length ? (
                             <>
                                 <span className="text-xs">$</span>

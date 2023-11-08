@@ -1,9 +1,11 @@
 import { ethers, Signer, ZeroAddress } from 'ethers6';
 import {
+    decimalsCache,
     ENDPOINTS,
     formatPintswapTrade,
     priceCache,
     subgraphTokenCache,
+    symbolCache,
     toAddress,
 } from '../utils';
 import { IOffer } from '@pintswap/sdk';
@@ -170,11 +172,17 @@ export async function tryBoth(props: { address?: string; history?: 'day' | 'hour
     const v2Token = await getV2Token(props);
     if (v2Token?.token) {
         if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v2Token;
+        if (!decimalsCache[1][props.address])
+            decimalsCache[1][props.address] = Number(v2Token.token?.decimals);
+        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v2Token.token?.symbol;
         return v2Token;
     }
     const v3Token = await getV3Token(props);
     if (v3Token?.token) {
         if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v3Token;
+        if (!decimalsCache[1][props.address])
+            decimalsCache[1][props.address] = Number(v3Token.token?.decimals);
+        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v3Token.token?.symbol;
         return v3Token;
     }
     return { token: null };

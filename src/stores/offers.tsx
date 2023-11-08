@@ -23,6 +23,7 @@ import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
+import { usePricesContext } from './prices';
 
 // Types
 export type IOffersStoreProps = {
@@ -142,7 +143,7 @@ const getUniqueMarkets = (offers: any[]) => {
             const isBuy = m.type === 'bid';
             if (found) {
                 found.offers += 1;
-                if (!isBuy) {
+                if (isBuy) {
                     found.buy.offers = [...found.buy.offers, m.raw];
                     if (found.buy.best > price) found.buy.best = price;
                     if (found.buy.sum < sum) found.buy.sum = sum;
@@ -166,7 +167,7 @@ const getUniqueMarkets = (offers: any[]) => {
                         sell: {
                             offers: [],
                             sum: 0,
-                            best: 0,
+                            best: price,
                         },
                         offers: 1,
                     };
@@ -218,6 +219,7 @@ export function OffersStore(props: { children: ReactNode }) {
     });
     const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { eth } = usePricesContext();
 
     const addTrade = async (hash: string, tradeProps: IOffer) => {
         setUserTrades(new Map(userTrades.set(hash, tradeProps)));
