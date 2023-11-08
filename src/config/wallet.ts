@@ -17,7 +17,7 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
-const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '';
+const projectId = process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '1';
 
 const determineChains = () => {
     if (TESTING) return [mainnet, hardhat];
