@@ -31,8 +31,7 @@ export const Button = ({
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
     const { openConnectModal } = useConnectModal();
-    const [incorrectModule, setIncorrectModule] = useState(true);
-    const { signIfNecessary, isIncorrectSigner, pintswap } = usePintswapContext();
+    const { signIfNecessary, incorrectSigner } = usePintswapContext();
 
     const renderType = () => {
         switch (type) {
@@ -78,7 +77,7 @@ export const Button = ({
                 onClick: openChainModal,
             };
         }
-        if (incorrectModule && checkNetwork) {
+        if (incorrectSigner && checkNetwork) {
             return {
                 text: 'Signature Required',
                 onClick: signIfNecessary,
@@ -89,12 +88,6 @@ export const Button = ({
             onClick: onClick,
         };
     };
-
-    useEffect(() => {
-        (async () => setIncorrectModule(await isIncorrectSigner()))().catch((err) =>
-            console.error(err),
-        );
-    }, [pintswap.module]);
 
     const paddingStyle = type === 'wallet' ? `` : `px-2 py-1 lg:px-3 lg:py-1.5`;
     return (

@@ -7,6 +7,7 @@ import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
 import { getEthPrice, getManyV2Tokens, getQuote, tryBoth } from '../api';
+import { convertExponentialToDecimal } from './format';
 
 function givesBase(offer: any) {
     return {
@@ -130,41 +131,38 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
         type,
     } = orderTokens(offer, chainId);
 
-    const eth = await getEthPrice();
-
-    // TESTING
     const { gives, gets } = offer as IOffer;
-    const promises = await Promise.all([
+    const [givesDetails, getsDetails, eth, tradeDecimals] = await Promise.all([
         tryBoth({ address: gives?.token }),
         tryBoth({ address: gets?.token }),
+        getEthPrice(),
+        getDecimals(trade.address, 1),
     ]);
 
+    const precision = 1000;
+    const givesEthPrice = parseFloat(givesDetails.token.derivedETH);
     const givesAmount = Number(
-        ethers.formatUnits(gives.amount || '', Number(promises[0].token.decimals)),
+        ethers.formatUnits(gives.amount || '', Number(givesDetails.token.decimals)),
     );
+    const getsEthPrice = parseFloat(getsDetails.token.derivedETH);
     const getsAmount = Number(
-        ethers.formatUnits(gets.amount || '', Number(promises[1].token.decimals)),
+        ethers.formatUnits(gets.amount || '', Number(getsDetails.token.decimals)),
     );
+    console.log(getsDetails.token, givesDetails.token);
+
     const calculateExchangeRate = () => {
+        let rate: number;
         if (type === 'ask') {
-            return (
-                (getsAmount / givesAmount) * (Number(promises[1].token.derivedETH) * Number(eth))
-            );
+            rate = (getsAmount / givesAmount) * getsEthPrice * Number(eth);
         } else {
-            return (
-                (givesAmount / getsAmount) * (Number(promises[0].token.derivedETH) * Number(eth))
-            );
+            rate = (givesAmount / getsAmount) * givesEthPrice * Number(eth);
         }
+        return convertExponentialToDecimal(rate); // TODO: do better
     };
 
-    const tradeDecimals = Number(
-        (await tryBoth({ address: trade.address }))?.token?.decimals || '18',
-    );
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
-    // TODO: fix this to be ETH amount as denomination in order to show trade price, not market price
     const usdPrice = await getUsdPrice(trade.address, eth);
     const usdTotal = Number(usdPrice) * Number(amount);
-    const price = Number(usdTotal) / Number(amount);
     return {
         chainId: offer.chainId || 1,
         price: String(calculateExchangeRate()) || '0',

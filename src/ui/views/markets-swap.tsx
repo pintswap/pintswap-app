@@ -230,6 +230,7 @@ export const MarketsSwapView = () => {
                             onClick={fulfillTrade}
                             loading={loading}
                             disabled={isLoading || loading.fulfill || !trade.gets.amount}
+                            percentDiff // TODO: not working
                             // max={peerOffers()[isBuy ? 'maxAsk' : 'maxBid'].amount}
                         />
                     </Card>

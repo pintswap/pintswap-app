@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { formatPeerImg, convertAmount, IUserHistoryItemProps } from '../../utils';
 import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
+import { FadeIn } from '../transitions';
 
 const activeColumns = [
     {
@@ -93,7 +94,7 @@ export const AccountView = () => {
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { state } = useLocation();
-    const { pintswap } = usePintswapContext();
+    const { pintswap, incorrectSigner, signIfNecessary } = usePintswapContext();
     const { userTrades, deleteAllTrades } = useOffersContext();
     const { userData, toggleActive, offers } = useUserContext();
     const {
@@ -375,11 +376,13 @@ export const AccountView = () => {
                             )}
                             {!isEditing ? (
                                 <Button
-                                    onClick={() => setIsEditing(true)}
+                                    onClick={() =>
+                                        incorrectSigner ? signIfNecessary() : setIsEditing(true)
+                                    }
                                     form="reset"
                                     type="outline"
                                 >
-                                    Edit
+                                    {incorrectSigner ? 'Sign to edit' : 'Edit'}
                                 </Button>
                             ) : (
                                 <>
@@ -412,28 +415,32 @@ export const AccountView = () => {
                     />
                 </Tab.Panel>
             </Card>
-
-            <div className="flex flex-row gap-4 justify-center items-center">
-                <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
-                    Create Offer
-                </Button>
-                <TooltipWrapper
-                    text={
-                        userData.active
-                            ? 'Removes offers from public orderbook'
-                            : 'Posts offers to public orderbook'
-                    }
-                    id="account-module-publish"
-                >
+            <FadeIn show={!incorrectSigner}>
+                <div className="flex flex-row gap-4 justify-center items-center">
                     <Button
-                        onClick={toggleActive}
+                        onClick={() => navigate('/create')}
                         className="sm:max-w-lg sm:self-center"
-                        type="transparent"
                     >
-                        {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                        Create Offer
                     </Button>
-                </TooltipWrapper>
-            </div>
+                    <TooltipWrapper
+                        text={
+                            userData.active
+                                ? 'Removes offers from public orderbook'
+                                : 'Posts offers to public orderbook'
+                        }
+                        id="account-module-publish"
+                    >
+                        <Button
+                            onClick={toggleActive}
+                            className="sm:max-w-lg sm:self-center"
+                            type="transparent"
+                        >
+                            {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                        </Button>
+                    </TooltipWrapper>
+                </div>
+            </FadeIn>
         </div>
     );
 };

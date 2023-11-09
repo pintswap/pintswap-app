@@ -1,57 +1,66 @@
 import { Card, Header, Input } from '../components';
 import { DataTable } from '../tables';
 import { useOffersContext } from '../../stores';
-import { useSearch } from '../../hooks';
+import { useSearch, useWindowSize } from '../../hooks';
 import { IMarketProps } from '../../utils';
 
-const columns = [
-    {
-        name: 'quote',
-        label: 'Ticker',
-        options: {
-            filter: false,
-            sort: true,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'buy',
-        label: 'Buy',
-        options: {
-            filter: false,
-            sort: false,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'sell',
-        label: 'Sell',
-        options: {
-            filter: false,
-            sort: false,
-            sortThirdClickReset: true,
-        },
-    },
-    {
-        name: 'market',
-        label: 'Market',
-        options: {
-            filter: false,
-            sort: false,
-            sortThirdClickReset: true,
-            setCellHeaderProps: () => ({ align: 'right' }),
-            setCellProps: () => ({ align: 'right' }),
-        },
-    },
-];
-
 export const MarketsTableView = () => {
+    const { width, breakpoints } = useWindowSize();
     const { uniqueMarkets, isLoading } = useOffersContext();
     const { query, list, handleChange } = useSearch(uniqueMarkets);
 
+    const columns = [
+        {
+            name: 'quote',
+            label: 'Ticker',
+            options: {
+                filter: false,
+                sort: true,
+                sortThirdClickReset: true,
+            },
+        },
+        {
+            name: 'buy',
+            label: 'Buy',
+            options: {
+                filter: false,
+                sort: false,
+                sortThirdClickReset: true,
+                setCellHeaderProps: () => ({
+                    align: width > breakpoints['2xl'] ? 'left' : 'right',
+                }),
+                setCellProps: () => ({ align: width > breakpoints['2xl'] ? 'left' : 'right' }),
+            },
+        },
+        {
+            name: 'sell',
+            label: 'Sell',
+            options: {
+                filter: false,
+                sort: false,
+                sortThirdClickReset: true,
+                setCellHeaderProps: () => ({
+                    align: width > breakpoints['2xl'] ? 'left' : 'right',
+                }),
+                setCellProps: () => ({ align: width > breakpoints['2xl'] ? 'left' : 'right' }),
+            },
+        },
+        {
+            name: 'market',
+            label: 'Market',
+            options: {
+                filter: false,
+                sort: false,
+                sortThirdClickReset: true,
+                setCellHeaderProps: () => ({ align: 'right' }),
+                setCellProps: () => ({ align: 'right' }),
+            },
+        },
+    ];
+
     return (
         <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-4 gap-6">
+            <div className="flex items-center justify-between mb-3 gap-6">
                 <Header breadcrumbs={[{ text: 'Markets', link: '/markets' }]}>Explore</Header>
                 <Input
                     value={query}

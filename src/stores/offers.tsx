@@ -283,7 +283,7 @@ export function OffersStore(props: { children: ReactNode }) {
     useQuery({
         queryKey: ['unique-markets'],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 10,
+        refetchInterval: 1000 * 6,
         enabled: !!module && module.peers.size > 0,
     });
     useEffect(() => {

@@ -25,6 +25,7 @@ export type IPintswapStoreProps = {
     setInitialLoad?: any;
     signIfNecessary: () => Promise<boolean>;
     isIncorrectSigner: () => Promise<boolean>;
+    incorrectSigner: boolean;
 };
 
 // Context
@@ -39,6 +40,7 @@ const PintswapContext = createContext<IPintswapStoreProps>({
         new Promise((res, rej) => res(signer)),
     signIfNecessary: () => new Promise((res, rej) => res(false)),
     isIncorrectSigner: () => new Promise((res, rej) => res(false)),
+    incorrectSigner: true,
 });
 
 // Utils
@@ -97,6 +99,7 @@ export function PintswapStore(props: { children: ReactNode }) {
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
     const [initialLoad, setInitialLoad] = useState(true);
+    const [incorrectModule, setIncorrectModule] = useState(true);
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
         module: undefined,
@@ -222,6 +225,13 @@ export function PintswapStore(props: { children: ReactNode }) {
         }
     };
 
+    // Check correct module signer
+    useEffect(() => {
+        (async () => setIncorrectModule(await isIncorrectSigner()))().catch((err) =>
+            console.error(err),
+        );
+    }, [pintswap.module]);
+
     // Initialize Pintswap unless just network switch
     useEffect(() => {
         if (
@@ -263,6 +273,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 setPintswap,
                 signIfNecessary,
                 isIncorrectSigner,
+                incorrectSigner: incorrectModule,
             }}
         >
             {props.children}

@@ -22,6 +22,7 @@ import {
 } from './ui/views';
 import 'react-toastify/dist/ReactToastify.css';
 import { useEffect, useState } from 'react';
+import { DEFAULT_TIMEOUT } from './utils';
 
 setFallbackWETH('0x7a2088a1bFc9d81c55368AE168C2C02570cB814F');
 
@@ -77,7 +78,7 @@ function App() {
 
             <ToastContainer
                 position="bottom-right"
-                autoClose={5000}
+                autoClose={DEFAULT_TIMEOUT}
                 hideProgressBar={false}
                 newestOnTop={false}
                 rtl={false}

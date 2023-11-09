@@ -36,10 +36,12 @@ export const Navbar = () => {
                             width={logoSize.width}
                         />
                     </button>
-                    <div className={`flex items-center gap-2 justify-self-end bg-brand-dashboard`}>
+                    <div
+                        className={`flex items-center gap-1.5 2xl:gap-2 justify-self-end bg-brand-dashboard`}
+                    >
                         {breakpoints.md <= width ? (
                             // Desktop
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 2xl:gap-2">
                                 <Gas className="mr-2" units="gwei" />
                                 <ChainDropdown />
                                 {/* {address && <DropdownMenu buttonClass='mr-2' items={[{ text: "0x...01" }]} customIcon={<span>Open Offers</span>} />} */}
@@ -47,7 +49,7 @@ export const Navbar = () => {
                             </div>
                         ) : (
                             // Mobile
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1.5 2xl:gap-2">
                                 {address ? <ChainDropdown /> : <Wallet />}
                                 <button
                                     onClick={() => setIsMobileOpen(!isMobileOpen)}

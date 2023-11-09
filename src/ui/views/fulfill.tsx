@@ -4,7 +4,7 @@ import { Avatar, SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { useEffect } from 'react';
-import { toAddress, updateToast } from '../../utils';
+import { DEFAULT_TIMEOUT, toAddress, updateToast } from '../../utils';
 import { useNavigate } from 'react-router-dom';
 
 export const FulfillView = () => {
@@ -49,7 +49,7 @@ export const FulfillView = () => {
             updateToast('swapping', 'success');
             const timeout = setTimeout(() => {
                 navigate('/');
-            }, 5000);
+            }, DEFAULT_TIMEOUT);
             return () => clearTimeout(timeout);
         }
     }, [steps[2].status]);

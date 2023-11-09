@@ -7,6 +7,7 @@ import { useDashNav, useWindowSize } from '../../hooks';
 import { usePintswapContext, useUserContext } from '../../stores';
 import { APP_VERSION } from '../../utils';
 import { Transition } from '@headlessui/react';
+import { FadeIn } from '../transitions';
 
 type IDashboardProps = {
     children: ReactNode;
@@ -23,15 +24,15 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         toggleActive,
         userData: { active },
     } = useUserContext();
-    const { pintswap } = usePintswapContext();
+    const { pintswap, incorrectSigner } = usePintswapContext();
     const navigate = useNavigate();
 
     if (width >= breakpoints.md) {
         // Desktop
         return (
             <div className={`3xl:max-w-8xl 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 flex-grow`}>
-                <div className="flex flex-col justify-between bg-brand-dashboard p-4 py-6 pl-0 gap-2">
-                    <ul className={`flex flex-col gap-1`}>
+                <div className="flex flex-col justify-between bg-brand-dashboard p-4 py-6 pl-0 gap-2 pr-10 2xl:pr-12">
+                    <ul className={`flex flex-col gap-0.5 2xl:gap-1`}>
                         {NAV_ITEMS.map((el, i) => {
                             return (
                                 <li key={`sidebar-nav-${i}`}>
@@ -42,7 +43,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                     >
                                         <button
                                             onClick={() => navigate(el.route || '/')}
-                                            className={`w-full text-left pl-4 pr-6 lg:pl-6 lg:pr-12 xl:pr-16 py-1.5 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed`}
+                                            className={`w-full text-left pl-4 lg:pl-6 py-1.5 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed pr-2`}
                                             disabled={el.text === 'NFTs'}
                                         >
                                             <ActiveText
@@ -59,41 +60,47 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                         })}
                     </ul>
                     <div className="flex flex-col gap-2 w-fit pl-4 lg:pl-6">
-                        <div className="flex flex-col">
-                            <Avatar
-                                peer={pintswap.module?.address}
-                                type="clickable"
-                                direction="vertical"
-                                align="left"
-                                withName
-                                truncated
-                            />
-                            <span className="text-xs text-neutral-400">Open Offers: {offers}</span>
-                        </div>
-                        <TooltipWrapper
-                            id="dashboard-publish-offers"
-                            text={
-                                userData.active
-                                    ? 'Make offers private'
-                                    : 'Let others see your offers'
-                            }
-                            position="right"
-                        >
-                            <button
-                                onClick={toggleActive}
-                                className="transition duration-100 hover:text-neutral-300 py-0.5"
-                            >
-                                <StatusIndicator
-                                    active={active}
-                                    message={active ? 'Stop Publish' : 'Start Publish'}
-                                />
-                            </button>
-                        </TooltipWrapper>
+                        <FadeIn show={!incorrectSigner}>
+                            <div className="flex flex-col gap-2 w-fit">
+                                <div className="flex flex-col">
+                                    <Avatar
+                                        peer={pintswap.module?.address}
+                                        type="clickable"
+                                        direction="vertical"
+                                        align="left"
+                                        withName
+                                        truncated
+                                    />
+                                    <span className="text-xs text-neutral-400">
+                                        Open Offers: {offers}
+                                    </span>
+                                </div>
+                                <TooltipWrapper
+                                    id="dashboard-publish-offers"
+                                    text={
+                                        userData.active
+                                            ? 'Make offers private'
+                                            : 'Let others see your offers'
+                                    }
+                                    position="right"
+                                >
+                                    <button
+                                        onClick={toggleActive}
+                                        className="transition duration-100 hover:text-neutral-300 py-0.5"
+                                    >
+                                        <StatusIndicator
+                                            active={active}
+                                            message={active ? 'Stop Publish' : 'Start Publish'}
+                                        />
+                                    </button>
+                                </TooltipWrapper>
+                            </div>
+                        </FadeIn>
                         <span className="text-xs 2xl:text-sm text-neutral-500">{APP_VERSION}</span>
                     </div>
                 </div>
                 <div
-                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-6 lg:px-8 xl:px-12 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
+                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-5 lg:px-8 xl:px-10 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
                 >
                     <main className="mx-auto pb-2">{children}</main>
                 </div>

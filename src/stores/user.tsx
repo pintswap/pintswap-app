@@ -60,8 +60,8 @@ export function UserStore(props: { children: ReactNode }) {
     const [tokenHoldings, setTokenHoldings] = useState<ITokenResProps[]>([]);
 
     function toggleActive(e?: any) {
-        if (!userData.active) module?.startPublishingOffers(60000);
-        else module?.startPublishingOffers(60000).stop();
+        if (!userData.active) module?.startPublishingOffers(10000);
+        else module?.startPublishingOffers(10000).stop();
         setUserData({ ...userData, active: !userData.active });
     }
 

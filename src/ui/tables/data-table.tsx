@@ -361,7 +361,7 @@ const CustomRow = (props: IDataTableProps) => {
             const _cell = cell as any;
             const difference = percentChange(usdPrice, _cell.best);
             return (
-                <span className="grid grid-cols-1 md:grid-cols-2 items-center gap-2">
+                <span className="grid grid-cols-1 2xl:grid-cols-2 justify-items-end 2xl:justify-items-start items-center gap-2">
                     <span className="sm:text-lg flex items-center gap-0.5">
                         {_cell.offers.length ? (
                             <>
@@ -380,7 +380,7 @@ const CustomRow = (props: IDataTableProps) => {
                             <span>-</span>
                         )}
                     </span>
-                    <span className="flex-col hidden mui:flex">
+                    <span className="flex-col hidden 2xl:flex">
                         <span className="text-xs">
                             <span className="text-neutral-400">Liquid:</span>{' '}
                             {Number(_cell.sum) < 100 ? (
@@ -505,7 +505,7 @@ const CustomRow = (props: IDataTableProps) => {
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-2 px-4`}
+                        className={`py-[7px] px-4`}
                     >
                         {!loading ? (
                             determineCell(cell, i)
