@@ -148,7 +148,6 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
     const getsAmount = Number(
         ethers.formatUnits(gets.amount || '', Number(getsDetails.token.decimals)),
     );
-    console.log(getsDetails.token, givesDetails.token);
 
     const calculateExchangeRate = () => {
         let rate: number;
