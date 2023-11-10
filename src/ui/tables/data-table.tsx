@@ -359,20 +359,23 @@ const CustomRow = (props: IDataTableProps) => {
         const charsShown = tableBreak ? 4 : 5;
         if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
             const _cell = cell as any;
-            const difference = percentChange(usdPrice, _cell.best);
+            const difference = Number(percentChange(usdPrice, _cell.best));
+            const diffWithTax =
+                index === 2 ? difference - _cell.tax / 100 : difference + _cell.tax / 100;
             return (
                 <span className="grid grid-cols-1 2xl:grid-cols-2 justify-items-end 2xl:justify-items-start items-center gap-2">
-                    <span className="sm:text-lg flex items-center gap-0.5">
+                    <span className="sm:text-lg flex items-center gap-0.5 2xl:justify-self-end">
                         {_cell.offers.length ? (
                             <>
-                                <span className="mr-2 text-xs">
+                                <div className="flex items-center gap-1 mr-2 text-xs">
                                     <ChangeDisplay
-                                        value={difference}
+                                        value={diffWithTax}
+                                        tax={_cell.tax}
                                         percent
                                         market={index === 2 ? 'sell' : 'buy'}
                                         opposite={index === 2}
                                     />
-                                </span>
+                                </div>
                                 <span className="text-xs">$</span>
                                 <SmartPrice price={_cell.best} />
                             </>

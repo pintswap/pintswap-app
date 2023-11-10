@@ -6,7 +6,7 @@ import { fromAddress, getDecimals, getSymbol, toAddress, toTicker } from './toke
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
-import { getEthPrice, getManyV2Tokens, getQuote, tryBoth } from '../api';
+import { getEthPrice, getManyV2Tokens, getQuote, getTokenTax, tryBoth } from '../api';
 import { convertExponentialToDecimal } from './format';
 
 function givesBase(offer: any) {
@@ -123,7 +123,11 @@ export async function toFormatted(transfer: any, chainId: number) {
     };
 }
 
-export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffers: IOfferProps[]) {
+export async function toLimitOrder(
+    offer: IOffer | any,
+    chainId: number,
+    allOffers: IOfferProps[],
+): Promise<IOfferProps> {
     const found = allOffers.find((o) => o.hash === hashOffer(offer));
     if (found) return found;
     const {
@@ -132,14 +136,17 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
     } = orderTokens(offer, chainId);
 
     const { gives, gets } = offer as IOffer;
-    const [givesDetails, getsDetails, eth, tradeDecimals] = await Promise.all([
-        tryBoth({ address: gives?.token }),
-        tryBoth({ address: gets?.token }),
-        getEthPrice(),
-        getDecimals(trade.address, 1),
-    ]);
+    const [givesDetails, getsDetails, eth, tradeDecimals, tradeTokenTax, baseTokenTax, ticker] =
+        await Promise.all([
+            tryBoth({ address: gives?.token }),
+            tryBoth({ address: gets?.token }),
+            getEthPrice(),
+            getDecimals(trade.address, 1),
+            getTokenTax(trade.address, 1),
+            getTokenTax(base.address, 1),
+            toTicker([base, trade], chainId),
+        ]);
 
-    const precision = 1000;
     const givesEthPrice = parseFloat(givesDetails.token.derivedETH);
     const givesAmount = Number(
         ethers.formatUnits(gives.amount || '', Number(givesDetails.token.decimals)),
@@ -167,11 +174,18 @@ export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffe
         price: String(calculateExchangeRate()) || '0',
         amount,
         type,
-        ticker: await toTicker([base, trade], chainId),
+        ticker,
         hash: hashOffer(offer),
         priceUsd: String(usdTotal),
         priceEth: (usdTotal * Number(eth)).toString(),
+        tax: {
+            buy: tradeTokenTax.buy + baseTokenTax.buy,
+            sell: tradeTokenTax.sell + baseTokenTax.sell,
+            [base.address]: baseTokenTax,
+            [trade.address]: tradeTokenTax,
+        },
         raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
+        peer: '',
     };
 }
 

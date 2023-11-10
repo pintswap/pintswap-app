@@ -27,9 +27,9 @@ export const MarketsTableView = () => {
                 sort: false,
                 sortThirdClickReset: true,
                 setCellHeaderProps: () => ({
-                    align: width > breakpoints['2xl'] ? 'left' : 'right',
+                    align: width > breakpoints['2xl'] ? 'center' : 'right',
                 }),
-                setCellProps: () => ({ align: width > breakpoints['2xl'] ? 'left' : 'right' }),
+                setCellProps: () => ({ align: width > breakpoints['2xl'] ? 'center' : 'right' }),
             },
         },
         {
@@ -40,9 +40,9 @@ export const MarketsTableView = () => {
                 sort: false,
                 sortThirdClickReset: true,
                 setCellHeaderProps: () => ({
-                    align: width > breakpoints['2xl'] ? 'left' : 'right',
+                    align: width > breakpoints['2xl'] ? 'center' : 'right',
                 }),
-                setCellProps: () => ({ align: width > breakpoints['2xl'] ? 'left' : 'right' }),
+                setCellProps: () => ({ align: width > breakpoints['2xl'] ? 'center' : 'right' }),
             },
         },
         {

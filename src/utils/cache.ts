@@ -52,3 +52,11 @@ export const subgraphTokenCache: Record<number, Record<string, any>> = {
     137: {},
     8453: {},
 };
+
+export const tokenTaxCache: Record<number, Record<string, { buy: number; sell: number }>> = {
+    1: {},
+    42161: {},
+    10: {},
+    137: {},
+    8453: {},
+};
