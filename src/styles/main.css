@@ -1493,6 +1493,12 @@ body {
 .bg-\[rgba\(0\2c 0\2c 0\2c 0\.6\)\] {
   background-color: rgba(0, 0, 0, 0.6);
 }
+.bg-\[rgba\(248\2c 113\2c 113\2c 0\.1\)\] {
+  background-color: rgba(248, 113, 113, 0.1);
+}
+.bg-\[rgba\(74\2c 222\2c 128\2c 0\.1\)\] {
+  background-color: rgba(74, 222, 128, 0.1);
+}
 .bg-brand-dashboard {
   --tw-bg-opacity: 1;
   background-color: rgb(10 10 10 / var(--tw-bg-opacity));
@@ -1739,6 +1745,10 @@ body {
   padding-left: 0.125rem;
   padding-right: 0.125rem;
 }
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1808,9 +1818,6 @@ body {
 }
 .pl-2 {
   padding-left: 0.5rem;
-}
-.pl-3 {
-  padding-left: 0.75rem;
 }
 .pl-4 {
   padding-left: 1rem;
@@ -2449,10 +2456,6 @@ body {
     padding-right: 0.5rem;
   }
 
-  .sm\:pl-4 {
-    padding-left: 1rem;
-  }
-
   .sm\:pr-20 {
     padding-right: 5rem;
   }
@@ -2549,16 +2552,8 @@ body {
     display: flex;
   }
 
-  .mui\:grid-cols-1 {
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-
   .mui\:flex-row {
     flex-direction: row;
-  }
-
-  .mui\:justify-start {
-    justify-content: flex-start;
   }
 
   .mui\:first\:border-neutral-800:first-child {

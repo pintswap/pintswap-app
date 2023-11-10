@@ -14,9 +14,10 @@ import { DataTable } from '../tables';
 import { useOffersContext, useUserContext, usePintswapContext } from '../../stores';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { formatPeerImg, convertAmount } from '../../utils';
+import { formatPeerImg, convertAmount, IUserHistoryItemProps } from '../../utils';
 import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
+import { FadeIn } from '../transitions';
 
 const activeColumns = [
     {
@@ -86,14 +87,16 @@ const historyColumns = [
     },
 ];
 
+const TABS = ['Profile', 'Offers', 'History'];
+
 export const AccountView = () => {
     const subgraph = useSubgraph({});
     const { width } = useWindowSize();
     const navigate = useNavigate();
     const { state } = useLocation();
-    const { pintswap } = usePintswapContext();
+    const { pintswap, incorrectSigner, signIfNecessary } = usePintswapContext();
     const { userTrades, deleteAllTrades } = useOffersContext();
-    const { userData, toggleActive } = useUserContext();
+    const { userData, toggleActive, offers } = useUserContext();
     const {
         shallowForm,
         updateShallow,
@@ -148,7 +151,12 @@ export const AccountView = () => {
         })().catch((err) => console.error(err));
     }, [userTrades.size]);
 
-    const TABS = ['Profile', 'Offers', 'History'];
+    useEffect(() => {
+        if (state?.tab) {
+            setCurrentTab(TABS.indexOf(state?.tab));
+        }
+    }, [state?.tab]);
+
     return (
         <div className="flex flex-col gap-3 sm:gap-4 2xl:gap-6">
             <div className="flex items-center justify-between">
@@ -182,7 +190,7 @@ export const AccountView = () => {
                 type="tabs"
                 rightButton={
                     currentTab === 1 &&
-                    !!pintswap.module?.offers.size && (
+                    offers > 0 && (
                         <button
                             onClick={deleteAllTrades}
                             className="text-red-400 transition duration-150 hover:text-red-500"
@@ -368,11 +376,13 @@ export const AccountView = () => {
                             )}
                             {!isEditing ? (
                                 <Button
-                                    onClick={() => setIsEditing(true)}
+                                    onClick={() =>
+                                        incorrectSigner ? signIfNecessary() : setIsEditing(true)
+                                    }
                                     form="reset"
                                     type="outline"
                                 >
-                                    Edit
+                                    {incorrectSigner ? 'Sign to edit' : 'Edit'}
                                 </Button>
                             ) : (
                                 <>
@@ -398,35 +408,39 @@ export const AccountView = () => {
                 <Tab.Panel>
                     <DataTable
                         columns={historyColumns}
-                        data={subgraph?.data?.userHistory || []}
+                        data={subgraph?.data?.userHistory as IUserHistoryItemProps[]}
                         toolbar={false}
                         type="history"
                         loading={subgraph.isLoading}
                     />
                 </Tab.Panel>
             </Card>
-
-            <div className="flex flex-row gap-4 justify-center items-center">
-                <Button onClick={() => navigate('/create')} className="sm:max-w-lg sm:self-center">
-                    Create Offer
-                </Button>
-                <TooltipWrapper
-                    text={
-                        userData.active
-                            ? 'Removes offers from public orderbook'
-                            : 'Posts offers to public orderbook'
-                    }
-                    id="account-module-publish"
-                >
+            <FadeIn show={!incorrectSigner}>
+                <div className="flex flex-row gap-4 justify-center items-center">
                     <Button
-                        onClick={toggleActive}
+                        onClick={() => navigate('/create')}
                         className="sm:max-w-lg sm:self-center"
-                        type="transparent"
                     >
-                        {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                        Create Offer
                     </Button>
-                </TooltipWrapper>
-            </div>
+                    <TooltipWrapper
+                        text={
+                            userData.active
+                                ? 'Removes offers from public orderbook'
+                                : 'Posts offers to public orderbook'
+                        }
+                        id="account-module-publish"
+                    >
+                        <Button
+                            onClick={toggleActive}
+                            className="sm:max-w-lg sm:self-center"
+                            type="transparent"
+                        >
+                            {userData.active ? 'Stop Publishing' : 'Publish Offers'}
+                        </Button>
+                    </TooltipWrapper>
+                </div>
+            </FadeIn>
         </div>
     );
 };

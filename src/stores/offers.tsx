@@ -23,6 +23,7 @@ import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
 import { useQuery } from '@tanstack/react-query';
+import { usePricesContext } from './prices';
 
 // Types
 export type IOffersStoreProps = {
@@ -139,20 +140,20 @@ const getUniqueMarkets = (offers: any[]) => {
             const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
             const price = parseFloat(m.price);
             const sum = parseFloat(m.amount);
-            const isBuy = m.type === 'bid';
+            const isBuy = m.type === 'ask';
             if (found) {
                 found.offers += 1;
-                if (!isBuy) {
+                if (isBuy) {
                     found.buy.offers = [...found.buy.offers, m.raw];
-                    if (found.buy.best > price) found.buy.best = price;
+                    if (found.buy.best > price || found.buy.best === 0) found.buy.best = price;
                     if (found.buy.sum < sum) found.buy.sum = sum;
                 } else {
                     found.sell.offers = [...found.sell.offers, m.raw];
-                    if (found.sell.best < price) found.sell.best = price;
+                    if (found.sell.best < price || found.sell.best === 0) found.sell.best = price;
                     if (found.sell.sum < sum) found.sell.sum = sum;
                 }
             } else {
-                if (!isBuy) {
+                if (isBuy) {
                     const formatted = {
                         // quote: quoteToken,
                         // bases: [split[1]],
@@ -180,7 +181,7 @@ const getUniqueMarkets = (offers: any[]) => {
                         buy: {
                             offers: [],
                             sum: 0,
-                            best: price,
+                            best: 0,
                         },
                         sell: {
                             offers: [m.raw],
@@ -218,6 +219,7 @@ export function OffersStore(props: { children: ReactNode }) {
     });
     const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { eth } = usePricesContext();
 
     const addTrade = async (hash: string, tradeProps: IOffer) => {
         setUserTrades(new Map(userTrades.set(hash, tradeProps)));
@@ -281,7 +283,7 @@ export function OffersStore(props: { children: ReactNode }) {
     useQuery({
         queryKey: ['unique-markets'],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 10,
+        refetchInterval: 1000 * 6,
         enabled: !!module && module.peers.size > 0,
     });
     useEffect(() => {

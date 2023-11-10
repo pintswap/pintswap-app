@@ -1,7 +1,8 @@
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
-import { MouseEventHandler, ReactNode } from 'react';
+import { MouseEventHandler, ReactNode, useEffect, useState } from 'react';
 import { ImSpinner9 } from 'react-icons/im';
 import { useAccount, useNetwork } from 'wagmi';
+import { usePintswapContext } from '../../stores';
 
 type IButtonProps = {
     children: ReactNode | string;
@@ -30,6 +31,7 @@ export const Button = ({
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
     const { openConnectModal } = useConnectModal();
+    const { signIfNecessary, incorrectSigner } = usePintswapContext();
 
     const renderType = () => {
         switch (type) {
@@ -73,6 +75,12 @@ export const Button = ({
             return {
                 text: 'Switch Networks',
                 onClick: openChainModal,
+            };
+        }
+        if (incorrectSigner && checkNetwork) {
+            return {
+                text: 'Signature Required',
+                onClick: signIfNecessary,
             };
         }
         return {

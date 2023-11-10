@@ -38,6 +38,7 @@ export type IUserStoreProps = {
     userData: IUserDataProps;
     toggleActive: () => void;
     setUserData: Dispatch<SetStateAction<IUserDataProps>>;
+    offers: number;
 };
 
 // Context
@@ -46,6 +47,7 @@ const UserContext = createContext<IUserStoreProps>({
     userData: EMPTY_USER_DATA,
     toggleActive() {},
     setUserData() {},
+    offers: 0,
 });
 
 // Wrapper
@@ -54,11 +56,12 @@ export function UserStore(props: { children: ReactNode }) {
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const [userData, setUserData] = useState<IUserDataProps>(EMPTY_USER_DATA);
+    const [offers, setOffers] = useState(0);
     const [tokenHoldings, setTokenHoldings] = useState<ITokenResProps[]>([]);
 
     function toggleActive(e?: any) {
-        if (!userData.active) module?.startPublishingOffers(60000);
-        else module?.startPublishingOffers(60000).stop();
+        if (!userData.active) module?.startPublishingOffers(10000);
+        else module?.startPublishingOffers(10000).stop();
         setUserData({ ...userData, active: !userData.active });
     }
 
@@ -83,15 +86,8 @@ export function UserStore(props: { children: ReactNode }) {
                     address: module.address,
                     bio: module.userData.bio,
                     img: module.userData.image,
+                    offers: module.offers,
                 });
-                // const interval = setInterval(() => {
-                //     setUserData({
-                //         ...userData,
-                //         name,
-                //         offers: module.offers,
-                //     });
-                // }, 8 * 1000);
-                // return () => clearInterval(interval);
             }
         })().catch((err) => console.error(err));
     }, [module?.address, module?.userData]);
@@ -108,6 +104,15 @@ export function UserStore(props: { children: ReactNode }) {
         })().catch((err) => console.error(err));
     }, [address]);
 
+    useEffect(() => {
+        if (module) {
+            const interval = setInterval(() => {
+                setOffers(module?.offers?.size || 0);
+            }, 2000);
+            return () => clearInterval(interval);
+        }
+    }, [module]);
+
     return (
         <UserContext.Provider
             value={{
@@ -115,6 +120,7 @@ export function UserStore(props: { children: ReactNode }) {
                 toggleActive,
                 setUserData,
                 tokenHoldings,
+                offers,
             }}
         >
             {props.children}

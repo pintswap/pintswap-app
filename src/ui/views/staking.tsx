@@ -25,7 +25,7 @@ export const StakingView = () => {
 
     return (
         <div className="flex flex-col max-w-5xl mx-auto">
-            <div className="flex items-center justify-between mb-4 gap-6">
+            <div className="flex items-center justify-between mb-3 gap-6">
                 <div className="flex flex-col">
                     <Header>Staking</Header>
                     <div className="flex items-center gap-1.5 mt-1">

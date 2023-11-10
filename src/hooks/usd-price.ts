@@ -37,6 +37,5 @@ export const useUsdPrice = (asset?: string) => {
             }
         })().catch((err) => console.error('#useSubgraph:', err));
     }, [eth, asset]);
-
     return res;
 };

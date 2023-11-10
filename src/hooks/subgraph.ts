@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
 import { getUserHistory, tryBoth } from '../api';
 import { usePintswapContext, usePricesContext } from '../stores';
 import { useAccount } from 'wagmi';
 import { ZeroAddress } from 'ethers6';
 import { useQuery } from '@tanstack/react-query';
+import { IUserHistoryItemProps } from '../utils';
 
 type IUserSubgraphRes = {
     data: {
@@ -11,7 +11,7 @@ type IUserSubgraphRes = {
         token?: any;
         tokenDayDatas?: any[];
         tokenHourDatas?: any[];
-        userHistory?: any[];
+        userHistory?: IUserHistoryItemProps[];
     } | null;
     isLoading: boolean;
     isError: boolean;

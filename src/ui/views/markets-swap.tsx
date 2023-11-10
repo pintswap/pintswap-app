@@ -1,12 +1,21 @@
-import { Card, Asset, Header, TooltipWrapper, SwitchToggle, TransitionModal } from '../components';
+import {
+    Card,
+    Asset,
+    Header,
+    TooltipWrapper,
+    SwitchToggle,
+    TransitionModal,
+    TextDisplay,
+    SmartPrice,
+} from '../components';
 import { DataTable } from '../tables';
 import { Avatar, SwapModule } from '../features';
-import { useTrade } from '../../hooks';
+import { usePrices, useSubgraph, useTrade, useUsdPrice } from '../../hooks';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { Tab } from '@headlessui/react';
 import { EMPTY_TRADE, NETWORKS, toAddress, truncate } from '../../utils';
-import { useOffersContext, usePintswapContext } from '../../stores';
+import { useOffersContext, usePintswapContext, usePricesContext } from '../../stores';
 import { IOffer } from '@pintswap/sdk';
 
 const columns = [
@@ -51,6 +60,9 @@ export const MarketsSwapView = () => {
     const { setOrder, trade, setTrade, displayTradeObj, fulfillTrade, loading, steps } = useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
+    const usdPrice = useUsdPrice(
+        toAddress(isBuy ? displayedTrade.gets.token : displayedTrade.gives.token),
+    );
 
     const peerOffers = useMemo(() => {
         let offers = offersByChain.erc20.filter(
@@ -172,7 +184,7 @@ export const MarketsSwapView = () => {
                     <Header breadcrumbs={renderBreadcrumbs()}>
                         {multiaddr ? 'Peer Orderbook' : 'Market Swap'}
                     </Header>
-                    {multiaddr && (
+                    {multiaddr ? (
                         <div className="justify-self-end hidden sm:block">
                             <TransitionModal
                                 button={
@@ -187,6 +199,18 @@ export const MarketsSwapView = () => {
                                 <Avatar peer={multiaddr} size={300} />
                             </TransitionModal>
                         </div>
+                    ) : (
+                        <TextDisplay
+                            loading={usdPrice === '-'}
+                            value={
+                                <span className="flex items-center gap-1">
+                                    <span className="text-sm">$</span>{' '}
+                                    <SmartPrice price={usdPrice} />
+                                </span>
+                            }
+                            label="Market Price"
+                            align="right"
+                        />
                     )}
                 </div>
                 <div className="flex flex-col lg:flex-row gap-2 md:gap-3 lg:gap-4">
@@ -206,6 +230,7 @@ export const MarketsSwapView = () => {
                             onClick={fulfillTrade}
                             loading={loading}
                             disabled={isLoading || loading.fulfill || !trade.gets.amount}
+                            percentDiff // TODO: not working
                             // max={peerOffers()[isBuy ? 'maxAsk' : 'maxBid'].amount}
                         />
                     </Card>
@@ -228,7 +253,7 @@ export const MarketsSwapView = () => {
                                 options={{
                                     sortOrder: {
                                         name: 'price',
-                                        direction: 'asc',
+                                        direction: 'desc',
                                     },
                                 }}
                                 // activeRow={activeIndex}
@@ -246,7 +271,7 @@ export const MarketsSwapView = () => {
                                 options={{
                                     sortOrder: {
                                         name: 'price',
-                                        direction: 'desc',
+                                        direction: 'asc',
                                     },
                                 }}
                                 // activeRow={activeIndex}
