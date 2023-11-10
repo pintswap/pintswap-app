@@ -154,16 +154,16 @@ export const MarketsSwapView = () => {
 
     useEffect(() => {
         if (quote && base && trade.gets.token === '') {
-            setDisplayedTrade({
-                gives: {
-                    token: base,
-                    amount: '',
-                },
-                gets: {
-                    token: quote,
-                    amount: '',
-                },
-            });
+            (async () => {
+                const found = peerOffers.asks[0];
+                if (found) {
+                    setOrder({ multiAddr: found?.peer, orderHash: found.hash });
+                    const displayOffer = await displayTradeObj(found.raw);
+                    const correctSide = { gives: displayOffer.gets, gets: displayOffer.gives };
+                    setDisplayedTrade(correctSide);
+                    setTrade(displayOffer);
+                }
+            })().catch((err) => console.error(err));
         }
     }, [offersByChain.erc20.length]);
 
@@ -226,6 +226,7 @@ export const MarketsSwapView = () => {
                         </div>
                         <SwapModule
                             trade={displayedTrade}
+                            raw={trade}
                             type="fulfill"
                             onClick={fulfillTrade}
                             loading={loading}

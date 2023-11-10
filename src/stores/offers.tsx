@@ -160,11 +160,13 @@ const getUniqueMarkets = (offers: any[]) => {
                         quote: m.ticker,
                         bases: [],
                         buy: {
+                            tax: m.tax.buy,
                             offers: [m.raw],
                             sum: sum,
                             best: price,
                         },
                         sell: {
+                            tax: m.tax.sell,
                             offers: [],
                             sum: 0,
                             best: 0,
@@ -179,16 +181,19 @@ const getUniqueMarkets = (offers: any[]) => {
                         quote: m.ticker,
                         bases: [],
                         buy: {
+                            tax: m.tax.buy,
                             offers: [],
                             sum: 0,
                             best: 0,
                         },
                         sell: {
+                            tax: m.tax.sell,
                             offers: [m.raw],
                             sum: sum,
                             best: price,
                         },
                         offers: 1,
+                        tax: m.tax,
                     };
                     _uniqueMarkets.push(formatted);
                 }

@@ -7,6 +7,8 @@ type IChangeDisplay = {
     percent?: boolean;
     opposite?: boolean;
     market?: 'buy' | 'sell';
+    tax?: number;
+    noCaret?: boolean;
 };
 
 export const ChangeDisplay = ({
@@ -15,9 +17,12 @@ export const ChangeDisplay = ({
     percent,
     opposite,
     market,
+    tax,
+    noCaret,
 }: IChangeDisplay) => {
     const isMoreThan = opposite ? Number(value) < 0 : Number(value) > 0;
     const iconSize = '12px';
+    const renderValue = market ? Math.abs(Number(value || '0')) : Number(value || '0');
 
     function renderPercentColor() {
         if (value) {
@@ -49,16 +54,26 @@ export const ChangeDisplay = ({
         );
     }
 
-    const renderValue = market ? Math.abs(Number(value || '0')) : Number(value || '0');
     return (
-        <span className={`flex items-center ${renderPercentColor()}`}>
-            {market === 'sell' || isMoreThan ? (
-                <PiCaretDownFill size={iconSize} />
-            ) : (
-                <PiCaretUpFill size={iconSize} />
-            )}
+        <div className="flex items-center gap-1">
+            {tax ? (
+                <span className={'rounded-3xl bg-[rgb(250,204,21,0.1)] px-1 text-yellow-400'}>
+                    T
+                </span>
+            ) : null}
+            <span className={`flex items-center ${renderPercentColor()}`}>
+                {!noCaret && (
+                    <>
+                        {market === 'sell' || isMoreThan ? (
+                            <PiCaretDownFill size={iconSize} />
+                        ) : (
+                            <PiCaretUpFill size={iconSize} />
+                        )}
+                    </>
+                )}
 
-            <span>{percent ? percentFormatter().format(renderValue) : renderValue}</span>
-        </span>
+                <span>{percent ? percentFormatter().format(renderValue) : renderValue}</span>
+            </span>
+        </div>
     );
 };

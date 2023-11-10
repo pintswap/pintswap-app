@@ -1310,6 +1310,9 @@ body {
 .justify-between {
   justify-content: space-between;
 }
+.justify-items-end {
+  justify-items: end;
+}
 .\!gap-3 {
   gap: 0.75rem !important;
 }
@@ -1711,8 +1714,8 @@ body {
 .p-4 {
   padding: 1rem;
 }
-.p-6 {
-  padding: 1.5rem;
+.p-5 {
+  padding: 1.25rem;
 }
 .p-\[2\.5px\] {
   padding: 2.5px;
@@ -1801,6 +1804,10 @@ body {
   padding-top: 1px;
   padding-bottom: 1px;
 }
+.py-\[7px\] {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
 .pb-1 {
   padding-bottom: 0.25rem;
 }
@@ -1828,14 +1835,14 @@ body {
 .pr-1\.5 {
   padding-right: 0.375rem;
 }
+.pr-10 {
+  padding-right: 2.5rem;
+}
 .pr-2 {
   padding-right: 0.5rem;
 }
 .pr-2\.5 {
   padding-right: 0.625rem;
-}
-.pr-6 {
-  padding-right: 1.5rem;
 }
 .pr-8 {
   padding-right: 2rem;
@@ -2504,6 +2511,14 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .md\:gap-0 {
+    gap: 0px;
+  }
+
+  .md\:gap-0\.5 {
+    gap: 0.125rem;
+  }
+
   .md\:gap-1 {
     gap: 0.25rem;
   }
@@ -2548,10 +2563,6 @@ body {
   }
 }
 @media (min-width: 900px) {
-  .mui\:flex {
-    display: flex;
-  }
-
   .mui\:flex-row {
     flex-direction: row;
   }
@@ -2682,10 +2693,6 @@ body {
     padding-left: 1.5rem;
   }
 
-  .lg\:pr-12 {
-    padding-right: 3rem;
-  }
-
   .lg\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -2723,13 +2730,9 @@ body {
     gap: 1.25rem;
   }
 
-  .xl\:px-12 {
-    padding-left: 3rem;
-    padding-right: 3rem;
-  }
-
-  .xl\:pr-16 {
-    padding-right: 4rem;
+  .xl\:px-10 {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
   }
 
   .xl\:text-base {
@@ -2758,12 +2761,24 @@ body {
     margin-bottom: 0.375rem;
   }
 
+  .\32xl\:flex {
+    display: flex;
+  }
+
+  .\32xl\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .\32xl\:justify-items-start {
+    justify-items: start;
+  }
+
   .\32xl\:gap-1 {
     gap: 0.25rem;
   }
 
-  .\32xl\:gap-1\.5 {
-    gap: 0.375rem;
+  .\32xl\:gap-2 {
+    gap: 0.5rem;
   }
 
   .\32xl\:gap-6 {
@@ -2778,6 +2793,10 @@ body {
   .\32xl\:py-4 {
     padding-top: 1rem;
     padding-bottom: 1rem;
+  }
+
+  .\32xl\:pr-12 {
+    padding-right: 3rem;
   }
 
   .\32xl\:text-sm {
