@@ -226,7 +226,7 @@ export function PintswapStore(props: { children: ReactNode }) {
 
     const signIfNecessary = async () => {
         try {
-            if (await isIncorrectSigner()) {
+            if (incorrectModule) {
                 await initialize();
             }
             return true;
