@@ -29,8 +29,6 @@ export type IPintswapStoreProps = {
     initializePintswapFromSigner: ({ signer }: any) => Promise<void>;
     setPeer?: any;
     setPintswap?: any;
-    initialLoad?: boolean;
-    setInitialLoad?: any;
     signIfNecessary: () => Promise<boolean>;
     isIncorrectSigner: () => Promise<boolean>;
     incorrectSigner: boolean;
@@ -108,7 +106,6 @@ export function PintswapStore(props: { children: ReactNode }) {
     const localPsUser = localStorage.getItem(`_pintUser${address ? `-${address}` : ''}`);
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
-    const [initialLoad, setInitialLoad] = useState(true);
     const [incorrectModule, setIncorrectModule] = useState(true);
 
     const [pintswap, setPintswap] = useState<IPintswapProps>({
@@ -239,28 +236,22 @@ export function PintswapStore(props: { children: ReactNode }) {
         }
     };
 
-    // // Check correct module signer
-    // useEffect(() => {
-    //     (async () => setIncorrectModule(await isIncorrectSigner()))().catch((err) =>
-    //         console.error(err),
-    //     );
-    // }, [pintswap.module]);
-
-    // Initialize Pintswap unless just network switch
+    // Initialize Default Signer
     useEffect(() => {
-        (async () => {
-            if (
-                !pintswap.module ||
-                newAddress ||
-                pintswap?.module?.signer?.address === '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199'
-            ) {
-                await initialize();
-            }
-        })().catch((err) => console.error(err));
-        if (newAddress) {
-            setIncorrectModule(true);
-        }
-    }, [signer, newAddress]);
+        (async () => await initialize())().catch((err) => console.error(err));
+    }, []);
+
+    // Initialize Pintswap Obj when wallet connect
+    useEffect(() => {
+        (async () => signer && incorrectModule && (await initialize()))().catch((err) =>
+            console.error(err),
+        );
+    }, [signer]);
+
+    // If switching account, force pintswap initialization again
+    useEffect(() => {
+        (async () => newAddress && setIncorrectModule(true))().catch((err) => console.error(err));
+    }, [newAddress]);
 
     // On chain change, reset any toasts
     useEffect(() => toast.dismiss(), [pintswap.chainId]);
@@ -286,8 +277,6 @@ export function PintswapStore(props: { children: ReactNode }) {
                     ...pintswap,
                     chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
                 },
-                initialLoad,
-                setInitialLoad,
                 initializePintswapFromSigner: async ({ signer }: any) =>
                     await initializePintswapFromSigner({ pintswap, setPintswap, signer }),
                 setPintswap,
