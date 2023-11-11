@@ -268,7 +268,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         if (chain?.id && pintswap.module && signer) {
             pintswap.module.signer = signer;
         }
-    }, [newNetwork, signer]);
+    }, [newNetwork]);
 
     return (
         <PintswapContext.Provider
