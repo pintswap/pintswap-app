@@ -226,8 +226,9 @@ export function PintswapStore(props: { children: ReactNode }) {
 
     const signIfNecessary = async () => {
         try {
-            if (await isIncorrectSigner()) {
+            if (incorrectModule) {
                 await initialize();
+                setIncorrectModule(false);
             }
             return true;
         } catch (err) {
@@ -268,7 +269,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         if (chain?.id && pintswap.module && signer) {
             pintswap.module.signer = signer;
         }
-    }, [newNetwork, signer]);
+    }, [newNetwork]);
 
     return (
         <PintswapContext.Provider
