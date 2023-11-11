@@ -228,6 +228,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         try {
             if (incorrectModule) {
                 await initialize();
+                setIncorrectModule(false);
             }
             return true;
         } catch (err) {
