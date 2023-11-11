@@ -395,67 +395,83 @@ export const useTrade = () => {
     };
 
     const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-        let shallow = new Map(userTrades);
-        switch (step) {
-            case 0:
-                // if (module) savePintswap(module);
-                console.log('#makerListener: taker approving trade');
-                toast('Taker is approving transaction');
-                toast.loading('Swapping...', { toastId: 'swapping' });
-                break;
-            case 1:
-                console.log('#makerListener: taker approved trade');
-                // toast('Taker approved transaction!');
-                break;
-            case 2:
-                console.log('#makerListener: swap is complete');
-                updateSteps('Complete'); // only for maker
-                shallow.delete(order.orderHash);
-                setUserTrades(shallow);
-                shallow = userTrades;
-                clearTrade();
-                updateToast('swapping', 'success');
-                break;
+        try {
+            let shallow = new Map(userTrades);
+            switch (step) {
+                case 0:
+                    // if (module) savePintswap(module);
+                    console.log('#makerListener: taker approving trade');
+                    toast('Taker is approving transaction');
+                    toast.loading('Swapping...', { toastId: 'swapping' });
+                    break;
+                case 1:
+                    console.log('#makerListener: taker approved trade');
+                    // toast('Taker approved transaction!');
+                    break;
+                case 2:
+                    console.log('#makerListener: swap is complete');
+                    updateSteps('Complete'); // only for maker
+                    shallow.delete(order.orderHash);
+                    setUserTrades(shallow);
+                    shallow = userTrades;
+                    clearTrade();
+                    updateToast('swapping', 'success');
+                    break;
+            }
+        } catch (err) {
+            console.error('#makerListener:', err);
+            updateToast('swapping', 'error', 'Error occured while swapping');
         }
     };
 
     const takerListener = async (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-        const [quote, base] = params.pair ? params.pair.split('-') : ['', ''];
-        let shallow = new Map(userTrades);
-        switch (step) {
-            case 0:
-                console.log('#takerListener: fulfilling trade');
-                break;
-            case 1:
-                console.log('#takerListener: taker approving token swap');
-                toast.update('swapping', { render: `Waiting for approval`, className: 'text-sm' });
-                break;
-            case 2:
-                console.log('#takerListener: approved token swap');
-                toast.update('swapping', { render: `Building transaction`, className: 'text-sm' });
-                break;
-            case 3: {
-                console.log('#takerListener: building transaction');
-                toast.update('swapping', {
-                    render: `Swapping ${trade.gets.token || quote.toUpperCase()} ${
-                        trade.gets.token ? 'for' : ''
-                    } ${trade.gives.token}`,
-                    className: 'text-sm',
-                });
-                break;
+        try {
+            const [quote, base] = params.pair ? params.pair.split('-') : ['', ''];
+            let shallow = new Map(userTrades);
+            switch (step) {
+                case 0:
+                    console.log('#takerListener: fulfilling trade');
+                    break;
+                case 1:
+                    console.log('#takerListener: taker approving token swap');
+                    toast.update('swapping', {
+                        render: `Waiting for approval`,
+                        className: 'text-sm',
+                    });
+                    break;
+                case 2:
+                    console.log('#takerListener: approved token swap');
+                    toast.update('swapping', {
+                        render: `Building transaction`,
+                        className: 'text-sm',
+                    });
+                    break;
+                case 3: {
+                    console.log('#takerListener: building transaction');
+                    toast.update('swapping', {
+                        render: `Swapping ${trade.gets.token || quote.toUpperCase()} ${
+                            trade.gives.token ? `for ${trade.gives.token}` : ''
+                        }`,
+                        className: 'text-sm',
+                    });
+                    break;
+                }
+                case 4:
+                    console.log('#takerListener: transaction built');
+                    break;
+                case 5:
+                    console.log('#takerLister: swap complete');
+                    updateSteps('Complete'); // only for taker
+                    updateToast('swapping', 'success', 'Swap successful', order.orderHash);
+                    setLoading({ ...loading, fulfill: false });
+                    setUserTrades(shallow);
+                    shallow.delete(order.orderHash);
+                    clearTrade();
+                    break;
             }
-            case 4:
-                console.log('#takerListener: transaction built');
-                break;
-            case 5:
-                console.log('#takerLister: swap complete');
-                updateSteps('Complete'); // only for taker
-                updateToast('swapping', 'success', 'Swap successful', order.orderHash);
-                setLoading({ ...loading, fulfill: false });
-                setUserTrades(shallow);
-                shallow.delete(order.orderHash);
-                clearTrade();
-                break;
+        } catch (err) {
+            console.error('#takerListener:', err);
+            updateToast('swapping', 'error', 'Error occured while swapping');
         }
     };
 
@@ -506,7 +522,7 @@ export const useTrade = () => {
             }
             return () => {};
         })().catch((err) => console.error(err));
-    }, [module, trade]);
+    }, [module]);
 
     return {
         loading,

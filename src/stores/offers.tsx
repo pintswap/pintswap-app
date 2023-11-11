@@ -285,17 +285,17 @@ export function OffersStore(props: { children: ReactNode }) {
     };
 
     // Listen for orderbook
-    useQuery({
-        queryKey: ['unique-markets'],
-        queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 6,
-        enabled: !!module && module.peers.size > 0,
-    });
+    // useQuery({
+    //     queryKey: ['unique-markets'],
+    //     queryFn: getPublicOrderbook,
+    //     refetchInterval: 1000 * 6,
+    //     enabled: !!module && module.peers.size > 0,
+    // });
     useEffect(() => {
         if (module) {
             if (!allOffers.erc20.length)
                 toast.loading('Connecting to P2P network', { toastId: 'findOffers' });
-            module.once('/pubsub/orderbook-update', getPublicOrderbook);
+            module.on('/pubsub/orderbook-update', getPublicOrderbook);
             return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);
         }
         return () => {};
