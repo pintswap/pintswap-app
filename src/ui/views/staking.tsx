@@ -36,7 +36,7 @@ export const StakingView = () => {
                             Vault rewards are currently only accumalating token taxes until the
                             trading engine is fully integrated. Read more{' '}
                             <a
-                                href="https://iron.pyrosec.gg/pintswap-litepaper.pdf"
+                                href="https://pintswap.exchange/litepaper.pdf"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="underline"
