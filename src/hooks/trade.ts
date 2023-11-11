@@ -438,8 +438,8 @@ export const useTrade = () => {
                 console.log('#takerListener: building transaction');
                 toast.update('swapping', {
                     render: `Swapping ${trade.gets.token || quote.toUpperCase()} ${
-                        trade.gets.token ? 'for' : ''
-                    } ${trade.gives.token}`,
+                        trade.gives.token ? `for ${trade.gives.token}` : ''
+                    }`,
                     className: 'text-sm',
                 });
                 break;
