@@ -1,4 +1,12 @@
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import {
+    createContext,
+    Dispatch,
+    ReactNode,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 import { useSigner, useAccount, useNetwork } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
@@ -26,6 +34,7 @@ export type IPintswapStoreProps = {
     signIfNecessary: () => Promise<boolean>;
     isIncorrectSigner: () => Promise<boolean>;
     incorrectSigner: boolean;
+    setIncorrectSigner: Dispatch<SetStateAction<boolean>>;
 };
 
 // Context
@@ -41,6 +50,7 @@ const PintswapContext = createContext<IPintswapStoreProps>({
     signIfNecessary: () => new Promise((res, rej) => res(false)),
     isIncorrectSigner: () => new Promise((res, rej) => res(false)),
     incorrectSigner: true,
+    setIncorrectSigner: () => false,
 });
 
 // Utils
@@ -157,8 +167,12 @@ export function PintswapStore(props: { children: ReactNode }) {
                         );
                     }
                     (window as any).ps = ps;
-                    ps.on('pintswap/node/status', (s: any) => {
+                    ps.on('pintswap/node/status', async (s: number) => {
                         if (TESTING) console.log('Node emitting', s);
+                        if (s === 1) {
+                            const incorrectSigner = await isIncorrectSigner();
+                            setIncorrectModule(!incorrectSigner);
+                        }
                     });
                     // Stop exisiting node if there is one started
                     if (pintswap.module?.isStarted() && pintswap.module) {
@@ -225,12 +239,12 @@ export function PintswapStore(props: { children: ReactNode }) {
         }
     };
 
-    // Check correct module signer
-    useEffect(() => {
-        (async () => setIncorrectModule(await isIncorrectSigner()))().catch((err) =>
-            console.error(err),
-        );
-    }, [pintswap.module]);
+    // // Check correct module signer
+    // useEffect(() => {
+    //     (async () => setIncorrectModule(await isIncorrectSigner()))().catch((err) =>
+    //         console.error(err),
+    //     );
+    // }, [pintswap.module]);
 
     // Initialize Pintswap unless just network switch
     useEffect(() => {
@@ -238,8 +252,12 @@ export function PintswapStore(props: { children: ReactNode }) {
             !pintswap.module ||
             newAddress ||
             pintswap?.module?.signer?.address === '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199'
-        )
+        ) {
             initialize();
+        }
+        if (newAddress) {
+            setIncorrectModule(true);
+        }
     }, [signer, newAddress]);
 
     // On chain change, reset any toasts
@@ -274,6 +292,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                 signIfNecessary,
                 isIncorrectSigner,
                 incorrectSigner: incorrectModule,
+                setIncorrectSigner: setIncorrectModule,
             }}
         >
             {props.children}
