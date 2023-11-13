@@ -108,6 +108,14 @@
         },
         {
             "chainId": 1,
+            "address": "0x37da9de38c4094e090c014325f6ef4baeb302626",
+            "name": "OTSea",
+            "symbol": "OTSea",
+            "decimals": 18,
+            "logoURI": "https://assets.coingecko.com/coins/images/31900/standard/photo_2023-09-17_16-46-21.jpg?1696530711"
+        },
+        {
+            "chainId": 1,
             "address": "0x111111111117dC0aa78b770fA6A738034120C302",
             "name": "1inch",
             "symbol": "1INCH",
