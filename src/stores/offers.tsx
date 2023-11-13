@@ -22,7 +22,6 @@ import {
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
-import { useQuery } from '@tanstack/react-query';
 import { usePricesContext } from './prices';
 
 // Types
@@ -139,7 +138,7 @@ const getUniqueMarkets = (offers: any[]) => {
         offers.forEach((m: any) => {
             const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
             const price = parseFloat(m.price);
-            const sum = parseFloat(m.amount);
+            const sum = parseFloat(m.amount) * price;
             const isBuy = m.type === 'ask';
             if (found) {
                 found.offers += 1;

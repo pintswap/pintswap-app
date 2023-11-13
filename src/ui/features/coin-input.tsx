@@ -2,7 +2,7 @@ import { ChangeEventHandler, ReactNode, useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { percentChange, toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton, ChangeDisplay } from '../components';
-import { usePintswapContext, usePricesContext } from '../../stores';
+import { usePintswapContext } from '../../stores';
 import { useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
 
@@ -45,7 +45,6 @@ export const CoinInput = ({
     const {
         pintswap: { chainId },
     } = usePintswapContext();
-    const { eth } = usePricesContext();
     const balance = useBalance(
         asset?.toUpperCase() === 'ETH'
             ? { address }

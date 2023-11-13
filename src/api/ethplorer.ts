@@ -38,7 +38,6 @@ export const getTokenBalances = async (address: string): Promise<ITokenResProps[
                     });
                 }
             });
-        if (TESTING) console.log('#getTokenHoldings:', final);
         return final;
     } catch (err) {
         console.error('#getTokenHoldings');
