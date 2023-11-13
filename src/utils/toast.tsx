@@ -19,6 +19,7 @@ export const updateToast = (
     type: 'success' | 'error',
     msg?: string,
     hash?: string,
+    timer?: number,
 ) => {
     if (type === 'success') {
         toast.update(toastId, {
@@ -29,6 +30,7 @@ export const updateToast = (
             },
             icon: <BsFillCheckCircleFill size="20px" color="#41a75b" />,
             ...defaultToastOptions,
+            autoClose: timer || defaultToastOptions.autoClose,
         });
     } else {
         toast.update(toastId, {
@@ -45,6 +47,7 @@ export const updateToast = (
             },
             icon: <BsFillExclamationCircleFill size="20px" color="#db4343" />,
             ...defaultToastOptions,
+            autoClose: timer || defaultToastOptions.autoClose,
         });
     }
 };

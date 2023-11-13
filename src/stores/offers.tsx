@@ -258,7 +258,7 @@ export function OffersStore(props: { children: ReactNode }) {
                 toast.update('findOffers', { render: 'Getting peer offers' });
             const availablePeers = (await resolveNames(module?.peers as any, module as any)) as any;
             if (!offersByChain.erc20.length)
-                updateToast('findOffers', 'success', 'Returning peer offers');
+                updateToast('findOffers', 'success', 'Connected', undefined, 2000);
             const grouped = groupByType(availablePeers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);

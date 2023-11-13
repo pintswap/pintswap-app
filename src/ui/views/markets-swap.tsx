@@ -60,9 +60,7 @@ export const MarketsSwapView = () => {
     const { setOrder, trade, setTrade, displayTradeObj, fulfillTrade, loading, steps } = useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
-    const usdPrice = useUsdPrice(
-        toAddress(isBuy ? displayedTrade.gets.token : displayedTrade.gives.token),
-    );
+    const usdPrice = useUsdPrice(toAddress(quote));
 
     const peerOffers = useMemo(() => {
         let offers = offersByChain.erc20.filter(
