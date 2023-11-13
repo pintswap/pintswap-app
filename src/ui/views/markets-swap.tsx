@@ -99,7 +99,7 @@ export const MarketsSwapView = () => {
             const displayOffer = await displayTradeObj(found.raw);
             const correctSide = { gives: displayOffer.gets, gets: displayOffer.gives };
             setDisplayedTrade(correctSide);
-            setTrade(displayOffer);
+            setTrade(found.raw);
         }
     };
 
