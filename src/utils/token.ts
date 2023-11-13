@@ -205,8 +205,8 @@ export async function getTokenAttributes(
     }
 }
 
-export async function getDecimals(token: string, chainId: number) {
-    if (!token || !chainId) return token || '';
+export async function getDecimals(token: string, chainId: number): Promise<number> {
+    if (!token || !chainId) return 18;
     const provider = providerFromChainId(chainId);
     if (isAddress(token)) {
         const address = getAddress(token);
