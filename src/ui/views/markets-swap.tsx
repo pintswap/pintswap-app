@@ -180,7 +180,7 @@ export const MarketsSwapView = () => {
     return (
         <>
             <div className="flex flex-col">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-2.5 lg:mb-3">
                     <Header breadcrumbs={renderBreadcrumbs()}>
                         {multiaddr ? 'Peer Orderbook' : 'Market Swap'}
                     </Header>
@@ -215,7 +215,7 @@ export const MarketsSwapView = () => {
                 </div>
                 <div className="flex flex-col lg:flex-row gap-2 md:gap-3 lg:gap-4">
                     <Card className="lg:max-w-lg">
-                        <h2 className="mb-2 lg:mb-3 font-semibold">Swap</h2>
+                        <h2 className="mb-3 font-semibold">Swap</h2>
                         <div className="mb-3">
                             <SwitchToggle
                                 labelOn="Buy"
