@@ -175,7 +175,7 @@ export async function toLimitOrder(
         amount,
         type,
         ticker,
-        hash: hashOffer(offer),
+        hash: offer?.hash || '',
         priceUsd: String(usdTotal),
         priceEth: (usdTotal * Number(eth)).toString(),
         tax: {
@@ -185,7 +185,8 @@ export async function toLimitOrder(
             [trade.address]: tradeTokenTax,
         },
         raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
-        peer: '',
+        peer: offer?.peer || '',
+        multiAddr: offer?.peer || '',
     };
 }
 

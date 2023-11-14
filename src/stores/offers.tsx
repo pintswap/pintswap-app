@@ -23,6 +23,7 @@ import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
 import { usePricesContext } from './prices';
+import { useQuery } from '@tanstack/react-query';
 
 // Types
 export type IOffersStoreProps = {
@@ -132,7 +133,7 @@ const toFlattened = memoize(
 );
 
 // Get unique ERC20 markets
-const getUniqueMarkets = (offers: any[]) => {
+const getUniqueMarkets = memoize((offers: any[]) => {
     if (offers.length) {
         const _uniqueMarkets: IMarketProps[] = [];
         offers.forEach((m: any) => {
@@ -201,7 +202,7 @@ const getUniqueMarkets = (offers: any[]) => {
         return _uniqueMarkets;
     }
     return [];
-};
+});
 
 const filterByChain = (arr: any[], chainId: number) => arr.filter((el) => el.chainId === chainId);
 
@@ -253,31 +254,21 @@ export function OffersStore(props: { children: ReactNode }) {
 
     // Get Active Trades
     const getPublicOrderbook = async () => {
-        if ((module?.peers.size as any) > 0) {
-            if (!offersByChain.erc20.length && !uniqueMarkets.length)
-                toast.update('findOffers', { render: 'Getting peer offers' });
-            const availablePeers = (await resolveNames(module?.peers as any, module as any)) as any;
-            if (!offersByChain.erc20.length)
-                updateToast('findOffers', 'success', 'Connected', undefined, 2000);
-            const grouped = groupByType(availablePeers);
+        if (module?.peers?.size) {
+            updateToast('findOffers', 'success', 'Connected successfully', undefined, 2000);
+            const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
             const flattenedNftTrades = await toFlattened(grouped.nft);
-            const mappedPairs = (
-                await Promise.all(
-                    flattenedPairs.map(
-                        async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
-                    ),
-                )
-            ).map((v, i) => ({
-                ...v,
-                peer: flattenedPairs[i].peer,
-                multiAddr: flattenedPairs[i].multiAddr,
-            }));
+            const mappedPairs = await Promise.all(
+                flattenedPairs.map(
+                    async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
+                ),
+            );
             const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
             setAllOffers(returnObj);
             setUniqueMarkets(getUniqueMarkets(mappedPairs));
-            setIsLoading(false);
+            if (mappedPairs.length) setIsLoading(false);
             return returnObj;
         }
         return { nft: [], erc20: [] };
