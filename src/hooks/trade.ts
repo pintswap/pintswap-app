@@ -468,6 +468,9 @@ export const useTrade = () => {
                     } else if (step === 'timeout') {
                         console.log('#takerListener: timeout');
                         updateToast('swapping', 'error', 'Error occured while swapping');
+                    } else if (step === 'dial request has no valid addresses') {
+                        console.log('#takerListener:', step);
+                        updateToast('swapping', 'error', 'Peer is no longer available');
                     } else {
                         console.log('#takerListener: swap complete');
                         updateSteps('Complete'); // only for taker
@@ -475,7 +478,7 @@ export const useTrade = () => {
                         await waitForTransaction({
                             hash: step as any,
                         });
-                        updateToast('swapping', 'success', 'Contract created', step);
+                        updateToast('swapping', 'success', 'Swap successful', step);
                         // setUserTrades(shallow);
                         // shallow.delete(order.orderHash);
                     }
