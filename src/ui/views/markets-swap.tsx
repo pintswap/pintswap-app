@@ -64,7 +64,6 @@ export const MarketsSwapView = () => {
         if (multiaddr) offers = offers.filter((el) => el.peer === multiaddr);
         const bids = offers.filter((el) => el.type === 'bid');
         const asks = offers.filter((el) => el.type === 'ask');
-        if (!asks.length && offersByChain.erc20.length) setIsBuy(false);
         return {
             bids,
             asks,

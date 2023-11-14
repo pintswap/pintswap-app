@@ -465,12 +465,18 @@ export const useTrade = () => {
                     if (step === 'user rejected signing') {
                         console.log('#takerListener: rejected transaction');
                         toast.dismiss();
-                    } else if (step === 'timeout') {
+                    } else if (step === 'maker not responsive') {
+                        console.log('#takerListener: maker unresponsive');
+                        updateToast('swapping', 'error', 'Peer took too long to approve');
+                    } else if (step === 'timeout' || step === 'ERROR') {
                         console.log('#takerListener: timeout');
                         updateToast('swapping', 'error', 'Error occured while swapping');
+                    } else if (step === 'insufficient funds') {
+                        console.log('#takerListener:', 'Not enough funds for gas');
+                        updateToast('swapping', 'error', 'Insufficient ETH for gas');
                     } else if (step === 'dial request has no valid addresses') {
                         console.log('#takerListener:', step);
-                        updateToast('swapping', 'error', 'Peer is no longer available');
+                        updateToast('swapping', 'error', 'Trade is no longer available');
                     } else {
                         console.log('#takerListener: swap complete');
                         updateSteps('Complete'); // only for taker
