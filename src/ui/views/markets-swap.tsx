@@ -1,8 +1,6 @@
 import {
     Card,
-    Asset,
     Header,
-    TooltipWrapper,
     SwitchToggle,
     TransitionModal,
     TextDisplay,
@@ -10,12 +8,12 @@ import {
 } from '../components';
 import { DataTable } from '../tables';
 import { Avatar, SwapModule } from '../features';
-import { usePrices, useSubgraph, useTrade, useUsdPrice } from '../../hooks';
+import { useTrade, useUsdPrice } from '../../hooks';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { EMPTY_TRADE, NETWORKS, toAddress, truncate } from '../../utils';
-import { useOffersContext, usePintswapContext, usePricesContext } from '../../stores';
+import { EMPTY_TRADE, toAddress, truncate } from '../../utils';
+import { useOffersContext } from '../../stores';
 import { IOffer } from '@pintswap/sdk';
 
 const columns = [
@@ -49,10 +47,7 @@ const columns = [
 ];
 
 export const MarketsSwapView = () => {
-    const { pathname, state } = useLocation();
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+    const { pathname } = useLocation();
     const { offersByChain, isLoading } = useOffersContext();
     const { pair, multiaddr } = useParams();
     const quote = pair?.split('-')[0] || '';
@@ -60,9 +55,7 @@ export const MarketsSwapView = () => {
     const { setOrder, trade, setTrade, displayTradeObj, fulfillTrade, loading, steps } = useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
-    const usdPrice = useUsdPrice(
-        toAddress(isBuy ? displayedTrade.gets.token : displayedTrade.gives.token),
-    );
+    const usdPrice = useUsdPrice(toAddress(quote));
 
     const peerOffers = useMemo(() => {
         let offers = offersByChain.erc20.filter(
@@ -71,7 +64,6 @@ export const MarketsSwapView = () => {
         if (multiaddr) offers = offers.filter((el) => el.peer === multiaddr);
         const bids = offers.filter((el) => el.type === 'bid');
         const asks = offers.filter((el) => el.type === 'ask');
-        if (!asks.length && offersByChain.erc20.length) setIsBuy(false);
         return {
             bids,
             asks,
@@ -127,25 +119,25 @@ export const MarketsSwapView = () => {
     };
 
     const renderEmptyTrade = () => {
-        if (isBuy && peerOffers.asks.length) {
+        if (!isBuy && peerOffers.bids.length) {
             setDisplayedTrade({
                 gives: {
-                    token: base,
+                    token: quote,
                     amount: '',
                 },
                 gets: {
-                    token: quote,
+                    token: base,
                     amount: '',
                 },
             });
         } else {
             setDisplayedTrade({
                 gives: {
-                    token: quote,
+                    token: base,
                     amount: '',
                 },
                 gets: {
-                    token: base,
+                    token: quote,
                     amount: '',
                 },
             });
@@ -166,6 +158,26 @@ export const MarketsSwapView = () => {
             })().catch((err) => console.error(err));
         }
     }, [offersByChain.erc20.length]);
+
+    useEffect(() => {
+        if (
+            trade.gets.amount === '' &&
+            trade.gives.amount === '' &&
+            displayedTrade.gets.amount !== '' &&
+            displayedTrade.gives.amount !== ''
+        ) {
+            setDisplayedTrade({
+                gives: {
+                    token: base,
+                    amount: '',
+                },
+                gets: {
+                    token: quote,
+                    amount: '',
+                },
+            });
+        }
+    }, [trade.gets.amount, trade.gives.amount]);
 
     useEffect(() => {
         renderEmptyTrade();

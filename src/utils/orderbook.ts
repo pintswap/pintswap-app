@@ -1,12 +1,12 @@
-import { BigNumberish, ethers, Signer } from 'ethers6';
+import { BigNumberish, ethers } from 'ethers6';
 import { groupBy } from 'lodash';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
-import { fromAddress, getDecimals, getSymbol, toAddress, toTicker } from './token';
+import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
-import { getEthPrice, getManyV2Tokens, getQuote, getTokenTax, tryBoth } from '../api';
+import { getEthPrice, getTokenTax, tryBoth } from '../api';
 import { convertExponentialToDecimal } from './format';
 
 function givesBase(offer: any) {
@@ -175,7 +175,7 @@ export async function toLimitOrder(
         amount,
         type,
         ticker,
-        hash: hashOffer(offer),
+        hash: offer?.hash || '',
         priceUsd: String(usdTotal),
         priceEth: (usdTotal * Number(eth)).toString(),
         tax: {
@@ -185,7 +185,8 @@ export async function toLimitOrder(
             [trade.address]: tradeTokenTax,
         },
         raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
-        peer: '',
+        peer: offer?.peer || '',
+        multiAddr: offer?.peer || '',
     };
 }
 

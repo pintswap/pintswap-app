@@ -28,7 +28,7 @@ export const Navbar = () => {
                 className={`bg-brand-dashboard py-2.5 lg:py-3 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
-                    <button onClick={() => navigate('/')} className="flex gap-1">
+                    <button onClick={() => navigate('/')} className="flex gap-1 w-fit">
                         <img
                             src="/logo/pintswap-logo.svg"
                             alt="PintSwap Logo"
@@ -71,7 +71,7 @@ export const Navbar = () => {
                 leave="transform transition ease-in-out duration-500"
                 leaveFrom="translate-y-0"
                 leaveTo="-translate-y-[100vw]"
-                className="absolute z-20 right-0 top-[50px]"
+                className="absolute z-30 right-0 top-[50px]"
             >
                 <ul className="flex flex-col w-screen bg-brand-dashboard shadow-md p-2 items-start">
                     {NAV_ITEMS.map((item, i) => (

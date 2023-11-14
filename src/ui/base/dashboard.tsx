@@ -43,7 +43,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                                     >
                                         <button
                                             onClick={() => navigate(el.route || '/')}
-                                            className={`w-full text-left pl-4 lg:pl-6 py-1.5 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed pr-2`}
+                                            className={`w-full text-left pl-4 lg:pl-6 py-1.5 flex items-center gap-1 lg:gap-2 transition duration-200 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed pr-4`}
                                             disabled={el.text === 'NFTs'}
                                         >
                                             <ActiveText
