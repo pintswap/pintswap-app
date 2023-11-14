@@ -22,6 +22,7 @@ import {
 import { ethers } from 'ethers';
 import { useSigner, useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
+import { waitForTransaction } from '@wagmi/core';
 
 function stringify(obj: any) {
     let cache: any = [];
@@ -394,9 +395,9 @@ export const useTrade = () => {
         }
     };
 
-    const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+    const makerListener = (step: 0 | 1 | 2 | string) => {
         try {
-            let shallow = new Map(userTrades);
+            // let shallow = new Map(userTrades);
             switch (step) {
                 case 0:
                     // if (module) savePintswap(module);
@@ -411,11 +412,14 @@ export const useTrade = () => {
                 case 2:
                     console.log('#makerListener: swap is complete');
                     updateSteps('Complete'); // only for maker
-                    shallow.delete(order.orderHash);
-                    setUserTrades(shallow);
-                    shallow = userTrades;
+                    module?.offers.delete(order.orderHash);
+                    // setUserTrades(shallow);
+                    // shallow = userTrades;
                     clearTrade();
                     updateToast('swapping', 'success');
+                    break;
+                default:
+                    console.log('#makerListener: swap is complete');
                     break;
             }
         } catch (err) {
@@ -424,10 +428,10 @@ export const useTrade = () => {
         }
     };
 
-    const takerListener = async (step: 0 | 1 | 2 | 3 | 4 | 5) => {
+    const takerListener = async (step: 0 | 1 | 2 | 3 | 4 | string) => {
         try {
             const [quote, base] = params.pair ? params.pair.split('-') : ['', ''];
-            let shallow = new Map(userTrades);
+            // let shallow = new Map(userTrades);
             switch (step) {
                 case 0:
                     console.log('#takerListener: fulfilling trade');
@@ -449,9 +453,7 @@ export const useTrade = () => {
                 case 3: {
                     console.log('#takerListener: building transaction');
                     toast.update('swapping', {
-                        render: `Swapping ${trade.gets.token || quote.toUpperCase()} ${
-                            trade.gives.token ? `for ${trade.gives.token}` : ''
-                        }`,
+                        render: `Building transaction`,
                         className: 'text-sm',
                     });
                     break;
@@ -459,13 +461,25 @@ export const useTrade = () => {
                 case 4:
                     console.log('#takerListener: transaction built');
                     break;
-                case 5:
-                    console.log('#takerLister: swap complete');
-                    updateSteps('Complete'); // only for taker
-                    updateToast('swapping', 'success', 'Swap successful', order.orderHash);
+                default:
+                    if (step === 'user rejected signing') {
+                        console.log('#takerListener: rejected transaction');
+                        toast.dismiss();
+                    } else if (step === 'ERR') {
+                        console.log('#takerListener: ERR');
+                        updateToast('swapping', 'error', 'Error occured while swapping');
+                    } else {
+                        console.log('#takerListener: swap complete');
+                        updateSteps('Complete'); // only for taker
+                        updateToast('swapping', 'pending', undefined, step);
+                        await waitForTransaction({
+                            hash: step as any,
+                        });
+                        updateToast('swapping', 'success', 'Contract created', step);
+                        // setUserTrades(shallow);
+                        // shallow.delete(order.orderHash);
+                    }
                     setLoading({ ...loading, fulfill: false });
-                    setUserTrades(shallow);
-                    shallow.delete(order.orderHash);
                     clearTrade();
                     break;
             }

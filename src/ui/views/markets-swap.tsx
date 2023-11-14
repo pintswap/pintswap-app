@@ -125,7 +125,7 @@ export const MarketsSwapView = () => {
     };
 
     const renderEmptyTrade = () => {
-        if (isBuy && peerOffers.asks.length) {
+        if (isBuy) {
             setDisplayedTrade({
                 gives: {
                     token: base,
@@ -167,6 +167,10 @@ export const MarketsSwapView = () => {
 
     useEffect(() => {
         renderEmptyTrade();
+    }, []);
+
+    useEffect(() => {
+        if (peerOffers.asks.length) renderEmptyTrade();
     }, [isBuy]);
 
     useEffect(() => {
