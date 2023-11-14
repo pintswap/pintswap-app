@@ -125,7 +125,7 @@ export const MarketsSwapView = () => {
     };
 
     const renderEmptyTrade = () => {
-        if (isBuy) {
+        if (isBuy && peerOffers.asks.length) {
             setDisplayedTrade({
                 gives: {
                     token: base,
@@ -166,11 +166,20 @@ export const MarketsSwapView = () => {
     }, [offersByChain.erc20.length]);
 
     useEffect(() => {
-        renderEmptyTrade();
+        setDisplayedTrade({
+            gives: {
+                token: base,
+                amount: '',
+            },
+            gets: {
+                token: quote,
+                amount: '',
+            },
+        });
     }, []);
 
     useEffect(() => {
-        if (peerOffers.asks.length) renderEmptyTrade();
+        renderEmptyTrade();
     }, [isBuy]);
 
     useEffect(() => {

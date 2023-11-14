@@ -22,11 +22,10 @@
   /* react-toastify */
   .Toastify__toast-theme--colored.Toastify__toast--success {
   }
-  .Toastify__progress-bar--success, 
+  .Toastify__progress-bar--success,
   .Toastify__progress-bar-theme--colored.Toastify__progress-bar--success {
-    background-color: #34d399 !important
+    background-color: #34d399 !important;
   }
-
 
   /* For upload profile picture */
   ::file-selector-button {

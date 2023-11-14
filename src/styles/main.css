@@ -427,6 +427,8 @@ html,
   }
 }
 
+/* react-toastify */
+
 /* For upload profile picture */
 
 ::file-selector-button {
@@ -1917,10 +1919,6 @@ html,
   --tw-text-opacity: 1;
   color: rgb(255 111 169 / var(--tw-text-opacity));
 }
-.text-brand-blue{
-  --tw-text-opacity: 1;
-  color: rgb(14 165 233 / var(--tw-text-opacity));
-}
 .text-gray-300{
   --tw-text-opacity: 1;
   color: rgb(209 213 219 / var(--tw-text-opacity));
@@ -2229,9 +2227,9 @@ html,
   --tw-text-opacity: 1 !important;
   color: rgb(239 68 68 / var(--tw-text-opacity)) !important;
 }
-.hover\:text-brand-purple:hover{
+.hover\:text-accent:hover{
   --tw-text-opacity: 1;
-  color: rgb(79 70 229 / var(--tw-text-opacity));
+  color: rgb(255 72 120 / var(--tw-text-opacity));
 }
 .hover\:text-gray-200:hover{
   --tw-text-opacity: 1;

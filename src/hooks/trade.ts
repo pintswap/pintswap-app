@@ -465,8 +465,8 @@ export const useTrade = () => {
                     if (step === 'user rejected signing') {
                         console.log('#takerListener: rejected transaction');
                         toast.dismiss();
-                    } else if (step === 'ERR') {
-                        console.log('#takerListener: ERR');
+                    } else if (step === 'timeout') {
+                        console.log('#takerListener: timeout');
                         updateToast('swapping', 'error', 'Error occured while swapping');
                     } else {
                         console.log('#takerListener: swap complete');
