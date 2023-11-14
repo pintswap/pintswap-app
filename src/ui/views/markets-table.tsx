@@ -60,7 +60,7 @@ export const MarketsTableView = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-3 gap-6">
+            <div className="flex items-center justify-between mb-2.5 lg:mb-3 gap-6">
                 <Header breadcrumbs={[{ text: 'Markets', link: '/markets' }]}>Explore</Header>
                 <Input
                     value={query}

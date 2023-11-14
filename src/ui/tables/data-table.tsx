@@ -11,7 +11,14 @@ import {
     useUserContext,
 } from '../../stores';
 import { useParams } from 'react-router-dom';
-import { BASE_URL, NETWORKS, truncate, numberFormatter, percentChange } from '../../utils';
+import {
+    BASE_URL,
+    NETWORKS,
+    truncate,
+    numberFormatter,
+    percentChange,
+    convertExponentialToDecimal,
+} from '../../utils';
 import { muiCache, muiOptions, muiTheme } from '../../config';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
@@ -385,11 +392,12 @@ const CustomRow = (props: IDataTableProps) => {
                     </span>
                     <span className="flex-col hidden 2xl:flex">
                         <span className="text-xs">
-                            <span className="text-neutral-400">Liquid:</span>{' '}
-                            {Number(_cell.sum) < 100 ? (
+                            <span className="text-neutral-400">Liquid:</span>
+                            {' $'}
+                            {Number(_cell.sum) < 10 ? (
                                 <SmartPrice price={_cell.sum} />
                             ) : (
-                                numberFormatter().format(_cell.sum)
+                                numberFormatter(2).format(_cell.sum)
                             )}
                         </span>
                         <span className="text-xs">

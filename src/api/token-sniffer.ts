@@ -1,11 +1,10 @@
 import { ZeroAddress, getAddress, isAddress } from 'ethers6';
 import { DAI, USDC, USDT, tokenTaxCache } from '../utils';
 
-// REQUEST OPTIONS
+// CONFIG
 const options = { method: 'GET', headers: { accept: 'application/json' } };
-
 const baseUrl = 'https://tokensniffer.com/api/v2';
-
+const apiKey = process.env.REACT_APP_TOKEN_SNIFFER_KEY;
 const defaultReturn = { buy: 0, sell: 0 };
 
 export const getTokenTax = async (
@@ -28,10 +27,9 @@ export const getTokenTax = async (
         return returnObj;
     }
     if (tokenTaxCache[chainId][_address]) return tokenTaxCache[chainId][_address];
+    if (!apiKey) return defaultReturn;
 
-    const url = `${baseUrl}/tokens/1/${_address}?apikey=${
-        process.env.REACT_APP_TOKEN_SNIFFER_KEY || 'freekey'
-    }&include_metrics=true&include_tests=false`;
+    const url = `${baseUrl}/tokens/1/${_address}?apikey=${apiKey}&include_metrics=true&include_tests=false`;
 
     try {
         const res = await fetch(url, options);

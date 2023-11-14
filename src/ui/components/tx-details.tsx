@@ -58,7 +58,7 @@ export const TxDetails = ({
             {({ open, close }) => (
                 <div>
                     <Disclosure.Button
-                        className={`w-full flex items-center justify-between bg-neutral-900 p-3 ${
+                        className={`w-full flex items-center justify-between bg-neutral-900 px-3 py-2.5 ${
                             open
                                 ? 'rounded-t-lg text-neutral-100'
                                 : 'rounded-lg text-neutral-400 hover:text-neutral-300'

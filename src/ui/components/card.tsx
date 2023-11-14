@@ -62,7 +62,7 @@ export const Card = ({
                     className={`flex flex-col ${backgroundColor} pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
                 >
                     {tabs && !header && (
-                        <div className="flex items-center justify-between text-center mb-2 lg:mb-3 font-semibold">
+                        <div className="flex items-center justify-between text-center mb-2.5 lg:mb-3 font-semibold">
                             <Tab.List className={`flex items-center gap-0.5`}>
                                 {tabs.map((tab, i) => (
                                     <Tab

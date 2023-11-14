@@ -116,7 +116,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </main>
                 </div>
 
-                {address && (
+                <FadeIn show={!!address && !incorrectSigner}>
                     <div className="fixed left-2 bottom-1">
                         <Avatar
                             size={42}
@@ -125,7 +125,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                             peer={pintswap?.module?.address}
                         />
                     </div>
-                )}
+                </FadeIn>
             </>
         );
     }

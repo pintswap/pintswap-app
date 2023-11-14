@@ -33,7 +33,7 @@ export const SwitchToggle = ({
                     checked={state}
                     onChange={setState}
                     disabled={disabled}
-                    className={`bg-neutral-800  hover:outline hover:outline-1 hover:outline-neutral-700 w-full relative inline-flex items-center rounded transition-colors focus:ring-0`}
+                    className={`bg-neutral-800 hover:outline hover:outline-1 hover:outline-neutral-700 w-full relative inline-flex items-center rounded transition-colors focus:ring-0`}
                 >
                     <span
                         className={`${
