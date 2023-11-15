@@ -5,7 +5,7 @@ import { Button, Card, PageStatus, SpinnerLoader } from '../components';
 import { Avatar, NFTDisplay } from '../features';
 import { useTrade } from '../../hooks';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { INFTProps, toFormatted, fetchNFT, updateToast } from '../../utils';
+import { INFTProps, toFormatted, fetchNFT, renderToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 
 export const FulfillNFTView = () => {
@@ -26,7 +26,7 @@ export const FulfillNFTView = () => {
     useEffect(() => {
         (async () => {
             if (offer) {
-                updateToast('loading-fulfill-nft', 'success', 'Connected to peer');
+                renderToast('loading-fulfill-nft', 'success', 'Connected to peer');
                 const n = await fetchNFT(offer.gives);
                 const cost = await toFormatted(offer.gets, chainId);
                 setLoading(false);
@@ -36,7 +36,7 @@ export const FulfillNFTView = () => {
     }, [offer]);
 
     useEffect(() => {
-        updateToast('loading-fulfill-nft', 'pending', 'Connecting to peer');
+        renderToast('loading-fulfill-nft', 'pending', 'Connecting to peer');
     }, []);
 
     const peer = state?.peer ? state.peer : multiaddr;

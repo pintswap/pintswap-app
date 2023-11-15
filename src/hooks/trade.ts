@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
 import {
     savePintswap,
-    updateToast,
+    renderToast,
     EMPTY_TRADE,
     TESTING,
     IOrderStateProps,
@@ -92,7 +92,7 @@ export const useTrade = (isOTC?: boolean) => {
         setLoading({ ...loading, fulfill: true });
 
         // Set loading
-        updateToast('swapping', 'pending', `Initiating trade. Please do not refresh the page.`);
+        renderToast('swapping', 'pending', `Initiating trade. Please do not refresh the page.`);
         if (module) {
             // Determine correct offer
             let offer = trade;
@@ -134,9 +134,9 @@ export const useTrade = (isOTC?: boolean) => {
                 // worker.onerror = (err) => {
                 //     console.error('#fulfillTrade - Error:', err);
                 //     if (String(err).toLowerCase().includes('user rejected')) {
-                //         updateToast('swapping', 'error', 'User rejected signature');
+                //         renderToast('swapping', 'error', 'User rejected signature');
                 //     } else {
-                //         updateToast('swapping', 'error', 'Error occured while swapping');
+                //         renderToast('swapping', 'error', 'Error occured while swapping');
                 //     }
                 // };
                 // worker.addEventListener('message', (event) => console.log(event.data));
@@ -156,7 +156,7 @@ export const useTrade = (isOTC?: boolean) => {
             } catch (err) {
                 console.error(err);
                 setError(true);
-                updateToast('swapping', 'error', 'Error occured while swapping');
+                renderToast('swapping', 'error', 'Error occured while swapping');
             }
         }
     };
@@ -201,7 +201,7 @@ export const useTrade = (isOTC?: boolean) => {
                 _offers = new Map(offers.map((offer) => [hashOffer(offer), offer]));
                 if (TESTING) console.log('#getTrades - Map:', _offers);
                 setPeerTrades(_offers);
-                updateToast('findPeer', 'success', 'Connected to peer!');
+                renderToast('findPeer', 'success', 'Connected to peer!');
             }
         }
 
@@ -313,7 +313,7 @@ export const useTrade = (isOTC?: boolean) => {
                 break;
             case 2:
                 console.log('#peerListener: found peer offers');
-                // updateToast('findPeer', 'success', 'Connected to peer!');
+                // renderToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 3:
                 console.log('#peerListener: returning offers');
@@ -330,7 +330,7 @@ export const useTrade = (isOTC?: boolean) => {
                     // if (module) savePintswap(module);
                     console.log('#makerListener: taker approving trade');
                     toast('Taker is approving transaction');
-                    updateToast('swapping', 'pending', 'Peer taking transaction');
+                    renderToast('swapping', 'pending', 'Peer taking transaction');
                     break;
                 case 1:
                     console.log('#makerListener: taker approved trade');
@@ -343,7 +343,7 @@ export const useTrade = (isOTC?: boolean) => {
                     // setUserTrades(shallow);
                     // shallow = userTrades;
                     clearTrade();
-                    updateToast('swapping', 'success');
+                    renderToast('swapping', 'success');
                     break;
                 default:
                     console.log('#makerListener: swap is complete');
@@ -351,7 +351,7 @@ export const useTrade = (isOTC?: boolean) => {
             }
         } catch (err) {
             console.error('#makerListener:', err);
-            updateToast('swapping', 'error', 'Error occured while swapping');
+            renderToast('swapping', 'error', 'Error occured while swapping');
         }
     };
 
@@ -394,24 +394,24 @@ export const useTrade = (isOTC?: boolean) => {
                         toast.dismiss();
                     } else if (step === 'maker not responsive') {
                         console.log('#takerListener: maker unresponsive');
-                        updateToast('swapping', 'error', 'Peer took too long to approve');
+                        renderToast('swapping', 'error', 'Peer took too long to approve');
                     } else if (step === 'timeout' || step === 'ERROR') {
                         console.log('#takerListener: timeout');
-                        updateToast('swapping', 'error', 'Error occured while swapping');
+                        renderToast('swapping', 'error', 'Error occured while swapping');
                     } else if (step === 'insufficient funds') {
                         console.log('#takerListener:', 'Not enough funds for gas');
-                        updateToast('swapping', 'error', 'Insufficient ETH for gas');
+                        renderToast('swapping', 'error', 'Insufficient ETH for gas');
                     } else if (step === 'dial request has no valid addresses') {
                         console.log('#takerListener:', step);
-                        updateToast('swapping', 'error', 'Trade is no longer available');
+                        renderToast('swapping', 'error', 'Trade is no longer available');
                     } else {
                         console.log('#takerListener: swap complete');
                         updateSteps('Complete'); // only for taker
-                        updateToast('swapping', 'pending', undefined, step);
+                        renderToast('swapping', 'pending', undefined, step);
                         await waitForTransaction({
                             hash: step as any,
                         });
-                        updateToast('swapping', 'success', 'Swap successful', step);
+                        renderToast('swapping', 'success', 'Swap successful', step);
                         clearTrade();
                         // setUserTrades(shallow);
                         // shallow.delete(order.orderHash);
@@ -422,7 +422,7 @@ export const useTrade = (isOTC?: boolean) => {
             }
         } catch (err) {
             console.error('#takerListener:', err);
-            updateToast('swapping', 'error', 'Error occured while swapping');
+            renderToast('swapping', 'error', 'Error occured while swapping');
         }
     };
 

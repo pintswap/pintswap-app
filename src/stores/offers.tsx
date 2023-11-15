@@ -16,7 +16,7 @@ import {
     defer,
     IMarketProps,
     IOfferProps,
-    updateToast,
+    renderToast,
     savePintswap,
 } from '../utils';
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
@@ -258,7 +258,7 @@ export function OffersStore(props: { children: ReactNode }) {
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
             if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
-                updateToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
+                renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
             const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
@@ -287,7 +287,7 @@ export function OffersStore(props: { children: ReactNode }) {
     useEffect(() => {
         if (module) {
             if (!allOffers.erc20.length && !pathname.includes('/fulfill'))
-                updateToast('findOffers', 'pending', 'Connecting to P2P network');
+                renderToast('findOffers', 'pending', 'Connecting to P2P network');
             module.once('/pubsub/orderbook-update', getPublicOrderbook);
             return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);
         }

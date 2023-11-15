@@ -7,7 +7,7 @@ import {
     displayOffer,
     getSymbol,
     reverseSymbolCache,
-    updateToast,
+    renderToast,
 } from '../utils';
 import { useOffersContext, usePintswapContext } from '../stores';
 import { useSwitchNetwork } from 'wagmi';
@@ -33,7 +33,7 @@ export const useOtcTrade = () => {
     async function executeTrade(e: SyntheticEvent) {
         e.preventDefault();
         setFillingTrade(true);
-        updateToast('filling-otc-trade', 'pending', 'Initiating trade');
+        renderToast('filling-otc-trade', 'pending', 'Initiating trade');
 
         if (module) {
             return;
@@ -43,7 +43,7 @@ export const useOtcTrade = () => {
     async function findOrder() {
         console.log('hit');
         if (module && onFulfill) {
-            updateToast('otc-loading', 'pending', 'Connecting to peer');
+            renderToast('otc-loading', 'pending', 'Connecting to peer');
             let _offers = new Map();
             // If chainId
             if (chainid && Number(chainid) !== chainId && switchNetworkAsync) {
@@ -59,7 +59,7 @@ export const useOtcTrade = () => {
                     console.log('peer', peer);
                 } catch (e) {
                     setError('No trades found');
-                    updateToast('otc-loading', 'error', 'No trades found');
+                    renderToast('otc-loading', 'error', 'No trades found');
                     return EMPTY_TRADE;
                 }
 
@@ -89,7 +89,7 @@ export const useOtcTrade = () => {
                 const found1 = _offers?.get(hash);
                 if (found1) {
                     setTrade({ display: await displayOffer(found1), raw: found1 });
-                    updateToast('otc-loading', 'success', 'Found trade');
+                    renderToast('otc-loading', 'success', 'Found trade');
                     return found1;
                 }
 
@@ -99,12 +99,12 @@ export const useOtcTrade = () => {
                 );
                 if (found2) {
                     setTrade({ raw: found2.raw, display: await displayOffer(found2.raw) });
-                    updateToast('otc-loading', 'success', 'Found trade');
+                    renderToast('otc-loading', 'success', 'Found trade');
                     return found2.raw;
                 }
             }
             setError('Trade not found');
-            updateToast('otc-loading', 'error', 'Trade not found');
+            renderToast('otc-loading', 'error', 'Trade not found');
         }
         return EMPTY_TRADE;
     }

@@ -10,7 +10,7 @@ import {
 import { SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import React, { useEffect, useState } from 'react';
-import { BASE_URL, DEFAULT_TIMEOUT, updateToast } from '../../utils';
+import { BASE_URL, DEFAULT_TIMEOUT, renderToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -72,7 +72,7 @@ export const SwapView = () => {
 
     useEffect(() => {
         if (steps[2].status === 'current') {
-            updateToast('swapping', 'success');
+            renderToast('swapping', 'success');
             const timeout = setTimeout(() => {
                 setIsModalOpen(false);
                 clearTrade();

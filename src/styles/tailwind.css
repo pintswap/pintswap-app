@@ -1,6 +1,16 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
 
+.Toastify__toast {
+  min-height: 60px !important;
+}
+.Toastify__toast-theme--colored.Toastify__toast--success {
+}
+.Toastify__progress-bar--success,
+.Toastify__progress-bar-theme--colored.Toastify__progress-bar--success {
+  background-color: #4ade80 !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -20,12 +30,8 @@
   }
 
   /* react-toastify */
-  .Toastify__toast-theme--colored.Toastify__toast--success {
-  }
-  .Toastify__progress-bar--success,
-  .Toastify__progress-bar-theme--colored.Toastify__progress-bar--success {
-    background-color: #34d399 !important;
-  }
+
+
 
   /* For upload profile picture */
   ::file-selector-button {
