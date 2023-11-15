@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { useTrade } from '../../hooks';
-import { Card, SwitchToggle, Button, Header } from '../components';
+import { Card, SwitchToggle, Button, Header, SelectCoin } from '../components';
 import { CoinInput } from '../features';
 import { DataTable } from '../tables';
 import { IMarketProps } from '../../utils';
@@ -45,6 +45,30 @@ const columns = [
     },
 ];
 
+interface TokenInfo {
+    amount: string;
+    token: string;
+}
+
+interface Offer {
+    gets: TokenInfo;
+    gives: TokenInfo;
+}
+
+interface MarketDetails {
+    best: number;
+    offers: Offer[];
+    sum: number;
+}
+
+interface MarketType {
+    bases: string[];
+    buy: MarketDetails;
+    sell: MarketDetails;
+    offers: number;
+    quote: string;
+}
+
 const dummyMarkets = [
     {
         bases: [],
@@ -65,7 +89,7 @@ const dummyMarkets = [
             sum: 67941.1412256516,
         },
         offers: 10,
-        quote: 'HOUSE/ETH',
+        quote: 'JOE/ETH',
         sell: {
             best: 0.12345,
             offers: [
@@ -102,7 +126,7 @@ const dummyMarkets = [
             sum: 67941.1412256516,
         },
         offers: 10,
-        quote: 'HOUSE/ETH',
+        quote: 'AXE/ETH',
         sell: {
             best: 0.12345,
             offers: [
@@ -160,64 +184,80 @@ const dummyMarkets = [
 ];
 
 export default function MarketMakerView() {
-    const [isBuying, setIsBuying] = useState(true);
-    const [quoteAmount, setQuoteAmount] = useState('');
+    const [open1, setOpen1] = useState(false);
+    const [open2, setOpen2] = useState(false);
     const [quoteAsset, setQuoteAsset] = useState('');
-    const [baseAmount, setBaseAmount] = useState('');
     const [baseAsset, setBaseAsset] = useState('');
     const list: any = [];
-    const [userMarkets, setUserMarkets] = useState([]);
+    const [market, setMarket] = useState<MarketType | null>(null);
+    const [userMarkets, setUsermarkets] = useState<MarketType[]>(dummyMarkets);
 
-    useEffect(() => {
-        console.log('quote amount:', quoteAmount);
-        console.log('asset:', quoteAsset);
-        console.log(isBuying);
-    });
+    //captures market you want to make
     const makeMarket = () => {
-        return 1;
+        console.log('make market button');
+        const newMarket: MarketType = {
+            bases: [],
+            buy: {
+                best: 0,
+                offers: [],
+                sum: 0,
+            },
+            offers: 0,
+            quote: `${quoteAsset}/${baseAsset}`,
+            sell: {
+                best: 0,
+                offers: [],
+                sum: 0,
+            },
+        };
+        setMarket(newMarket);
+        setUsermarkets((userMarkets) => [...userMarkets, newMarket]);
     };
 
     return (
-        <div className="flex flex-col">
-            <div className="flex flex-col max-w-lg mx-auto mb-4">
+        <div className="flex">
+            <div className="flex flex-col max-w-lg mx-auto mb-4 mr-8">
                 <h2 className="view-header text-left">Market Maker</h2>
-                <Card className="!py-4" type="tabs" tabs={[]}>
-                    <SwitchToggle
-                        labelOn="Buy"
-                        labelOnTooltip=""
-                        labelOff="Sell"
-                        labelOffTooltip=""
-                        state={!isBuying}
-                        setState={() => setIsBuying(!isBuying)}
-                        customColors={[
-                            'bg-gradient-to-tr to-accent-dark from-accent-light',
-                            'bg-gradient-to-tr to-green-700 from-emerald-400',
-                        ]}
-                    />
-                    <CoinInput
-                        label="Quote token"
-                        asset={quoteAsset}
-                        onAssetClick={(e: any) => setQuoteAsset(e.target.innerText)}
-                        value={quoteAmount}
-                        onAmountChange={({ currentTarget }) => setQuoteAmount(currentTarget.value)}
-                    ></CoinInput>
-                    <CoinInput
-                        label="Base Token"
-                        asset={baseAsset}
-                        onAssetClick={(e: any) => setBaseAsset(e.target.innerText)}
-                        value={baseAmount}
-                        onAmountChange={({ currentTarget }) => setBaseAmount(currentTarget.value)}
-                    ></CoinInput>
-                    <Button className="w-full !py-2.5"> Make</Button>
+                <Card className="!py-3 min-w-52 content-center">
+                    <div className="flex-col py-4">
+                        <div className="p-4">
+                            <h3>Quote Token</h3>
+                            <SelectCoin
+                                asset={quoteAsset}
+                                onAssetClick={(e: any) => {
+                                    setQuoteAsset(e.target.innerText);
+                                    setOpen1(false);
+                                }}
+                                modalOpen={open1}
+                                setModalOpen={setOpen1}
+                            ></SelectCoin>
+                        </div>
+                        <div className="p-4">
+                            <h3>Base Token</h3>
+                            <SelectCoin
+                                asset={baseAsset}
+                                onAssetClick={(e: any) => {
+                                    setBaseAsset(e.target.innerText);
+                                    setOpen2(false);
+                                }}
+                                modalOpen={open2}
+                                setModalOpen={setOpen2}
+                            ></SelectCoin>
+                        </div>
+                    </div>
+                    <Button loading={false} onClick={makeMarket} className="!py-2.5 w-48">
+                        {' '}
+                        Make
+                    </Button>
                 </Card>
             </div>
             <div>
                 <h2 className="view-header text-left">Your Markets</h2>
-                <Card type="tabs">
+                <Card>
                     <DataTable
                         type="markets"
                         columns={columns}
-                        data={dummyMarkets as IMarketProps[]}
+                        data={userMarkets as IMarketProps[]}
                         loading={false}
                         pagination
                         options={{
