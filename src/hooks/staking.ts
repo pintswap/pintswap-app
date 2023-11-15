@@ -191,7 +191,7 @@ export const useStaking = () => {
     async function handleWithdraw(e: any) {
         e.preventDefault();
         if (!userData.data.availableToRedeem || Number(userData.data.availableToRedeem) === 0) {
-            toast.info('Nothing to withdraw', { autoClose: 4000 });
+            toast.info('Nothing to withdraw');
             return;
         }
         try {
@@ -221,7 +221,7 @@ export const useStaking = () => {
     async function handleRedeem(e: any) {
         e.preventDefault();
         if (!userData.data.availableToRedeem || Number(userData.data.availableToRedeem) === 0) {
-            toast.info('Nothing to redeem', { autoClose: 4000 });
+            toast.info('Nothing to redeem');
             return;
         }
         try {

@@ -44,7 +44,7 @@ export const FulfillNFTView = () => {
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
-            <div className="flex flex-col gap-4 md:gap-6 max-w-3xl mx-auto">
+            <div className="flex flex-col gap-3 2xl:gap-4 max-w-3xl mx-auto">
                 <button onClick={() => navigate(`/${multiaddr}`)} className="w-fit text-left">
                     <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
                 </button>

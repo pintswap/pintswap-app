@@ -1,6 +1,7 @@
 import { Id, toast } from 'react-toastify';
 import { BsFillCheckCircleFill, BsFillExclamationCircleFill } from 'react-icons/bs';
 import { truncate } from './format';
+import { DEFAULT_TIMEOUT } from './constants';
 
 type IToastStatusProps = {
     status: 'error' | 'success' | 'pending';
@@ -10,7 +11,7 @@ type IToastStatusProps = {
 
 export const defaultToastOptions = {
     isLoading: false,
-    autoClose: 4000,
+    autoClose: DEFAULT_TIMEOUT,
     closeButton: true,
 };
 
@@ -36,7 +37,7 @@ export const updateToast = (
             break;
         }
         case 'pending': {
-            toast.loading(<ToastStatus status="pending" transaction={hash} />, {
+            toast.loading(<ToastStatus status="pending" transaction={hash} message={msg} />, {
                 toastId,
             });
             break;

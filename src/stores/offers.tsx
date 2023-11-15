@@ -24,6 +24,7 @@ import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
 import { usePricesContext } from './prices';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'react-router-dom';
 
 // Types
 export type IOffersStoreProps = {
@@ -212,6 +213,7 @@ export function OffersStore(props: { children: ReactNode }) {
         pintswap: { module, chainId, loading },
     } = usePintswapContext();
     const { newNetwork } = useNetworkContext();
+    const { pathname } = useLocation();
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [allOffers, setAllOffers] = useState<Record<'nft' | 'erc20', IOfferProps[]>>({
@@ -255,8 +257,8 @@ export function OffersStore(props: { children: ReactNode }) {
     // Get Active Trades
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
-            if (allOffers.erc20.length === 0)
-                updateToast('findOffers', 'success', 'Connected successfully', undefined, 2000);
+            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
+                updateToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
             const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
@@ -284,7 +286,7 @@ export function OffersStore(props: { children: ReactNode }) {
     });
     useEffect(() => {
         if (module) {
-            if (!allOffers.erc20.length)
+            if (!allOffers.erc20.length && !pathname.includes('/fulfill'))
                 toast.loading('Connecting to P2P network', { toastId: 'findOffers' });
             module.once('/pubsub/orderbook-update', getPublicOrderbook);
             return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);

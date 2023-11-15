@@ -253,7 +253,7 @@ export const Avatar = ({
                     )}
                 </div>
                 <div className={`flex flex-col pl-2 ${alignClass()}`}>
-                    {loading || peerData.loading ? (
+                    {(loading || peerData.loading) && !peer ? (
                         <div
                             className={`rounded-md bg-neutral-900 mt-0.5`}
                             style={{ width: 150, height: 24 }}

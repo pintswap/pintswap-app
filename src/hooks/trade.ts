@@ -8,18 +8,15 @@ import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
 import {
     savePintswap,
     updateToast,
-    convertAmount,
     EMPTY_TRADE,
-    getTokenAttributes,
     TESTING,
-    ITokenProps,
     IOrderStateProps,
     IOrderbookProps,
     reverseSymbolCache,
     getSymbol,
-    getTokenAddress,
+    buildOffer,
+    displayOffer,
 } from '../utils';
-import { ethers } from 'ethers';
 import { useSigner, useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
 import { waitForTransaction } from '@wagmi/core';
@@ -41,7 +38,7 @@ function stringify(obj: any) {
     return str;
 }
 
-export const useTrade = () => {
+export const useTrade = (isOTC?: boolean) => {
     const params = useParams();
     const { switchNetwork } = useSwitchNetwork();
     const { data: signer } = useSigner();
@@ -70,79 +67,12 @@ export const useTrade = () => {
     const isMaker = pathname === '/create';
     const isOnActive = pathname === '/explore' || pathname === '/create';
 
-    const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
-        if (!gets.token && !gives.token) return EMPTY_TRADE;
-        const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
-            | ITokenProps
-            | undefined;
-        const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
-            | ITokenProps
-            | undefined;
-
-        // NFT
-        if (gives?.tokenId) {
-            const builtObj = {
-                gives: {
-                    ...gives,
-                    tokenId: ethers.utils.hexlify(Number(gives.tokenId)),
-                    amount: undefined,
-                },
-                gets: {
-                    token: getTokenAddress(foundGetsToken, gets, chainId),
-                    amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
-                },
-            };
-            if (TESTING) console.log('#buildTradeObj:', builtObj);
-            return builtObj;
-        }
-        // ERC20
-        const builtObj = {
-            gives: {
-                token: getTokenAddress(foundGivesToken, gives, chainId),
-                amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
-            },
-            gets: {
-                token: getTokenAddress(foundGetsToken, gets, chainId),
-                amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
-            },
-        };
-        if (TESTING) console.log('#buildTradeObj:', builtObj);
-        return builtObj;
-    };
-
-    const displayTradeObj = async ({ gets, gives }: IOffer) => {
-        try {
-            return {
-                gives: {
-                    token: (await getSymbol(gives.token, chainId)) || gives.token,
-                    amount: await convertAmount('number', gives.amount || '', gives.token, chainId),
-                },
-                gets: {
-                    token: (await getSymbol(gets.token, chainId)) || gets.token,
-                    amount: await convertAmount('number', gets.amount || '', gets.token, chainId),
-                },
-            };
-        } catch (err) {
-            console.error(err);
-            return {
-                gives: {
-                    token: gives.token,
-                    amount: gives.amount,
-                },
-                gets: {
-                    token: gets.token,
-                    amount: gets.amount,
-                },
-            };
-        }
-    };
-
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent, isPublic = true) => {
         e.preventDefault();
         if (module) {
             try {
-                const offer = await buildTradeObj(trade);
+                const offer = await buildOffer(trade);
                 if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
                 module.signer = signer;
                 module.broadcastOffer(offer);
@@ -193,7 +123,7 @@ export const useTrade = () => {
                     };
                 } else {
                     // Standard
-                    const builtTrade = await buildTradeObj(offer);
+                    const builtTrade = await buildOffer(offer);
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
                     tradeForWorker = { type: 'default', trade: builtTrade };
                 }
@@ -282,7 +212,7 @@ export const useTrade = () => {
         if (params.hash) {
             if (TESTING) console.log('#getTrades - Order Hash:', params.hash);
             if (_offers.get(params.hash)) {
-                setTrade(await displayTradeObj(_offers.get(params.hash) as IOffer));
+                setTrade(await displayOffer(_offers.get(params.hash) as IOffer));
                 return;
             }
 
@@ -485,11 +415,12 @@ export const useTrade = () => {
                             hash: step as any,
                         });
                         updateToast('swapping', 'success', 'Swap successful', step);
+                        clearTrade();
                         // setUserTrades(shallow);
                         // shallow.delete(order.orderHash);
                     }
-                    setLoading({ ...loading, fulfill: false });
-                    clearTrade();
+                    setLoading({ ...loading, fulfill: false, trade: false });
+                    if (!isOTC) clearTrade();
                     break;
             }
         } catch (err) {
@@ -512,7 +443,7 @@ export const useTrade = () => {
         if (module) {
             if (!isMaker && !isOnActive)
                 toast.update('findPeer', { render: 'Connecting to peer...' });
-            module.on('pintswap/trade/peer', peerListener);
+            // module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);
             module.on('trade:maker', makerTradeListener);
@@ -520,7 +451,7 @@ export const useTrade = () => {
             return () => {
                 module.removeListener('trade:maker', makerTradeListener);
                 module.removeListener('pintswap/trade/taker', takerListener);
-                module.removeListener('pintswap/trade/peer', peerListener);
+                // module.removeListener('pintswap/trade/peer', peerListener);
                 module.removeListener('pintswap/trade/maker', makerListener);
             };
         }
@@ -564,7 +495,6 @@ export const useTrade = () => {
         clearTrade,
         isButtonDisabled,
         peerTrades,
-        displayTradeObj,
         setOrder,
     };
 };
