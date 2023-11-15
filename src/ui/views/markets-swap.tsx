@@ -224,7 +224,7 @@ export const MarketsSwapView = () => {
                     )}
                 </div>
                 <div className="flex flex-col lg:flex-row gap-2 md:gap-3 lg:gap-4">
-                    <Card className="lg:max-w-lg">
+                    <Card className="lg:max-w-lg h-fit">
                         <h2 className="mb-3 font-semibold">Swap</h2>
                         <div className="mb-3">
                             <SwitchToggle
@@ -251,6 +251,7 @@ export const MarketsSwapView = () => {
                         defaultTab={isBuy ? 'asks' : 'bids'}
                         selectedTab={isBuy ? 'asks' : 'bids'}
                         onTabChange={() => setIsBuy(!isBuy)}
+                        className="h-fit"
                     >
                         <Tab.Panel>
                             <DataTable

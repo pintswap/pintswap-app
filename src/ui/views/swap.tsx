@@ -85,12 +85,7 @@ export const SwapView = () => {
         <>
             <div className="flex flex-col max-w-lg mx-auto">
                 <h2 className="view-header text-left">Create Offer</h2>
-                <Card
-                    className="!py-3"
-                    type="tabs"
-                    tabs={['MARKET', 'LIMIT', 'NFT']}
-                    onTabChange={clearTrade}
-                >
+                <Card type="tabs" tabs={['MARKET', 'LIMIT', 'NFT']} onTabChange={clearTrade}>
                     <div className="mb-3">
                         <SwitchToggle
                             labelOn="Public"

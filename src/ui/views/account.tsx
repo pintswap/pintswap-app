@@ -380,7 +380,7 @@ export const AccountView = () => {
                                         incorrectSigner ? signIfNecessary() : setIsEditing(true)
                                     }
                                     form="reset"
-                                    type="outline"
+                                    type="outline-secondary"
                                 >
                                     {incorrectSigner ? 'Sign to edit' : 'Edit'}
                                 </Button>
@@ -416,13 +416,7 @@ export const AccountView = () => {
                 </Tab.Panel>
             </Card>
             <FadeIn show={!incorrectSigner}>
-                <div className="flex flex-row gap-4 justify-center items-center">
-                    <Button
-                        onClick={() => navigate('/create')}
-                        className="sm:max-w-lg sm:self-center"
-                    >
-                        Create Offer
-                    </Button>
+                <div className="flex flex-row gap-3 justify-center items-center">
                     <TooltipWrapper
                         text={
                             userData.active
@@ -434,11 +428,17 @@ export const AccountView = () => {
                         <Button
                             onClick={toggleActive}
                             className="sm:max-w-lg sm:self-center"
-                            type="transparent"
+                            type="outline"
                         >
                             {userData.active ? 'Stop Publishing' : 'Publish Offers'}
                         </Button>
                     </TooltipWrapper>
+                    <Button
+                        onClick={() => navigate('/create')}
+                        className="sm:max-w-lg sm:self-center"
+                    >
+                        Create Offer
+                    </Button>
                 </div>
             </FadeIn>
         </div>

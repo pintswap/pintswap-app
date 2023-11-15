@@ -287,7 +287,7 @@ export function OffersStore(props: { children: ReactNode }) {
     useEffect(() => {
         if (module) {
             if (!allOffers.erc20.length && !pathname.includes('/fulfill'))
-                toast.loading('Connecting to P2P network', { toastId: 'findOffers' });
+                updateToast('findOffers', 'pending', 'Connecting to P2P network');
             module.once('/pubsub/orderbook-update', getPublicOrderbook);
             return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);
         }

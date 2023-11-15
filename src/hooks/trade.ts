@@ -92,10 +92,7 @@ export const useTrade = (isOTC?: boolean) => {
         setLoading({ ...loading, fulfill: true });
 
         // Set loading
-        toast.loading(`Initiating trade. Please do not refresh the page.`, {
-            toastId: 'swapping',
-            className: 'text-sm',
-        });
+        updateToast('swapping', 'pending', `Initiating trade. Please do not refresh the page.`);
         if (module) {
             // Determine correct offer
             let offer = trade;
@@ -333,7 +330,7 @@ export const useTrade = (isOTC?: boolean) => {
                     // if (module) savePintswap(module);
                     console.log('#makerListener: taker approving trade');
                     toast('Taker is approving transaction');
-                    toast.loading('Swapping...', { toastId: 'swapping' });
+                    updateToast('swapping', 'pending', 'Peer taking transaction');
                     break;
                 case 1:
                     console.log('#makerListener: taker approved trade');

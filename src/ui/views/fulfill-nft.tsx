@@ -36,7 +36,7 @@ export const FulfillNFTView = () => {
     }, [offer]);
 
     useEffect(() => {
-        toast.loading('Connecting to peer', { toastId: 'loading-fulfill-nft' });
+        updateToast('loading-fulfill-nft', 'pending', 'Connecting to peer');
     }, []);
 
     const peer = state?.peer ? state.peer : multiaddr;
