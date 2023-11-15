@@ -2973,10 +2973,10 @@
     "@parcel/watcher-win32-ia32" "2.3.0"
     "@parcel/watcher-win32-x64" "2.3.0"
 
-"@pintswap/sdk@^1.4.23":
-  version "1.4.23"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.23.tgz#c1b3a0e8deae21cd59525ad7928153f43a2b3663"
-  integrity sha512-azHtJ0uAR1CFP63f6PJJuc7uFko039w3otkf9ti8H+ElEIK4StbfzevRBt1G9+bNyLcHkJ9xuVQNoqtQH0lFiA==
+"@pintswap/sdk@1.4.22":
+  version "1.4.22"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.22.tgz#b829dce9c0a5790b763572e4a6623e322b9c86b5"
+  integrity sha512-6MA1WYGsmS0/a2NE1nNy2jLvVh+enKCzAI39TVclu8tntO3+C6IOxpMeHShM1PCA47hQDsOpi3KC6Oa32gBDfg==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -16827,9 +16827,9 @@ unquote@~1.1.1:
   integrity sha512-vRCqFv6UhXpWxZPyGDh/F3ZpNv8/qo7w6iufLpQg9aKnQ71qM4B5KiI7Mia9COcjEhrO9LueHpMYjYzsWH3OIg==
 
 unstorage@^1.9.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-1.10.0.tgz#6ac8e24d1d61c5373ae6a84b7059d6e89a868c64"
-  integrity sha512-azLoAeUMi1d1U823lR+eipFJjBydDAXFXoDAu6R9YCxQbkHzpoWaahqZUSkFFSfQSUZiWCqH3GmT3KuzffbcCQ==
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/unstorage/-/unstorage-1.10.1.tgz#bf8cc00a406e40a6293e893da9807057d95875b0"
+  integrity sha512-rWQvLRfZNBpF+x8D3/gda5nUCQL2PgXy2jNG4U7/Rc9BGEv9+CAJd0YyGCROUBKs9v49Hg8huw3aih5Bf5TAVw==
   dependencies:
     anymatch "^3.1.3"
     chokidar "^3.5.3"

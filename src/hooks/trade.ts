@@ -352,7 +352,7 @@ export const useTrade = () => {
         const getter = async () => {
             if (pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
-                if (splitUrl[1] === 'fulfill' && params.hash) {
+                if (splitUrl[1] === 'fulfill' && params.hash && !order.orderHash) {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
