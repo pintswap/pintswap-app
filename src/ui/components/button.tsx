@@ -1,6 +1,5 @@
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { MouseEventHandler, ReactNode, useEffect, useState } from 'react';
-import { ImSpinner9 } from 'react-icons/im';
 import { useAccount, useNetwork } from 'wagmi';
 import { usePintswapContext } from '../../stores';
 
@@ -106,8 +105,8 @@ export const Button = ({
                 </div>
             ) : (
                 <>
+                    {loading && <div className="Toastify__spinner" />}
                     {render().text}
-                    {loading && <ImSpinner9 className="animate-spin" />}
                 </>
             )}
         </button>

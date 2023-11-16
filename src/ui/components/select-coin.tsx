@@ -102,7 +102,7 @@ export const SelectCoin = ({
                                     <Asset symbol={asset} />
                                 )
                             ) : type === 'fulfill' || loading ? (
-                                <span className="pl-2">Loading</span>
+                                <span className="pl-2 text-neutral-500 animate-pulse">Loading</span>
                             ) : (
                                 <span className="pl-2 flex items-center">
                                     Select<span className="hidden sm:block ml-[5px]">a token</span>

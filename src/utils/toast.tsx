@@ -1,6 +1,7 @@
-import { Id, toast } from 'react-toastify';
+import { Id, ToastContainer, toast } from 'react-toastify';
 import { BsFillCheckCircleFill, BsFillExclamationCircleFill } from 'react-icons/bs';
 import { truncate } from './format';
+import { DEFAULT_TIMEOUT } from './constants';
 
 type IToastStatusProps = {
     status: 'error' | 'success' | 'pending';
@@ -8,13 +9,13 @@ type IToastStatusProps = {
     message?: string;
 };
 
-export const defaultToastOptions = {
+const defaultToastOptions = {
     isLoading: false,
-    autoClose: 4000,
+    autoClose: DEFAULT_TIMEOUT,
     closeButton: true,
 };
 
-export const updateToast = (
+export const renderToast = (
     toastId: Id,
     type: 'success' | 'error' | 'pending',
     msg?: string,
@@ -27,16 +28,16 @@ export const updateToast = (
                 render: <ToastStatus status="success" transaction={hash} message={msg} />,
                 type: 'success',
                 progressStyle: {
-                    background: '#41a75b',
+                    background: '#4ade80',
                 },
-                icon: <BsFillCheckCircleFill size="20px" color="#41a75b" />,
+                icon: <BsFillCheckCircleFill size="20px" color="#4ade80" />,
                 ...defaultToastOptions,
                 autoClose: timer || defaultToastOptions.autoClose,
             });
             break;
         }
         case 'pending': {
-            toast.loading(<ToastStatus status="pending" transaction={hash} />, {
+            toast.loading(<ToastStatus status="pending" transaction={hash} message={msg} />, {
                 toastId,
             });
             break;
@@ -52,9 +53,9 @@ export const updateToast = (
                 ),
                 type: 'error',
                 progressStyle: {
-                    background: '#db4343',
+                    background: '#f87171',
                 },
-                icon: <BsFillExclamationCircleFill size="20px" color="#db4343" />,
+                icon: <BsFillExclamationCircleFill size="20px" color="#f87171" />,
                 ...defaultToastOptions,
                 autoClose: timer || defaultToastOptions.autoClose,
             });

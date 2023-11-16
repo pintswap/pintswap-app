@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { ImSpinner9 } from 'react-icons/im';
 import { useNavigate } from 'react-router-dom';
 import { Button } from './button';
 import { DripAnimation } from './drip-animation';
@@ -25,8 +24,8 @@ export const PageStatus = ({ type = 'loading', message, fx }: IPageStatusProps) 
                 <img src="/logo/pintswap-logo.svg" alt="PintSwap Logo" height="28" width="159" />
                 {type === 'loading' && (
                     <>
-                        <span>{message ? message : 'Filling up pints...'}</span>
-                        <ImSpinner9 className="animate-spin" size="24px" />
+                        <span>{message ? message : 'A P2P Orderbook DEX'}</span>
+                        <div className="Toastify__spinner" />
                     </>
                 )}
                 {type === 'error' && (

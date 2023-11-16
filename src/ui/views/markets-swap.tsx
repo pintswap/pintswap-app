@@ -12,7 +12,7 @@ import { useTrade, useUsdPrice } from '../../hooks';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { EMPTY_TRADE, toAddress, truncate } from '../../utils';
+import { EMPTY_TRADE, displayOffer, reverseOffer, toAddress, truncate } from '../../utils';
 import { useOffersContext } from '../../stores';
 import { IOffer } from '@pintswap/sdk';
 
@@ -52,7 +52,7 @@ export const MarketsSwapView = () => {
     const { pair, multiaddr } = useParams();
     const quote = pair?.split('-')[0] || '';
     const base = pair?.split('-')[1] || '';
-    const { setOrder, trade, setTrade, displayTradeObj, fulfillTrade, loading, steps } = useTrade();
+    const { setOrder, trade, setTrade, fulfillTrade, loading, steps } = useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
     const usdPrice = useUsdPrice(toAddress(quote));
@@ -88,9 +88,8 @@ export const MarketsSwapView = () => {
         );
         if (found) {
             setOrder({ multiAddr: found.peer, orderHash: found.hash });
-            const displayOffer = await displayTradeObj(found.raw);
-            const correctSide = { gives: displayOffer.gets, gets: displayOffer.gives };
-            setDisplayedTrade(correctSide);
+            const displayedOffer = await displayOffer(found.raw);
+            setDisplayedTrade(reverseOffer(displayedOffer));
             setTrade(found.raw);
         }
     };
@@ -150,9 +149,8 @@ export const MarketsSwapView = () => {
                 const found = peerOffers.asks[0];
                 if (found) {
                     setOrder({ multiAddr: found?.peer, orderHash: found.hash });
-                    const displayOffer = await displayTradeObj(found.raw);
-                    const correctSide = { gives: displayOffer.gets, gets: displayOffer.gives };
-                    setDisplayedTrade(correctSide);
+                    const displayedOffer = await displayOffer(found.raw);
+                    setDisplayedTrade(reverseOffer(displayedOffer));
                     setTrade(found.raw);
                 }
             })().catch((err) => console.error(err));
@@ -226,7 +224,7 @@ export const MarketsSwapView = () => {
                     )}
                 </div>
                 <div className="flex flex-col lg:flex-row gap-2 md:gap-3 lg:gap-4">
-                    <Card className="lg:max-w-lg">
+                    <Card className="lg:max-w-lg h-fit">
                         <h2 className="mb-3 font-semibold">Swap</h2>
                         <div className="mb-3">
                             <SwitchToggle
@@ -253,6 +251,7 @@ export const MarketsSwapView = () => {
                         defaultTab={isBuy ? 'asks' : 'bids'}
                         selectedTab={isBuy ? 'asks' : 'bids'}
                         onTabChange={() => setIsBuy(!isBuy)}
+                        className="h-fit"
                     >
                         <Tab.Panel>
                             <DataTable

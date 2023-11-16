@@ -17,7 +17,7 @@ export const Base = ({ children, loading }: IBaseProps) => {
                 enter="transition-opacity duration-200"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
-                leave="transition-opacity duration-200"
+                leave="transition-opacity duration-500"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
                 className="relative !z-[99999]"

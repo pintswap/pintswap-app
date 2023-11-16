@@ -75,7 +75,8 @@ export const Asset = ({
                         alt={assetProps()?.alt || assetProps()?.symbol}
                         width={size}
                         height={size}
-                        className="rounded-full"
+                        className="rounded-full contain"
+                        style={{ contain: 'strict' }}
                     />
                     <div className="flex flex-col">
                         <span className={`${fontSize} ${subSymbol ? 'leading-tight' : ''}`}>

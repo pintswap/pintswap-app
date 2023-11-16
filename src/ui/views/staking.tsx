@@ -23,8 +23,19 @@ export const StakingView = () => {
     } = useStaking();
     const price = useUsdPrice('0x58fB30A61C218A3607e9273D52995a49fF2697Ee');
 
+    const determineDecimals = () => {
+        if (width < breakpoints.sm) {
+            return 1;
+        } else if (width < breakpoints.md) {
+            return 2;
+        } else if (width < breakpoints.lg) {
+            return 3;
+        }
+        return 4;
+    };
+
     return (
-        <div className="flex flex-col max-w-5xl mx-auto">
+        <div className="flex flex-col max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-2.5 lg:mb-3 gap-6">
                 <div className="flex flex-col">
                     <Header>Staking</Header>
@@ -49,11 +60,11 @@ export const StakingView = () => {
             </div>
             <Card>
                 <div className="flex flex-col gap-2">
-                    <div className="grid grid-cols-4 py-2 gap-y-3 gap-1 sm:gap-2 sm:px-2">
+                    <div className="grid grid-cols-4 py-2 gap-y-3 gap-1.5 sm:gap-2 sm:px-2">
                         <Asset size={32} symbol="PINT" subSymbol="sipPINT" fontSize="text-lg" />
                         <TextDisplay
                             label="APR"
-                            value={percentFormatter(isMobile ? 1 : 2).format(Number(apr))}
+                            value={percentFormatter(2).format(Number(apr))}
                             size="text-lg sm:text-xl"
                             align="right"
                             direction="vertical"
@@ -61,7 +72,7 @@ export const StakingView = () => {
                         />
                         <TextDisplay
                             label={width < breakpoints.sm ? 'Staked' : 'Total Staked'}
-                            value={numberFormatter(isMobile ? 1 : 3).format(Number(totalAssets))}
+                            value={numberFormatter(determineDecimals()).format(Number(totalAssets))}
                             size="text-lg sm:text-xl"
                             align="right"
                             direction="vertical"
@@ -72,7 +83,9 @@ export const StakingView = () => {
                         />
                         <TextDisplay
                             label="Deposited"
-                            value={numberFormatter(isMobile ? 1 : 3).format(Number(userDeposited))}
+                            value={numberFormatter(determineDecimals()).format(
+                                Number(userDeposited),
+                            )}
                             size="text-lg sm:text-xl"
                             align="right"
                             direction="vertical"

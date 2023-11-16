@@ -2973,10 +2973,10 @@
     "@parcel/watcher-win32-ia32" "2.3.0"
     "@parcel/watcher-win32-x64" "2.3.0"
 
-"@pintswap/sdk@1.4.22":
-  version "1.4.22"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.22.tgz#b829dce9c0a5790b763572e4a6623e322b9c86b5"
-  integrity sha512-6MA1WYGsmS0/a2NE1nNy2jLvVh+enKCzAI39TVclu8tntO3+C6IOxpMeHShM1PCA47hQDsOpi3KC6Oa32gBDfg==
+"@pintswap/sdk@^1.4.23":
+  version "1.4.23"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.23.tgz#c1b3a0e8deae21cd59525ad7928153f43a2b3663"
+  integrity sha512-azHtJ0uAR1CFP63f6PJJuc7uFko039w3otkf9ti8H+ElEIK4StbfzevRBt1G9+bNyLcHkJ9xuVQNoqtQH0lFiA==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"

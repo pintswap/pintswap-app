@@ -18,7 +18,7 @@ import {
     formattedFromTransfer,
     matchOffers,
     TESTING,
-    updateToast,
+    renderToast,
 } from '../../utils';
 import { useParams } from 'react-router-dom';
 import { isEqual } from 'lodash';
@@ -124,7 +124,7 @@ export const PeerTickerFulfill = ({
     }, [matchInputs]);
 
     useEffect(() => {
-        if (steps[2].status === 'current') updateToast('swapping', 'success');
+        if (steps[2].status === 'current') renderToast('swapping', 'success');
     }, [steps[2].status]);
 
     return (

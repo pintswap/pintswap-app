@@ -1,6 +1,16 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
 
+.Toastify__toast {
+  min-height: 58px !important;
+}
+.Toastify__toast-theme--colored.Toastify__toast--success {
+}
+.Toastify__progress-bar--success,
+.Toastify__progress-bar-theme--colored.Toastify__progress-bar--success {
+  background-color: #4ade80 !important;
+}
+
 /* ! tailwindcss v3.3.5 | MIT License | https://tailwindcss.com */
 
 /*
@@ -903,6 +913,10 @@ body {
 .h-auto {
   height: auto;
 }
+.h-fit {
+  height: -moz-fit-content;
+  height: fit-content;
+}
 .h-full {
   height: 100%;
 }
@@ -1019,8 +1033,8 @@ body {
 .max-w-3xl {
   max-width: 48rem;
 }
-.max-w-5xl {
-  max-width: 64rem;
+.max-w-6xl {
+  max-width: 72rem;
 }
 .max-w-\[120px\] {
   max-width: 120px;
@@ -1257,14 +1271,6 @@ body {
 }
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-.animate-spin {
-  animation: spin 1s linear infinite;
 }
 .cursor-default {
   cursor: default;
@@ -1754,10 +1760,6 @@ body {
 .\!py-2\.5 {
   padding-top: 0.625rem !important;
   padding-bottom: 0.625rem !important;
-}
-.\!py-3 {
-  padding-top: 0.75rem !important;
-  padding-bottom: 0.75rem !important;
 }
 .\!py-4 {
   padding-top: 1rem !important;
@@ -2805,6 +2807,10 @@ body {
 
   .\32xl\:gap-2 {
     gap: 0.5rem;
+  }
+
+  .\32xl\:gap-4 {
+    gap: 1rem;
   }
 
   .\32xl\:gap-6 {

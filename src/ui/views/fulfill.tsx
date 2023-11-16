@@ -1,17 +1,19 @@
-import { Tab, Transition } from '@headlessui/react';
-import { PageStatus, TransitionModal, Card } from '../components';
+import { Tab } from '@headlessui/react';
+import { TransitionModal, Card } from '../components';
 import { Avatar, SwapModule } from '../features';
-import { useTrade } from '../../hooks';
+import { useOtcTrade, useTrade } from '../../hooks';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { useEffect } from 'react';
-import { DEFAULT_TIMEOUT, toAddress, updateToast } from '../../utils';
+import { DEFAULT_TIMEOUT, reverseOffer, toAddress, renderToast, wait } from '../../utils';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export const FulfillView = () => {
     const { address } = useAccount();
     const navigate = useNavigate();
     const { chain } = useNetwork();
-    const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade();
+    // const { loadingTrade, trade: otcTrade, executeTrade, fillingTrade, clearTrade } = useOtcTrade();
+    const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade(true);
     const { data } = useBalance(
         trade.gets.token?.toUpperCase() === 'ETH'
             ? { address }
@@ -24,7 +26,6 @@ export const FulfillView = () => {
             !trade.gives?.amount ||
             !trade.gets?.token ||
             !trade.gives?.token ||
-            loading.trade ||
             loading.fulfill ||
             !address ||
             Number(data?.formatted) === 0
@@ -32,7 +33,7 @@ export const FulfillView = () => {
     };
 
     const determineButtonText = () => {
-        if (loading.trade || loading.fulfill) return 'Loading';
+        if (!trade.gets.token && !trade.gives.token) return 'Loading';
         if (
             !trade.gets?.amount ||
             !trade.gives?.amount ||
@@ -46,17 +47,15 @@ export const FulfillView = () => {
 
     useEffect(() => {
         if (steps[2].status === 'current') {
-            updateToast('swapping', 'success');
-            const timeout = setTimeout(() => {
-                navigate('/');
-            }, DEFAULT_TIMEOUT);
+            renderToast('swapping', 'success');
+            const timeout = setTimeout(() => navigate('/'), DEFAULT_TIMEOUT * 2);
             return () => clearTimeout(timeout);
         }
     }, [steps[2].status]);
 
     return (
         <>
-            <div className="flex flex-col gap-4 md:gap-6 max-w-lg mx-auto">
+            <div className="flex flex-col gap-3 2xl:gap-4 max-w-lg mx-auto">
                 <div className="flex items-center justify-between">
                     <TransitionModal
                         button={
@@ -77,13 +76,13 @@ export const FulfillView = () => {
                     <Tab.Panel>
                         <SwapModule
                             type="fulfill"
-                            trade={{
-                                gets: trade.gives,
-                                gives: trade.gets,
-                            }}
+                            trade={reverseOffer(trade)}
                             disabled={isButtonDisabled()}
                             onClick={fulfillTrade}
-                            loading={loading}
+                            loading={{
+                                trade: !trade.gets.token && !trade.gives.token,
+                                fulfill: loading.fulfill,
+                            }}
                             buttonText={determineButtonText()}
                         />
                     </Tab.Panel>
@@ -93,7 +92,7 @@ export const FulfillView = () => {
                 show={steps[2].status === 'current'}
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
-                enterTo="opacity-100"
+                 enterTo="opacity-100"
                 leave="transition-opacity duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"

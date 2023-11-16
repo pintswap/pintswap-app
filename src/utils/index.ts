@@ -11,6 +11,7 @@ export * from './format';
 export * from './math';
 export * from './cache';
 export * from './contracts';
+export * from './helpers';
 
 export function defer() {
     let resolve,
