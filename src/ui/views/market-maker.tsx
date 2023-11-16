@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { useTrade } from '../../hooks';
 import { Card, SwitchToggle, Button, Header, SelectCoin } from '../components';
-import { CoinInput } from '../features';
 import { DataTable } from '../tables';
 import { IMarketProps } from '../../utils';
+import { TbSlash } from 'react-icons/tb';
+import { IconContext } from 'react-icons/lib';
 
 const columns = [
     {
@@ -215,40 +215,57 @@ export default function MarketMakerView() {
     };
 
     return (
-        <div className="flex">
-            <div className="flex flex-col max-w-lg mx-auto mb-4 mr-8">
+        <div className="flex-col">
+            <div className="flex flex-col max-w-lg mx-auto mb-4">
                 <h2 className="view-header text-left">Market Maker</h2>
-                <Card className="!py-3 min-w-52 content-center">
-                    <div className="flex-col py-4">
-                        <div className="p-4">
-                            <h3>Quote Token</h3>
-                            <SelectCoin
-                                asset={quoteAsset}
-                                onAssetClick={(e: any) => {
-                                    setQuoteAsset(e.target.innerText);
-                                    setOpen1(false);
-                                }}
-                                modalOpen={open1}
-                                setModalOpen={setOpen1}
-                            ></SelectCoin>
+                <Card className="!p-4 text-center">
+                    <div className="flex justify-center shadow-inner items-center">
+                        <div className="p-4 pr-16 max-[400]:bg-green flex flex-col justify-center text-center mt-2  bg-neutral-900 rounded-lg h-40 ">
+                            <h3 className="basis-1/3 ">Quote Token</h3>
+                            <div className="basis-1/3  flex flex-col justify-center">
+                                <SelectCoin
+                                    asset={quoteAsset}
+                                    onAssetClick={(e: any) => {
+                                        setQuoteAsset(e.target.innerText);
+                                        setOpen1(false);
+                                    }}
+                                    modalOpen={open1}
+                                    setModalOpen={setOpen1}
+                                ></SelectCoin>
+                            </div>
+
+                            <div className="basis-1/3 "></div>
                         </div>
-                        <div className="p-4">
-                            <h3>Base Token</h3>
-                            <SelectCoin
-                                asset={baseAsset}
-                                onAssetClick={(e: any) => {
-                                    setBaseAsset(e.target.innerText);
-                                    setOpen2(false);
-                                }}
-                                modalOpen={open2}
-                                setModalOpen={setOpen2}
-                            ></SelectCoin>
+                        <div className="bg-brand-dashboard rounded-lg flex w-7 h-40 justify-center items-center">
+                            <div className=" absolute bg-brand-dashboard rounded-lg">
+                                <TbSlash color={'white'} size={'6rem'} />
+                            </div>
+                        </div>
+                        <div className="p-4 pl-16 flex flex-col justify-center text-center mt-2  bg-neutral-900 rounded-lg h-40">
+                            <h3 className="basis-1/3">Base Token</h3>
+                            <div className="basis-1/3 flex flex-col justify-center">
+                                <SelectCoin
+                                    asset={baseAsset}
+                                    onAssetClick={(e: any) => {
+                                        setBaseAsset(e.target.innerText);
+                                        setOpen2(false);
+                                    }}
+                                    modalOpen={open2}
+                                    setModalOpen={setOpen2}
+                                ></SelectCoin>
+                            </div>
+                            <div className="basis-1/3"></div>
                         </div>
                     </div>
-                    <Button loading={false} onClick={makeMarket} className="!py-2.5 w-48">
-                        {' '}
-                        Make
-                    </Button>
+                    <div className="flex justify-center">
+                        <Button
+                            loading={false}
+                            onClick={makeMarket}
+                            className="!py-2.5 w-52 self-center m-4"
+                        >
+                            Create Market
+                        </Button>
+                    </div>
                 </Card>
             </div>
             <div>
