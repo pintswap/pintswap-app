@@ -5,7 +5,7 @@ import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { arbitrum, hardhat, mainnet } from 'wagmi/chains';
-import { TESTING } from '../utils/constants';
+import { ALCHEMY_KEY, LLAMA_NODES_KEY, TESTING, WALLET_CONNECT_ID } from '../utils/constants';
 import {
     coinbaseWallet,
     injectedWallet,
@@ -19,13 +19,6 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
-const projectId =
-    process.env.REACT_APP_WALLETCONNECT_PROJECT_ID || '78ccad0d08b9ec965f59df86cc3e6a3c';
-const REACT_APP_LLAMA_NODES_KEY =
-    process.env.PROCESS_APP_LLAMA_NODES_KEY || '01HDHGP0YXWDYKRT37QQBDGST5';
-const REACT_APP_ALCHEMY_KEY =
-    process.env.REACT_APP_ALCHEMY_KEY || 'vwnSKKEvi4HqnhPObIph_5GENWoaMb8a';
-
 const determineChains = () => {
     if (TESTING) return [mainnet, hardhat];
     return [mainnet];
@@ -34,12 +27,12 @@ const determineChains = () => {
 export const { chains, provider } = configureChains(determineChains(), [
     jsonRpcProvider({
         rpc: (chain) => ({
-            http: `https://eth.llamarpc.com/rpc/${REACT_APP_LLAMA_NODES_KEY}`,
-            webSocket: `wss://eth.llamarpc.com/rpc/${REACT_APP_LLAMA_NODES_KEY}`,
+            http: `https://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`,
+            webSocket: `wss://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`,
         }),
     }),
     alchemyProvider({
-        apiKey: REACT_APP_ALCHEMY_KEY || '',
+        apiKey: ALCHEMY_KEY || '',
     }),
     publicProvider(),
 ]);
@@ -47,17 +40,17 @@ export const { chains, provider } = configureChains(determineChains(), [
 export const connectors = connectorsForWallets([
     {
         groupName: 'Recommended',
-        wallets: [metaMaskWallet({ chains, projectId })],
+        wallets: [metaMaskWallet({ chains, projectId: WALLET_CONNECT_ID })],
     },
     {
         groupName: 'Popular',
         wallets: [
-            walletConnectWallet({ chains, projectId }),
+            walletConnectWallet({ chains, projectId: WALLET_CONNECT_ID }),
             coinbaseWallet({ appName: 'PintSwap', chains }),
-            rainbowWallet({ chains, projectId }),
-            trustWallet({ chains, projectId }),
-            ledgerWallet({ chains, projectId }),
-            imTokenWallet({ chains, projectId }),
+            rainbowWallet({ chains, projectId: WALLET_CONNECT_ID }),
+            trustWallet({ chains, projectId: WALLET_CONNECT_ID }),
+            ledgerWallet({ chains, projectId: WALLET_CONNECT_ID }),
+            imTokenWallet({ chains, projectId: WALLET_CONNECT_ID }),
             braveWallet({ chains }),
             injectedWallet({ chains }),
         ],
