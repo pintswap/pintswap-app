@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
 
 .Toastify__toast {
-  min-height: 60px !important;
+  min-height: 56px !important;
 }
 .Toastify__toast-theme--colored.Toastify__toast--success {
 }
