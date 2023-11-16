@@ -60,7 +60,7 @@ export const StakingView = () => {
             </div>
             <Card>
                 <div className="flex flex-col gap-2">
-                    <div className="grid grid-cols-4 py-2 gap-y-3 gap-1 sm:gap-2 sm:px-2">
+                    <div className="grid grid-cols-4 py-2 gap-y-3 gap-1.5 sm:gap-2 sm:px-2">
                         <Asset size={32} symbol="PINT" subSymbol="sipPINT" fontSize="text-lg" />
                         <TextDisplay
                             label="APR"
