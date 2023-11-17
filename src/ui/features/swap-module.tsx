@@ -5,9 +5,10 @@ import { INFTProps, fetchNFT, toAddress, tokenTaxCache } from '../../utils';
 import { Button, SpinnerLoader, TxDetails } from '../components';
 import { NFTInput, NFTDisplay, CoinInput } from '../features';
 import { getQuote } from '../../api';
-import { useOffersContext, usePricesContext } from '../../stores';
-import { useAccount } from 'wagmi';
+import { useOffersContext, usePintswapContext, usePricesContext } from '../../stores';
+import { useAccount, useBalance } from 'wagmi';
 import { useTrade } from '../../hooks';
+import { ZeroAddress } from 'ethers6';
 
 type ISwapModule = {
     trade: IOffer;
@@ -48,6 +49,18 @@ export const SwapModule = ({
     const { address } = useAccount();
     const [nft, setNFT] = useState<INFTProps | null>(null);
     const [nftLoading, setNftLoading] = useState(false);
+    const {
+        pintswap: { chainId },
+    } = usePintswapContext();
+    const { data: givesWalletBalance } = useBalance(
+        trade?.gives?.token === ZeroAddress ||
+            !trade.gives?.token ||
+            trade?.gives?.token?.toUpperCase() === 'ETH'
+            ? { address, watch: true }
+            : { token: toAddress(trade.gives.token, chainId) as any, address, watch: true },
+    );
+    const isBalanceInsufficient =
+        givesWalletBalance && Number(givesWalletBalance.formatted) < Number(trade?.gives?.amount);
 
     const determineLoadingText = () => {
         if (loading?.broadcast || loading?.fulfill) return 'Swapping';
@@ -56,12 +69,16 @@ export const SwapModule = ({
     };
     const determineButtonText = () => {
         if (buttonText) return buttonText;
-        if (type === 'fulfill') return 'Fulfill';
+        if (type === 'fulfill') {
+            if (isBalanceInsufficient) return `Insufficient ${givesWalletBalance.symbol} Balance`;
+            return 'Fulfill';
+        }
         if (type === 'nft') {
             if (nft && nft.amount === '0') return 'Cannot verify NFT ownership';
             if (!nft) return 'Select NFT';
         }
         if (!trade.gets.token) return 'Select a Token';
+        if (isBalanceInsufficient) return `Insufficient ${givesWalletBalance.symbol} Balance`;
         if (!isPublic) return 'Create Offer';
         if (!autoQuote) return 'Place Limit Order';
         return 'Swap';
@@ -223,7 +240,7 @@ export const SwapModule = ({
                     />
                     <Button
                         className="w-full rounded-lg !py-2.5"
-                        disabled={disabled}
+                        disabled={disabled || isBalanceInsufficient}
                         loadingText={determineLoadingText()}
                         loading={loading?.broadcast || loading?.fulfill || loading?.trade}
                         onClick={onClick}

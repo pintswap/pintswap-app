@@ -123,7 +123,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                     '0xdf57089febbacf7ba0bc227dafbffa9fc08a93fdc68e1e42411a14efcf23656e',
                 ).connect(new ethers.InfuraProvider('mainnet')),
             });
-            if (TESTING) console.log('noWalletInitPs:', noWalletInitPs);
+            if (TESTING) console.log('Pintswap::Fallback', noWalletInitPs);
             return mergeUserData(noWalletInitPs, pintswap.module);
         } else {
             // TODO: fix
@@ -138,12 +138,12 @@ export function PintswapStore(props: { children: ReactNode }) {
                     password: await signer?.getAddress(),
                 } as any)) as Pintswap;
                 savePintswap(psFromPass);
-                if (TESTING) console.log('psFromPass:', psFromPass);
+                if (TESTING) console.log('Pintswap::Password', psFromPass);
                 return mergeUserData(psFromPass, pintswap.module);
             } else {
                 const initPs = await Pintswap.initialize({ awaitReceipts: false, signer });
                 savePintswap(initPs);
-                if (TESTING) console.log('initPs:', initPs);
+                if (TESTING) console.log('Pintswap::Default', initPs);
                 return mergeUserData(initPs, pintswap.module);
             }
             // }
@@ -165,7 +165,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                     }
                     (window as any).ps = ps;
                     ps.on('pintswap/node/status', async (s: number) => {
-                        if (TESTING) console.log('Node emitting', s);
+                        if (TESTING) console.log('Node::Emitting', s);
                         if (s === 1) {
                             const incorrectSigner = await isIncorrectSigner();
                             setIncorrectModule(!incorrectSigner);
@@ -173,11 +173,11 @@ export function PintswapStore(props: { children: ReactNode }) {
                     });
                     // Stop exisiting node if there is one started
                     if (pintswap.module?.isStarted() && pintswap.module) {
-                        if (TESTING) console.log('Stopped previous node');
+                        if (TESTING) console.log('Node::Stopping');
                         await pintswap.module.stopNode();
                     }
                     // Start node
-                    if (TESTING) console.log('Starting new node');
+                    if (TESTING) console.log('Node::Starting');
                     await ps.startNode();
                     // Subscribe to peer
                     ps.on('peer:discovery', async (peer: any) => {
@@ -187,13 +187,15 @@ export function PintswapStore(props: { children: ReactNode }) {
                     await ps.subscribeOffers();
                     resolve(ps);
                 } catch (err) {
-                    console.warn('#initialize:', err);
-                    if (TESTING) console.log('noWalletInitPs:', pintswap.module);
+                    if (!String(err).includes('user rejected signing'))
+                        console.error('#initialize:', err);
+                    if (TESTING && !pintswap.module)
+                        console.log('Pintswap::Fallback', pintswap.module);
                     (window as any).ps = pintswap.module;
                     if (!pintswap.module?.isStarted() && pintswap.module) {
                         // Start node
                         await pintswap?.module?.startNode();
-                        if (TESTING) console.log('Starting new node');
+                        if (TESTING) console.log('Node::Starting');
                     }
                     // Subscribe to peer
                     pintswap?.module?.on('peer:discovery', async (peer: any) => {

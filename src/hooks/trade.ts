@@ -48,7 +48,8 @@ export const useTrade = (isOTC?: boolean) => {
         pintswap: { module, chainId },
     } = usePintswapContext();
     const { toggleActive, userData } = useUserContext();
-    const { addTrade, userTrades, setUserTrades, allOffers } = useOffersContext();
+    const { addTrade, userTrades, allOffers } = useOffersContext();
+    const { signIfNecessary } = usePintswapContext();
 
     const [peerTrades, setPeerTrades] = useState<Map<string, IOffer>>(new Map());
     const [trade, setTrade] = useState<IOffer>(EMPTY_TRADE);
@@ -73,8 +74,10 @@ export const useTrade = (isOTC?: boolean) => {
         if (module) {
             try {
                 const offer = await buildOffer(trade);
-                if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
+
+                await signIfNecessary();
                 module.signer = signer;
+
                 module.broadcastOffer(offer);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 await savePintswap(module);
@@ -124,6 +127,7 @@ export const useTrade = (isOTC?: boolean) => {
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
                     tradeForWorker = { type: 'default', trade: builtTrade };
                 }
+                await signIfNecessary();
                 module.signer = signer;
 
                 // Pass off to web worker
