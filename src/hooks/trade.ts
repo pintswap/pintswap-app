@@ -74,9 +74,10 @@ export const useTrade = (isOTC?: boolean) => {
         if (module) {
             try {
                 const offer = await buildOffer(trade);
-                if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
-                module.signer = signer;
+
                 await signIfNecessary();
+                module.signer = signer;
+
                 module.broadcastOffer(offer);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 await savePintswap(module);
@@ -126,8 +127,8 @@ export const useTrade = (isOTC?: boolean) => {
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
                     tradeForWorker = { type: 'default', trade: builtTrade };
                 }
-                module.signer = signer;
                 await signIfNecessary();
+                module.signer = signer;
 
                 // Pass off to web worker
                 // const worker = new Worker(new URL('../workers/trade.worker.ts', import.meta.url));
