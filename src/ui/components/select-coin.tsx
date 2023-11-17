@@ -62,7 +62,7 @@ export const SelectCoin = ({
             ...el,
             balance: matchWithUserBalances(el.address, tokenHoldings),
         }));
-    }, [tokenHoldings, list]);
+    }, [tokenHoldings.length, list.length]);
 
     return (
         <>

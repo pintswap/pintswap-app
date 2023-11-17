@@ -24,7 +24,7 @@ export const MarketsView = () => {
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
 
-    const memoizedList = useMemo(() => list, [list]);
+    const memoizedList = useMemo(() => list, [list.length]);
 
     useEffect(() => {
         if (offersByChain.erc20) {

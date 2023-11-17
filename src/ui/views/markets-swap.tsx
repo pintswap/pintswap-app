@@ -78,7 +78,7 @@ export const MarketsSwapView = () => {
                   )
                 : undefined,
         };
-    }, [offersByChain.erc20]);
+    }, [offersByChain.erc20.length]);
 
     const onClickRow = async (row: any) => {
         const [tradeType, price, amount, sum] = row;

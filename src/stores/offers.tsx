@@ -9,7 +9,6 @@ import {
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
-import { memoize } from 'lodash';
 import {
     toLimitOrder,
     TESTING,
@@ -114,27 +113,25 @@ const groupByType = (m: any) => {
     };
 };
 
-const toFlattened = memoize(
-    async (v) =>
-        await Promise.all(
-            [...v.entries()].reduce(
-                (r, [multiaddr, [_, offerList]]) =>
-                    r.concat(
-                        offerList.map(async (v: any) => ({
-                            ...v,
-                            peer: multiaddr,
-                            chainId: 1,
-                            // chainId: await detectTradeNetwork(v),
-                            hash: hashOffer(v),
-                        })),
-                    ),
-                [],
-            ),
+const toFlattened = async (v: any) =>
+    await Promise.all(
+        [...v.entries()].reduce(
+            (r, [multiaddr, [_, offerList]]) =>
+                r.concat(
+                    offerList.map(async (v: any) => ({
+                        ...v,
+                        peer: multiaddr,
+                        chainId: 1,
+                        // chainId: await detectTradeNetwork(v),
+                        hash: hashOffer(v),
+                    })),
+                ),
+            [],
         ),
-);
+    );
 
 // Get unique ERC20 markets
-const getUniqueMarkets = memoize((offers: any[]) => {
+const getUniqueMarkets = (offers: any[]) => {
     if (offers.length) {
         const _uniqueMarkets: IMarketProps[] = [];
         offers.forEach((m: any) => {
@@ -203,7 +200,7 @@ const getUniqueMarkets = memoize((offers: any[]) => {
         return _uniqueMarkets;
     }
     return [];
-});
+};
 
 const filterByChain = (arr: any[], chainId: number) => arr.filter((el) => el.chainId === chainId);
 
@@ -270,8 +267,11 @@ export function OffersStore(props: { children: ReactNode }) {
             );
             const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
             setAllOffers(returnObj);
-            setUniqueMarkets(getUniqueMarkets(mappedPairs));
-            if (mappedPairs.length) setIsLoading(false);
+
+            if (mappedPairs.length) {
+                setUniqueMarkets(getUniqueMarkets(mappedPairs));
+                setIsLoading(false);
+            }
             return returnObj;
         }
         return { nft: [], erc20: [] };
