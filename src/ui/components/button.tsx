@@ -94,11 +94,11 @@ export const Button = ({
             type={form ? form : 'button'}
             onClick={render().onClick}
             disabled={disabled}
-            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} disabled:opacity-70 border-2 rounded shadow disabled:cursor-not-allowed transition duration-200 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
+            className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} disabled:opacity-70 border-2 rounded shadow disabled:cursor-not-allowed transition duration-150 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (
                 <div
-                    className={`px-2 py-1 lg:px-3 lg:py-1.5 flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 back rounded transition duration-200 group relative`}
+                    className={`px-2 py-1 lg:px-3 lg:py-1.5 flex h-full w-full items-center justify-center bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 back rounded transition duration-150 group relative`}
                 >
                     <div className="absolute h-0 w-0 transition-all duration-150 ease-out group-hover:h-full group-hover:w-full bg-gradient-to-tr from-neutral-900 via-neutral-900 to-neutral-900 rounded"></div>
                     <span className="relative">{render().text}</span>

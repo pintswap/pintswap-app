@@ -18,7 +18,7 @@ export const MarketsRow = (props: IDataTableProps) => {
     const usdPrice = '';
     // useUsdPrice((data[0] as any).split('/')[0]);
 
-    const baseStyle = `text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent sm:first:border-neutral-800 ${
+    const baseStyle = `text-left transition duration-150 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent sm:first:border-neutral-800 ${
         loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
     } ${activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''}`;
 

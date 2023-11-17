@@ -33,7 +33,7 @@ export const CopyClipboard = ({ icon, value, lg, truncate, children }: ICopyClip
                     data-tooltip-id="clipboard-copy-click"
                     onCopy={toggleTooltip}
                 >
-                    <div className="hover:cursor-pointer hover:text-neutral-300 transition duration-200 flex items-center gap-1 md:gap-2">
+                    <div className="hover:cursor-pointer hover:text-neutral-300 transition duration-150 flex items-center gap-1 md:gap-2">
                         {children}
                         {icon && <MdContentCopy />}
                     </div>
