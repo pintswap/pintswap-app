@@ -15,6 +15,7 @@ import { Tab } from '@headlessui/react';
 import { EMPTY_TRADE, displayOffer, reverseOffer, toAddress, truncate } from '../../utils';
 import { useOffersContext } from '../../stores';
 import { IOffer } from '@pintswap/sdk';
+import { useBalance } from 'wagmi';
 
 const columns = [
     {

@@ -6,7 +6,7 @@ import { Button, SpinnerLoader, TxDetails } from '../components';
 import { NFTInput, NFTDisplay, CoinInput } from '../features';
 import { getQuote } from '../../api';
 import { useOffersContext, usePricesContext } from '../../stores';
-import { useAccount } from 'wagmi';
+import { useAccount, useBalance } from 'wagmi';
 import { useTrade } from '../../hooks';
 
 type ISwapModule = {
@@ -48,6 +48,11 @@ export const SwapModule = ({
     const { address } = useAccount();
     const [nft, setNFT] = useState<INFTProps | null>(null);
     const [nftLoading, setNftLoading] = useState(false);
+    const { data: givesWalletBalance } = useBalance({
+        address,
+        token: toAddress(trade.gives.token) as any,
+        watch: true,
+    });
 
     const determineLoadingText = () => {
         if (loading?.broadcast || loading?.fulfill) return 'Swapping';
@@ -56,7 +61,11 @@ export const SwapModule = ({
     };
     const determineButtonText = () => {
         if (buttonText) return buttonText;
-        if (type === 'fulfill') return 'Fulfill';
+        if (type === 'fulfill') {
+            if (givesWalletBalance && Number(givesWalletBalance.formatted) === 0)
+                return `Insufficient ${givesWalletBalance.symbol} Balance`;
+            return 'Fulfill';
+        }
         if (type === 'nft') {
             if (nft && nft.amount === '0') return 'Cannot verify NFT ownership';
             if (!nft) return 'Select NFT';
@@ -223,7 +232,12 @@ export const SwapModule = ({
                     />
                     <Button
                         className="w-full rounded-lg !py-2.5"
-                        disabled={disabled}
+                        disabled={
+                            disabled ||
+                            (type === 'fulfill' &&
+                                givesWalletBalance &&
+                                Number(givesWalletBalance.formatted) === 0)
+                        }
                         loadingText={determineLoadingText()}
                         loading={loading?.broadcast || loading?.fulfill || loading?.trade}
                         onClick={onClick}
