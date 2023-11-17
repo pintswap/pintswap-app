@@ -10,7 +10,7 @@ export const PeersView = () => {
     const { peersData, peersLoading, peersError } = usePeersContext();
     const { query, list, handleChange } = useSearch(peersData);
 
-    const memoizedList = useMemo(() => list, [list]);
+    const memoizedList = useMemo(() => list, [list.length]);
 
     return (
         <div className="flex flex-col">
