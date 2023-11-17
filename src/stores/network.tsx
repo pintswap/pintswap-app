@@ -41,13 +41,13 @@ export function NetworkStore(props: { children: ReactNode }) {
             clearTimeout(timerRef.current);
 
             if (account) {
-                console.log('new account', account);
+                console.log('New account detected:', account);
                 setMeta({ ...meta, newAddress: true });
                 timerRef.current = setTimeout(() => {
                     setMeta({ ...meta, newAddress: false });
                 }, DEFAULT_TIMER);
             } else if (chain) {
-                console.log('new chain', chain);
+                console.log('New chain detected:', chain);
                 setMeta({ ...meta, newNetwork: true });
                 timerRef.current = setTimeout(() => {
                     setMeta({ ...meta, newNetwork: false });
