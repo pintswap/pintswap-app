@@ -23,7 +23,7 @@ type IDropdownMenuProps = {
 export const DropdownMenu = ({ items, customIcon, buttonClass, onClick }: IDropdownMenuProps) => {
     const navigate = useNavigate();
 
-    const genericHamburgerLine = `h-1 w-6 my-[3px] rounded-full bg-white transition ease transform duration-200 rounded`;
+    const genericHamburgerLine = `h-1 w-6 my-[3px] rounded-full bg-white transition ease transform duration-150 rounded`;
     return (
         <Menu
             as="div"

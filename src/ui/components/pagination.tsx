@@ -30,7 +30,7 @@ export const Pagination = ({ max, next, prev, jump, perPage, currentPage }: IPag
         }
     };
 
-    const btnBaseClass = `w-full transition duration-200 hover:text-neutral-300`;
+    const btnBaseClass = `w-full transition duration-150 hover:text-neutral-300`;
     return (
         <div className="flex justify-center w-full">
             <div className={`grid gap-0.5 grid-cols-7`}>
