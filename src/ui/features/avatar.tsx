@@ -159,7 +159,7 @@ export const Avatar = ({
                 }}
                 className={` ${
                     imgShape === 'square' ? 'rounded' : 'rounded-full'
-                } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
+                } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-150 hover:bg-gray`}
                 alt="Avatar"
             />
         );
@@ -195,7 +195,7 @@ export const Avatar = ({
                             }}
                             className={` ${
                                 imgShape === 'square' ? 'rounded' : 'rounded-full'
-                            } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
+                            } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-150 hover:bg-gray`}
                             alt="Avatar"
                         />
                     </button>

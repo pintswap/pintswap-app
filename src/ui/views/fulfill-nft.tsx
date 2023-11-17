@@ -21,7 +21,7 @@ export const FulfillNFTView = () => {
 
     const offer = useMemo(() => {
         return peerTrades.get(hash as string);
-    }, [peerTrades, hash, multiaddr]);
+    }, [peerTrades.size, hash, multiaddr]);
 
     useEffect(() => {
         (async () => {
