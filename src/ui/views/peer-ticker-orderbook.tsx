@@ -132,7 +132,7 @@ export const PeerTickerOrderbookView = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="grid grid-cols-2 lg:grid-cols-3 items-center justify-between mb-4 md:mb-6">
+            <div className="grid grid-cols-2 lg:grid-cols-3 items-center justify-between mb-4">
                 <Header
                     breadcrumbs={[
                         { text: 'Markets', link: '/markets' },

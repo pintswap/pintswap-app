@@ -10,11 +10,11 @@ export const PeersView = () => {
     const { peersData, peersLoading, peersError } = usePeersContext();
     const { query, list, handleChange } = useSearch(peersData);
 
-    const memoizedList = useMemo(() => list, [list]);
+    const memoizedList = useMemo(() => list, [list.length]);
 
     return (
         <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
+            <div className="flex items-center justify-between mb-2.5 lg:mb-3 gap-6">
                 <Header breadcrumbs={[{ text: 'Peers', link: '/peers' }]}>Active Peers</Header>
                 <Input
                     value={query}

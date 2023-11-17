@@ -1,12 +1,13 @@
-import { BigNumberish, ethers, Signer } from 'ethers6';
+import { BigNumberish, ethers } from 'ethers6';
 import { groupBy } from 'lodash';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
-import { calculatePrices, getUsdPrice } from '../hooks';
+import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
-import { getEthPrice } from '../api';
+import { getEthPrice, getTokenTax, tryBoth } from '../api';
+import { convertExponentialToDecimal } from './format';
 
 function givesBase(offer: any) {
     return {
@@ -122,34 +123,70 @@ export async function toFormatted(transfer: any, chainId: number) {
     };
 }
 
-export async function toLimitOrder(offer: IOffer | any, chainId: number, allOffers: IOfferProps[]) {
+export async function toLimitOrder(
+    offer: IOffer | any,
+    chainId: number,
+    allOffers: IOfferProps[],
+): Promise<IOfferProps> {
     const found = allOffers.find((o) => o.hash === hashOffer(offer));
     if (found) return found;
     const {
         pair: [base, trade],
         type,
     } = orderTokens(offer, chainId);
-    const [baseDecimals, tradeDecimals] = await Promise.all(
-        [base, trade].map(async (v) => await getDecimals(v.address, chainId)),
+
+    const { gives, gets } = offer as IOffer;
+    const [givesDetails, getsDetails, eth, tradeDecimals, tradeTokenTax, baseTokenTax, ticker] =
+        await Promise.all([
+            tryBoth({ address: gives?.token }),
+            tryBoth({ address: gets?.token }),
+            getEthPrice(),
+            getDecimals(trade.address, 1),
+            getTokenTax(trade.address, 1),
+            getTokenTax(base.address, 1),
+            toTicker([base, trade], chainId),
+        ]);
+
+    const givesEthPrice = parseFloat(givesDetails.token.derivedETH);
+    const givesAmount = Number(
+        ethers.formatUnits(gives.amount || '', Number(givesDetails.token.decimals)),
     );
+    const getsEthPrice = parseFloat(getsDetails.token.derivedETH);
+    const getsAmount = Number(
+        ethers.formatUnits(gets.amount || '', Number(getsDetails.token.decimals)),
+    );
+
+    const calculateExchangeRate = () => {
+        let rate: number;
+        if (type === 'ask') {
+            rate = (getsAmount / givesAmount) * getsEthPrice * Number(eth);
+        } else {
+            rate = (givesAmount / getsAmount) * givesEthPrice * Number(eth);
+        }
+        return convertExponentialToDecimal(rate); // TODO: do better
+    };
+
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
-    const eth = await getEthPrice();
     const usdPrice = await getUsdPrice(trade.address, eth);
-    // const price =
-    //     (Number(ethers.formatUnits(base.amount, baseDecimals)) /
-    //     Number(ethers.formatUnits(trade.amount, tradeDecimals)));
     const usdTotal = Number(usdPrice) * Number(amount);
-    const price = Number(usdTotal) / Number(amount);
     return {
         chainId: offer.chainId || 1,
-        price: String(price) || '0',
+        price: String(calculateExchangeRate()) || '0',
         amount,
         type,
-        ticker: await toTicker([base, trade], chainId),
-        hash: hashOffer(offer),
-        priceUsd: usdTotal.toString(),
+        ticker,
+        hash: offer?.hash || '',
+        priceUsd: String(usdTotal),
         priceEth: (usdTotal * Number(eth)).toString(),
+        tax: {
+            buy: tradeTokenTax.buy + baseTokenTax.buy,
+            sell: tradeTokenTax.sell + baseTokenTax.sell,
+            [base.address]: baseTokenTax,
+            [trade.address]: tradeTokenTax,
+        },
         raw: { gives: (offer as IOffer).gives, gets: (offer as IOffer).gets },
+        peer: offer?.peer || '',
+        multiAddr: offer?.peer || '',
     };
 }
 

@@ -64,7 +64,7 @@ export const PairListView = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="mb-4 md:mb-6">
+            <div className="mb-4">
                 <Header
                     breadcrumbs={[
                         { text: 'Markets', link: '/markets' },

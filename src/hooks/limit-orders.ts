@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import { memoize } from 'lodash';
 import { isERC721Transfer, isERC20Transfer } from '@pintswap/sdk';
 import { usePintswapContext, useOffersContext } from '../stores';
 import { ethers } from 'ethers6';
@@ -45,12 +44,11 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
         return result;
     };
 
-    const toFlattened = memoize((v: any) =>
+    const toFlattened = (v: any) =>
         mapToArray(v).map(([key, value]: any) => ({
             ...value,
             hash: key,
-        })),
-    );
+        }));
 
     function groupByType(peerTrades: any) {
         const flattened = toFlattened(peerTrades);
@@ -66,7 +64,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
 
     const sorted = useMemo(() => {
         return groupByType(peerTrades);
-    }, [peerTrades]);
+    }, [peerTrades.size]);
 
     const forTicker =
         type === 'peer-ticker-orderbook'
@@ -82,7 +80,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                           ),
                       ]),
                   );
-              }, [sorted])
+              }, [sorted.erc20.length, sorted.nfts.length])
             : null;
 
     // Subscribers
@@ -161,7 +159,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
 
     const filteredNfts = useMemo(
         () => sorted.nfts.filter((v: any) => isERC721Transfer(v.gives)),
-        [sorted.nfts, multiaddr],
+        [sorted.nfts.length, multiaddr],
     );
 
     return {

@@ -21,7 +21,7 @@ export const TooltipWrapper = ({
             <span
                 data-tooltip-id={id}
                 data-tooltip-content={text}
-                className={`z-[999] leading-[1] ${wrapperClass}`}
+                className={`z-20 leading-[1] ${wrapperClass}`}
             >
                 {children}
             </span>

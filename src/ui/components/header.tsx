@@ -8,7 +8,7 @@ type IHeader = {
 
 export const Header = ({ children, breadcrumbs }: IHeader) => {
     return (
-        <div className="flex flex-col justify-start items-start gap-1 md:gap-2 whitespace-nowrap">
+        <div className="flex flex-col justify-start items-start md:gap-0.5 whitespace-nowrap">
             <h2 className="view-header mb-0">{children}</h2>
             {breadcrumbs && <Breadcrumbs crumbs={breadcrumbs} />}
         </div>

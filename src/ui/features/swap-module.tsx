@@ -1,12 +1,13 @@
 import { MdArrowDownward } from 'react-icons/md';
-import { IOffer } from '@pintswap/sdk';
+import { IOffer, hashOffer } from '@pintswap/sdk';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
-import { INFTProps, fetchNFT } from '../../utils';
+import { INFTProps, fetchNFT, toAddress, tokenTaxCache } from '../../utils';
 import { Button, SpinnerLoader, TxDetails } from '../components';
 import { NFTInput, NFTDisplay, CoinInput } from '../features';
 import { getQuote } from '../../api';
-import { usePricesContext } from '../../stores';
+import { useOffersContext, usePricesContext } from '../../stores';
 import { useAccount } from 'wagmi';
+import { useTrade } from '../../hooks';
 
 type ISwapModule = {
     trade: IOffer;
@@ -24,6 +25,8 @@ type ISwapModule = {
     max?: string;
     autoQuote?: boolean;
     percentDiff?: boolean;
+    buttonText?: string;
+    raw?: IOffer;
 };
 
 export const SwapModule = ({
@@ -38,6 +41,8 @@ export const SwapModule = ({
     max,
     autoQuote = true,
     percentDiff,
+    buttonText,
+    raw,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -50,6 +55,7 @@ export const SwapModule = ({
         return 'Loading';
     };
     const determineButtonText = () => {
+        if (buttonText) return buttonText;
         if (type === 'fulfill') return 'Fulfill';
         if (type === 'nft') {
             if (nft && nft.amount === '0') return 'Cannot verify NFT ownership';
@@ -212,6 +218,8 @@ export const SwapModule = ({
                         trade={trade}
                         loading={typeof loading === 'boolean' ? loading : loading?.trade}
                         type="fulfill"
+                        buyTax={tokenTaxCache[1][toAddress(trade?.gets?.token) || '']?.buy}
+                        sellTax={tokenTaxCache[1][toAddress(trade?.gives?.token) || '']?.sell}
                     />
                     <Button
                         className="w-full rounded-lg !py-2.5"

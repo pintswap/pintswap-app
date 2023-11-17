@@ -57,11 +57,13 @@ export type IMarketProps = {
         offers: IOffer[];
         best: number;
         sum: number;
+        tax: number;
     };
     sell: {
         offers: IOffer[];
         best: number;
         sum: number;
+        tax: number;
     };
     offers: number;
 };
@@ -78,4 +80,28 @@ export type IOfferProps = {
     priceUsd: string;
     priceEth: string;
     raw: IOffer;
+    tax: any;
+};
+
+export type IUserHistoryItemProps = {
+    hash: string;
+    timestamp: string;
+    chainId: number;
+    pair: string;
+    maker: string;
+    taker: string;
+    gets: {
+        amount: string;
+        address: string;
+        symbol: string;
+        decimals: number;
+    };
+    gives: {
+        amount: string;
+        address: string;
+        symbol: string;
+        decimals: number;
+    };
+    sending: string;
+    receiving: string;
 };

@@ -10,3 +10,4 @@ export * from './prices';
 export * from './usd-price';
 export * from './account';
 export * from './staking';
+export * from './otc-trade';

@@ -1,6 +1,90 @@
 import { Signer, formatUnits } from 'ethers6';
-import { getDecimals, getSymbol } from './token';
-import { providerFromChainId } from './provider';
+import {
+    convertAmount,
+    getDecimals,
+    getSymbol,
+    getTokenAddress,
+    getTokenAttributes,
+} from './token';
+import { EMPTY_TRADE, TESTING } from './constants';
+import { ethers } from 'ethers';
+import { ITokenProps } from './types';
+import { IOffer } from '@pintswap/sdk';
+
+// Trade
+export const buildOffer = async ({ gets, gives }: IOffer, chainId: number = 1): Promise<IOffer> => {
+    if (!gets.token && !gives.token) return EMPTY_TRADE;
+    const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
+        | ITokenProps
+        | undefined;
+    const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
+        | ITokenProps
+        | undefined;
+
+    // NFT
+    if (gives?.tokenId) {
+        const builtObj = {
+            gives: {
+                ...gives,
+                tokenId: ethers.utils.hexlify(Number(gives.tokenId)),
+                amount: undefined,
+            },
+            gets: {
+                token: getTokenAddress(foundGetsToken, gets, chainId),
+                amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
+            },
+        };
+        if (TESTING) console.log('#buildTradeObj:', builtObj);
+        return builtObj;
+    }
+    // ERC20
+    const builtObj = {
+        gives: {
+            token: getTokenAddress(foundGivesToken, gives, chainId),
+            amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
+        },
+        gets: {
+            token: getTokenAddress(foundGetsToken, gets, chainId),
+            amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
+        },
+    };
+    if (TESTING) console.log('#buildTradeObj:', builtObj);
+    return builtObj;
+};
+
+export const displayOffer = async ({ gets, gives }: IOffer, chainId: number = 1) => {
+    try {
+        return {
+            gives: {
+                token: (await getSymbol(gives.token, chainId)) || gives.token,
+                amount: await convertAmount('number', gives.amount || '', gives.token, chainId),
+            },
+            gets: {
+                token: (await getSymbol(gets.token, chainId)) || gets.token,
+                amount: await convertAmount('number', gets.amount || '', gets.token, chainId),
+            },
+        };
+    } catch (err) {
+        console.error(err);
+        return {
+            gives: {
+                token: gives.token,
+                amount: gives.amount,
+            },
+            gets: {
+                token: gets.token,
+                amount: gets.amount,
+            },
+        };
+    }
+};
+
+export const reverseOffer = ({ gets, gives }: IOffer): IOffer => {
+    return {
+        gives: gets,
+        gets: gives,
+    };
+};
 
 // STRING
 export function truncate(s: string, amount?: number) {
@@ -14,6 +98,24 @@ export const shorten = (s: string) => {
     if (s.length <= 8) return s;
     return `${s.substr(0, 4)}...${s.substr(s.length - 4, 4)}`;
 };
+
+export function convertExponentialToDecimal(exponentialNumber: number | string): string {
+    // sanity check - is it exponential number
+    const str = exponentialNumber.toString();
+    if (str.indexOf('e') !== -1) {
+        let _exponentialNumber: number;
+        if (typeof exponentialNumber === 'string') _exponentialNumber = Number(exponentialNumber);
+        else _exponentialNumber = exponentialNumber;
+        const exponent = parseInt(str.split('-')[1], 10);
+        // Unfortunately I can not return 1e-8 as 0.00000001, because even if I call parseFloat() on it,
+        // it will still return the exponential representation
+        // So I have to use .toFixed()
+        const result = _exponentialNumber.toFixed(exponent);
+        return result;
+    } else {
+        return String(exponentialNumber);
+    }
+}
 
 export function parseTickerAsset(ticker: string, asset: 1 | 2, icon?: boolean) {
     if (!ticker) return '';

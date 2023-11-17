@@ -29,8 +29,8 @@ export const useDashNav = () => {
             tooltip: 'Make a Market',
         },
         {
-            text: 'Swap',
-            route: '/swap',
+            text: 'Create',
+            route: '/create',
             disabled: false,
             icon: <MdSwapHoriz size={ICON_SIZE} />,
             tooltip: 'Broadcast an offer',

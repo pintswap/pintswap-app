@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { IUserDataProps, usePintswapContext, usePeersContext, useUserContext } from '../../stores';
 import {
     DEFAULT_AVATAR,
-    formatPeerImg,
     formatPeerName,
     getFormattedPeer,
     getPeerImg,
@@ -23,7 +22,7 @@ type IAvatarProps = {
     bioClass?: string;
     align?: 'left' | 'center' | 'right';
     loading?: boolean;
-    type?: 'clickable' | 'default' | 'profile';
+    type?: 'clickable' | 'default' | 'profile' | 'img';
     direction?: 'horizontal' | 'vertical';
     ring?: boolean;
     ringColor?: `bg-${string}`;
@@ -52,7 +51,7 @@ export const Avatar = ({
     const { pintswap } = usePintswapContext();
     const { module } = pintswap;
     const { userData, setUserData } = useUserContext();
-    const { peersData } = usePeersContext();
+    const { peersData, updatePeersData } = usePeersContext();
 
     const peerName = typeof peer === 'string' ? peer : peer?.name;
     const isUser = peerName === module?.address;
@@ -85,7 +84,10 @@ export const Avatar = ({
         if (module && peer && peerName) {
             const found = peersData.find((el) => el.name === peerName);
             if (found) {
-                const img = withImage ? await getPeerImg(pintswap, peer) : found.img;
+                const img =
+                    withImage && found.img === '/img/generic-avatar.jpg'
+                        ? await getPeerImg(pintswap, peer)
+                        : found.img;
                 const returnObj = {
                     ...found,
                     active: isUser ? userData.active : found.active,
@@ -94,6 +96,7 @@ export const Avatar = ({
                     img,
                     loading: false,
                 };
+                updatePeersData(returnObj);
                 return returnObj;
             }
             const formattedPeer = await getFormattedPeer(
@@ -142,6 +145,26 @@ export const Avatar = ({
         });
     }, [userData.name, userData.bio, userData.img]);
 
+    if (type === 'img') {
+        return (
+            <img
+                src={(peerData.img as string) || DEFAULT_AVATAR}
+                height={size}
+                width={size}
+                style={{
+                    minWidth: size,
+                    minHeight: size,
+                    maxHeight: size,
+                    maxWidth: size,
+                }}
+                className={` ${
+                    imgShape === 'square' ? 'rounded' : 'rounded-full'
+                } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-150 hover:bg-gray`}
+                alt="Avatar"
+            />
+        );
+    }
+
     if (type === 'clickable') {
         return (
             <div className={`${loading ? 'animate-pulse' : ''}`}>
@@ -172,7 +195,7 @@ export const Avatar = ({
                             }}
                             className={` ${
                                 imgShape === 'square' ? 'rounded' : 'rounded-full'
-                            } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-200 hover:bg-gray`}
+                            } bg-brand-dashboard object-cover self-center flex items-center justify-center bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 back transition duration-150 hover:bg-gray`}
                             alt="Avatar"
                         />
                     </button>
@@ -229,37 +252,37 @@ export const Avatar = ({
                         </>
                     )}
                 </div>
-                <div className={`flex flex-col pl-3 sm:pl-4 ${alignClass()}`}>
-                    <div>
-                        {loading || peerData.loading ? (
-                            <div
-                                className={`rounded-md self-center bg-neutral-900 mt-0.5`}
-                                style={{ width: 150, height: 30 }}
-                            />
-                        ) : (
-                            <span className={`${nameClass ? nameClass : 'text-lg lg:text-2xl'}`}>
-                                {peerData.name?.includes('.drip')
-                                    ? peerData.name
-                                    : truncate(PintP2P.toAddress(peerData.name))}
-                            </span>
-                        )}
-                    </div>
-                    <div>
-                        {loading || peerData.loading ? (
-                            <div
-                                className={`rounded-md bg-neutral-900 mt-1`}
-                                style={{ width: 200, height: 20 }}
-                            />
-                        ) : (
-                            <span
-                                className={`${
-                                    bioClass ? bioClass : 'text-sm lg:text-md text-gray-400'
-                                }`}
-                            >
-                                {peerData.bio}
-                            </span>
-                        )}
-                    </div>
+                <div className={`flex flex-col pl-2 ${alignClass()}`}>
+                    {(loading || peerData.loading) && !peer ? (
+                        <div
+                            className={`rounded-md bg-neutral-900 mt-0.5`}
+                            style={{ width: 150, height: 24 }}
+                        />
+                    ) : (
+                        <span
+                            className={`${
+                                nameClass ? nameClass : 'text-lg lg:text-2xl'
+                            } leading-tight`}
+                        >
+                            {peerData.name?.includes('.drip')
+                                ? peerData.name
+                                : truncate(PintP2P.toAddress(peerData.name))}
+                        </span>
+                    )}
+                    {loading || peerData.loading ? (
+                        <div
+                            className={`rounded-md bg-neutral-900 mt-0.5`}
+                            style={{ width: 200, height: 16 }}
+                        />
+                    ) : (
+                        <span
+                            className={`${
+                                bioClass ? bioClass : 'text-sm lg:text-md text-gray-400'
+                            }`}
+                        >
+                            {peerData.bio}
+                        </span>
+                    )}
                 </div>
             </div>
         );

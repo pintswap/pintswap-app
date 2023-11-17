@@ -10,7 +10,7 @@ import {
 import { SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import React, { useEffect, useState } from 'react';
-import { BASE_URL, updateToast } from '../../utils';
+import { BASE_URL, DEFAULT_TIMEOUT, renderToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -72,11 +72,11 @@ export const SwapView = () => {
 
     useEffect(() => {
         if (steps[2].status === 'current') {
-            updateToast('swapping', 'success');
+            renderToast('swapping', 'success');
             const timeout = setTimeout(() => {
                 setIsModalOpen(false);
                 clearTrade();
-            }, 5000);
+            }, DEFAULT_TIMEOUT);
             return () => clearTimeout(timeout);
         }
     }, [steps[2].status]);
@@ -85,12 +85,7 @@ export const SwapView = () => {
         <>
             <div className="flex flex-col max-w-lg mx-auto">
                 <h2 className="view-header text-left">Create Offer</h2>
-                <Card
-                    className="!py-4"
-                    type="tabs"
-                    tabs={['ERC20', 'NFT', 'LIMIT']}
-                    onTabChange={clearTrade}
-                >
+                <Card type="tabs" tabs={['MARKET', 'LIMIT', 'NFT']} onTabChange={clearTrade}>
                     <div className="mb-3">
                         <SwitchToggle
                             labelOn="Public"
@@ -118,17 +113,6 @@ export const SwapView = () => {
                     </Tab.Panel>
                     <Tab.Panel>
                         <SwapModule
-                            type="nft"
-                            trade={trade}
-                            updateTrade={updateTrade}
-                            disabled={isButtonDisabled()}
-                            onClick={handleSwap}
-                            loading={loading}
-                            isPublic={isPublic}
-                        />
-                    </Tab.Panel>
-                    <Tab.Panel>
-                        <SwapModule
                             trade={trade}
                             updateTrade={updateTrade}
                             disabled={isButtonDisabled()}
@@ -138,6 +122,17 @@ export const SwapView = () => {
                             isPublic={isPublic}
                             autoQuote={false}
                             percentDiff
+                        />
+                    </Tab.Panel>
+                    <Tab.Panel>
+                        <SwapModule
+                            type="nft"
+                            trade={trade}
+                            updateTrade={updateTrade}
+                            disabled={isButtonDisabled()}
+                            onClick={handleSwap}
+                            loading={loading}
+                            isPublic={isPublic}
                         />
                     </Tab.Panel>
                 </Card>

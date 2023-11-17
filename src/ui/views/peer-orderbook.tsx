@@ -2,7 +2,7 @@ import { Card, Header, TransitionModal } from '../components';
 import { Avatar } from '../features';
 import { DataTable, NFTTable } from '../tables';
 import { useLocation, useParams } from 'react-router-dom';
-import { useLimitOrders, useTrade } from '../../hooks';
+import { useLimitOrders, useTrade, useWindowSize } from '../../hooks';
 import { useEffect, useState } from 'react';
 import { useOffersContext, usePintswapContext } from '../../stores';
 import { groupBy } from 'lodash';
@@ -24,8 +24,10 @@ const columns = [
         label: 'Bid',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'right' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
     {
@@ -33,16 +35,18 @@ const columns = [
         label: 'Ask',
         options: {
             filter: false,
-            sort: true,
+            sort: false,
             sortThirdClickReset: true,
+            setCellHeaderProps: () => ({ align: 'right' }),
+            setCellProps: () => ({ align: 'right' }),
         },
     },
 ];
 
 export const PeerOrderbookView = () => {
     const { order, loading } = useTrade();
+    const { width, breakpoints } = useWindowSize();
     const { filteredNfts } = useLimitOrders('peer-orderbook');
-    const { state } = useLocation();
     const { multiaddr } = useParams();
     const { offersByChain } = useOffersContext();
     const [uniquePairs, setUniquePairs] = useState<any[]>([]);
@@ -73,11 +77,9 @@ export const PeerOrderbookView = () => {
         );
     }, [offersByChain.erc20, resolved, multiaddr]);
 
-    const peer = state?.peer ? state.peer : multiaddr ? multiaddr : order.multiAddr;
-
     return (
         <div className="flex flex-col">
-            <div className="grid grid-cols-2 items-center justify-between mb-4 md:mb-6">
+            <div className="grid grid-cols-2 items-center justify-between mb-4">
                 <Header
                     breadcrumbs={[
                         { text: 'Peers', link: '/peers' },
@@ -87,14 +89,16 @@ export const PeerOrderbookView = () => {
                     Peer Overview
                 </Header>
 
-                <div className="justify-self-end hidden sm:block">
+                <div className="justify-self-end">
                     <TransitionModal
                         button={
                             <Avatar
                                 peer={multiaddr}
                                 nameClass="text-xl"
-                                type="profile"
+                                type={width > breakpoints.md ? 'profile' : 'img'}
                                 align="left"
+                                ringColor="bg-transparent"
+                                size={'44px'}
                             />
                         }
                     >

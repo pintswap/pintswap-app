@@ -1,16 +1,24 @@
-import { Tab, Transition } from '@headlessui/react';
-import { PageStatus, TransitionModal, Card } from '../components';
+import { Tab } from '@headlessui/react';
+import { TransitionModal, Card } from '../components';
 import { Avatar, SwapModule } from '../features';
-import { useTrade } from '../../hooks';
-import { useAccount } from 'wagmi';
+import { useOtcTrade, useTrade } from '../../hooks';
+import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { useEffect } from 'react';
-import { updateToast } from '../../utils';
+import { DEFAULT_TIMEOUT, reverseOffer, toAddress, renderToast, wait } from '../../utils';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export const FulfillView = () => {
     const { address } = useAccount();
     const navigate = useNavigate();
-    const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade();
+    const { chain } = useNetwork();
+    // const { loadingTrade, trade: otcTrade, executeTrade, fillingTrade, clearTrade } = useOtcTrade();
+    const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade(true);
+    const { data } = useBalance(
+        trade.gets.token?.toUpperCase() === 'ETH'
+            ? { address }
+            : { token: toAddress(trade.gets.token || '', chain?.id) as any, address, watch: true },
+    );
 
     const isButtonDisabled = () => {
         return (
@@ -18,25 +26,36 @@ export const FulfillView = () => {
             !trade.gives?.amount ||
             !trade.gets?.token ||
             !trade.gives?.token ||
-            loading.trade ||
             loading.fulfill ||
-            !address
+            !address ||
+            Number(data?.formatted) === 0
         );
+    };
+
+    const determineButtonText = () => {
+        if (!trade.gets.token && !trade.gives.token) return 'Loading';
+        if (
+            !trade.gets?.amount ||
+            !trade.gives?.amount ||
+            !trade.gets?.token ||
+            !trade.gives?.token
+        )
+            return 'Error loading trade';
+        if (Number(data?.formatted) === 0) return `Insufficient ${trade.gets.token} balance`;
+        return 'Fulfill';
     };
 
     useEffect(() => {
         if (steps[2].status === 'current') {
-            updateToast('swapping', 'success');
-            const timeout = setTimeout(() => {
-                navigate('/');
-            }, 5000);
+            renderToast('swapping', 'success');
+            const timeout = setTimeout(() => navigate('/'), DEFAULT_TIMEOUT * 2);
             return () => clearTimeout(timeout);
         }
     }, [steps[2].status]);
 
     return (
         <>
-            <div className="flex flex-col gap-4 md:gap-6 max-w-lg mx-auto">
+            <div className="flex flex-col gap-3 2xl:gap-4 max-w-lg mx-auto">
                 <div className="flex items-center justify-between">
                     <TransitionModal
                         button={
@@ -57,13 +76,14 @@ export const FulfillView = () => {
                     <Tab.Panel>
                         <SwapModule
                             type="fulfill"
-                            trade={{
-                                gets: trade.gives,
-                                gives: trade.gets,
-                            }}
+                            trade={reverseOffer(trade)}
                             disabled={isButtonDisabled()}
                             onClick={fulfillTrade}
-                            loading={loading}
+                            loading={{
+                                trade: !trade.gets.token && !trade.gives.token,
+                                fulfill: loading.fulfill,
+                            }}
+                            buttonText={determineButtonText()}
                         />
                     </Tab.Panel>
                 </Card>
@@ -72,7 +92,7 @@ export const FulfillView = () => {
                 show={steps[2].status === 'current'}
                 enter="transition-opacity duration-300"
                 enterFrom="opacity-0"
-                enterTo="opacity-100"
+                 enterTo="opacity-100"
                 leave="transition-opacity duration-100"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"

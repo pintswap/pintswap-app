@@ -1,12 +1,19 @@
-import { Card, Asset, Header, TooltipWrapper, SwitchToggle, TransitionModal } from '../components';
+import {
+    Card,
+    Header,
+    SwitchToggle,
+    TransitionModal,
+    TextDisplay,
+    SmartPrice,
+} from '../components';
 import { DataTable } from '../tables';
 import { Avatar, SwapModule } from '../features';
-import { useTrade } from '../../hooks';
+import { useTrade, useUsdPrice } from '../../hooks';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { EMPTY_TRADE, NETWORKS, toAddress, truncate } from '../../utils';
-import { useOffersContext, usePintswapContext } from '../../stores';
+import { EMPTY_TRADE, displayOffer, reverseOffer, toAddress, truncate } from '../../utils';
+import { useOffersContext } from '../../stores';
 import { IOffer } from '@pintswap/sdk';
 
 const columns = [
@@ -40,17 +47,15 @@ const columns = [
 ];
 
 export const MarketsSwapView = () => {
-    const { pathname, state } = useLocation();
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+    const { pathname } = useLocation();
     const { offersByChain, isLoading } = useOffersContext();
     const { pair, multiaddr } = useParams();
     const quote = pair?.split('-')[0] || '';
     const base = pair?.split('-')[1] || '';
-    const { setOrder, trade, setTrade, displayTradeObj, fulfillTrade, loading, steps } = useTrade();
+    const { setOrder, trade, setTrade, fulfillTrade, loading, steps } = useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
+    const usdPrice = useUsdPrice(toAddress(quote));
 
     const peerOffers = useMemo(() => {
         let offers = offersByChain.erc20.filter(
@@ -59,7 +64,6 @@ export const MarketsSwapView = () => {
         if (multiaddr) offers = offers.filter((el) => el.peer === multiaddr);
         const bids = offers.filter((el) => el.type === 'bid');
         const asks = offers.filter((el) => el.type === 'ask');
-        if (!asks.length && offersByChain.erc20.length) setIsBuy(false);
         return {
             bids,
             asks,
@@ -74,7 +78,7 @@ export const MarketsSwapView = () => {
                   )
                 : undefined,
         };
-    }, [offersByChain.erc20]);
+    }, [offersByChain.erc20.length]);
 
     const onClickRow = async (row: any) => {
         const [tradeType, price, amount, sum] = row;
@@ -84,10 +88,9 @@ export const MarketsSwapView = () => {
         );
         if (found) {
             setOrder({ multiAddr: found.peer, orderHash: found.hash });
-            const displayOffer = await displayTradeObj(found.raw);
-            const correctSide = { gives: displayOffer.gets, gets: displayOffer.gives };
-            setDisplayedTrade(correctSide);
-            setTrade(displayOffer);
+            const displayedOffer = await displayOffer(found.raw);
+            setDisplayedTrade(reverseOffer(displayedOffer));
+            setTrade(found.raw);
         }
     };
 
@@ -115,25 +118,25 @@ export const MarketsSwapView = () => {
     };
 
     const renderEmptyTrade = () => {
-        if (isBuy && peerOffers.asks.length) {
+        if (!isBuy && peerOffers.bids.length) {
             setDisplayedTrade({
                 gives: {
-                    token: base,
+                    token: quote,
                     amount: '',
                 },
                 gets: {
-                    token: quote,
+                    token: base,
                     amount: '',
                 },
             });
         } else {
             setDisplayedTrade({
                 gives: {
-                    token: quote,
+                    token: base,
                     amount: '',
                 },
                 gets: {
-                    token: base,
+                    token: quote,
                     amount: '',
                 },
             });
@@ -142,6 +145,25 @@ export const MarketsSwapView = () => {
 
     useEffect(() => {
         if (quote && base && trade.gets.token === '') {
+            (async () => {
+                const found = peerOffers.asks[0];
+                if (found) {
+                    setOrder({ multiAddr: found?.peer, orderHash: found.hash });
+                    const displayedOffer = await displayOffer(found.raw);
+                    setDisplayedTrade(reverseOffer(displayedOffer));
+                    setTrade(found.raw);
+                }
+            })().catch((err) => console.error(err));
+        }
+    }, [offersByChain.erc20.length]);
+
+    useEffect(() => {
+        if (
+            trade.gets.amount === '' &&
+            trade.gives.amount === '' &&
+            displayedTrade.gets.amount !== '' &&
+            displayedTrade.gives.amount !== ''
+        ) {
             setDisplayedTrade({
                 gives: {
                     token: base,
@@ -153,8 +175,7 @@ export const MarketsSwapView = () => {
                 },
             });
         }
-        console.log('peerOffers', peerOffers);
-    }, [offersByChain.erc20.length]);
+    }, [trade.gets.amount, trade.gives.amount]);
 
     useEffect(() => {
         renderEmptyTrade();
@@ -169,11 +190,11 @@ export const MarketsSwapView = () => {
     return (
         <>
             <div className="flex flex-col">
-                <div className="flex items-center justify-between mb-4 md:mb-6">
+                <div className="flex items-center justify-between mb-2.5 lg:mb-3">
                     <Header breadcrumbs={renderBreadcrumbs()}>
                         {multiaddr ? 'Peer Orderbook' : 'Market Swap'}
                     </Header>
-                    {multiaddr && (
+                    {multiaddr ? (
                         <div className="justify-self-end hidden sm:block">
                             <TransitionModal
                                 button={
@@ -188,11 +209,23 @@ export const MarketsSwapView = () => {
                                 <Avatar peer={multiaddr} size={300} />
                             </TransitionModal>
                         </div>
+                    ) : (
+                        <TextDisplay
+                            loading={usdPrice === '-'}
+                            value={
+                                <span className="flex items-center gap-1">
+                                    <span className="text-sm">$</span>{' '}
+                                    <SmartPrice price={usdPrice} />
+                                </span>
+                            }
+                            label="Market Price"
+                            align="right"
+                        />
                     )}
                 </div>
                 <div className="flex flex-col lg:flex-row gap-2 md:gap-3 lg:gap-4">
-                    <Card className="lg:max-w-lg">
-                        <h2 className="mb-2 lg:mb-3 font-semibold">Swap</h2>
+                    <Card className="lg:max-w-lg h-fit">
+                        <h2 className="mb-3 font-semibold">Swap</h2>
                         <div className="mb-3">
                             <SwitchToggle
                                 labelOn="Buy"
@@ -203,10 +236,12 @@ export const MarketsSwapView = () => {
                         </div>
                         <SwapModule
                             trade={displayedTrade}
+                            raw={trade}
                             type="fulfill"
                             onClick={fulfillTrade}
                             loading={loading}
                             disabled={isLoading || loading.fulfill || !trade.gets.amount}
+                            percentDiff // TODO: not working
                             // max={peerOffers()[isBuy ? 'maxAsk' : 'maxBid'].amount}
                         />
                     </Card>
@@ -216,6 +251,7 @@ export const MarketsSwapView = () => {
                         defaultTab={isBuy ? 'asks' : 'bids'}
                         selectedTab={isBuy ? 'asks' : 'bids'}
                         onTabChange={() => setIsBuy(!isBuy)}
+                        className="h-fit"
                     >
                         <Tab.Panel>
                             <DataTable
@@ -229,7 +265,7 @@ export const MarketsSwapView = () => {
                                 options={{
                                     sortOrder: {
                                         name: 'price',
-                                        direction: 'asc',
+                                        direction: 'desc',
                                     },
                                 }}
                                 // activeRow={activeIndex}
@@ -247,7 +283,7 @@ export const MarketsSwapView = () => {
                                 options={{
                                     sortOrder: {
                                         name: 'price',
-                                        direction: 'desc',
+                                        direction: 'asc',
                                     },
                                 }}
                                 // activeRow={activeIndex}

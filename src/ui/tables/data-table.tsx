@@ -11,11 +11,18 @@ import {
     useUserContext,
 } from '../../stores';
 import { useParams } from 'react-router-dom';
-import { BASE_URL, NETWORKS, truncate, numberFormatter } from '../../utils';
+import {
+    BASE_URL,
+    NETWORKS,
+    truncate,
+    numberFormatter,
+    percentChange,
+    convertExponentialToDecimal,
+} from '../../utils';
 import { muiCache, muiOptions, muiTheme } from '../../config';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { toast } from 'react-toastify';
-import { TooltipWrapper, Asset, SmartPrice, Button, Skeleton } from '../components';
+import { TooltipWrapper, Asset, SmartPrice, Button, Skeleton, ChangeDisplay } from '../components';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { MarketsRow } from './markets-row';
 import { useQuery } from '@tanstack/react-query';
@@ -47,22 +54,20 @@ export type IDataTableProps = {
     column?: number;
 };
 
-export const DataTable = (props: IDataTableProps) => {
-    const {
-        data,
-        columns,
-        title,
-        loading,
-        type,
-        peer,
-        toolbar,
-        pagination,
-        options,
-        getRow,
-        trade,
-        activeRow,
-    } = props;
-
+export const DataTable = ({
+    data,
+    columns,
+    title,
+    loading = false,
+    type,
+    peer,
+    toolbar,
+    pagination = true,
+    options,
+    getRow,
+    trade,
+    activeRow,
+}: IDataTableProps) => {
     // TODO: complete
     const determineRow = (rowIndex: number) => {
         const renderProps = {
@@ -177,18 +182,19 @@ const CustomRow = (props: IDataTableProps) => {
     const { deleteTrade, userTrades } = useOffersContext();
     const navigate = useNavigate();
 
+    const isMarketsTable = cols[3] === 'Market' || cols[2] === 'Sell' || cols[1] === 'Buy';
     const { data: usdPrice } = useQuery({
         queryKey: [`price-${(data[0] as any)?.split('/')[0]}`],
         queryFn: () => getUsdPrice((data[0] as any)?.split('/')[0], eth),
-        enabled: !!(data[0] as any)?.split('/')[0] && cols[3] === 'Market',
-        refetchInterval: 1000 * 30,
+        enabled: !!(data[0] as any)?.split('/')[0] && isMarketsTable,
+        refetchInterval: 1000 * 60,
     });
 
     const hasHoverState = `${
         type === 'staking' || loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
     }`;
 
-    const baseStyle = `${hasHoverState} text-left transition duration-200 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent mui:first:border-neutral-800 ${
+    const baseStyle = `${hasHoverState} text-left transition duration-150 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent mui:first:border-neutral-800 ${
         activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''
     }`;
 
@@ -229,8 +235,6 @@ const CustomRow = (props: IDataTableProps) => {
                 return window.open(`${NETWORKS[chainId].explorer}/tx/${firstCell}`, '_blank');
             case 'peer-orderbook': {
                 const [quote, base] = firstCell.split('/');
-                console.log(quote.toLowerCase());
-                console.log(base.toLowerCase());
                 return navigate(
                     `/peers/${peer}/${quote.toLowerCase().trim()}-${base.toLowerCase().trim()}`,
                 );
@@ -325,7 +329,7 @@ const CustomRow = (props: IDataTableProps) => {
                 );
             } else if (type === 'markets') {
                 return (
-                    <p className="flex items-center justify-end mui:justify-start gap-0.5">
+                    <p className="flex items-center justify-end gap-0.5">
                         <span className="text-xs">$</span>
                         {usdPrice ? (
                             <span className="sm:text-lg">
@@ -362,11 +366,23 @@ const CustomRow = (props: IDataTableProps) => {
         const charsShown = tableBreak ? 4 : 5;
         if (((cell as any).best || (cell as any).best === 0) && type === 'markets') {
             const _cell = cell as any;
+            const difference = Number(percentChange(usdPrice, _cell.best));
+            const diffWithTax =
+                index === 2 ? difference - _cell.tax / 100 : difference + _cell.tax / 100;
             return (
-                <span className="grid grid-cols-1 mui:grid-cols-2 items-center gap-2">
-                    <span className="sm:text-lg flex items-center gap-0.5">
+                <span className="grid grid-cols-1 2xl:grid-cols-2 justify-items-end 2xl:justify-items-start items-center gap-2">
+                    <span className="sm:text-lg flex items-center gap-0.5 2xl:justify-self-end">
                         {_cell.offers.length ? (
                             <>
+                                <div className="flex items-center gap-1 mr-2 text-xs">
+                                    <ChangeDisplay
+                                        value={diffWithTax}
+                                        tax={_cell.tax}
+                                        percent
+                                        market={index === 2 ? 'sell' : 'buy'}
+                                        opposite={index === 2}
+                                    />
+                                </div>
                                 <span className="text-xs">$</span>
                                 <SmartPrice price={_cell.best} />
                             </>
@@ -374,13 +390,14 @@ const CustomRow = (props: IDataTableProps) => {
                             <span>-</span>
                         )}
                     </span>
-                    <span className="flex-col hidden mui:flex">
+                    <span className="flex-col hidden 2xl:flex">
                         <span className="text-xs">
-                            <span className="text-neutral-400">Liquid:</span>{' '}
-                            {Number(_cell.sum) < 100 ? (
+                            <span className="text-neutral-400">Liquid:</span>
+                            {' $'}
+                            {Number(_cell.sum) < 10 ? (
                                 <SmartPrice price={_cell.sum} />
                             ) : (
-                                numberFormatter().format(_cell.sum)
+                                numberFormatter(2).format(_cell.sum)
                             )}
                         </span>
                         <span className="text-xs">
@@ -397,12 +414,11 @@ const CustomRow = (props: IDataTableProps) => {
             // Address / MultiAddr
             return truncate(cell, charsShown);
         } else if (!isNaN(Number(cell))) {
-            if (
-                (type === 'markets' && String(cell).includes('.')) ||
-                ((type === 'asks' || type === 'bids') && (index === 0 || index === 2))
-            ) {
+            const isMarketPrice = type === 'markets' && String(cell).includes('.');
+            const isOrderbook = type === 'asks' || type === 'bids';
+            if (isMarketPrice || (isOrderbook && (index === 0 || index === 2))) {
                 return (
-                    <span className="flex items-center gap-1">
+                    <span className={`flex items-center gap-1`}>
                         <small>$</small>
                         <SmartPrice price={cell} />
                     </span>
@@ -443,10 +459,10 @@ const CustomRow = (props: IDataTableProps) => {
                     (index === 0 || type === 'peer-orderbook')
                 ) {
                     // Display USD value if possible
-                    if (_baseAsset.includes('eth')) _cell = (Number(cell) * Number(eth)).toString();
+                    if (_baseAsset.includes('eth')) _cell = Number(cell).toString();
                     else _cell = cell;
                     return (
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center justify-end gap-1">
                             <small>$</small>
                             <SmartPrice price={_cell} />
                         </span>
@@ -468,6 +484,12 @@ const CustomRow = (props: IDataTableProps) => {
                     );
                 // Display Big Number
                 _cell = cell;
+                if (type === 'peer-orderbook')
+                    return (
+                        <span className="flex items-center justify-end">
+                            <SmartPrice price={_cell} />
+                        </span>
+                    );
                 return <SmartPrice price={_cell} />;
             }
         } else if ((type === 'peer-orderbook' || type === 'markets') && cell.includes('/')) {
@@ -494,7 +516,7 @@ const CustomRow = (props: IDataTableProps) => {
                 {cells.map((cell, i) => (
                     <td
                         key={`data-table-cell-${i}-${Math.floor(Math.random() * 1000)}`}
-                        className={`py-2 px-4`}
+                        className={`py-[7px] px-4`}
                     >
                         {!loading ? (
                             determineCell(cell, i)

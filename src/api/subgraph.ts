@@ -1,5 +1,13 @@
 import { ethers, Signer, ZeroAddress } from 'ethers6';
-import { ENDPOINTS, formatPintswapTrade, priceCache, toAddress } from '../utils';
+import {
+    decimalsCache,
+    ENDPOINTS,
+    formatPintswapTrade,
+    priceCache,
+    subgraphTokenCache,
+    symbolCache,
+    toAddress,
+} from '../utils';
 import { IOffer } from '@pintswap/sdk';
 
 const JSON_HEADER_POST = { method: 'POST', headers: { 'Content-Type': 'application/json' } };
@@ -159,11 +167,24 @@ export async function getV2Token({
 }
 
 export async function tryBoth(props: { address?: string; history?: 'day' | 'hour' }) {
-    if (!props) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
+    if (!props || !props.address) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
+    if (subgraphTokenCache[1][props.address]) return subgraphTokenCache[1][props.address];
     const v2Token = await getV2Token(props);
-    if (v2Token?.token) return v2Token;
+    if (v2Token?.token) {
+        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v2Token;
+        if (!decimalsCache[1][props.address])
+            decimalsCache[1][props.address] = Number(v2Token.token?.decimals);
+        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v2Token.token?.symbol;
+        return v2Token;
+    }
     const v3Token = await getV3Token(props);
-    if (v3Token?.token) return v3Token;
+    if (v3Token?.token) {
+        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v3Token;
+        if (!decimalsCache[1][props.address])
+            decimalsCache[1][props.address] = Number(v3Token.token?.decimals);
+        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v3Token.token?.symbol;
+        return v3Token;
+    }
     return { token: null };
 }
 
@@ -268,7 +289,7 @@ export async function getQuote(
         const quote = Number(givesEthPrice) / Number(getsEthPrice);
         if (quote === 0) return '';
         if (type === 'exact') return quote.toString();
-        return (Math.round(quote * 9990) / 10000).toString(); // round down to nearest 4 decimal places
+        return (Math.round(quote * 10000) / 10000).toString(); // round down to nearest 4 decimal places
     }
     return '0';
 }

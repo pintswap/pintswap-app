@@ -1,17 +1,30 @@
 import { Disclosure, Transition } from '@headlessui/react';
 import { IOffer } from '@pintswap/sdk';
 import { BiChevronUp } from 'react-icons/bi';
-import { convertAmount } from '../../utils';
+import { convertAmount, percentFormatter } from '../../utils';
 import { useEffect, useState } from 'react';
 import { usePintswapContext } from '../../stores';
+import { ChangeDisplay } from './change-display';
 
 type ITxDetailsProps = {
     trade: IOffer;
     loading?: boolean;
     type: 'fulfill' | 'create';
+    sellTax?: number;
+    buyTax?: number;
+    exchangeRate?: number;
 };
 
-export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
+export const TxDetails = ({
+    trade,
+    loading,
+    type,
+    buyTax,
+    sellTax,
+    exchangeRate,
+}: ITxDetailsProps) => {
+    const _buyTax = buyTax && buyTax !== 0 ? buyTax / 100 : undefined;
+    const _sellTax = sellTax && sellTax !== 0 ? sellTax / 100 : undefined;
     const {
         pintswap: { module, chainId },
     } = usePintswapContext();
@@ -45,7 +58,7 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
             {({ open, close }) => (
                 <div>
                     <Disclosure.Button
-                        className={`w-full flex items-center justify-between bg-neutral-900 p-3 ${
+                        className={`w-full flex items-center justify-between bg-neutral-900 px-3 py-2.5 ${
                             open
                                 ? 'rounded-t-lg text-neutral-100'
                                 : 'rounded-lg text-neutral-400 hover:text-neutral-300'
@@ -55,10 +68,22 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                         <span className="text-sm lg:text-md font-extralight">
                             Transaction Details
                         </span>
-                        <BiChevronUp
-                            className={`${open ? 'rotate-180 transform' : ''}`}
-                            size="20"
-                        />
+                        <div className="flex items-center gap-1">
+                            {(_buyTax || _sellTax) && (
+                                <div className="rounded-3xl bg-[rgba(74,222,128,0.1)] px-1 text-green-400 flex items-center text-xs gap-1">
+                                    <span>
+                                        {percentFormatter(0).format(
+                                            (_buyTax || 0) + (_sellTax || 0),
+                                        )}
+                                    </span>
+                                    <span>Tax Saved</span>
+                                </div>
+                            )}
+                            <BiChevronUp
+                                className={`${open ? 'rotate-180 transform' : ''}`}
+                                size="20"
+                            />
+                        </div>
                     </Disclosure.Button>
 
                     <Transition
@@ -82,6 +107,36 @@ export const TxDetails = ({ trade, loading, type }: ITxDetailsProps) => {
                                 <span>Receiving</span>
                                 <span>{displayTrade.receiving}</span>
                             </li>
+                            {exchangeRate && (
+                                <li className="flex items-center justify-between">
+                                    <span>Exchange Rate</span>
+                                    <span>{displayTrade.receiving}</span>
+                                </li>
+                            )}
+                            {(_buyTax || _sellTax) && (
+                                <div className="pt-1">
+                                    <span className="text-neutral-400">Fees saved</span>
+                                    <hr className="my-0.5" />
+                                </div>
+                            )}
+                            {_sellTax && displayTrade.sending.split('  ')[1] !== 'ETH' && (
+                                <li className="flex items-center justify-between">
+                                    <span>{`${displayTrade.sending.split('  ')[1]} Sell Tax`}</span>
+                                    <span>
+                                        <ChangeDisplay value={_sellTax} percent noCaret />
+                                    </span>
+                                </li>
+                            )}
+                            {_buyTax && displayTrade.receiving.split('  ')[1] !== 'ETH' && (
+                                <li className="flex items-center justify-between">
+                                    <span>{`${
+                                        displayTrade.receiving.split('  ')[1]
+                                    } Buy Tax`}</span>
+                                    <span>
+                                        <ChangeDisplay value={_buyTax} percent noCaret />
+                                    </span>
+                                </li>
+                            )}
                         </Disclosure.Panel>
                     </Transition>
                 </div>

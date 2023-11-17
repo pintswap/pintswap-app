@@ -7,21 +7,19 @@ import { toast } from 'react-toastify';
 import { useNetworkContext, useOffersContext, useUserContext } from '../stores';
 import {
     savePintswap,
-    updateToast,
-    convertAmount,
+    renderToast,
     EMPTY_TRADE,
-    getTokenAttributes,
     TESTING,
-    ITokenProps,
     IOrderStateProps,
     IOrderbookProps,
     reverseSymbolCache,
     getSymbol,
-    getTokenAddress,
+    buildOffer,
+    displayOffer,
 } from '../utils';
-import { ethers } from 'ethers';
-import { useSwitchNetwork } from 'wagmi';
+import { useSigner, useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
+import { waitForTransaction } from '@wagmi/core';
 
 function stringify(obj: any) {
     let cache: any = [];
@@ -40,9 +38,10 @@ function stringify(obj: any) {
     return str;
 }
 
-export const useTrade = () => {
+export const useTrade = (isOTC?: boolean) => {
     const params = useParams();
     const { switchNetwork } = useSwitchNetwork();
+    const { data: signer } = useSigner();
     const { newNetwork } = useNetworkContext();
     const { pathname } = useLocation();
     const {
@@ -66,82 +65,16 @@ export const useTrade = () => {
     const [foundPeerOffers, setFoundPeerOffers] = useState(false);
 
     const isMaker = pathname === '/create';
-    const isOnActive = pathname === '/explore' || pathname === '/swap';
-
-    const buildTradeObj = async ({ gets, gives }: IOffer): Promise<IOffer> => {
-        if (!gets.token && !gives.token) return EMPTY_TRADE;
-        const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
-            | ITokenProps
-            | undefined;
-        const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
-            | ITokenProps
-            | undefined;
-
-        // NFT
-        if (gives?.tokenId) {
-            const builtObj = {
-                gives: {
-                    ...gives,
-                    tokenId: ethers.utils.hexlify(Number(gives.tokenId)),
-                    amount: undefined,
-                },
-                gets: {
-                    token: getTokenAddress(foundGetsToken, gets, chainId),
-                    amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
-                },
-            };
-            if (TESTING) console.log('#buildTradeObj:', builtObj);
-            return builtObj;
-        }
-        // ERC20
-        const builtObj = {
-            gives: {
-                token: getTokenAddress(foundGivesToken, gives, chainId),
-                amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
-            },
-            gets: {
-                token: getTokenAddress(foundGetsToken, gets, chainId),
-                amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
-            },
-        };
-        if (TESTING) console.log('#buildTradeObj:', builtObj);
-        return builtObj;
-    };
-
-    const displayTradeObj = async ({ gets, gives }: IOffer) => {
-        try {
-            return {
-                gives: {
-                    token: (await getSymbol(gives.token, chainId)) || gives.token,
-                    amount: await convertAmount('number', gives.amount || '', gives.token, chainId),
-                },
-                gets: {
-                    token: (await getSymbol(gets.token, chainId)) || gets.token,
-                    amount: await convertAmount('number', gets.amount || '', gets.token, chainId),
-                },
-            };
-        } catch (err) {
-            console.error(err);
-            return {
-                gives: {
-                    token: gives.token,
-                    amount: gives.amount,
-                },
-                gets: {
-                    token: gets.token,
-                    amount: gets.amount,
-                },
-            };
-        }
-    };
+    const isOnActive = pathname === '/explore' || pathname === '/create';
 
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent, isPublic = true) => {
         e.preventDefault();
         if (module) {
             try {
-                const offer = await buildTradeObj(trade);
+                const offer = await buildOffer(trade);
                 if (TESTING) console.log('#broadcastTrade: TradeObj', offer);
+                module.signer = signer;
                 module.broadcastOffer(offer);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 await savePintswap(module);
@@ -159,10 +92,7 @@ export const useTrade = () => {
         setLoading({ ...loading, fulfill: true });
 
         // Set loading
-        toast.loading(`Initiating trade. Please do not refresh the page.`, {
-            toastId: 'swapping',
-            className: 'text-sm',
-        });
+        renderToast('swapping', 'pending', `Initiating trade. Please do not refresh the page.`);
         if (module) {
             // Determine correct offer
             let offer = trade;
@@ -190,10 +120,11 @@ export const useTrade = () => {
                     };
                 } else {
                     // Standard
-                    const builtTrade = await buildTradeObj(offer);
+                    const builtTrade = await buildOffer(offer);
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
                     tradeForWorker = { type: 'default', trade: builtTrade };
                 }
+                module.signer = signer;
 
                 // Pass off to web worker
                 // const worker = new Worker(new URL('../workers/trade.worker.ts', import.meta.url));
@@ -203,9 +134,9 @@ export const useTrade = () => {
                 // worker.onerror = (err) => {
                 //     console.error('#fulfillTrade - Error:', err);
                 //     if (String(err).toLowerCase().includes('user rejected')) {
-                //         updateToast('swapping', 'error', 'User rejected signature');
+                //         renderToast('swapping', 'error', 'User rejected signature');
                 //     } else {
-                //         updateToast('swapping', 'error', 'Error occured while swapping');
+                //         renderToast('swapping', 'error', 'Error occured while swapping');
                 //     }
                 // };
                 // worker.addEventListener('message', (event) => console.log(event.data));
@@ -225,7 +156,7 @@ export const useTrade = () => {
             } catch (err) {
                 console.error(err);
                 setError(true);
-                updateToast('swapping', 'error', 'Error occured while swapping');
+                renderToast('swapping', 'error', 'Error occured while swapping');
             }
         }
     };
@@ -254,7 +185,6 @@ export const useTrade = () => {
                 ? await module.getUserData(resolved)
                 : { offers: [] };
             if (offers?.length > 0 && !peerTrades?.size) {
-                if (TESTING) console.log('#getTrades - Offers:', offers);
                 await Promise.all(
                     offers.map(async (offer) => {
                         const tokens = [offer.gets?.token, offer.gives?.token];
@@ -269,9 +199,9 @@ export const useTrade = () => {
                     }),
                 );
                 _offers = new Map(offers.map((offer) => [hashOffer(offer), offer]));
-                setPeerTrades(_offers);
                 if (TESTING) console.log('#getTrades - Map:', _offers);
-                updateToast('findPeer', 'success', 'Connected to peer!');
+                setPeerTrades(_offers);
+                renderToast('findPeer', 'success', 'Connected to peer!');
             }
         }
 
@@ -279,7 +209,7 @@ export const useTrade = () => {
         if (params.hash) {
             if (TESTING) console.log('#getTrades - Order Hash:', params.hash);
             if (_offers.get(params.hash)) {
-                setTrade(await displayTradeObj(_offers.get(params.hash) as IOffer));
+                setTrade(await displayOffer(_offers.get(params.hash) as IOffer));
                 return;
             }
 
@@ -349,7 +279,7 @@ export const useTrade = () => {
         const getter = async () => {
             if (pathname.includes('/')) {
                 const splitUrl = pathname.split('/');
-                if (splitUrl[1] === 'fulfill' && params.hash) {
+                if (splitUrl[1] === 'fulfill' && params.hash && !order.orderHash) {
                     // If multiAddr and orderHash
                     setLoading({ ...loading, trade: true });
                     if (steps[1].status !== 'current') updateSteps('Fulfill');
@@ -383,7 +313,7 @@ export const useTrade = () => {
                 break;
             case 2:
                 console.log('#peerListener: found peer offers');
-                // updateToast('findPeer', 'success', 'Connected to peer!');
+                // renderToast('findPeer', 'success', 'Connected to peer!');
                 break;
             case 3:
                 console.log('#peerListener: returning offers');
@@ -392,68 +322,107 @@ export const useTrade = () => {
         }
     };
 
-    const makerListener = (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-        let shallow = new Map(userTrades);
-        switch (step) {
-            case 0:
-                // if (module) savePintswap(module);
-                console.log('#makerListener: taker approving trade');
-                toast('Taker is approving transaction');
-                toast.loading('Swapping...', { toastId: 'swapping' });
-                break;
-            case 1:
-                console.log('#makerListener: taker approved trade');
-                // toast('Taker approved transaction!');
-                break;
-            case 2:
-                console.log('#makerListener: swap is complete');
-                updateSteps('Complete'); // only for maker
-                shallow.delete(order.orderHash);
-                setUserTrades(shallow);
-                shallow = userTrades;
-                clearTrade();
-                updateToast('swapping', 'success');
-                break;
+    const makerListener = (step: 0 | 1 | 2 | string) => {
+        try {
+            // let shallow = new Map(userTrades);
+            switch (step) {
+                case 0:
+                    // if (module) savePintswap(module);
+                    console.log('#makerListener: taker approving trade');
+                    toast('Taker is approving transaction');
+                    renderToast('swapping', 'pending', 'Peer taking transaction');
+                    break;
+                case 1:
+                    console.log('#makerListener: taker approved trade');
+                    // toast('Taker approved transaction!');
+                    break;
+                case 2:
+                    console.log('#makerListener: swap is complete');
+                    updateSteps('Complete'); // only for maker
+                    module?.offers.delete(order.orderHash);
+                    // setUserTrades(shallow);
+                    // shallow = userTrades;
+                    clearTrade();
+                    renderToast('swapping', 'success');
+                    break;
+                default:
+                    console.log('#makerListener: swap is complete');
+                    break;
+            }
+        } catch (err) {
+            console.error('#makerListener:', err);
+            renderToast('swapping', 'error', 'Error occured while swapping');
         }
     };
 
-    const takerListener = async (step: 0 | 1 | 2 | 3 | 4 | 5) => {
-        const [quote, base] = params.pair ? params.pair.split('-') : ['', ''];
-        let shallow = new Map(userTrades);
-        switch (step) {
-            case 0:
-                console.log('#takerListener: fulfilling trade');
-                break;
-            case 1:
-                console.log('#takerListener: taker approving token swap');
-                toast.update('swapping', { render: `Waiting for approval`, className: 'text-sm' });
-                break;
-            case 2:
-                console.log('#takerListener: approved token swap');
-                toast.update('swapping', { render: `Building transaction`, className: 'text-sm' });
-                break;
-            case 3: {
-                console.log('#takerListener: building transaction');
-                toast.update('swapping', {
-                    render: `Swapping ${trade.gets.token || quote.toUpperCase()} ${
-                        trade.gets.token ? 'for' : ''
-                    } ${trade.gives.token}`,
-                    className: 'text-sm',
-                });
-                break;
+    const takerListener = async (step: 0 | 1 | 2 | 3 | 4 | string) => {
+        try {
+            const [quote, base] = params.pair ? params.pair.split('-') : ['', ''];
+            // let shallow = new Map(userTrades);
+            switch (step) {
+                case 0:
+                    console.log('#takerListener: fulfilling trade');
+                    break;
+                case 1:
+                    console.log('#takerListener: taker approving token swap');
+                    toast.update('swapping', {
+                        render: `Waiting for approval`,
+                        className: 'text-sm',
+                    });
+                    break;
+                case 2:
+                    console.log('#takerListener: approved token swap');
+                    toast.update('swapping', {
+                        render: `Building transaction`,
+                        className: 'text-sm',
+                    });
+                    break;
+                case 3: {
+                    console.log('#takerListener: building transaction');
+                    toast.update('swapping', {
+                        render: `Building transaction`,
+                        className: 'text-sm',
+                    });
+                    break;
+                }
+                case 4:
+                    console.log('#takerListener: transaction built');
+                    break;
+                default:
+                    if (step === 'user rejected signing') {
+                        console.log('#takerListener: rejected transaction');
+                        toast.dismiss();
+                    } else if (step === 'maker not responsive') {
+                        console.log('#takerListener: maker unresponsive');
+                        renderToast('swapping', 'error', 'Peer took too long to approve');
+                    } else if (step === 'timeout' || step === 'ERROR') {
+                        console.log('#takerListener: timeout');
+                        renderToast('swapping', 'error', 'Error occured while swapping');
+                    } else if (step === 'insufficient funds') {
+                        console.log('#takerListener:', 'Not enough funds for gas');
+                        renderToast('swapping', 'error', 'Insufficient ETH for gas');
+                    } else if (step === 'dial request has no valid addresses') {
+                        console.log('#takerListener:', step);
+                        renderToast('swapping', 'error', 'Trade is no longer available');
+                    } else {
+                        console.log('#takerListener: swap complete');
+                        updateSteps('Complete'); // only for taker
+                        renderToast('swapping', 'pending', undefined, step);
+                        await waitForTransaction({
+                            hash: step as any,
+                        });
+                        renderToast('swapping', 'success', 'Swap successful', step);
+                        clearTrade();
+                        // setUserTrades(shallow);
+                        // shallow.delete(order.orderHash);
+                    }
+                    setLoading({ ...loading, fulfill: false, trade: false });
+                    if (!isOTC) clearTrade();
+                    break;
             }
-            case 4:
-                console.log('#takerListener: transaction built');
-                break;
-            case 5:
-                console.log('#takerLister: swap complete');
-                updateSteps('Complete'); // only for taker
-                setLoading({ ...loading, fulfill: false });
-                shallow.delete(order.orderHash);
-                setUserTrades(shallow);
-                clearTrade();
-                updateToast('swapping', 'success');
-                break;
+        } catch (err) {
+            console.error('#takerListener:', err);
+            renderToast('swapping', 'error', 'Error occured while swapping');
         }
     };
 
@@ -471,7 +440,7 @@ export const useTrade = () => {
         if (module) {
             if (!isMaker && !isOnActive)
                 toast.update('findPeer', { render: 'Connecting to peer...' });
-            module.on('pintswap/trade/peer', peerListener);
+            // module.on('pintswap/trade/peer', peerListener);
             module.on('pintswap/trade/taker', takerListener);
             module.on('pintswap/trade/maker', makerListener);
             module.on('trade:maker', makerTradeListener);
@@ -479,7 +448,7 @@ export const useTrade = () => {
             return () => {
                 module.removeListener('trade:maker', makerTradeListener);
                 module.removeListener('pintswap/trade/taker', takerListener);
-                module.removeListener('pintswap/trade/peer', peerListener);
+                // module.removeListener('pintswap/trade/peer', peerListener);
                 module.removeListener('pintswap/trade/maker', makerListener);
             };
         }
@@ -504,7 +473,7 @@ export const useTrade = () => {
             }
             return () => {};
         })().catch((err) => console.error(err));
-    }, [module, trade]);
+    }, [module]);
 
     return {
         loading,
@@ -523,7 +492,6 @@ export const useTrade = () => {
         clearTrade,
         isButtonDisabled,
         peerTrades,
-        displayTradeObj,
         setOrder,
     };
 };

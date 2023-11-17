@@ -59,11 +59,11 @@ export const Card = ({
                 }
             >
                 <div
-                    className={`flex flex-col ${backgroundColor} pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-200 ${className}`}
+                    className={`flex flex-col ${backgroundColor} pt-2 p-3 md:pt-3 md:p-4 lg:px-6 rounded-lg shadow w-full transition duration-150 ${className}`}
                 >
                     {tabs && !header && (
-                        <div className="flex items-center justify-between text-center mb-2 lg:mb-3 font-semibold">
-                            <Tab.List className={`flex items-center j gap-1 2xl:gap-1.5`}>
+                        <div className="flex items-center justify-between text-center mb-2.5 lg:mb-3 font-semibold">
+                            <Tab.List className={`flex items-center gap-0.5`}>
                                 {tabs.map((tab, i) => (
                                     <Tab
                                         key={`tabs-${i}`}
@@ -111,7 +111,7 @@ export const Card = ({
     }
     return (
         <div
-            className={`flex flex-col ${backgroundColor} pt-3 p-4 lg:px-6 lg:py-5 rounded-lg shadow w-full transition duration-200 ${className}`}
+            className={`flex flex-col ${backgroundColor} pt-3 p-4 lg:px-6 lg:py-5 rounded-lg shadow w-full transition duration-150 ${className}`}
         >
             {header && !tabs && (
                 <h3 className="md:text-lg xl:text-xl text-center mb-4 lg:mb-6 font-semibold">

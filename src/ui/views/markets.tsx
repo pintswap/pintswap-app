@@ -24,7 +24,7 @@ export const MarketsView = () => {
     const [uniquePairs, setUniquePairs] = useState<string[]>([]);
     const { query, list, handleChange } = useSearch(uniquePairs);
 
-    const memoizedList = useMemo(() => list, [list]);
+    const memoizedList = useMemo(() => list, [list.length]);
 
     useEffect(() => {
         if (offersByChain.erc20) {
@@ -70,7 +70,7 @@ export const MarketsView = () => {
 
     return (
         <div className="flex flex-col">
-            <div className="flex items-center justify-between mb-4 md:mb-6 gap-6">
+            <div className="flex items-center justify-between mb-2.5 lg:mb-3 gap-6">
                 <Header breadcrumbs={[{ text: 'Markets', link: '/markets' }]}>Explore</Header>
                 <Input
                     value={query}

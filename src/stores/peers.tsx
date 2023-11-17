@@ -28,10 +28,14 @@ export function PeersStore(props: { children: ReactNode }) {
     const { offersByChain, allOffers, isLoading } = useOffersContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<IUserDataProps[]>([]);
 
     const updatePeersData = (peer: IUserDataProps) => {
-        // TODO: function to add any peers not currently stored to be added or updated with appropriate data
+        setData((prevData) =>
+            prevData.map((el, i) =>
+                el.name === peer.name || el.address === peer.address ? peer : el,
+            ),
+        );
     };
 
     const getAllPeersData = async () => {

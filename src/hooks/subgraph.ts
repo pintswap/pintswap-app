@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
 import { getUserHistory, tryBoth } from '../api';
 import { usePintswapContext, usePricesContext } from '../stores';
 import { useAccount } from 'wagmi';
 import { ZeroAddress } from 'ethers6';
+import { useQuery } from '@tanstack/react-query';
+import { IUserHistoryItemProps } from '../utils';
 
 type IUserSubgraphRes = {
     data: {
@@ -10,7 +11,7 @@ type IUserSubgraphRes = {
         token?: any;
         tokenDayDatas?: any[];
         tokenHourDatas?: any[];
-        userHistory?: any[];
+        userHistory?: IUserHistoryItemProps[];
     } | null;
     isLoading: boolean;
     isError: boolean;
@@ -30,66 +31,41 @@ export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' 
     } = usePintswapContext();
     const { address } = useAccount();
     const { eth } = usePricesContext();
-    const [res, setRes] = useState<IUserSubgraphRes>({ ...DEFAULT_RES, data: { usdPrice: eth } });
 
-    function updateRes(key: 'data' | 'isLoading' | 'isError' | 'error', data: any) {
-        setRes({ ...res, [key]: data });
-    }
+    const tokenDetails = useQuery({
+        queryKey: ['use-subgraph-token', props.address],
+        queryFn: () => tryBoth(props),
+        enabled: !!props.address,
+    });
 
-    useEffect(() => {
-        (async () => {
-            if (props && props?.address) {
-                updateRes('isLoading', true);
-                if (props.address === ZeroAddress) {
-                    setRes({
-                        ...res,
-                        isLoading: false,
-                        data: {
-                            ...res.data,
-                            usdPrice: eth,
-                        },
-                    });
-                } else {
-                    const data = await tryBoth(props);
-                    if (data) {
-                        setRes({
-                            ...res,
-                            data: {
-                                ...data,
-                                usdPrice:
-                                    Number(eth) > 0 && data?.token?.derivedETH
-                                        ? (Number(eth) * Number(data.token.derivedETH)).toString()
-                                        : address === ZeroAddress
-                                        ? ''
-                                        : '0',
-                            },
-                            isLoading: false,
-                        });
-                    } else {
-                        setRes({
-                            ...res,
-                            isLoading: false,
-                            isError: true,
-                            error: 'Something went wrong.',
-                        });
-                    }
-                }
+    const userHistory = useQuery({
+        queryKey: ['use-subgraph-user-history', address],
+        queryFn: () => getUserHistory(address as string, module?.signer),
+        enabled: !!module?.signer && !!address,
+    });
+
+    const renderUsdPrice = () => {
+        if (props.address) {
+            if (props.address === ZeroAddress) return eth;
+            else {
+                return Number(eth) > 0 && tokenDetails.data?.token?.derivedETH
+                    ? (Number(eth) * Number(tokenDetails?.data.token.derivedETH)).toString()
+                    : address === ZeroAddress
+                    ? ''
+                    : '0';
             }
-        })().catch((err) => console.error('#useSubgraph:', err));
-    }, [props?.address, props?.history, eth, address]);
+        }
+        return '0';
+    };
 
-    useEffect(() => {
-        (async () => {
-            if (address && module?.signer) {
-                updateRes('isLoading', true);
-                const userHistory = await getUserHistory(address, module.signer);
-                let shallow = { ...res };
-                if (shallow.data && userHistory?.length) shallow.data.userHistory = userHistory;
-                shallow.isLoading = false;
-                setRes(shallow);
-            }
-        })().catch((err) => console.error(err));
-    }, [address, module?.signer]);
-
-    return res;
+    return {
+        data: {
+            usdPrice: renderUsdPrice(),
+            userHistory: userHistory.data || [],
+            ...tokenDetails.data,
+        },
+        isLoading: tokenDetails.isLoading || userHistory.isLoading,
+        isError: tokenDetails.isError || userHistory.isError,
+        error: tokenDetails.error || userHistory.error,
+    };
 };

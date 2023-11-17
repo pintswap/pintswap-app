@@ -95,7 +95,7 @@ export const Input = ({
                     <MdSearch size="18px" className="text-neutral-200" />
                 </div>
                 <input
-                    className={`bg-transparent outline-none ring-none p-2 pl-0.5 ${className} min-w-0 group placeholder:text-sm`}
+                    className={`bg-transparent outline-none ring-none p-1.5 pl-0.5 ${className} min-w-0 group placeholder:text-sm`}
                     value={value}
                     onChange={onChange}
                     placeholder={!placeholder ? 'Search here' : placeholder}
@@ -152,7 +152,7 @@ export const Input = ({
             />
             {token && maxClick && (
                 <button
-                    className="text-xs text-primary transition duration-200 hover:text-primary-hover text-right flex gap-1 justify-end"
+                    className="text-xs text-primary transition duration-150 hover:text-primary-hover text-right flex gap-1 justify-end"
                     onClick={() => maxClick(tradeObjKey, balance.formatted)}
                 >
                     MAX:

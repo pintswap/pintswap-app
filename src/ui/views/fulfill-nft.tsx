@@ -5,7 +5,7 @@ import { Button, Card, PageStatus, SpinnerLoader } from '../components';
 import { Avatar, NFTDisplay } from '../features';
 import { useTrade } from '../../hooks';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { INFTProps, toFormatted, fetchNFT, updateToast } from '../../utils';
+import { INFTProps, toFormatted, fetchNFT, renderToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 
 export const FulfillNFTView = () => {
@@ -21,12 +21,12 @@ export const FulfillNFTView = () => {
 
     const offer = useMemo(() => {
         return peerTrades.get(hash as string);
-    }, [peerTrades, hash, multiaddr]);
+    }, [peerTrades.size, hash, multiaddr]);
 
     useEffect(() => {
         (async () => {
             if (offer) {
-                updateToast('loading-fulfill-nft', 'success', 'Connected to peer');
+                renderToast('loading-fulfill-nft', 'success', 'Connected to peer');
                 const n = await fetchNFT(offer.gives);
                 const cost = await toFormatted(offer.gets, chainId);
                 setLoading(false);
@@ -36,7 +36,7 @@ export const FulfillNFTView = () => {
     }, [offer]);
 
     useEffect(() => {
-        toast.loading('Connecting to peer', { toastId: 'loading-fulfill-nft' });
+        renderToast('loading-fulfill-nft', 'pending', 'Connecting to peer');
     }, []);
 
     const peer = state?.peer ? state.peer : multiaddr;
@@ -44,7 +44,7 @@ export const FulfillNFTView = () => {
     return (
         <>
             {error && <PageStatus type="error" fx={() => toast.dismiss()} />}
-            <div className="flex flex-col gap-4 md:gap-6 max-w-3xl mx-auto">
+            <div className="flex flex-col gap-3 2xl:gap-4 max-w-3xl mx-auto">
                 <button onClick={() => navigate(`/${multiaddr}`)} className="w-fit text-left">
                     <Avatar peer={peer} withBio withName align="left" size={60} type="profile" />
                 </button>

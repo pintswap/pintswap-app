@@ -9,20 +9,21 @@ import {
 } from 'react';
 import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
-import { memoize } from 'lodash';
 import {
     toLimitOrder,
     TESTING,
     defer,
     IMarketProps,
     IOfferProps,
-    updateToast,
+    renderToast,
     savePintswap,
 } from '../utils';
 import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { toast } from 'react-toastify';
+import { usePricesContext } from './prices';
 import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'react-router-dom';
 
 // Types
 export type IOffersStoreProps = {
@@ -112,24 +113,22 @@ const groupByType = (m: any) => {
     };
 };
 
-const toFlattened = memoize(
-    async (v) =>
-        await Promise.all(
-            [...v.entries()].reduce(
-                (r, [multiaddr, [_, offerList]]) =>
-                    r.concat(
-                        offerList.map(async (v: any) => ({
-                            ...v,
-                            peer: multiaddr,
-                            chainId: 1,
-                            // chainId: await detectTradeNetwork(v),
-                            hash: hashOffer(v),
-                        })),
-                    ),
-                [],
-            ),
+const toFlattened = async (v: any) =>
+    await Promise.all(
+        [...v.entries()].reduce(
+            (r, [multiaddr, [_, offerList]]) =>
+                r.concat(
+                    offerList.map(async (v: any) => ({
+                        ...v,
+                        peer: multiaddr,
+                        chainId: 1,
+                        // chainId: await detectTradeNetwork(v),
+                        hash: hashOffer(v),
+                    })),
+                ),
+            [],
         ),
-);
+    );
 
 // Get unique ERC20 markets
 const getUniqueMarkets = (offers: any[]) => {
@@ -138,32 +137,34 @@ const getUniqueMarkets = (offers: any[]) => {
         offers.forEach((m: any) => {
             const found = _uniqueMarkets.find((u) => u.quote === m.ticker);
             const price = parseFloat(m.price);
-            const sum = parseFloat(m.amount);
-            const isBuy = m.type === 'bid';
+            const sum = parseFloat(m.amount) * price;
+            const isBuy = m.type === 'ask';
             if (found) {
                 found.offers += 1;
-                if (!isBuy) {
+                if (isBuy) {
                     found.buy.offers = [...found.buy.offers, m.raw];
-                    if (found.buy.best > price) found.buy.best = price;
+                    if (found.buy.best > price || found.buy.best === 0) found.buy.best = price;
                     if (found.buy.sum < sum) found.buy.sum = sum;
                 } else {
                     found.sell.offers = [...found.sell.offers, m.raw];
-                    if (found.sell.best < price) found.sell.best = price;
+                    if (found.sell.best < price || found.sell.best === 0) found.sell.best = price;
                     if (found.sell.sum < sum) found.sell.sum = sum;
                 }
             } else {
-                if (!isBuy) {
+                if (isBuy) {
                     const formatted = {
                         // quote: quoteToken,
                         // bases: [split[1]],
                         quote: m.ticker,
                         bases: [],
                         buy: {
+                            tax: m.tax.buy,
                             offers: [m.raw],
                             sum: sum,
                             best: price,
                         },
                         sell: {
+                            tax: m.tax.sell,
                             offers: [],
                             sum: 0,
                             best: 0,
@@ -178,16 +179,19 @@ const getUniqueMarkets = (offers: any[]) => {
                         quote: m.ticker,
                         bases: [],
                         buy: {
+                            tax: m.tax.buy,
                             offers: [],
                             sum: 0,
-                            best: price,
+                            best: 0,
                         },
                         sell: {
+                            tax: m.tax.sell,
                             offers: [m.raw],
                             sum: sum,
                             best: price,
                         },
                         offers: 1,
+                        tax: m.tax,
                     };
                     _uniqueMarkets.push(formatted);
                 }
@@ -206,6 +210,7 @@ export function OffersStore(props: { children: ReactNode }) {
         pintswap: { module, chainId, loading },
     } = usePintswapContext();
     const { newNetwork } = useNetworkContext();
+    const { pathname } = useLocation();
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [allOffers, setAllOffers] = useState<Record<'nft' | 'erc20', IOfferProps[]>>({
@@ -218,6 +223,7 @@ export function OffersStore(props: { children: ReactNode }) {
     });
     const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { eth } = usePricesContext();
 
     const addTrade = async (hash: string, tradeProps: IOffer) => {
         setUserTrades(new Map(userTrades.set(hash, tradeProps)));
@@ -247,31 +253,25 @@ export function OffersStore(props: { children: ReactNode }) {
 
     // Get Active Trades
     const getPublicOrderbook = async () => {
-        if ((module?.peers.size as any) > 0) {
-            if (!offersByChain.erc20.length && !uniqueMarkets.length)
-                toast.update('findOffers', { render: 'Getting peer offers' });
-            const availablePeers = (await resolveNames(module?.peers as any, module as any)) as any;
-            if (!offersByChain.erc20.length)
-                updateToast('findOffers', 'success', 'Returning peer offers');
-            const grouped = groupByType(availablePeers);
+        if (module?.peers?.size) {
+            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
+                renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
+            const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
             const flattenedNftTrades = await toFlattened(grouped.nft);
-            const mappedPairs = (
-                await Promise.all(
-                    flattenedPairs.map(
-                        async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
-                    ),
-                )
-            ).map((v, i) => ({
-                ...v,
-                peer: flattenedPairs[i].peer,
-                multiAddr: flattenedPairs[i].multiAddr,
-            }));
+            const mappedPairs = await Promise.all(
+                flattenedPairs.map(
+                    async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
+                ),
+            );
             const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
             setAllOffers(returnObj);
-            setUniqueMarkets(getUniqueMarkets(mappedPairs));
-            setIsLoading(false);
+
+            if (mappedPairs.length) {
+                setUniqueMarkets(getUniqueMarkets(mappedPairs));
+                setIsLoading(false);
+            }
             return returnObj;
         }
         return { nft: [], erc20: [] };
@@ -281,13 +281,13 @@ export function OffersStore(props: { children: ReactNode }) {
     useQuery({
         queryKey: ['unique-markets'],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 10,
+        refetchInterval: 1000 * 5,
         enabled: !!module && module.peers.size > 0,
     });
     useEffect(() => {
         if (module) {
-            if (!allOffers.erc20.length)
-                toast.loading('Connecting to P2P network', { toastId: 'findOffers' });
+            if (!allOffers.erc20.length && !pathname.includes('/fulfill'))
+                renderToast('findOffers', 'pending', 'Connecting to P2P network');
             module.once('/pubsub/orderbook-update', getPublicOrderbook);
             return () => module.removeListener('/pubsub/orderbook-update', getPublicOrderbook);
         }

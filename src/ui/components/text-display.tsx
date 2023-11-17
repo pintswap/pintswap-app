@@ -37,7 +37,6 @@ export const TextDisplay = ({
                 return 'flex-row gap-1.5';
         }
     };
-    console.log(loading);
     return (
         <div className={`flex flex-col ${determineAlign()}`}>
             <span className="text-xs text-neutral-500">{label}</span>
@@ -50,7 +49,7 @@ export const TextDisplay = ({
                     >
                         {value}
                     </span>
-                    {usdValue && (
+                    {usdValue && !loading && (
                         <span
                             className={`inline items-center text-neutral-300 ${determineAlign()} ${
                                 direction === 'vertical' ? 'text-xs' : ''
