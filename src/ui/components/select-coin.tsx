@@ -24,6 +24,7 @@ type ISelectCoin = {
     disabled?: boolean;
     type?: 'swap' | 'fulfill';
     loading?: boolean;
+    hide?: boolean;
     noSelect?: boolean;
     customButton?: ReactNode;
 };
@@ -34,6 +35,7 @@ export const SelectCoin = ({
     modalOpen,
     setModalOpen,
     disabled,
+    hide,
     type = 'swap',
     loading,
     noSelect,
@@ -95,11 +97,11 @@ export const SelectCoin = ({
                                             target="_blank"
                                             rel="noreferrer"
                                         >
-                                            <Asset symbol={asset} />
+                                            <Asset symbol={asset} hide={hide} />
                                         </a>
                                     </TooltipWrapper>
                                 ) : (
-                                    <Asset symbol={asset} />
+                                    <Asset symbol={asset} hide={hide} />
                                 )
                             ) : type === 'fulfill' || loading ? (
                                 <span className="pl-2 text-neutral-500 animate-pulse">Loading</span>

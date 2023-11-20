@@ -8,12 +8,14 @@ type IAssetProps = {
     loading?: boolean;
     fontSize?: `text-${string}`;
     position?: 'left' | 'right';
+    hide?: boolean;
     subSymbol?: string;
 };
 
 export const Asset = ({
     symbol,
     alt,
+    hide,
     loading,
     size = 25,
     fontSize = 'text-md',
@@ -79,10 +81,14 @@ export const Asset = ({
                         style={{ contain: 'strict' }}
                     />
                     <div className="flex flex-col">
-                        <span className={`${fontSize} ${subSymbol ? 'leading-tight' : ''}`}>
+                        <span
+                            className={`${fontSize} ${subSymbol ? 'leading-tight' : ''} ${
+                                hide ? 'hidden' : ''
+                            } `}
+                        >
                             {assetProps()?.symbol}
                         </span>
-                        {subSymbol && <span className="text-xs text-gray-400">{subSymbol}</span>}
+                        {subSymbol && <span className="text-xs text-gray-400 ">{subSymbol}</span>}
                     </div>
                 </>
             )}
