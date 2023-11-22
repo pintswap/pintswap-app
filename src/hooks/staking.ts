@@ -116,7 +116,7 @@ export const useStaking = () => {
 
     const INTERVAL = 1000 * 5;
     const vaultData = useQuery({
-        queryKey: ['sipPINT-data'],
+        queryKey: ['sipPINT-data', startingBlock],
         queryFn: getVaultData,
         initialData: { totalAssets: '0', totalSupply: '0', apr: '0', totalRewards: '0' },
         refetchInterval: INTERVAL,
@@ -124,7 +124,7 @@ export const useStaking = () => {
     });
 
     const userData = useQuery({
-        queryKey: ['sipPINT-user'],
+        queryKey: ['sipPINT-user', address],
         queryFn: getVaultUserData,
         enabled: !!address,
         initialData: { userBalance: '0', availableToRedeem: '0', difference: '0' },
