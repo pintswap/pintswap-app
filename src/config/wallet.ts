@@ -25,12 +25,12 @@ const determineChains = () => {
 };
 
 export const { chains, provider } = configureChains(determineChains(), [
-    jsonRpcProvider({
-        rpc: (chain) => ({
-            http: `https://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`,
-            webSocket: `wss://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`,
-        }),
-    }),
+    // jsonRpcProvider({
+    //     rpc: (chain) => ({
+    //         http: `https://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`,
+    //         webSocket: `wss://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`,
+    //     }),
+    // }),
     alchemyProvider({
         apiKey: ALCHEMY_KEY || '',
     }),
