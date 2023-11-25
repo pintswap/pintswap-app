@@ -122,7 +122,7 @@ export const useTrade = (isOTC?: boolean) => {
                             amount: toBeHex(v.amount),
                         })),
                     };
-                } else if (fill) {
+                } else if (fill && fill !== null) {
                     // Partial fill
                     const builtTrade = await buildOffer(offer);
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
