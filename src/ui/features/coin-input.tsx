@@ -21,6 +21,7 @@ type ICoinInput = {
     noSelect?: boolean;
     customButton?: ReactNode;
     change?: string;
+    maxLoading?: boolean;
 };
 
 export const CoinInput = ({
@@ -38,6 +39,7 @@ export const CoinInput = ({
     noSelect,
     customButton,
     change,
+    maxLoading,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
@@ -133,7 +135,6 @@ export const CoinInput = ({
                 <small>
                     {max && (
                         <button
-                            className="p-0.5 group text-neutral-400"
                             onClick={() => {
                                 const amount = {
                                     currentTarget: {
@@ -142,11 +143,21 @@ export const CoinInput = ({
                                 };
                                 onAmountChange(amount as any);
                             }}
+                            className=" group text-neutral-400 p-0.5 flex items-center gap-1"
                         >
                             MAX:{' '}
-                            <span className="text-primary group-hover:text-primary-hover transition duration-100">
-                                <SmartPrice price={determineMax() || '0'} />
-                            </span>
+                            <Skeleton
+                                innerClass="!py-0 !px-3"
+                                loading={maxAmount === '-' || balance.isLoading}
+                            >
+                                <span
+                                    className={`${
+                                        maxAmount === '-' || balance.isLoading ? 'opacity-0' : ''
+                                    }text-primary group-hover:text-primary-hover transition duration-100`}
+                                >
+                                    <SmartPrice price={determineMax() || '0'} />
+                                </span>
+                            </Skeleton>
                         </button>
                     )}
                 </small>

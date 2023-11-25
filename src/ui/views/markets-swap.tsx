@@ -12,7 +12,15 @@ import { useTrade, useUsdPrice } from '../../hooks';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import { Tab } from '@headlessui/react';
-import { EMPTY_TRADE, displayOffer, reverseOffer, toAddress, truncate } from '../../utils';
+import {
+    EMPTY_TRADE,
+    IOfferProps,
+    displayOffer,
+    getNextHighestIndex,
+    reverseOffer,
+    toAddress,
+    truncate,
+} from '../../utils';
 import { useOffersContext } from '../../stores';
 import { IOffer } from '@pintswap/sdk';
 
@@ -52,7 +60,8 @@ export const MarketsSwapView = () => {
     const { pair, multiaddr } = useParams();
     const quote = pair?.split('-')[0] || '';
     const base = pair?.split('-')[1] || '';
-    const { setOrder, trade, setTrade, fulfillTrade, loading, steps } = useTrade();
+    const { setOrder, trade, setTrade, fulfillTrade, loading, steps, updateTrade, setFill, fill } =
+        useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
     const usdPrice = useUsdPrice(toAddress(quote));
@@ -94,31 +103,8 @@ export const MarketsSwapView = () => {
         }
     };
 
-    const renderBreadcrumbs = () => {
-        if (multiaddr) {
-            return [
-                { text: 'Peers', link: '/peers' },
-                {
-                    text: `${truncate(pathname.split('/')[2])}`,
-                    link: `/peers/${pathname.split('/')[2]}`,
-                },
-                {
-                    text: `${pair?.toUpperCase()}`,
-                    link: `/peers/${pathname.split('/')[2]}/${pair}`,
-                },
-            ];
-        }
-        return [
-            { text: 'Markets', link: '/markets' },
-            {
-                text: `${pathname.split('/')[2]?.toUpperCase()}`,
-                link: `/markets/${pathname.split('/')[2]}`,
-            },
-        ];
-    };
-
     const renderEmptyTrade = () => {
-        if (!isBuy && peerOffers.bids.length) {
+        if (!isBuy && peerOffers?.bids.length) {
             setDisplayedTrade({
                 gives: {
                     token: quote,
@@ -143,27 +129,37 @@ export const MarketsSwapView = () => {
         }
     };
 
-    useEffect(() => {
-        if (quote && base && trade.gets.token === '') {
-            (async () => {
-                const found = peerOffers.asks[0];
-                if (found) {
-                    setOrder({ multiAddr: found?.peer, orderHash: found.hash });
-                    const displayedOffer = await displayOffer(found.raw);
-                    setDisplayedTrade(reverseOffer(displayedOffer));
-                    setTrade(found.raw);
-                }
-            })().catch((err) => console.error(err));
+    const renderBreadcrumbs = () => {
+        if (multiaddr) {
+            return [
+                { text: 'Peers', link: '/peers' },
+                {
+                    text: `${truncate(pathname.split('/')[2])}`,
+                    link: `/peers/${pathname.split('/')[2]}`,
+                },
+                {
+                    text: `${pair?.toUpperCase()}`,
+                    link: `/peers/${pathname.split('/')[2]}/${pair}`,
+                },
+            ];
         }
-    }, [offersByChain.erc20.length]);
+        return [
+            { text: 'Markets', link: '/markets' },
+            {
+                text: `${pathname.split('/')[2]?.toUpperCase()}`,
+                link: `/markets/${pathname.split('/')[2]}`,
+            },
+        ];
+    };
 
     useEffect(() => {
         if (
-            trade.gets.amount === '' &&
-            trade.gives.amount === '' &&
-            displayedTrade.gets.amount !== '' &&
-            displayedTrade.gives.amount !== ''
+            trade?.gets?.amount === '' &&
+            trade?.gives?.amount === '' &&
+            displayedTrade?.gets.amount !== '' &&
+            displayedTrade?.gives.amount !== ''
         ) {
+            // Set empty
             setDisplayedTrade({
                 gives: {
                     token: base,
@@ -175,7 +171,7 @@ export const MarketsSwapView = () => {
                 },
             });
         }
-    }, [trade.gets.amount, trade.gives.amount]);
+    }, [trade?.gets?.amount, trade?.gives?.amount]);
 
     useEffect(() => {
         renderEmptyTrade();
@@ -186,6 +182,25 @@ export const MarketsSwapView = () => {
             renderEmptyTrade();
         }
     }, [steps[2].status]);
+
+    useEffect(() => {
+        // Find best price for fill/give amount
+        if (peerOffers) {
+            let list: IOfferProps[] = [];
+            if (isBuy) list = peerOffers.asks;
+            else list = peerOffers.bids;
+            if (!list.length) return;
+            const bestIndex = getNextHighestIndex(
+                list.map((o) => Number(o.amount)),
+                Number(fill),
+            );
+            if (bestIndex >= list.length) {
+                console.log('next highest offer', list[bestIndex]);
+                setTrade(list[bestIndex]?.raw);
+            }
+            console.log('next highest index', bestIndex);
+        }
+    }, [fill]);
 
     return (
         <>
@@ -236,7 +251,13 @@ export const MarketsSwapView = () => {
                         </div>
                         <SwapModule
                             trade={displayedTrade}
+                            max={
+                                (isBuy ? peerOffers?.maxAsk?.amount : peerOffers?.maxBid?.amount) ||
+                                '-'
+                            }
                             raw={trade}
+                            fill={fill}
+                            setFill={setFill}
                             type="fulfill"
                             onClick={fulfillTrade}
                             loading={loading}

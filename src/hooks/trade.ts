@@ -16,6 +16,7 @@ import {
     getSymbol,
     buildOffer,
     displayOffer,
+    convertAmount,
 } from '../utils';
 import { useSigner, useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
@@ -121,6 +122,26 @@ export const useTrade = (isOTC?: boolean) => {
                             amount: toBeHex(v.amount),
                         })),
                     };
+                } else if (fill && fill !== null) {
+                    // Partial fill
+                    const builtTrade = await buildOffer(offer);
+                    if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
+                    tradeForWorker = {
+                        type: 'batch',
+                        trade: [
+                            {
+                                offer: builtTrade,
+                                amount: toBeHex(
+                                    await convertAmount(
+                                        'hex',
+                                        fill,
+                                        builtTrade?.gets?.amount || '',
+                                        chainId,
+                                    ),
+                                ),
+                            },
+                        ],
+                    };
                 } else {
                     // Standard
                     const builtTrade = await buildOffer(offer);
@@ -144,7 +165,6 @@ export const useTrade = (isOTC?: boolean) => {
                 //     }
                 // };
                 // worker.addEventListener('message', (event) => console.log(event.data));
-
                 // TEMP
                 switch (tradeForWorker.type) {
                     case 'batch':

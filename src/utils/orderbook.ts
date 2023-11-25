@@ -9,6 +9,12 @@ import { IOfferProps } from './types';
 import { getEthPrice, getTokenTax, tryBoth } from '../api';
 import { convertExponentialToDecimal } from './format';
 
+export function getNextHighestIndex(arr: number[], value: number) {
+    let i = arr.length;
+    while (arr[--i] > value);
+    return ++i;
+}
+
 function givesBase(offer: any) {
     return {
         pair: [
