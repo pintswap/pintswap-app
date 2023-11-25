@@ -178,7 +178,7 @@ export const MarketsSwapView = () => {
     }, [isBuy]);
 
     useEffect(() => {
-        if (steps[2].status === 'current' && !trade.gives.amount && !trade.gets.amount) {
+        if (steps[2].status === 'current' && !trade?.gives.amount && !trade?.gets.amount) {
             renderEmptyTrade();
         }
     }, [steps[2].status]);
@@ -261,7 +261,7 @@ export const MarketsSwapView = () => {
                             type="fulfill"
                             onClick={fulfillTrade}
                             loading={loading}
-                            disabled={isLoading || loading.fulfill || !trade.gets.amount}
+                            disabled={isLoading || loading.fulfill || !trade?.gets.amount}
                             percentDiff // TODO: not working
                             // max={peerOffers()[isBuy ? 'maxAsk' : 'maxBid'].amount}
                         />
