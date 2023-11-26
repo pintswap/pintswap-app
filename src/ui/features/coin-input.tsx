@@ -147,12 +147,14 @@ export const CoinInput = ({
                         >
                             MAX:{' '}
                             <Skeleton
-                                innerClass="!py-0 !px-3"
-                                loading={maxAmount === '-' || balance.isLoading}
+                                innerClass="!p-0 min-w-[30px]"
+                                loading={maxAmount === '-' || balance.isLoading || maxLoading}
                             >
                                 <span
                                     className={`${
-                                        maxAmount === '-' || balance.isLoading ? 'opacity-0' : ''
+                                        maxAmount === '-' || balance.isLoading || maxLoading
+                                            ? 'opacity-0'
+                                            : ''
                                     }text-primary group-hover:text-primary-hover transition duration-100`}
                                 >
                                     <SmartPrice price={determineMax() || '0'} />

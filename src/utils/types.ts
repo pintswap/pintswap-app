@@ -70,6 +70,7 @@ export type IMarketProps = {
 
 export type IOfferProps = {
     amount: string;
+    baseAmount: string;
     chainId: number;
     hash: string;
     multiAddr?: string;
