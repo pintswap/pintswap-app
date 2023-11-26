@@ -126,19 +126,19 @@ export const useTrade = (isOTC?: boolean) => {
                     // Partial fill
                     const builtTrade = await buildOffer(offer);
                     if (TESTING) console.log('#fulfillTrade - Trade Obj:', builtTrade);
+                    const amount = await convertAmount(
+                        'hex',
+                        fill,
+                        builtTrade?.gets?.amount || '',
+                        chainId,
+                    );
+                    if (TESTING) console.log('#fulfillTrade - Fill Amount:', amount, fill);
                     tradeForWorker = {
                         type: 'batch',
                         trade: [
                             {
                                 offer: builtTrade,
-                                amount: toBeHex(
-                                    await convertAmount(
-                                        'hex',
-                                        fill,
-                                        builtTrade?.gets?.amount || '',
-                                        chainId,
-                                    ),
-                                ),
+                                amount,
                             },
                         ],
                     };

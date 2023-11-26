@@ -142,16 +142,25 @@ export async function toLimitOrder(
     } = orderTokens(offer, chainId);
 
     const { gives, gets } = offer as IOffer;
-    const [givesDetails, getsDetails, eth, tradeDecimals, tradeTokenTax, baseTokenTax, ticker] =
-        await Promise.all([
-            tryBoth({ address: gives?.token }),
-            tryBoth({ address: gets?.token }),
-            getEthPrice(),
-            getDecimals(trade.address, 1),
-            getTokenTax(trade.address, 1),
-            getTokenTax(base.address, 1),
-            toTicker([base, trade], chainId),
-        ]);
+    const [
+        givesDetails,
+        getsDetails,
+        eth,
+        tradeDecimals,
+        tradeTokenTax,
+        baseTokenTax,
+        ticker,
+        baseDecimals,
+    ] = await Promise.all([
+        tryBoth({ address: gives?.token }),
+        tryBoth({ address: gets?.token }),
+        getEthPrice(),
+        getDecimals(trade.address, 1),
+        getTokenTax(trade.address, 1),
+        getTokenTax(base.address, 1),
+        toTicker([base, trade], chainId),
+        getDecimals(base.address, 1),
+    ]);
 
     const givesEthPrice = parseFloat(givesDetails.token.derivedETH);
     const givesAmount = Number(
@@ -173,12 +182,14 @@ export async function toLimitOrder(
     };
 
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
+    const baseAmount = ethers.formatUnits(base.amount, baseDecimals);
     const usdPrice = await getUsdPrice(trade.address, eth);
     const usdTotal = Number(usdPrice) * Number(amount);
     return {
         chainId: offer.chainId || 1,
         price: String(calculateExchangeRate()) || '0',
         amount,
+        baseAmount,
         type,
         ticker,
         hash: offer?.hash || '',
