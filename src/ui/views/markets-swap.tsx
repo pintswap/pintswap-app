@@ -65,6 +65,7 @@ export const MarketsSwapView = () => {
         useTrade();
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
+    const [output, setOutput] = useState('');
     const usdPrice = useUsdPrice(toAddress(quote));
 
     const peerOffers = useMemo(() => {
@@ -196,6 +197,10 @@ export const MarketsSwapView = () => {
                     setOrder({ multiAddr: maxOffer.peer, orderHash: maxOffer.hash });
                     const displayedOffer = await displayOffer(maxOffer.raw);
                     setDisplayedTrade(reverseOffer(displayedOffer));
+                    const _output = isBuy
+                        ? Number(fill) / Number(maxOffer.exchangeRate)
+                        : Number(fill) * Number(maxOffer.exchangeRate);
+                    setOutput(String(_output));
                 } else {
                     let list: IOfferProps[] = [];
                     if (isBuy) list = peerOffers.asks;
@@ -215,8 +220,11 @@ export const MarketsSwapView = () => {
                             multiAddr: list[bestIndex]?.peer,
                             orderHash: list[bestIndex]?.hash,
                         });
-                        const displayedOffer = await displayOffer(list[bestIndex]?.raw);
-                        setDisplayedTrade(reverseOffer(displayedOffer));
+                        const _output = isBuy
+                            ? Number(fill) / Number(list[bestIndex].exchangeRate)
+                            : Number(fill) * Number(list[bestIndex].exchangeRate);
+                        if (TESTING) console.log('Fill: output', output);
+                        setOutput(String(_output));
                     }
                     if (TESTING) console.log('Fill: next highest index', bestIndex);
                 }
@@ -225,6 +233,7 @@ export const MarketsSwapView = () => {
             renderEmptyTrade();
             setTrade(EMPTY_TRADE);
             setOrder({ multiAddr: '', orderHash: '' });
+            setOutput('');
         }
     }, [fill]);
 
@@ -284,6 +293,7 @@ export const MarketsSwapView = () => {
                             }
                             raw={trade}
                             fill={fill}
+                            output={output}
                             setFill={setFill}
                             type="fulfill"
                             onClick={fulfillTrade}

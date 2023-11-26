@@ -10,7 +10,6 @@ import { getEthPrice, getTokenTax, tryBoth } from '../api';
 import { convertExponentialToDecimal } from './format';
 
 export function getNextHighestIndex(arr: number[], value: number) {
-    console.log(arr, value);
     let i = arr.length;
     while (arr[--i] > value);
     return ++i;
@@ -175,20 +174,31 @@ export async function toLimitOrder(
     const calculateExchangeRate = () => {
         let rate: number;
         if (type === 'ask') {
+            rate = getsAmount / givesAmount;
+        } else {
+            rate = givesAmount / getsAmount;
+        }
+        return convertExponentialToDecimal(rate); // TODO: do better
+    };
+    const calculateUsdExchangeRate = () => {
+        let rate: number;
+        if (type === 'ask') {
             rate = (getsAmount / givesAmount) * getsEthPrice * Number(eth);
         } else {
             rate = (givesAmount / getsAmount) * givesEthPrice * Number(eth);
         }
         return convertExponentialToDecimal(rate); // TODO: do better
     };
-    const exchangeRate = calculateExchangeRate();
+    const usdExchangeRate = calculateUsdExchangeRate();
+    const nativeExchangeRate = calculateExchangeRate();
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
     const baseAmount = ethers.formatUnits(base.amount, baseDecimals);
     const usdPrice = await getUsdPrice(trade.address, eth);
     const usdTotal = Number(usdPrice) * Number(amount);
     return {
         chainId: offer.chainId || 1,
-        price: String(exchangeRate) || '0',
+        price: String(usdExchangeRate) || '0',
+        exchangeRate: String(nativeExchangeRate) || '0',
         amount,
         baseAmount,
         type,

@@ -29,6 +29,7 @@ type ISwapModule = {
     raw?: IOffer;
     setFill?: React.Dispatch<React.SetStateAction<string>>;
     fill?: string;
+    output?: string;
 };
 
 export const SwapModule = ({
@@ -45,6 +46,7 @@ export const SwapModule = ({
     percentDiff,
     buttonText,
     raw,
+    output,
     setFill,
     fill,
 }: ISwapModule) => {
@@ -225,7 +227,7 @@ export const SwapModule = ({
                     </button>
                     <CoinInput
                         label="You get"
-                        value={trade.gets?.amount}
+                        value={output || trade.gets?.amount}
                         onAssetClick={(e: any) =>
                             updateTrade ? updateTrade('gets.token', e.target.innerText) : {}
                         }

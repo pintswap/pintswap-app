@@ -71,6 +71,7 @@ export type IMarketProps = {
 
 export type IOfferProps = {
     amount: string;
+    exchangeRate: string;
     baseAmount: string;
     chainId: number;
     hash: string;
