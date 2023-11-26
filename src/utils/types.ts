@@ -1,4 +1,5 @@
 import { IOffer } from '@pintswap/sdk';
+import { BigNumberish } from 'ethers6';
 
 export interface BaseOffer {
     token: string;

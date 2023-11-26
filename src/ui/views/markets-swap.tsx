@@ -15,6 +15,7 @@ import { Tab } from '@headlessui/react';
 import {
     EMPTY_TRADE,
     IOfferProps,
+    TESTING,
     displayOffer,
     getNextHighestIndex,
     reverseOffer,
@@ -200,15 +201,15 @@ export const MarketsSwapView = () => {
                     if (isBuy) list = peerOffers.asks;
                     else list = peerOffers.bids;
                     if (!list.length) return;
-                    const bestIndex = getNextHighestIndex(
-                        list.map((o) => Number(o.amount)).sort((a, b) => a - b),
-                        Number(fill),
-                    );
+                    const amounts = list
+                        .map((o) => Number(o[isBuy ? 'baseAmount' : 'amount']))
+                        .sort((a, b) => a - b);
+                    const bestIndex = getNextHighestIndex(amounts, Number(fill));
                     if (
                         list[bestIndex] &&
                         trade?.gets?.amount !== list[bestIndex]?.raw?.gets?.amount
                     ) {
-                        console.log('next highest offer', list[bestIndex]);
+                        if (TESTING) console.log('Fill: next highest offer', list[bestIndex]);
                         setTrade(list[bestIndex]?.raw);
                         setOrder({
                             multiAddr: list[bestIndex]?.peer,
@@ -217,10 +218,13 @@ export const MarketsSwapView = () => {
                         const displayedOffer = await displayOffer(list[bestIndex]?.raw);
                         setDisplayedTrade(reverseOffer(displayedOffer));
                     }
-                    console.log('next highest index', bestIndex);
+                    if (TESTING) console.log('Fill: next highest index', bestIndex);
                 }
-                console.log('fill', fill);
             })().catch((err) => console.error(err));
+        } else if (peerOffers && !fill) {
+            renderEmptyTrade();
+            setTrade(EMPTY_TRADE);
+            setOrder({ multiAddr: '', orderHash: '' });
         }
     }, [fill]);
 

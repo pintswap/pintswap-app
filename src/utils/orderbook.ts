@@ -1,4 +1,4 @@
-import { BigNumberish, ethers } from 'ethers6';
+import { BigNumberish, ethers, parseUnits } from 'ethers6';
 import { groupBy } from 'lodash';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
@@ -10,6 +10,7 @@ import { getEthPrice, getTokenTax, tryBoth } from '../api';
 import { convertExponentialToDecimal } from './format';
 
 export function getNextHighestIndex(arr: number[], value: number) {
+    console.log(arr, value);
     let i = arr.length;
     while (arr[--i] > value);
     return ++i;
@@ -180,14 +181,14 @@ export async function toLimitOrder(
         }
         return convertExponentialToDecimal(rate); // TODO: do better
     };
-
+    const exchangeRate = calculateExchangeRate();
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
     const baseAmount = ethers.formatUnits(base.amount, baseDecimals);
     const usdPrice = await getUsdPrice(trade.address, eth);
     const usdTotal = Number(usdPrice) * Number(amount);
     return {
         chainId: offer.chainId || 1,
-        price: String(calculateExchangeRate()) || '0',
+        price: String(exchangeRate) || '0',
         amount,
         baseAmount,
         type,

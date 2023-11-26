@@ -138,7 +138,7 @@ export const CoinInput = ({
                             onClick={() => {
                                 const amount = {
                                     currentTarget: {
-                                        value: value === determineMax() ? '0' : determineMax(),
+                                        value: value === determineMax() ? '' : determineMax(),
                                     },
                                 };
                                 onAmountChange(amount as any);
