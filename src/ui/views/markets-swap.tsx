@@ -66,6 +66,7 @@ export const MarketsSwapView = () => {
     const [isBuy, setIsBuy] = useState(true);
     const [displayedTrade, setDisplayedTrade] = useState<IOffer>(EMPTY_TRADE);
     const [output, setOutput] = useState('');
+    const [rowClicked, setRowClicked] = useState(false);
     const usdPrice = useUsdPrice(toAddress(quote));
 
     const peerOffers = useMemo(() => {
@@ -92,6 +93,7 @@ export const MarketsSwapView = () => {
     }, [offersByChain.erc20.length]);
 
     const onClickRow = async (row: any) => {
+        setRowClicked(true);
         const [tradeType, price, amount, sum] = row;
         // const { index } = row;
         const found = peerOffers[isBuy ? 'asks' : 'bids'].find(
@@ -104,6 +106,7 @@ export const MarketsSwapView = () => {
             setDisplayedTrade(reverseOffer(displayedOffer));
             setTrade(found.raw);
         }
+        rowClicked && setTimeout(() => setRowClicked(false), 1000);
     };
 
     const renderEmptyTrade = () => {
@@ -188,48 +191,54 @@ export const MarketsSwapView = () => {
     }, [steps[2].status]);
 
     useEffect(() => {
-        // Find best price for fill/give amount
-        if (peerOffers && fill) {
-            (async () => {
-                const maxOffer = isBuy ? peerOffers?.maxAsk : peerOffers?.maxBid;
-                if (maxOffer && fill === maxOffer[isBuy ? 'baseAmount' : 'amount']) {
-                    setTrade(maxOffer.raw);
-                    setOrder({ multiAddr: maxOffer.peer, orderHash: maxOffer.hash });
-                    const displayedOffer = await displayOffer(maxOffer.raw);
-                    setDisplayedTrade(reverseOffer(displayedOffer));
-                    const _output = isBuy
-                        ? Number(fill) / Number(maxOffer.exchangeRate)
-                        : Number(fill) * Number(maxOffer.exchangeRate);
-                    setOutput(String(_output));
-                } else {
-                    let list: IOfferProps[] = [];
-                    if (isBuy) list = peerOffers.asks;
-                    else list = peerOffers.bids;
-                    if (!list.length) return;
-                    const amounts = list
-                        .map((o) => Number(o[isBuy ? 'baseAmount' : 'amount']))
-                        .sort((a, b) => a - b);
-                    const bestIndex = getNextHighestIndex(amounts, Number(fill));
-                    if (list[bestIndex]) {
-                        if (TESTING) console.log('Fill: next highest offer', list[bestIndex]);
-                        setTrade(list[bestIndex]?.raw);
-                        setOrder({
-                            multiAddr: list[bestIndex]?.peer,
-                            orderHash: list[bestIndex]?.hash,
-                        });
+        if (!rowClicked) {
+            // Find best price for fill/give amount
+            if (peerOffers && fill) {
+                (async () => {
+                    const maxOffer = isBuy ? peerOffers?.maxAsk : peerOffers?.maxBid;
+                    if (maxOffer && fill === maxOffer[isBuy ? 'baseAmount' : 'amount']) {
+                        setTrade(maxOffer.raw);
+                        setOrder({ multiAddr: maxOffer.peer, orderHash: maxOffer.hash });
+                        const displayedOffer = await displayOffer(maxOffer.raw);
+                        setDisplayedTrade(reverseOffer(displayedOffer));
                         const _output = isBuy
-                            ? Number(fill) / Number(list[bestIndex].exchangeRate)
-                            : Number(fill) * Number(list[bestIndex].exchangeRate);
-                        if (TESTING) console.log('Fill: output', output);
+                            ? Number(fill) / Number(maxOffer.exchangeRate)
+                            : Number(fill) * Number(maxOffer.exchangeRate);
                         setOutput(String(_output));
+                    } else {
+                        let list: IOfferProps[] = [];
+                        if (isBuy) list = peerOffers.asks;
+                        else list = peerOffers.bids;
+                        if (!list.length) return;
+                        const amounts = list
+                            .map((o) => Number(o[isBuy ? 'baseAmount' : 'amount']))
+                            .sort((a, b) => a - b);
+                        const bestIndex = getNextHighestIndex(amounts, Number(fill));
+                        if (list[bestIndex]) {
+                            if (TESTING)
+                                console.log(
+                                    'Fill::next highest offer exchange rate',
+                                    list[bestIndex].exchangeRate,
+                                );
+                            setTrade(list[bestIndex]?.raw);
+                            setOrder({
+                                multiAddr: list[bestIndex]?.peer,
+                                orderHash: list[bestIndex]?.hash,
+                            });
+                            const _output = isBuy
+                                ? Number(fill) / Number(list[bestIndex].exchangeRate)
+                                : Number(fill) * Number(list[bestIndex].exchangeRate);
+                            if (TESTING) console.log('Fill::output', output);
+                            setOutput(String(_output));
+                        }
                     }
-                }
-            })().catch((err) => console.error(err));
-        } else if (peerOffers && !fill) {
-            renderEmptyTrade();
-            setTrade(EMPTY_TRADE);
-            setOrder({ multiAddr: '', orderHash: '' });
-            setOutput('');
+                })().catch((err) => console.error(err));
+            } else if (peerOffers && !fill) {
+                renderEmptyTrade();
+                setTrade(EMPTY_TRADE);
+                setOrder({ multiAddr: '', orderHash: '' });
+                setOutput('');
+            }
         }
     }, [fill]);
 
