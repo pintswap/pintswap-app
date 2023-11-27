@@ -166,6 +166,7 @@ export const useTrade = (isOTC?: boolean) => {
                 // };
                 // worker.addEventListener('message', (event) => console.log(event.data));
                 // TEMP
+                console.log('#fulfillTrade: Passed in:', multiAddr, tradeForWorker.trade);
                 switch (tradeForWorker.type) {
                     case 'batch':
                         module.createBatchTrade(multiAddr, tradeForWorker.trade);

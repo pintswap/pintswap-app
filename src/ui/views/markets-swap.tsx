@@ -210,10 +210,7 @@ export const MarketsSwapView = () => {
                         .map((o) => Number(o[isBuy ? 'baseAmount' : 'amount']))
                         .sort((a, b) => a - b);
                     const bestIndex = getNextHighestIndex(amounts, Number(fill));
-                    if (
-                        list[bestIndex] &&
-                        trade?.gets?.amount !== list[bestIndex]?.raw?.gets?.amount
-                    ) {
+                    if (list[bestIndex]) {
                         if (TESTING) console.log('Fill: next highest offer', list[bestIndex]);
                         setTrade(list[bestIndex]?.raw);
                         setOrder({
@@ -226,7 +223,6 @@ export const MarketsSwapView = () => {
                         if (TESTING) console.log('Fill: output', output);
                         setOutput(String(_output));
                     }
-                    if (TESTING) console.log('Fill: next highest index', bestIndex);
                 }
             })().catch((err) => console.error(err));
         } else if (peerOffers && !fill) {
