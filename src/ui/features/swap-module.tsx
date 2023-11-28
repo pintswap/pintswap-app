@@ -29,7 +29,7 @@ type ISwapModule = {
     raw?: IOffer;
     setFill?: React.Dispatch<React.SetStateAction<string>>;
     fill?: string;
-    output?: string;
+    output?: { value: string; loading: boolean };
 };
 
 export const SwapModule = ({
@@ -227,13 +227,14 @@ export const SwapModule = ({
                     </button>
                     <CoinInput
                         label="You get"
-                        value={output || trade.gets?.amount}
+                        value={output?.value || trade.gets?.amount}
                         onAssetClick={(e: any) =>
                             updateTrade ? updateTrade('gets.token', e.target.innerText) : {}
                         }
                         onAmountChange={({ currentTarget }) =>
                             updateTrade ? updateTrade('gets.amount', currentTarget.value) : {}
                         }
+                        loading={output?.loading}
                         asset={trade.gets?.token}
                         disabled={!!setFill}
                         type={type}

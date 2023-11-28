@@ -22,6 +22,7 @@ type ICoinInput = {
     customButton?: ReactNode;
     change?: string;
     maxLoading?: boolean;
+    loading?: boolean;
 };
 
 export const CoinInput = ({
@@ -40,6 +41,7 @@ export const CoinInput = ({
     customButton,
     change,
     maxLoading,
+    loading,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
@@ -91,15 +93,21 @@ export const CoinInput = ({
         <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black">
             {label && <span className="text-xs text-gray-400">{label}</span>}
             <div className="flex justify-between items-center gap-0.5 pt-4 pb-1">
-                <input
-                    className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] sm:max-w-none min-w-0 w-fit"
-                    placeholder="0"
-                    type="number"
-                    onChange={onAmountChange}
-                    value={value}
-                    disabled={disabled}
-                    id={id}
-                />
+                <Skeleton loading={loading} innerClass="!p-0 min-w-[160px] min-h-[28px]">
+                    {loading ? (
+                        <span className="h-full text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] sm:max-w-none min-w-0 w-fit" />
+                    ) : (
+                        <input
+                            className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] sm:max-w-none min-w-0 w-fit"
+                            placeholder="0"
+                            type="number"
+                            onChange={onAmountChange}
+                            value={value}
+                            disabled={disabled}
+                            id={id}
+                        />
+                    )}
+                </Skeleton>
                 <SelectCoin
                     asset={asset}
                     onAssetClick={clickAndClose}
@@ -114,7 +122,10 @@ export const CoinInput = ({
             <div className="w-full flex justify-between items-center">
                 <small className="text-gray-400 flex items-center gap-0.5">
                     <span>$</span>
-                    <Skeleton loading={!usdPrice && Number(value) !== 0} innerClass="!px-1">
+                    <Skeleton
+                        loading={(!usdPrice && Number(value) !== 0) || loading}
+                        innerClass="!px-1"
+                    >
                         <span className="flex items-center gap-1">
                             <SmartPrice price={renderInputUsd()} />
                             {change && Number(change) > 1 && (
