@@ -159,9 +159,19 @@ export const MarketsSwapView = () => {
         ];
     };
 
+    const gtMax = () => Number(fill) > Number(renderMax());
+
+    const renderMax = () => {
+        if (isBuy) return peerOffers?.maxAsk?.baseAmount || '-';
+        else return peerOffers?.maxBid?.amount || '-';
+    };
+
     const findTrade = async () => {
         const maxOffer = isBuy ? peerOffers?.maxAsk : peerOffers?.maxBid;
-        if (maxOffer && fill === maxOffer[isBuy ? 'baseAmount' : 'amount']) {
+        if (
+            (maxOffer && fill === maxOffer[isBuy ? 'baseAmount' : 'amount']) ||
+            (maxOffer && gtMax())
+        ) {
             setTrade(maxOffer.raw);
             setOrder({ multiAddr: maxOffer.peer, orderHash: maxOffer.hash });
             const displayedOffer = await displayOffer(maxOffer.raw);
@@ -231,6 +241,14 @@ export const MarketsSwapView = () => {
     }, [steps[2].status]);
 
     useEffect(() => {
+        if (!fill) {
+            renderEmptyTrade();
+            setTrade(EMPTY_TRADE);
+            setOrder({ multiAddr: '', orderHash: '' });
+            setOutput({ value: '', loading: false });
+            return;
+        }
+
         !rowClicked && setOutput({ value: output.value, loading: true });
         const waitForUser = setTimeout(() => {
             if (!rowClicked) {
@@ -245,12 +263,6 @@ export const MarketsSwapView = () => {
                 }
             }
         }, 1000);
-        if (!fill) {
-            renderEmptyTrade();
-            setTrade(EMPTY_TRADE);
-            setOrder({ multiAddr: '', orderHash: '' });
-            setOutput({ value: '', loading: false });
-        }
         return () => clearTimeout(waitForUser);
     }, [fill, peerOffers.asks.length, peerOffers.bids.length]);
 
@@ -303,11 +315,7 @@ export const MarketsSwapView = () => {
                         </div>
                         <SwapModule
                             trade={displayedTrade}
-                            max={
-                                (isBuy
-                                    ? peerOffers?.maxAsk?.baseAmount
-                                    : peerOffers?.maxBid?.amount) || '-'
-                            }
+                            max={renderMax()}
                             raw={trade}
                             fill={fill}
                             output={output}
@@ -315,7 +323,9 @@ export const MarketsSwapView = () => {
                             type="fulfill"
                             onClick={fulfillTrade}
                             loading={loading}
-                            disabled={isLoading || loading.fulfill || !trade?.gets.amount}
+                            disabled={
+                                isLoading || loading.fulfill || !trade?.gets.amount || gtMax()
+                            }
                             percentDiff // TODO: not working
                             // max={peerOffers()[isBuy ? 'maxAsk' : 'maxBid'].amount}
                         />
