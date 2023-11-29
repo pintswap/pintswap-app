@@ -245,7 +245,14 @@ export const SwapModule = ({
 
                 <div className="flex flex-col gap-2 mt-2">
                     <TxDetails
-                        trade={trade}
+                        trade={fill && output ? 
+                            { gets: { 
+                                amount: fill, 
+                                ...trade.gets 
+                            }, gives: {
+                                amount: output,
+                                ...trade.gives
+                            }} : trade}
                         loading={typeof loading === 'boolean' ? loading : loading?.trade}
                         type="fulfill"
                         buyTax={tokenTaxCache[1][toAddress(trade?.gets?.token) || '']?.buy}
