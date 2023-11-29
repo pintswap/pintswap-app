@@ -195,10 +195,10 @@ export const MarketsSwapView = () => {
                         'Fill::next highest offer exchange rate',
                         list[bestIndex].exchangeRate,
                     );
-                setTrade(list[bestIndex]?.raw);
+                setTrade(list[bestIndex].raw);
                 setOrder({
-                    multiAddr: list[bestIndex]?.peer,
-                    orderHash: list[bestIndex]?.hash,
+                    multiAddr: list[bestIndex].peer,
+                    orderHash: list[bestIndex].hash,
                 });
                 const _output = isBuy
                     ? Number(fill) / Number(list[bestIndex].exchangeRate)
