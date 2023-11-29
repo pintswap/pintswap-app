@@ -249,6 +249,10 @@ export const MarketsSwapView = () => {
             return;
         }
 
+        if (isBuy ? !peerOffers.asks.length : !peerOffers.bids.length) {
+            return;
+        }
+
         !rowClicked && setOutput({ value: output.value, loading: true });
         const waitForUser = setTimeout(() => {
             if (!rowClicked) {
@@ -304,7 +308,7 @@ export const MarketsSwapView = () => {
                 </div>
                 <div className="flex flex-col lg:flex-row gap-2 md:gap-3 lg:gap-4">
                     <Card className="lg:max-w-lg h-fit">
-                        <h2 className="mb-3 font-semibold">Swap</h2>
+                        <h2 className="mb-2 font-semibold">Swap</h2>
                         <div className="mb-3">
                             <SwitchToggle
                                 labelOn="Buy"
@@ -322,6 +326,7 @@ export const MarketsSwapView = () => {
                             setFill={setFill}
                             type="fulfill"
                             onClick={fulfillTrade}
+                            offers={isBuy ? peerOffers.asks.length : peerOffers.bids.length}
                             loading={loading}
                             disabled={
                                 isLoading || loading.fulfill || !trade?.gets.amount || gtMax()

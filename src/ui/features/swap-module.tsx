@@ -30,6 +30,7 @@ type ISwapModule = {
     setFill?: React.Dispatch<React.SetStateAction<string>>;
     fill?: string;
     output?: { value: string; loading: boolean };
+    offers?: number;
 };
 
 export const SwapModule = ({
@@ -49,6 +50,7 @@ export const SwapModule = ({
     output,
     setFill,
     fill,
+    offers,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -212,7 +214,7 @@ export const SwapModule = ({
                         asset={trade.gives?.token}
                         max={type === 'swap' || !!max}
                         maxAmount={max}
-                        maxLoading={!!max && max === '-'}
+                        maxLoading={!!max && max === '-' && offers !== 0}
                         type={type}
                         id="swap-module-give"
                     />
@@ -242,18 +244,38 @@ export const SwapModule = ({
                         trade={percentDiff ? trade : undefined}
                     />
                 </div>
-
+                {/* <>
+                {console.log(
+                    fill && output?.value ? 
+                    { gets: { 
+                        amount: fill, 
+                        ...trade.gets 
+                    }, gives: {
+                        amount: output.value,
+                        ...trade.gives
+                    }} : trade
+                )}
+                </> */}
                 <div className="flex flex-col gap-2 mt-2">
                     <TxDetails
-                        trade={fill && output ? 
-                            { gets: { 
-                                amount: fill, 
-                                ...trade.gets 
-                            }, gives: {
-                                amount: output,
-                                ...trade.gives
-                            }} : trade}
-                        loading={typeof loading === 'boolean' ? loading : loading?.trade}
+                        trade={
+                            fill && output?.value
+                                ? {
+                                      gets: {
+                                          amount: fill,
+                                          ...trade.gets,
+                                      },
+                                      gives: {
+                                          amount: output.value,
+                                          ...trade.gives,
+                                      },
+                                  }
+                                : trade
+                        }
+                        loading={
+                            (typeof loading === 'boolean' ? loading : loading?.trade) ||
+                            (output && output.loading)
+                        }
                         type="fulfill"
                         buyTax={tokenTaxCache[1][toAddress(trade?.gets?.token) || '']?.buy}
                         sellTax={tokenTaxCache[1][toAddress(trade?.gives?.token) || '']?.sell}
