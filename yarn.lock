@@ -2973,10 +2973,10 @@
     "@parcel/watcher-win32-ia32" "2.3.0"
     "@parcel/watcher-win32-x64" "2.3.0"
 
-"@pintswap/sdk@^1.4.23":
-  version "1.4.23"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.23.tgz#c1b3a0e8deae21cd59525ad7928153f43a2b3663"
-  integrity sha512-azHtJ0uAR1CFP63f6PJJuc7uFko039w3otkf9ti8H+ElEIK4StbfzevRBt1G9+bNyLcHkJ9xuVQNoqtQH0lFiA==
+"@pintswap/sdk@^1.4.25":
+  version "1.4.25"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.25.tgz#df56355340ff6481485734ef59c028bb22d89ff6"
+  integrity sha512-Q/yVZxqOqgIApYZOCssjxawiqGUe9n6HYN4Wxei+c+pI7Sc48JtNAMDhWALv5VtGbQBzARwWQJ3VK1Hk9Zbd6A==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -8084,6 +8084,7 @@ eth-rpc-errors@^4.0.2:
     fast-safe-stringify "^2.0.6"
 
 "ethers6@npm:ethers@^6.3.0", ethers@^6.3.0:
+  name ethers6
   version "6.8.1"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.8.1.tgz#ee2a1a39b5f62a13678f90ccd879175391d0a2b4"
   integrity sha512-iEKm6zox5h1lDn6scuRWdIdFJUCGg3+/aQWu0F4K0GVyEZiktFkqrJbRjTn1FlYEPz7RKA707D6g5Kdk6j7Ljg==
