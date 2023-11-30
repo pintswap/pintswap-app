@@ -1,5 +1,6 @@
 import { ethers, Signer } from 'ethers6';
 import { ALCHEMY_KEY, DEFAULT_CHAINID, INFURA_PROJECT_ID, LLAMA_NODES_KEY } from './constants';
+import { getNetwork } from '@wagmi/core';
 
 export function providerFromChainId(chainId: number | string) {
     switch (Number(chainId)) {
@@ -21,4 +22,10 @@ export function providerFromChainId(chainId: number | string) {
 
 export async function chainIdFromProvider(provider: Signer) {
     return Number((await provider?.provider?.getNetwork())?.chainId?.toString()) || DEFAULT_CHAINID;
+}
+
+export function getChainId() {
+    return getNetwork().chain?.unsupported
+        ? DEFAULT_CHAINID
+        : getNetwork().chain?.id || DEFAULT_CHAINID;
 }

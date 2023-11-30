@@ -29,7 +29,7 @@ export const getTokenTax = async (
     if (tokenTaxCache[chainId][_address]) return tokenTaxCache[chainId][_address];
     if (!apiKey) return defaultReturn;
 
-    const url = `${baseUrl}/tokens/1/${_address}?apikey=${apiKey}&include_metrics=true&include_tests=false`;
+    const url = `${baseUrl}/tokens/${chainId}/${_address}?apikey=${apiKey}&include_metrics=true&include_tests=false`;
 
     try {
         const res = await fetch(url, options);

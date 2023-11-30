@@ -1,7 +1,7 @@
 import { MdArrowDownward } from 'react-icons/md';
 import { IOffer } from '@pintswap/sdk';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
-import { INFTProps, fetchNFT, toAddress, tokenTaxCache } from '../../utils';
+import { INFTProps, fetchNFT, getChainId, toAddress, tokenTaxCache } from '../../utils';
 import { Button, TxDetails } from '../components';
 import { NFTInput, CoinInput } from '../features';
 import { getQuote } from '../../api';
@@ -56,9 +56,7 @@ export const SwapModule = ({
     const { address } = useAccount();
     const [nft, setNFT] = useState<INFTProps | null>(null);
     const [nftLoading, setNftLoading] = useState(false);
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+    const chainId = getChainId();
     const { data: givesWalletBalance } = useBalance(
         trade?.gives?.token === ZeroAddress ||
             !trade.gives?.token ||
@@ -277,8 +275,8 @@ export const SwapModule = ({
                             (output && output.loading)
                         }
                         type="fulfill"
-                        buyTax={tokenTaxCache[1][toAddress(trade?.gets?.token) || '']?.buy}
-                        sellTax={tokenTaxCache[1][toAddress(trade?.gives?.token) || '']?.sell}
+                        buyTax={tokenTaxCache[chainId][toAddress(trade?.gets?.token) || '']?.buy}
+                        sellTax={tokenTaxCache[chainId][toAddress(trade?.gives?.token) || '']?.sell}
                     />
                     <Button
                         className="w-full rounded-lg !py-2.5"

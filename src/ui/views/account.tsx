@@ -14,7 +14,7 @@ import { DataTable } from '../tables';
 import { useOffersContext, useUserContext, usePintswapContext } from '../../stores';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { formatPeerImg, convertAmount, IUserHistoryItemProps } from '../../utils';
+import { formatPeerImg, convertAmount, IUserHistoryItemProps, getChainId } from '../../utils';
 import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { FadeIn } from '../transitions';
@@ -95,6 +95,7 @@ export const AccountView = () => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { pintswap, incorrectSigner, signIfNecessary } = usePintswapContext();
+    const chainId = getChainId();
     const { userTrades, deleteAllTrades } = useOffersContext();
     const { userData, toggleActive, offers } = useUserContext();
     const {
@@ -123,7 +124,7 @@ export const AccountView = () => {
                     const isReceivingNft = entry[1].gets?.tokenId ? true : false;
                     return {
                         hash: entry[0],
-                        chainId: 1,
+                        chainId: detectTradeNetwork(entry[1]),
                         // chainId: await detectTradeNetwork(entry[1]),
                         sending: await convertAmount(
                             'readable',

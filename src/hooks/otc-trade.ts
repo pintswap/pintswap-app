@@ -22,7 +22,7 @@ export const useOtcTrade = () => {
         pintswap: { module, chainId },
     } = usePintswapContext();
     const { switchNetworkAsync } = useSwitchNetwork();
-    const { allOffers } = useOffersContext();
+    const { offersByChain } = useOffersContext();
 
     const onFulfill = pathname.includes('fulfill');
 
@@ -94,7 +94,7 @@ export const useOtcTrade = () => {
                 }
 
                 // Check public orderbook if there's an offer hash
-                const found2 = [...allOffers.erc20, ...allOffers.nft].find(
+                const found2 = [...offersByChain.erc20, ...offersByChain.nft].find(
                     (el) => el.hash?.toLowerCase() === hash?.toLowerCase(),
                 );
                 if (found2) {

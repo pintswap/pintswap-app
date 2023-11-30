@@ -10,7 +10,7 @@ import {
 import { useSigner, useAccount, useNetwork } from 'wagmi';
 import { Pintswap } from '@pintswap/sdk';
 import { ethers } from 'ethers6';
-import { DEFAULT_CHAINID, defer, savePintswap, TESTING } from '../utils';
+import { DEFAULT_CHAINID, defer, getChainId, savePintswap, TESTING } from '../utils';
 import { getNetwork } from '@wagmi/core';
 import { toast } from 'react-toastify';
 import { useNetworkContext } from './network';
@@ -112,7 +112,7 @@ export function PintswapStore(props: { children: ReactNode }) {
         module: undefined,
         loading: true,
         error: false,
-        chainId: getNetwork()?.chain?.id || DEFAULT_CHAINID,
+        chainId: getChainId(),
     });
     // Determine PintSwap module source
     const determinePsModule = async () => {

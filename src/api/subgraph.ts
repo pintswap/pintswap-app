@@ -3,6 +3,7 @@ import {
     decimalsCache,
     ENDPOINTS,
     formatPintswapTrade,
+    getChainId,
     priceCache,
     subgraphTokenCache,
     symbolCache,
@@ -168,21 +169,27 @@ export async function getV2Token({
 
 export async function tryBoth(props: { address?: string; history?: 'day' | 'hour' }) {
     if (!props || !props.address) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
-    if (subgraphTokenCache[1][props.address]) return subgraphTokenCache[1][props.address];
+    const chainId = getChainId();
+    if (subgraphTokenCache[chainId][props.address])
+        return subgraphTokenCache[chainId][props.address];
     const v2Token = await getV2Token(props);
     if (v2Token?.token) {
-        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v2Token;
-        if (!decimalsCache[1][props.address])
-            decimalsCache[1][props.address] = Number(v2Token.token?.decimals);
-        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v2Token.token?.symbol;
+        if (!subgraphTokenCache[chainId][props.address])
+            subgraphTokenCache[chainId][props.address] = v2Token;
+        if (!decimalsCache[chainId][props.address])
+            decimalsCache[chainId][props.address] = Number(v2Token.token?.decimals);
+        if (!symbolCache[chainId][props.address])
+            symbolCache[chainId][props.address] = v2Token.token?.symbol;
         return v2Token;
     }
     const v3Token = await getV3Token(props);
     if (v3Token?.token) {
-        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v3Token;
-        if (!decimalsCache[1][props.address])
-            decimalsCache[1][props.address] = Number(v3Token.token?.decimals);
-        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v3Token.token?.symbol;
+        if (!subgraphTokenCache[chainId][props.address])
+            subgraphTokenCache[chainId][props.address] = v3Token;
+        if (!decimalsCache[chainId][props.address])
+            decimalsCache[chainId][props.address] = Number(v3Token.token?.decimals);
+        if (!symbolCache[chainId][props.address])
+            symbolCache[chainId][props.address] = v3Token.token?.symbol;
         return v3Token;
     }
     return { token: null };
@@ -198,7 +205,8 @@ export async function getManyV2Tokens(addresses: string[]): Promise<any[]> {
 }
 
 export async function getEthPrice(): Promise<string> {
-    if (priceCache[1][ZeroAddress]) return priceCache[1][ZeroAddress];
+    const chainId = getChainId();
+    if (priceCache[chainId][ZeroAddress]) return priceCache[chainId][ZeroAddress];
     const response = await fetch(ENDPOINTS['uniswap']['v3'], {
         ...JSON_HEADER_POST,
         body: JSON.stringify({
@@ -212,7 +220,8 @@ export async function getEthPrice(): Promise<string> {
     const {
         data: { bundles },
     } = await response.json();
-    if (!priceCache[1][ZeroAddress]) priceCache[1][ZeroAddress] = bundles[0].ethPriceUSD;
+    if (!priceCache[chainId][ZeroAddress])
+        priceCache[chainId][ZeroAddress] = bundles[0].ethPriceUSD;
     return bundles[0].ethPriceUSD;
 }
 

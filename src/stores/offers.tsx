@@ -7,7 +7,6 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
 import {
     toLimitOrder,
@@ -18,10 +17,8 @@ import {
     renderToast,
     savePintswap,
 } from '../utils';
-import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
+import { hashOffer, isERC20Transfer, detectTradeNetwork, IOffer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
-import { toast } from 'react-toastify';
-import { usePricesContext } from './prices';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 
@@ -121,8 +118,7 @@ const toFlattened = async (v: any) =>
                     offerList.map(async (v: any) => ({
                         ...v,
                         peer: multiaddr,
-                        chainId: 1,
-                        // chainId: await detectTradeNetwork(v),
+                        chainId: await detectTradeNetwork(v),
                         hash: hashOffer(v),
                     })),
                 ),
@@ -223,7 +219,6 @@ export function OffersStore(props: { children: ReactNode }) {
     });
     const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { eth } = usePricesContext();
 
     const addTrade = async (hash: string, tradeProps: IOffer) => {
         setUserTrades(new Map(userTrades.set(hash, tradeProps)));
@@ -269,7 +264,12 @@ export function OffersStore(props: { children: ReactNode }) {
             setAllOffers(returnObj);
 
             if (mappedPairs.length) {
-                setUniqueMarkets(getUniqueMarkets(mappedPairs));
+                const filtered = filterByChain(mappedPairs, chainId);
+                setOffersByChain({
+                    nft: filterByChain(flattenedNftTrades, chainId),
+                    erc20: filtered,
+                });
+                setUniqueMarkets(getUniqueMarkets(filtered));
                 setIsLoading(false);
             }
             return returnObj;

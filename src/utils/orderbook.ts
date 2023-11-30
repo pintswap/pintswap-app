@@ -8,6 +8,7 @@ import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
 import { getEthPrice, getTokenTax, tryBoth } from '../api';
 import { convertExponentialToDecimal } from './format';
+import { getChainId } from './provider';
 
 export function getNextHighestIndex(arr: number[], value: number) {
     let i = arr.length;
@@ -155,11 +156,11 @@ export async function toLimitOrder(
         tryBoth({ address: gives?.token }),
         tryBoth({ address: gets?.token }),
         getEthPrice(),
-        getDecimals(trade.address, 1),
-        getTokenTax(trade.address, 1),
-        getTokenTax(base.address, 1),
+        getDecimals(trade.address, chainId),
+        getTokenTax(trade.address, chainId),
+        getTokenTax(base.address, chainId),
         toTicker([base, trade], chainId),
-        getDecimals(base.address, 1),
+        getDecimals(base.address, chainId),
     ]);
 
     const givesEthPrice = parseFloat(givesDetails.token.derivedETH);

@@ -249,9 +249,7 @@ export const MarketsSwapView = () => {
             return;
         }
 
-        if (isBuy ? !peerOffers.asks.length : !peerOffers.bids.length) {
-            return;
-        }
+        if (isBuy ? !peerOffers.asks.length : !peerOffers.bids.length) return;
 
         !rowClicked && setOutput({ value: output.value, loading: true });
         const waitForUser = setTimeout(() => {

@@ -20,8 +20,8 @@ import {
 import merge from 'lodash.merge';
 
 const determineChains = () => {
-    if (TESTING) return [mainnet, hardhat];
-    return [mainnet];
+    if (TESTING) return [mainnet, arbitrum, hardhat];
+    return [mainnet, arbitrum];
 };
 
 export const { chains, provider } = configureChains(determineChains(), [
