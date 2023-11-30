@@ -1,6 +1,6 @@
 import { ChangeEventHandler, ReactNode, useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { percentChange, toAddress } from '../../utils';
+import { getChainId, percentChange, toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton, ChangeDisplay } from '../components';
 import { usePintswapContext } from '../../stores';
 import { useUsdPrice } from '../../hooks';
@@ -46,9 +46,7 @@ export const CoinInput = ({
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
     const { address } = useAccount();
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+    const chainId = getChainId();
     const balance = useBalance(
         asset?.toUpperCase() === 'ETH'
             ? { address }
@@ -159,11 +157,17 @@ export const CoinInput = ({
                             MAX:{' '}
                             <Skeleton
                                 innerClass="!p-0 min-w-[30px]"
-                                loading={maxAmount === '-' || balance.isLoading || maxLoading}
+                                loading={
+                                    maxLoading !== undefined
+                                        ? maxLoading
+                                        : maxAmount === '-' || balance.isLoading
+                                }
                             >
                                 <span
                                     className={`${
-                                        maxAmount === '-' || balance.isLoading || maxLoading
+                                        maxLoading !== undefined
+                                            ? maxLoading
+                                            : maxAmount === '-' || balance.isLoading
                                             ? 'opacity-0'
                                             : ''
                                     }text-primary group-hover:text-primary-hover transition duration-100`}
