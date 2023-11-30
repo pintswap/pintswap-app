@@ -1,6 +1,6 @@
 {
     "name": "pintswap-app",
-    "version": "2.0.0-beta",
+    "version": "0.1.0",
     "private": true,
     "homepage": "https://app.pintswap.exchange",
     "license": "MIT",
@@ -23,13 +23,14 @@
         "build:css": "postcss src/styles/tailwind.css -o src/styles/main.css",
         "lint": "eslint . --ext ts --ext tsx",
         "pretty": "prettier --write .",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "reinstall": "rm -rf node_modules/.yarn-integrity && yarn install"
     },
     "dependencies": {
         "@emotion/react": "^11.10.6",
         "@emotion/styled": "^11.10.6",
         "@headlessui/react": "^1.7.13",
-        "@pintswap/sdk": "^1.4.23",
+        "@pintswap/sdk": "^1.4.26",
         "@rainbow-me/rainbowkit": "^0.12.2",
         "@tanstack/react-query": "^5.0.0",
         "@testing-library/jest-dom": "^5.16.5",

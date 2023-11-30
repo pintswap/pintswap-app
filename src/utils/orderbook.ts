@@ -1,4 +1,4 @@
-import { BigNumberish, ethers } from 'ethers6';
+import { BigNumberish, ethers, parseUnits } from 'ethers6';
 import { groupBy } from 'lodash';
 import { hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
@@ -8,6 +8,12 @@ import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
 import { getEthPrice, getTokenTax, tryBoth } from '../api';
 import { convertExponentialToDecimal } from './format';
+
+export function getNextHighestIndex(arr: number[], value: number) {
+    let i = arr.length;
+    while (arr[--i] > value);
+    return ++i;
+}
 
 function givesBase(offer: any) {
     return {
@@ -136,16 +142,25 @@ export async function toLimitOrder(
     } = orderTokens(offer, chainId);
 
     const { gives, gets } = offer as IOffer;
-    const [givesDetails, getsDetails, eth, tradeDecimals, tradeTokenTax, baseTokenTax, ticker] =
-        await Promise.all([
-            tryBoth({ address: gives?.token }),
-            tryBoth({ address: gets?.token }),
-            getEthPrice(),
-            getDecimals(trade.address, 1),
-            getTokenTax(trade.address, 1),
-            getTokenTax(base.address, 1),
-            toTicker([base, trade], chainId),
-        ]);
+    const [
+        givesDetails,
+        getsDetails,
+        eth,
+        tradeDecimals,
+        tradeTokenTax,
+        baseTokenTax,
+        ticker,
+        baseDecimals,
+    ] = await Promise.all([
+        tryBoth({ address: gives?.token }),
+        tryBoth({ address: gets?.token }),
+        getEthPrice(),
+        getDecimals(trade.address, 1),
+        getTokenTax(trade.address, 1),
+        getTokenTax(base.address, 1),
+        toTicker([base, trade], chainId),
+        getDecimals(base.address, 1),
+    ]);
 
     const givesEthPrice = parseFloat(givesDetails.token.derivedETH);
     const givesAmount = Number(
@@ -159,20 +174,33 @@ export async function toLimitOrder(
     const calculateExchangeRate = () => {
         let rate: number;
         if (type === 'ask') {
+            rate = getsAmount / givesAmount;
+        } else {
+            rate = givesAmount / getsAmount;
+        }
+        return convertExponentialToDecimal(rate); // TODO: do better
+    };
+    const calculateUsdExchangeRate = () => {
+        let rate: number;
+        if (type === 'ask') {
             rate = (getsAmount / givesAmount) * getsEthPrice * Number(eth);
         } else {
             rate = (givesAmount / getsAmount) * givesEthPrice * Number(eth);
         }
         return convertExponentialToDecimal(rate); // TODO: do better
     };
-
+    const usdExchangeRate = calculateUsdExchangeRate();
+    const nativeExchangeRate = calculateExchangeRate();
     const amount = ethers.formatUnits(trade.amount, tradeDecimals);
+    const baseAmount = ethers.formatUnits(base.amount, baseDecimals);
     const usdPrice = await getUsdPrice(trade.address, eth);
     const usdTotal = Number(usdPrice) * Number(amount);
     return {
         chainId: offer.chainId || 1,
-        price: String(calculateExchangeRate()) || '0',
+        price: String(usdExchangeRate) || '0',
+        exchangeRate: String(nativeExchangeRate) || '0',
         amount,
+        baseAmount,
         type,
         ticker,
         hash: offer?.hash || '',

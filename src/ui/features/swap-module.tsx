@@ -1,13 +1,12 @@
 import { MdArrowDownward } from 'react-icons/md';
-import { IOffer, hashOffer } from '@pintswap/sdk';
+import { IOffer } from '@pintswap/sdk';
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { INFTProps, fetchNFT, toAddress, tokenTaxCache } from '../../utils';
-import { Button, SpinnerLoader, TxDetails } from '../components';
-import { NFTInput, NFTDisplay, CoinInput } from '../features';
+import { Button, TxDetails } from '../components';
+import { NFTInput, CoinInput } from '../features';
 import { getQuote } from '../../api';
-import { useOffersContext, usePintswapContext, usePricesContext } from '../../stores';
+import { usePintswapContext, usePricesContext } from '../../stores';
 import { useAccount, useBalance } from 'wagmi';
-import { useTrade } from '../../hooks';
 import { ZeroAddress } from 'ethers6';
 
 type ISwapModule = {
@@ -28,6 +27,10 @@ type ISwapModule = {
     percentDiff?: boolean;
     buttonText?: string;
     raw?: IOffer;
+    setFill?: React.Dispatch<React.SetStateAction<string>>;
+    fill?: string;
+    output?: { value: string; loading: boolean };
+    offers?: number;
 };
 
 export const SwapModule = ({
@@ -44,6 +47,10 @@ export const SwapModule = ({
     percentDiff,
     buttonText,
     raw,
+    output,
+    setFill,
+    fill,
+    offers,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -190,17 +197,24 @@ export const SwapModule = ({
                 <div className="flex flex-col justify-center items-center gap-1.5">
                     <CoinInput
                         label="You give"
-                        value={trade.gives?.amount}
+                        value={fill ? fill : trade.gives?.amount}
                         onAssetClick={(e: any) =>
                             updateTrade ? updateTrade('gives.token', e.target.innerText) : {}
                         }
-                        onAmountChange={({ currentTarget }) =>
-                            updateTrade ? updateTrade('gives.amount', currentTarget.value) : {}
-                        }
+                        onAmountChange={({ currentTarget }) => {
+                            if (setFill) {
+                                setFill(currentTarget.value);
+                                return;
+                            }
+                            if (updateTrade) {
+                                updateTrade('gives.amount', currentTarget.value);
+                                return;
+                            }
+                        }}
                         asset={trade.gives?.token}
-                        max={type === 'swap'}
+                        max={type === 'swap' || !!max}
                         maxAmount={max}
-                        disabled={type === 'fulfill'}
+                        maxLoading={!!max && max === '-' && offers !== 0}
                         type={type}
                         id="swap-module-give"
                     />
@@ -215,25 +229,53 @@ export const SwapModule = ({
                     </button>
                     <CoinInput
                         label="You get"
-                        value={trade.gets?.amount}
+                        value={output?.value || trade.gets?.amount}
                         onAssetClick={(e: any) =>
                             updateTrade ? updateTrade('gets.token', e.target.innerText) : {}
                         }
                         onAmountChange={({ currentTarget }) =>
                             updateTrade ? updateTrade('gets.amount', currentTarget.value) : {}
                         }
+                        loading={output?.loading}
                         asset={trade.gets?.token}
-                        disabled={type === 'fulfill'}
+                        disabled={!!setFill}
                         type={type}
                         id="swap-module-get"
                         trade={percentDiff ? trade : undefined}
                     />
                 </div>
-
+                {/* <>
+                {console.log(
+                    fill && output?.value ? 
+                    { gets: { 
+                        amount: fill, 
+                        ...trade.gets 
+                    }, gives: {
+                        amount: output.value,
+                        ...trade.gives
+                    }} : trade
+                )}
+                </> */}
                 <div className="flex flex-col gap-2 mt-2">
                     <TxDetails
-                        trade={trade}
-                        loading={typeof loading === 'boolean' ? loading : loading?.trade}
+                        trade={
+                            fill && output?.value
+                                ? {
+                                      gets: {
+                                          amount: fill,
+                                          ...trade.gets,
+                                      },
+                                      gives: {
+                                          amount: output.value,
+                                          ...trade.gives,
+                                      },
+                                  }
+                                : trade
+                        }
+                        loading={
+                            (typeof loading === 'boolean' ? loading : loading?.trade) ||
+                            (output && output.loading)
+                        }
                         type="fulfill"
                         buyTax={tokenTaxCache[1][toAddress(trade?.gets?.token) || '']?.buy}
                         sellTax={tokenTaxCache[1][toAddress(trade?.gives?.token) || '']?.sell}

@@ -1,4 +1,5 @@
 import { IOffer } from '@pintswap/sdk';
+import { BigNumberish } from 'ethers6';
 
 export interface BaseOffer {
     token: string;
@@ -70,6 +71,8 @@ export type IMarketProps = {
 
 export type IOfferProps = {
     amount: string;
+    exchangeRate: string;
+    baseAmount: string;
     chainId: number;
     hash: string;
     multiAddr?: string;

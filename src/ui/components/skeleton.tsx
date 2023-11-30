@@ -14,6 +14,7 @@ type ISkeletonProps = {
     maxW?: `max-w${string}`;
     wrapperClass?: string;
     innerClass?: string;
+    color?: `bg${string}`;
 };
 
 export const Skeleton = ({
@@ -23,12 +24,13 @@ export const Skeleton = ({
     maxW,
     wrapperClass,
     innerClass,
+    color,
 }: ISkeletonProps) => {
     return (
         <div role="status" className={`${loading ? 'animate-pulse' : ''} ${wrapperClass || ''}`}>
             <div
                 className={`${rounding} ${maxW || ''} px-2 ${
-                    loading ? 'bg-neutral-800 text-transparent' : ''
+                    loading ? `${color ? color : 'bg-neutral-800'} text-transparent` : ''
                 } ${innerClass || ''}`}
             >
                 {children}
