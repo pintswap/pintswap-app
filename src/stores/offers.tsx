@@ -279,7 +279,7 @@ export function OffersStore(props: { children: ReactNode }) {
 
     // Listen for orderbook
     useQuery({
-        queryKey: ['unique-markets'],
+        queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
         refetchInterval: 1000 * 5,
         enabled: !!module && module.peers.size > 0,
