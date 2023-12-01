@@ -1,6 +1,6 @@
 import '@rainbow-me/rainbowkit/styles.css';
 import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import { Chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -18,6 +18,38 @@ import {
     braveWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
+
+const baseChain: Chain | any = {
+    id: 8453,
+    name: 'Base',
+    network: 'base',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    iconUrl:
+        'https://assets-global.website-files.com/5f973c97cf5aea614f93a26c/6451a34baee26f54b2419cf3_base-logo.png',
+    iconBackground: '#fff',
+    rpcUrls: {
+        default: {
+            http: ['https://mainnet.base.org'],
+        },
+        public: {
+            http: ['https://mainnet.base.org'],
+        },
+    },
+    blockExplorers: {
+        blockscout: {
+            name: 'Basescout',
+            url: 'https://base.blockscout.com',
+        },
+        default: {
+            name: 'Basescan',
+            url: 'https://basescan.org',
+        },
+        etherscan: {
+            name: 'Basescan',
+            url: 'https://basescan.org',
+        },
+    },
+};
 
 const determineChains = () => {
     if (TESTING) return [mainnet, arbitrum, hardhat];

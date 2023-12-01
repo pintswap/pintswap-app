@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 export const useStaking = () => {
     const { data: signer } = useSigner();
     const { address } = useAccount();
-    const { data: currentBlock } = useBlockNumber();
+    const { data: currentBlock } = useBlockNumber({ chainId: 1 });
     const startingBlock = currentBlock ? currentBlock - 100000 : 0; // 100,000 blocks usually get mined in 2 weeks
 
     const [depositInput, setDepositInput] = useState('');

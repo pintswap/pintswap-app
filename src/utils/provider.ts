@@ -15,6 +15,8 @@ export function providerFromChainId(chainId: number | string) {
             return new ethers.JsonRpcProvider('https://api.avax.network/ext/bc/C/rpc');
         case 10:
             return new ethers.JsonRpcProvider('https://mainnet.optimism.io');
+        case 8453:
+            return new ethers.JsonRpcProvider('https://base-mainnet.public.blastapi.io');
         default:
             return new ethers.InfuraProvider('mainnet', INFURA_PROJECT_ID);
     }
