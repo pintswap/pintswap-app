@@ -1,12 +1,11 @@
 import { Tab } from '@headlessui/react';
 import { TransitionModal, Card } from '../components';
 import { Avatar, SwapModule } from '../features';
-import { useOtcTrade, useTrade } from '../../hooks';
+import { useTrade } from '../../hooks';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { useEffect } from 'react';
 import { DEFAULT_TIMEOUT, reverseOffer, toAddress, renderToast, wait } from '../../utils';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 export const FulfillView = () => {
     const { address } = useAccount();
