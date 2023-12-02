@@ -40,7 +40,7 @@ export const Wallet = (props: IWalletProps) => {
                         return { onClick: () => openChainModal(), render: 'Wrong Network' };
                     } else {
                         return {
-                            onClick: () => disconnect(),
+                            onClick: () => openAccountModal(),
                             render: account.displayName,
                         };
                     }

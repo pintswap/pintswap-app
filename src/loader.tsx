@@ -13,7 +13,14 @@ import {
 } from './stores';
 import './styles/tailwind.css';
 import 'react-tooltip/dist/react-tooltip.css';
-import { ReactQueryProvider, chains, RainbowKitProvider, wagmiClient, walletTheme } from './config';
+import {
+    ReactQueryProvider,
+    chains,
+    RainbowKitProvider,
+    wagmiClient,
+    walletTheme,
+    CustomAvatar,
+} from './config';
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
@@ -21,7 +28,7 @@ root.render(
         <ReactQueryProvider>
             <WagmiConfig client={wagmiClient}>
                 <ThemeStore>
-                    <RainbowKitProvider chains={chains} theme={walletTheme}>
+                    <RainbowKitProvider chains={chains} theme={walletTheme} avatar={CustomAvatar}>
                         <NetworkStore>
                             <PintswapStore>
                                 <PricesStore>
