@@ -8,6 +8,7 @@ import {
     toAddress,
     NETWORKS,
     balanceTokenSort,
+    getChainId,
 } from '../../utils';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { MdClose } from 'react-icons/md';
@@ -40,8 +41,9 @@ export const SelectCoin = ({
     customButton,
 }: ISelectCoin) => {
     const {
-        pintswap: { module, chainId },
+        pintswap: { module },
     } = usePintswapContext();
+    const chainId = getChainId();
     const { tokenHoldings } = useUserContext();
     const { query, list, handleChange, clearQuery } = useSearch(getTokenList(chainId));
     const [unknownToken, setUnknownToken] = useState({ symbol: 'Unknown Token', loading: false });

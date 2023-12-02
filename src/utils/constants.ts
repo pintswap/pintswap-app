@@ -45,7 +45,7 @@ export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> =
 // TOKENS
 const TOKENS: ITokenProps[] = require('./token-list.json').tokens;
 export const getTokenList = (chainId?: number) =>
-    TOKENS.filter((el) => (el.chainId === chainId ? chainId : getChainId()));
+    TOKENS.filter((el) => el.chainId === (chainId ? chainId : getChainId()));
 export const getTokenListBySymbol = (chainId?: number) => keyBy(getTokenList(chainId), 'symbol');
 export const getTokenListByAddress = (chainId?: number) =>
     keyBy(

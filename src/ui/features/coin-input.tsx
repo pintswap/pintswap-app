@@ -170,7 +170,7 @@ export const CoinInput = ({
                                             : maxAmount === '-' || balance.isLoading
                                             ? 'opacity-0'
                                             : ''
-                                    }text-primary group-hover:text-primary-hover transition duration-100`}
+                                    } text-primary group-hover:text-primary-hover transition duration-100`}
                                 >
                                     <SmartPrice price={determineMax() || '0'} />
                                 </span>

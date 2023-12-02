@@ -39,7 +39,7 @@ export const Asset = ({
                 alt: alt || found?.symbol || DEFAULT.alt,
                 symbol: found?.symbol || DEFAULT.symbol,
             };
-        const mainnetFound = getTokenList().find(
+        const mainnetFound = getTokenList(1).find(
             (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
         );
         if (mainnetFound)
