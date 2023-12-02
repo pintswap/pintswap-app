@@ -122,17 +122,17 @@ export const AccountView = () => {
                 Array.from(userTrades, async (entry) => {
                     const isSendingNft = entry[1].gives?.tokenId ? true : false;
                     const isReceivingNft = entry[1].gets?.tokenId ? true : false;
+                    const chainId = await detectTradeNetwork(entry[1]);
                     return {
                         hash: entry[0],
-                        chainId: detectTradeNetwork(entry[1]),
-                        // chainId: await detectTradeNetwork(entry[1]),
+                        chainId,
                         sending: await convertAmount(
                             'readable',
                             isSendingNft
                                 ? formatUnits(entry[1].gives.tokenId || '', 0)
                                 : entry[1].gives.amount || '',
                             entry[1].gives.token,
-                            pintswap.chainId,
+                            chainId,
                             isSendingNft,
                         ),
                         receiving: await convertAmount(
@@ -141,7 +141,7 @@ export const AccountView = () => {
                                 ? formatUnits(entry[1].gets.tokenId || '', 0)
                                 : entry[1].gets.amount || '',
                             entry[1].gets.token,
-                            pintswap.chainId,
+                            chainId,
                             isReceivingNft,
                         ),
                         isNftOffer: isSendingNft,
@@ -399,6 +399,7 @@ export const AccountView = () => {
                     </form>
                 </Tab.Panel>
                 <Tab.Panel>
+                    <>{console.log('table', tableData)}</>
                     <DataTable
                         columns={activeColumns}
                         data={tableData}
