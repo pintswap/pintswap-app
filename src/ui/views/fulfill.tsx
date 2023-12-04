@@ -1,7 +1,7 @@
 import { Tab } from '@headlessui/react';
 import { TransitionModal, Card } from '../components';
 import { Avatar, SwapModule } from '../features';
-import { useTrade } from '../../hooks';
+import { useOtcTrade, useTrade } from '../../hooks';
 import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { useEffect } from 'react';
 import { DEFAULT_TIMEOUT, reverseOffer, toAddress, renderToast, wait } from '../../utils';
@@ -11,7 +11,7 @@ export const FulfillView = () => {
     const { address } = useAccount();
     const navigate = useNavigate();
     const { chain } = useNetwork();
-    // const { loadingTrade, trade: otcTrade, executeTrade, fillingTrade, clearTrade } = useOtcTrade();
+    const { loadingTrade, trade: otcTrade, executeTrade, fillingTrade } = useOtcTrade();
     const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade(true);
     const { data } = useBalance(
         trade.gets.token?.toUpperCase() === 'ETH'

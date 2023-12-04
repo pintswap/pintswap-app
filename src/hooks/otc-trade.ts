@@ -8,6 +8,7 @@ import {
     getSymbol,
     reverseSymbolCache,
     renderToast,
+    getChainId,
 } from '../utils';
 import { useOffersContext, usePintswapContext } from '../stores';
 import { useSwitchNetwork } from 'wagmi';
@@ -19,8 +20,9 @@ export const useOtcTrade = () => {
     const { chainid, hash, multiaddr } = useParams(); // chainid, multiaddr, hash
     const { pathname } = useLocation();
     const {
-        pintswap: { module, chainId },
+        pintswap: { module },
     } = usePintswapContext();
+    const chainId = getChainId();
     const { switchNetworkAsync } = useSwitchNetwork();
     const { offersByChain } = useOffersContext();
 
@@ -88,7 +90,10 @@ export const useOtcTrade = () => {
                 if (TESTING) console.log('OTC | offer hash:', hash);
                 const found1 = _offers?.get(hash);
                 if (found1) {
-                    setTrade({ display: await displayOffer(found1), raw: found1 });
+                    setTrade({
+                        display: await displayOffer(found1, Number(chainid || chainId)),
+                        raw: found1,
+                    });
                     renderToast('otc-loading', 'success', 'Found trade');
                     return found1;
                 }
@@ -98,7 +103,10 @@ export const useOtcTrade = () => {
                     (el) => el.hash?.toLowerCase() === hash?.toLowerCase(),
                 );
                 if (found2) {
-                    setTrade({ raw: found2.raw, display: await displayOffer(found2.raw) });
+                    setTrade({
+                        raw: found2.raw,
+                        display: await displayOffer(found2.raw, Number(chainid || chainId)),
+                    });
                     renderToast('otc-loading', 'success', 'Found trade');
                     return found2.raw;
                 }

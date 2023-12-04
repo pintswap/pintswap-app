@@ -1954,6 +1954,9 @@ body {
 .\!leading-none {
   line-height: 1 !important;
 }
+.\!leading-normal {
+  line-height: 1.5 !important;
+}
 .leading-3 {
   line-height: 0.75rem;
 }
@@ -2542,6 +2545,10 @@ body {
 
   .md\:max-w-\[300px\] {
     max-width: 300px;
+  }
+
+  .md\:max-w-xs {
+    max-width: 20rem;
   }
 
   .md\:grid-cols-2 {
