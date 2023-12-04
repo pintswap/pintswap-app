@@ -10,17 +10,19 @@ import {
 import { SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import React, { useEffect, useState } from 'react';
-import { BASE_URL, DEFAULT_TIMEOUT, renderToast } from '../../utils';
+import { BASE_URL, DEFAULT_TIMEOUT, getChainId, renderToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { Tab, Transition } from '@headlessui/react';
+import { hashOffer } from '@pintswap/sdk';
 
 export const SwapView = () => {
     const navigate = useNavigate();
     const {
-        pintswap: { module, chainId },
+        pintswap: { module },
     } = usePintswapContext();
+    const chainId = getChainId();
     const {
         loading,
         trade,
@@ -49,7 +51,7 @@ export const SwapView = () => {
     const createTradeLink = () => {
         let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName || module?.address}`;
         if (trade.gives.tokenId) {
-            finalUrl = `${finalUrl}/nft/${order.orderHash}`;
+            finalUrl = `${finalUrl}/nft/${order.orderHash || hashOffer(trade)}`;
         } else {
             finalUrl = `${finalUrl}/${order.orderHash}`;
         }

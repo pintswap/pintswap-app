@@ -270,8 +270,8 @@ export function OffersStore(props: { children: ReactNode }) {
                     erc20: filtered,
                 });
                 setUniqueMarkets(getUniqueMarkets(filtered));
-                setIsLoading(false);
             }
+            setIsLoading(false);
             return returnObj;
         }
         return { nft: [], erc20: [] };
@@ -306,7 +306,8 @@ export function OffersStore(props: { children: ReactNode }) {
     useEffect(() => {
         if (newNetwork) {
             (async () => {
-                setIsLoading(true);
+                // setIsLoading(true);
+                setUniqueMarkets(getUniqueMarkets(filterByChain(allOffers.erc20, chainId)));
                 await getPublicOrderbook();
             })().catch((err) => console.error(err));
         }
