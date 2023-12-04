@@ -35,6 +35,7 @@ export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> =
     uniswap: {
         v2: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev',
         v3: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
+        arb: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-arbitrum-one',
     },
     pintswap: {
         eth: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-eth',

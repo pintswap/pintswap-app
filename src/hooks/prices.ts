@@ -1,13 +1,13 @@
 import { formatUnits, isAddress } from 'ethers6';
 import { useEffect, useState } from 'react';
-import { tryBoth } from '../api';
-import { DEFAULT_CHAINID, getChainId, getTokenListBySymbol, priceCache } from '../utils';
-import { ITransfer } from '@pintswap/sdk';
-import { getNetwork } from '@wagmi/core';
+import { getUniswapToken } from '../api';
+import { getChainId, getTokenListBySymbol, priceCache } from '../utils';
+import { ITransfer, detectTradeNetwork } from '@pintswap/sdk';
 import { getEthPrice } from '../api/subgraph';
 
 export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets?: ITransfer }) => {
-    const chainId = getChainId();
+    const _chainId = await detectTradeNetwork({ gives, gets });
+    let chainId = _chainId ? _chainId : getChainId();
     if (!gives?.token || !gets?.token || !gives?.amount || !gets?.amount)
         return { eth: '0', usd: '0' };
     if (priceCache[chainId][`${gives.token}-${gets.token}`])
@@ -23,8 +23,8 @@ export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets
             ? gets?.token
             : getTokenListBySymbol(chainId)[gets?.token]?.address;
         if (addressA && addressB) {
-            const { token: aToken } = await tryBoth({ address: addressA });
-            const { token: bToken } = await tryBoth({ address: addressB });
+            const { token: aToken } = await getUniswapToken({ address: addressA });
+            const { token: bToken } = await getUniswapToken({ address: addressB });
             const aAmount = gives?.amount.startsWith('0x')
                 ? formatUnits(gives.amount, Number(aToken?.decimals || '18'))
                 : gives?.amount;

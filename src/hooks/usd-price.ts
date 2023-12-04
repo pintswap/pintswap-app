@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getEthPrice, tryBoth } from '../api';
+import { getEthPrice, getUniswapToken } from '../api';
 import { usePricesContext } from '../stores';
 import { isAddress, getAddress, ZeroAddress } from 'ethers6';
 import { DEFAULT_INTERVAL, toAddress } from '../utils';
@@ -13,7 +13,7 @@ export const getUsdPrice = async (asset: string, eth: string, setState?: any) =>
             setState && setState(_eth);
             return _eth;
         } else {
-            const data = await tryBoth({ address });
+            const data = await getUniswapToken({ address });
             if (data) {
                 const returnObj =
                     Number(_eth) > 0 && data?.token?.derivedETH
