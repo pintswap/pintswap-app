@@ -93,8 +93,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     const mapped = (
                         await Promise.all(
                             flattened.map(
-                                async (v: any) =>
-                                    await toLimitOrder(v, chainId, offersByChain.erc20),
+                                async (v: any) => await toLimitOrder(v, offersByChain.erc20),
                             ),
                         )
                     ).map((v, i) => ({
@@ -112,8 +111,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     const mapped = (
                         await Promise.all(
                             flattened.map(
-                                async (v: any) =>
-                                    await toLimitOrder(v, chainId, offersByChain.erc20),
+                                async (v: any) => await toLimitOrder(v, offersByChain.erc20),
                             ),
                         )
                     ).map((v, i) => ({

@@ -256,9 +256,7 @@ export function OffersStore(props: { children: ReactNode }) {
             const flattenedPairs = await toFlattened(grouped.erc20);
             const flattenedNftTrades = await toFlattened(grouped.nft);
             const mappedPairs = await Promise.all(
-                flattenedPairs.map(
-                    async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
-                ),
+                flattenedPairs.map(async (v: any) => await toLimitOrder(v, allOffers.erc20)),
             );
             const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
             setAllOffers(returnObj);

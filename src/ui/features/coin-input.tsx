@@ -118,28 +118,35 @@ export const CoinInput = ({
                 />
             </div>
             <div className="w-full flex justify-between items-center">
+                {/* TODO: fix for all chains */}
                 <small className="text-gray-400 flex items-center gap-0.5">
-                    <span>$</span>
-                    <Skeleton
-                        loading={(!usdPrice && Number(value) !== 0) || loading}
-                        innerClass="!px-1"
-                    >
-                        <span className="flex items-center gap-1">
-                            <SmartPrice price={renderInputUsd()} />
-                            {change && Number(change) > 1 && (
-                                <span className="text-xs text-green-400">
-                                    ( +{Number(change).toFixed(2)} {asset} )
+                    {chainId === 1 ? (
+                        <>
+                            <span>$</span>
+                            <Skeleton
+                                loading={(!usdPrice && Number(value) !== 0) || loading}
+                                innerClass="!px-1"
+                            >
+                                <span className="flex items-center gap-1">
+                                    <SmartPrice price={renderInputUsd()} />
+                                    {change && Number(change) > 1 && (
+                                        <span className="text-xs text-green-400">
+                                            ( +{Number(change).toFixed(2)} {asset} )
+                                        </span>
+                                    )}
+                                    {trade &&
+                                        !usdPrice &&
+                                        value &&
+                                        trade.gives.amount &&
+                                        trade.gives.token && (
+                                            <ChangeDisplay value={percent} parentheses percent />
+                                        )}
                                 </span>
-                            )}
-                            {trade &&
-                                !usdPrice &&
-                                value &&
-                                trade.gives.amount &&
-                                trade.gives.token && (
-                                    <ChangeDisplay value={percent} parentheses percent />
-                                )}
-                        </span>
-                    </Skeleton>
+                            </Skeleton>
+                        </>
+                    ) : (
+                        <span>-</span>
+                    )}
                 </small>
                 <small>
                     {max && (

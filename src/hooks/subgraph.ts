@@ -1,4 +1,4 @@
-import { getUserHistory, tryBoth } from '../api';
+import { getUserHistory, getUniswapToken } from '../api';
 import { usePintswapContext, usePricesContext } from '../stores';
 import { useAccount } from 'wagmi';
 import { ZeroAddress } from 'ethers6';
@@ -34,7 +34,7 @@ export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' 
 
     const tokenDetails = useQuery({
         queryKey: ['use-subgraph-token', props.address],
-        queryFn: () => tryBoth(props),
+        queryFn: () => getUniswapToken(props),
         enabled: !!props.address,
     });
 

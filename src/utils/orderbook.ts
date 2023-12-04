@@ -1,12 +1,12 @@
 import { BigNumberish, ethers, parseUnits } from 'ethers6';
 import { groupBy } from 'lodash';
-import { hashOffer, IOffer } from '@pintswap/sdk';
+import { detectTradeNetwork, hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
 import { getUsdPrice } from '../hooks';
 import { IOfferProps } from './types';
-import { getEthPrice, getTokenTax, tryBoth } from '../api';
+import { getEthPrice, getTokenTax, getUniswapToken } from '../api';
 import { convertExponentialToDecimal } from './format';
 import { getChainId } from './provider';
 
@@ -132,11 +132,11 @@ export async function toFormatted(transfer: any, chainId: number) {
 
 export async function toLimitOrder(
     offer: IOffer | any,
-    chainId: number,
     allOffers: IOfferProps[],
 ): Promise<IOfferProps> {
     const found = allOffers.find((o) => o.hash === hashOffer(offer));
     if (found) return found;
+    const chainId = await detectTradeNetwork(offer);
     const {
         pair: [base, trade],
         type,
@@ -153,8 +153,8 @@ export async function toLimitOrder(
         ticker,
         baseDecimals,
     ] = await Promise.all([
-        tryBoth({ address: gives?.token }),
-        tryBoth({ address: gets?.token }),
+        getUniswapToken({ address: gives?.token, chainId }),
+        getUniswapToken({ address: gets?.token, chainId }),
         getEthPrice(),
         getDecimals(trade.address, chainId),
         getTokenTax(trade.address, chainId),

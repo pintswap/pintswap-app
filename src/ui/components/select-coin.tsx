@@ -176,9 +176,12 @@ export const SelectCoin = ({
                                             fontSize="text-lg"
                                             size={30}
                                         />
-                                        <span className="text-sm">
-                                            <SmartPrice price={el.balance || '0'} />
-                                        </span>
+                                        {/* TODO: integrate wallet balances for other chains */}
+                                        {chainId === 1 && (
+                                            <span className="text-sm">
+                                                <SmartPrice price={el.balance || '0'} />
+                                            </span>
+                                        )}
                                     </button>
                                 </li>
                             ))}
