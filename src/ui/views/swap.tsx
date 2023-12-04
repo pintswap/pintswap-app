@@ -83,11 +83,16 @@ export const SwapView = () => {
         }
     }, [steps[2].status]);
 
+    const determineTabs = () => {
+        // TODO: fix up to work on all chains
+        if (chainId !== 1) return ['LIMIT', 'NFT'];
+        return ['MARKET', 'LIMIT', 'NFT'];
+    };
     return (
         <>
             <div className="flex flex-col max-w-lg mx-auto">
                 <h2 className="view-header text-left">Create Offer</h2>
-                <Card type="tabs" tabs={['MARKET', 'LIMIT', 'NFT']} onTabChange={clearTrade}>
+                <Card type="tabs" tabs={determineTabs()} onTabChange={clearTrade}>
                     <div className="mb-3">
                         <SwitchToggle
                             labelOn="Public"
@@ -102,17 +107,20 @@ export const SwapView = () => {
                             ]}
                         />
                     </div>
-                    <Tab.Panel>
-                        <SwapModule
-                            trade={trade}
-                            updateTrade={updateTrade}
-                            disabled={isButtonDisabled()}
-                            onClick={handleSwap}
-                            loading={loading}
-                            setTrade={setTrade}
-                            isPublic={isPublic}
-                        />
-                    </Tab.Panel>
+                    {/* TODO: fix to work on all chains */}
+                    {chainId === 1 && (
+                        <Tab.Panel>
+                            <SwapModule
+                                trade={trade}
+                                updateTrade={updateTrade}
+                                disabled={isButtonDisabled()}
+                                onClick={handleSwap}
+                                loading={loading}
+                                setTrade={setTrade}
+                                isPublic={isPublic}
+                            />
+                        </Tab.Panel>
+                    )}
                     <Tab.Panel>
                         <SwapModule
                             trade={trade}
