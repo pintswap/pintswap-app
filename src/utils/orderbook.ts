@@ -1,6 +1,6 @@
 import { BigNumberish, ethers, parseUnits } from 'ethers6';
 import { groupBy } from 'lodash';
-import { hashOffer, IOffer } from '@pintswap/sdk';
+import { detectTradeNetwork, hashOffer, IOffer } from '@pintswap/sdk';
 import { isERC20Transfer } from '@pintswap/sdk/lib/trade';
 import { fromAddress, getDecimals, toAddress, toTicker } from './token';
 import { DAI, ETH, TESTING, USDC, USDT } from './constants';
@@ -132,11 +132,11 @@ export async function toFormatted(transfer: any, chainId: number) {
 
 export async function toLimitOrder(
     offer: IOffer | any,
-    chainId: number,
     allOffers: IOfferProps[],
 ): Promise<IOfferProps> {
     const found = allOffers.find((o) => o.hash === hashOffer(offer));
     if (found) return found;
+    const chainId = await detectTradeNetwork(offer);
     const {
         pair: [base, trade],
         type,

@@ -399,7 +399,6 @@ export const AccountView = () => {
                     </form>
                 </Tab.Panel>
                 <Tab.Panel>
-                    <>{console.log('table', tableData)}</>
                     <DataTable
                         columns={activeColumns}
                         data={tableData}
@@ -418,7 +417,13 @@ export const AccountView = () => {
                 </Tab.Panel>
             </Card>
             <FadeIn show={!incorrectSigner}>
-                <div className="flex flex-row gap-3 justify-center items-center">
+                <div className="grid grid-cols-2 gap-2 px-2 items-center md:max-w-xs">
+                    <Button
+                        onClick={() => navigate('/create')}
+                        className="sm:max-w-lg sm:self-center"
+                    >
+                        Create Offer
+                    </Button>
                     <TooltipWrapper
                         text={
                             userData.active
@@ -426,21 +431,16 @@ export const AccountView = () => {
                                 : 'Posts offers to public orderbook'
                         }
                         id="account-module-publish"
+                        wrapperClass="!leading-normal"
                     >
                         <Button
                             onClick={toggleActive}
-                            className="sm:max-w-lg sm:self-center"
+                            className="sm:max-w-lg sm:self-center w-full"
                             type="outline"
                         >
                             {userData.active ? 'Stop Publishing' : 'Publish Offers'}
                         </Button>
                     </TooltipWrapper>
-                    <Button
-                        onClick={() => navigate('/create')}
-                        className="sm:max-w-lg sm:self-center"
-                    >
-                        Create Offer
-                    </Button>
                 </div>
             </FadeIn>
         </div>
