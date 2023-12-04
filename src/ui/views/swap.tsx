@@ -85,7 +85,7 @@ export const SwapView = () => {
 
     const determineTabs = () => {
         // TODO: fix up to work on all chains
-        if (chainId !== 1) return ['LIMIT', 'NFT'];
+        if (chainId !== 1) return ['ERC20', 'NFT'];
         return ['MARKET', 'LIMIT', 'NFT'];
     };
     return (
