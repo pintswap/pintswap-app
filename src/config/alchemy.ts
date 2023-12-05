@@ -9,4 +9,7 @@ const config = {
  * @deprecated
  * Using llamaNodes now instead for RPC
  */
-export const alchemy = new Alchemy(config);
+export const alchemy: Record<number, any> = {
+    1: new Alchemy(config),
+    42161: new Alchemy({ ...config, network: Network.ARB_MAINNET }),
+};

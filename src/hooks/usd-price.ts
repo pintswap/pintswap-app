@@ -36,7 +36,7 @@ export const useUsdPrice = (asset?: string) => {
     const { data } = useQuery({
         queryKey: ['use-usd-price', asset],
         queryFn: () => (asset ? getUsdPrice(asset, eth) : '0'),
-        enabled: !!asset && chainId !== 1,
+        enabled: !!asset && chainId === 1,
         refetchInterval: DEFAULT_INTERVAL * 5, // Every 30 seconds
         initialData: '0',
     });

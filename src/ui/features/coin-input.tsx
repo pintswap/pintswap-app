@@ -2,9 +2,10 @@ import { ChangeEventHandler, ReactNode, useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
 import { getChainId, percentChange, toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton, ChangeDisplay } from '../components';
-import { usePintswapContext } from '../../stores';
+import { useOffersContext, usePintswapContext } from '../../stores';
 import { useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
+import { useLocation } from 'react-router-dom';
 
 type ICoinInput = {
     label?: string;
@@ -23,6 +24,7 @@ type ICoinInput = {
     change?: string;
     maxLoading?: boolean;
     loading?: boolean;
+    maxText?: string;
 };
 
 export const CoinInput = ({
@@ -42,11 +44,14 @@ export const CoinInput = ({
     change,
     maxLoading,
     loading,
+    maxText,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
+    const { pathname } = useLocation();
     const { address } = useAccount();
     const chainId = getChainId();
+    const { allOffers } = useOffersContext();
     const balance = useBalance(
         asset?.toUpperCase() === 'ETH'
             ? { address }
@@ -69,6 +74,19 @@ export const CoinInput = ({
         return Number(value) > 0 && asset
             ? (Number(value) * Number(usdPrice || '0')).toString()
             : '0.00';
+    }
+
+    function isLoadingMax() {
+        return maxLoading !== undefined
+            ? maxLoading ||
+                  maxAmount === '-' ||
+                  balance.isLoading ||
+                  maxAmount === '0' ||
+                  (!allOffers.erc20?.length && !pathname.includes('create'))
+            : maxAmount === '-' ||
+                  balance.isLoading ||
+                  maxAmount === '0' ||
+                  (!allOffers.erc20?.length && !pathname.includes('create'));
     }
 
     useEffect(() => {
@@ -161,23 +179,13 @@ export const CoinInput = ({
                             }}
                             className=" group text-neutral-400 p-0.5 flex items-center gap-1"
                         >
-                            MAX:{' '}
-                            <Skeleton
-                                innerClass="!p-0 min-w-[30px]"
-                                loading={
-                                    maxLoading !== undefined
-                                        ? maxLoading
-                                        : maxAmount === '-' || balance.isLoading
-                                }
-                            >
+                            {maxText ? maxText : 'MAX'}
+                            {': '}
+                            <Skeleton innerClass="!p-0 min-w-[24px]" loading={isLoadingMax()}>
                                 <span
                                     className={`${
-                                        maxLoading !== undefined
-                                            ? maxLoading
-                                            : maxAmount === '-' || balance.isLoading
-                                            ? 'opacity-0'
-                                            : ''
-                                    } text-primary group-hover:text-primary-hover transition duration-100`}
+                                        isLoadingMax() ? 'opacity-0' : ''
+                                    } transition duration-100 text-primary group-hover:text-primary-hover`}
                                 >
                                     <SmartPrice price={determineMax() || '0'} />
                                 </span>
