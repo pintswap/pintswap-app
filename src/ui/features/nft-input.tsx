@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useWindowSize } from '../../hooks';
-import { INFTProps, truncate } from '../../utils';
+import { INFTProps, getChainId, truncate } from '../../utils';
 import { alchemy } from '../../config';
-import { usePintswapContext } from '../../stores';
 import { SelectNFT, SpinnerLoader } from '../components';
 import { NFTDisplay } from './nft-display';
 import { useAccount } from 'wagmi';
@@ -30,9 +29,7 @@ export const NFTInput = ({
     type = 'owner',
 }: INFTInput) => {
     const { address } = useAccount();
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+    const chainId = getChainId();
     const { width, breakpoints } = useWindowSize();
     const [dropdownItems, setDropdownItems] = useState<INFTProps[]>([]);
     const [modalOpen, setModalOpen] = useState(false);
@@ -45,10 +42,10 @@ export const NFTInput = ({
     useEffect(() => {
         (async () => {
             if (address && type === 'owner') {
-                const res = await alchemy.nft.getNftsForOwner(address);
+                const res = await alchemy[chainId].nft.getNftsForOwner(address);
                 if (res && res.ownedNfts?.length) {
                     setDropdownItems(
-                        res.ownedNfts.map((n) => ({
+                        res.ownedNfts.map((n: any) => ({
                             image: n.media?.length
                                 ? n?.media[0]?.gateway
                                 : n.tokenUri?.gateway || n.tokenUri?.raw || '',

@@ -107,7 +107,7 @@ export const wagmiClient = createClient({
     provider,
 });
 
-export const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
     return ensImage ? (
         <img src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
     ) : (
@@ -120,4 +120,4 @@ export const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
     );
 };
 
-export { WagmiConfig, RainbowKitProvider };
+export { WagmiConfig, RainbowKitProvider, CustomAvatar };

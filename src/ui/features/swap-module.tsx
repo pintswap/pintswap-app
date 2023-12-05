@@ -8,6 +8,7 @@ import { getQuote } from '../../api';
 import { usePintswapContext, usePricesContext } from '../../stores';
 import { useAccount, useBalance } from 'wagmi';
 import { ZeroAddress } from 'ethers6';
+import { BigNumber } from 'ethers';
 
 type ISwapModule = {
     trade: IOffer;
@@ -31,6 +32,7 @@ type ISwapModule = {
     fill?: string;
     output?: { value: string; loading: boolean };
     offers?: number;
+    maxText?: string;
 };
 
 export const SwapModule = ({
@@ -51,6 +53,7 @@ export const SwapModule = ({
     setFill,
     fill,
     offers,
+    maxText,
 }: ISwapModule) => {
     const { eth } = usePricesContext();
     const { address } = useAccount();
@@ -100,15 +103,18 @@ export const SwapModule = ({
         useEffect(() => {
             (async () => {
                 const { gives } = trade;
-                if (gives.tokenId && gives.token) {
+                if (gives?.tokenId && gives?.token) {
                     setNftLoading(true);
+                    console.log('set nft', gives);
                     const n = await fetchNFT({
                         token: gives.token,
                         tokenId: gives.tokenId,
                         owner: address,
+                        chainId,
                     });
                     setNFT(n);
                     setNftLoading(false);
+                    console.log('set nft');
                 }
                 if (!gives.tokenId) {
                     setNFT(null);
@@ -173,6 +179,22 @@ export const SwapModule = ({
             setTimeout(() => setIsReversing(false), 200);
         };
 
+        const renderMax = () => {
+            if (!!max && max === '-' && offers !== 0) return '';
+            if (
+                max &&
+                Number(max) !== 0 &&
+                givesWalletBalance?.formatted &&
+                Number(givesWalletBalance.formatted) !== 0
+            ) {
+                if (Number(max) > Number(givesWalletBalance.formatted)) {
+                    return givesWalletBalance.formatted;
+                }
+                return max;
+            }
+            return givesWalletBalance?.formatted;
+        };
+
         useEffect(() => {
             if (!trade.gives.token && updateTrade) updateTrade('gives.token', 'ETH');
         }, [trade]);
@@ -211,7 +233,8 @@ export const SwapModule = ({
                         }}
                         asset={trade.gives?.token}
                         max={type === 'swap' || !!max}
-                        maxAmount={max}
+                        maxText={maxText}
+                        maxAmount={renderMax()}
                         maxLoading={!!max && max === '-' && offers !== 0}
                         type={type}
                         id="swap-module-give"

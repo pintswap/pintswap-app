@@ -250,7 +250,7 @@ export function OffersStore(props: { children: ReactNode }) {
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
             if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
-                renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
+                renderToast('findOffers', 'pending', 'Found other peers', undefined);
             const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
@@ -269,6 +269,8 @@ export function OffersStore(props: { children: ReactNode }) {
                 });
                 setUniqueMarkets(getUniqueMarkets(filtered));
             }
+            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
+                renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
             setIsLoading(false);
             return returnObj;
         }
