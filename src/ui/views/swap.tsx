@@ -50,24 +50,15 @@ export const SwapView = () => {
 
     const createTradeLink = () => {
         let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName || module?.address}`;
-        if (
-            !order.orderHash &&
-            (trade.gets.amount || trade.gives.amount) &&
-            (trade.gives.amount || trade.gives.tokenId) &&
-            trade.gives.token &&
-            trade.gets.token
-        ) {
-            if (trade.gives?.tokenId) {
-                finalUrl = `${finalUrl}/nft/${hashOffer(trade)}`;
-            } else {
-                finalUrl = `${finalUrl}/${hashOffer(trade)}`;
-            }
-        } else {
+        if (order.orderHash) {
             if (trade.gives?.tokenId) {
                 finalUrl = `${finalUrl}/nft/${order.orderHash}`;
             } else {
                 finalUrl = `${finalUrl}/${order.orderHash}`;
             }
+        } else {
+            renderToast('create-offer-link', 'error', 'Error creating share link');
+            return ``;
         }
         return `${finalUrl}/${chainId}`;
     };
