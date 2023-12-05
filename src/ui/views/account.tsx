@@ -14,7 +14,7 @@ import { DataTable } from '../tables';
 import { useOffersContext, useUserContext, usePintswapContext } from '../../stores';
 import { Tab } from '@headlessui/react';
 import { useEffect, useState } from 'react';
-import { formatPeerImg, convertAmount, IUserHistoryItemProps } from '../../utils';
+import { formatPeerImg, convertAmount, IUserHistoryItemProps, getChainId } from '../../utils';
 import { useAccountForm, useSubgraph, useWindowSize } from '../../hooks';
 import { detectTradeNetwork } from '@pintswap/sdk';
 import { FadeIn } from '../transitions';
@@ -95,6 +95,7 @@ export const AccountView = () => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const { pintswap, incorrectSigner, signIfNecessary } = usePintswapContext();
+    const chainId = getChainId();
     const { userTrades, deleteAllTrades } = useOffersContext();
     const { userData, toggleActive, offers } = useUserContext();
     const {
@@ -121,17 +122,17 @@ export const AccountView = () => {
                 Array.from(userTrades, async (entry) => {
                     const isSendingNft = entry[1].gives?.tokenId ? true : false;
                     const isReceivingNft = entry[1].gets?.tokenId ? true : false;
+                    const chainId = await detectTradeNetwork(entry[1]);
                     return {
                         hash: entry[0],
-                        chainId: 1,
-                        // chainId: await detectTradeNetwork(entry[1]),
+                        chainId,
                         sending: await convertAmount(
                             'readable',
                             isSendingNft
                                 ? formatUnits(entry[1].gives.tokenId || '', 0)
                                 : entry[1].gives.amount || '',
                             entry[1].gives.token,
-                            pintswap.chainId,
+                            chainId,
                             isSendingNft,
                         ),
                         receiving: await convertAmount(
@@ -140,7 +141,7 @@ export const AccountView = () => {
                                 ? formatUnits(entry[1].gets.tokenId || '', 0)
                                 : entry[1].gets.amount || '',
                             entry[1].gets.token,
-                            pintswap.chainId,
+                            chainId,
                             isReceivingNft,
                         ),
                         isNftOffer: isSendingNft,
@@ -416,7 +417,13 @@ export const AccountView = () => {
                 </Tab.Panel>
             </Card>
             <FadeIn show={!incorrectSigner}>
-                <div className="flex flex-row gap-3 justify-center items-center">
+                <div className="grid grid-cols-2 gap-2 px-2 items-center md:max-w-xs">
+                    <Button
+                        onClick={() => navigate('/create')}
+                        className="sm:max-w-lg sm:self-center"
+                    >
+                        Create Offer
+                    </Button>
                     <TooltipWrapper
                         text={
                             userData.active
@@ -424,21 +431,16 @@ export const AccountView = () => {
                                 : 'Posts offers to public orderbook'
                         }
                         id="account-module-publish"
+                        wrapperClass="!leading-normal"
                     >
                         <Button
                             onClick={toggleActive}
-                            className="sm:max-w-lg sm:self-center"
+                            className="sm:max-w-lg sm:self-center w-full"
                             type="outline"
                         >
                             {userData.active ? 'Stop Publishing' : 'Publish Offers'}
                         </Button>
                     </TooltipWrapper>
-                    <Button
-                        onClick={() => navigate('/create')}
-                        className="sm:max-w-lg sm:self-center"
-                    >
-                        Create Offer
-                    </Button>
                 </div>
             </FadeIn>
         </div>

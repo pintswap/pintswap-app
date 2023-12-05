@@ -234,7 +234,12 @@ export const useTrade = (isOTC?: boolean) => {
         if (params.hash) {
             if (TESTING) console.log('#getTrades - Order Hash:', params.hash);
             if (_offers.get(params.hash)) {
-                setTrade(await displayOffer(_offers.get(params.hash) as IOffer));
+                setTrade(
+                    await displayOffer(
+                        _offers.get(params.hash) as IOffer,
+                        Number(params.chainid || chainId),
+                    ),
+                );
                 return;
             }
 

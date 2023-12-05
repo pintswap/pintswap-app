@@ -1,10 +1,11 @@
 import { ChangeEventHandler, ReactNode, useEffect, useState } from 'react';
 import { useAccount, useBalance } from 'wagmi';
-import { percentChange, toAddress } from '../../utils';
+import { getChainId, percentChange, toAddress } from '../../utils';
 import { SmartPrice, SelectCoin, Skeleton, ChangeDisplay } from '../components';
-import { usePintswapContext } from '../../stores';
+import { useOffersContext, usePintswapContext } from '../../stores';
 import { useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
+import { useLocation } from 'react-router-dom';
 
 type ICoinInput = {
     label?: string;
@@ -23,6 +24,7 @@ type ICoinInput = {
     change?: string;
     maxLoading?: boolean;
     loading?: boolean;
+    maxText?: string;
 };
 
 export const CoinInput = ({
@@ -42,13 +44,14 @@ export const CoinInput = ({
     change,
     maxLoading,
     loading,
+    maxText,
 }: ICoinInput) => {
     const [open, setOpen] = useState(false);
     const [percent, setPercent] = useState('0');
+    const { pathname } = useLocation();
     const { address } = useAccount();
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+    const chainId = getChainId();
+    const { allOffers } = useOffersContext();
     const balance = useBalance(
         asset?.toUpperCase() === 'ETH'
             ? { address }
@@ -73,6 +76,19 @@ export const CoinInput = ({
             : '0.00';
     }
 
+    function isLoadingMax() {
+        return maxLoading !== undefined
+            ? maxLoading ||
+                  maxAmount === '-' ||
+                  balance.isLoading ||
+                  maxAmount === '0' ||
+                  (!allOffers.erc20?.length && !pathname.includes('create'))
+            : maxAmount === '-' ||
+                  balance.isLoading ||
+                  maxAmount === '0' ||
+                  (!allOffers.erc20?.length && !pathname.includes('create'));
+    }
+
     useEffect(() => {
         if (
             trade &&
@@ -95,10 +111,10 @@ export const CoinInput = ({
             <div className="flex justify-between items-center gap-0.5 pt-4 pb-1">
                 <Skeleton loading={loading} innerClass="!p-0 min-w-[160px] min-h-[28px]">
                     {loading ? (
-                        <span className="h-full text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] sm:max-w-none min-w-0 w-fit" />
+                        <span className="h-full text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] md:max-w-[240px] 2xl:max-w-[280px] min-w-0 w-fit" />
                     ) : (
                         <input
-                            className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] sm:max-w-none min-w-0 w-fit"
+                            className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] md:max-w-[240px] 2xl:max-w-[280px] min-w-0 w-fit"
                             placeholder="0"
                             type="number"
                             onChange={onAmountChange}
@@ -120,28 +136,35 @@ export const CoinInput = ({
                 />
             </div>
             <div className="w-full flex justify-between items-center">
+                {/* TODO: fix for all chains */}
                 <small className="text-gray-400 flex items-center gap-0.5">
-                    <span>$</span>
-                    <Skeleton
-                        loading={(!usdPrice && Number(value) !== 0) || loading}
-                        innerClass="!px-1"
-                    >
-                        <span className="flex items-center gap-1">
-                            <SmartPrice price={renderInputUsd()} />
-                            {change && Number(change) > 1 && (
-                                <span className="text-xs text-green-400">
-                                    ( +{Number(change).toFixed(2)} {asset} )
+                    {chainId === 1 ? (
+                        <>
+                            <span>$</span>
+                            <Skeleton
+                                loading={(!usdPrice && Number(value) !== 0) || loading}
+                                innerClass="!px-1"
+                            >
+                                <span className="flex items-center gap-1">
+                                    <SmartPrice price={renderInputUsd()} />
+                                    {change && Number(change) > 1 && (
+                                        <span className="text-xs text-green-400">
+                                            ( +{Number(change).toFixed(2)} {asset} )
+                                        </span>
+                                    )}
+                                    {trade &&
+                                        !usdPrice &&
+                                        value &&
+                                        trade.gives.amount &&
+                                        trade.gives.token && (
+                                            <ChangeDisplay value={percent} parentheses percent />
+                                        )}
                                 </span>
-                            )}
-                            {trade &&
-                                !usdPrice &&
-                                value &&
-                                trade.gives.amount &&
-                                trade.gives.token && (
-                                    <ChangeDisplay value={percent} parentheses percent />
-                                )}
-                        </span>
-                    </Skeleton>
+                            </Skeleton>
+                        </>
+                    ) : (
+                        <span>-</span>
+                    )}
                 </small>
                 <small>
                     {max && (
@@ -156,17 +179,13 @@ export const CoinInput = ({
                             }}
                             className=" group text-neutral-400 p-0.5 flex items-center gap-1"
                         >
-                            MAX:{' '}
-                            <Skeleton
-                                innerClass="!p-0 min-w-[30px]"
-                                loading={maxAmount === '-' || balance.isLoading || maxLoading}
-                            >
+                            {maxText ? maxText : 'MAX'}
+                            {': '}
+                            <Skeleton innerClass="!p-0 min-w-[24px]" loading={isLoadingMax()}>
                                 <span
                                     className={`${
-                                        maxAmount === '-' || balance.isLoading || maxLoading
-                                            ? 'opacity-0'
-                                            : ''
-                                    }text-primary group-hover:text-primary-hover transition duration-100`}
+                                        isLoadingMax() ? 'opacity-0' : ''
+                                    } transition duration-100 text-primary group-hover:text-primary-hover`}
                                 >
                                     <SmartPrice price={determineMax() || '0'} />
                                 </span>

@@ -1,6 +1,11 @@
 import '@rainbow-me/rainbowkit/styles.css';
-import { connectorsForWallets, darkTheme, RainbowKitProvider } from '@rainbow-me/rainbowkit';
-import { configureChains, createClient, WagmiConfig } from 'wagmi';
+import {
+    connectorsForWallets,
+    darkTheme,
+    RainbowKitProvider,
+    AvatarComponent,
+} from '@rainbow-me/rainbowkit';
+import { Chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -19,9 +24,41 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
+const baseChain: Chain | any = {
+    id: 8453,
+    name: 'Base',
+    network: 'base',
+    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+    iconUrl:
+        'https://assets-global.website-files.com/5f973c97cf5aea614f93a26c/6451a34baee26f54b2419cf3_base-logo.png',
+    iconBackground: '#fff',
+    rpcUrls: {
+        default: {
+            http: ['https://mainnet.base.org'],
+        },
+        public: {
+            http: ['https://mainnet.base.org'],
+        },
+    },
+    blockExplorers: {
+        blockscout: {
+            name: 'Basescout',
+            url: 'https://base.blockscout.com',
+        },
+        default: {
+            name: 'Basescan',
+            url: 'https://basescan.org',
+        },
+        etherscan: {
+            name: 'Basescan',
+            url: 'https://basescan.org',
+        },
+    },
+};
+
 const determineChains = () => {
-    if (TESTING) return [mainnet, hardhat];
-    return [mainnet];
+    if (TESTING) return [mainnet, arbitrum, hardhat];
+    return [mainnet, arbitrum];
 };
 
 export const { chains, provider } = configureChains(determineChains(), [
@@ -70,4 +107,17 @@ export const wagmiClient = createClient({
     provider,
 });
 
-export { WagmiConfig, RainbowKitProvider };
+const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+    return ensImage ? (
+        <img src={ensImage} width={size} height={size} style={{ borderRadius: 999 }} />
+    ) : (
+        <img
+            src={'./img/generic-avatar.svg'}
+            width={size}
+            height={size}
+            style={{ borderRadius: 999, backgroundColor: '#fff' }}
+        />
+    );
+};
+
+export { WagmiConfig, RainbowKitProvider, CustomAvatar };

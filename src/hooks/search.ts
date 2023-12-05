@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import { IMarketProps, INFTProps, ITokenProps, getTokenList } from '../utils';
+import { IMarketProps, INFTProps, ITokenProps, getChainId, getTokenList } from '../utils';
 import { IUserDataProps, usePintswapContext } from '../stores';
 
 const isKeyInObjArray = (list: any[], key: string) =>
@@ -8,9 +8,7 @@ const isKeyInObjArray = (list: any[], key: string) =>
 export const useSearch = (
     list: string[] | ITokenProps[] | IUserDataProps[] | IMarketProps[] | INFTProps[],
 ) => {
-    const {
-        pintswap: { chainId },
-    } = usePintswapContext();
+    const chainId = getChainId();
     const [searchState, setSearchState] = useState({ query: '', list });
 
     const determineType = () => {

@@ -6,13 +6,12 @@ import { useAccount, useBalance, useNetwork } from 'wagmi';
 import { useEffect } from 'react';
 import { DEFAULT_TIMEOUT, reverseOffer, toAddress, renderToast, wait } from '../../utils';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
 
 export const FulfillView = () => {
     const { address } = useAccount();
     const navigate = useNavigate();
     const { chain } = useNetwork();
-    // const { loadingTrade, trade: otcTrade, executeTrade, fillingTrade, clearTrade } = useOtcTrade();
+    const { loadingTrade, trade: otcTrade, executeTrade, fillingTrade } = useOtcTrade();
     const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade(true);
     const { data } = useBalance(
         trade.gets.token?.toUpperCase() === 'ETH'

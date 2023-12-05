@@ -1,6 +1,6 @@
 import fetch from 'cross-fetch';
 import { ethers, getAddress, isAddress } from 'ethers6';
-import { providerFromChainId } from './provider';
+import { getChainId, providerFromChainId } from './provider';
 import { INFTProps } from './types';
 import { DEFAULT_CHAINID, TESTING } from './constants';
 import { MIN_ABIS } from './contracts';
@@ -31,8 +31,8 @@ export async function fetchNFT(
 ): Promise<INFTProps> {
     const hash = hashNftIdentifier({ token, tokenId });
     if (nftCache[hash]) return nftCache[hash];
-    chainId = chainId || DEFAULT_CHAINID;
-    const contract = new ethers.Contract(token, MIN_ABIS.NFT, providerFromChainId(chainId || 1));
+    chainId = chainId || getChainId();
+    const contract = new ethers.Contract(token, MIN_ABIS.NFT, providerFromChainId(chainId));
     const uri = await contract.tokenURI(tokenId);
     let nft;
     try {

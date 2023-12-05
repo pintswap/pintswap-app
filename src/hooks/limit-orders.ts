@@ -23,7 +23,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
     } = usePintswapContext();
     const { order, peerTrades } = useTrade();
     const { hash, multiaddr } = useParams();
-    const { allOffers } = useOffersContext();
+    const { offersByChain } = useOffersContext();
 
     // All peers limit orders states
     const [limitOrders, setLimitOrders] = useState<any[]>([]);
@@ -93,7 +93,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     const mapped = (
                         await Promise.all(
                             flattened.map(
-                                async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
+                                async (v: any) => await toLimitOrder(v, offersByChain.erc20),
                             ),
                         )
                     ).map((v, i) => ({
@@ -111,7 +111,7 @@ export const useLimitOrders = (type: IUseLimitOrdersProps) => {
                     const mapped = (
                         await Promise.all(
                             flattened.map(
-                                async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
+                                async (v: any) => await toLimitOrder(v, offersByChain.erc20),
                             ),
                         )
                     ).map((v, i) => ({

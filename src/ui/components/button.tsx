@@ -93,7 +93,7 @@ export const Button = ({
         <button
             type={form ? form : 'button'}
             onClick={render().onClick}
-            disabled={disabled}
+            disabled={disabled && !incorrectSigner && checkNetwork}
             className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} disabled:opacity-70 border-2 rounded shadow disabled:cursor-not-allowed transition duration-150 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (

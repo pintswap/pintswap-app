@@ -91,7 +91,6 @@ export const PeerTickerFulfill = ({
                             amount: match.effective.gives,
                         },
                     },
-                    chainId,
                     allOffers.erc20,
                 )) as any;
                 if (TESTING)

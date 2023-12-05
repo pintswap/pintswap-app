@@ -3,6 +3,7 @@ import {
     decimalsCache,
     ENDPOINTS,
     formatPintswapTrade,
+    getChainId,
     priceCache,
     subgraphTokenCache,
     symbolCache,
@@ -22,9 +23,11 @@ const ETH_RES = {
 export async function getV3Token({
     address,
     history,
+    chainId,
 }: {
     address?: string;
     history?: 'day' | 'hour';
+    chainId?: number;
 }): Promise<{
     token: any;
     tokenDayDatas: any[];
@@ -76,7 +79,11 @@ export async function getV3Token({
     };
 
     try {
-        const response = await fetch(ENDPOINTS['uniswap']['v3'], {
+        const determineUniGraph = () => {
+            if (chainId === 42161) return 'arb';
+            return 'v3';
+        };
+        const response = await fetch(ENDPOINTS['uniswap'][determineUniGraph()], {
             ...JSON_HEADER_POST,
             body: JSON.stringify({
                 query: `{
@@ -166,26 +173,55 @@ export async function getV2Token({
     }
 }
 
-export async function tryBoth(props: { address?: string; history?: 'day' | 'hour' }) {
+export async function getUniswapToken(props: {
+    address?: string;
+    history?: 'day' | 'hour';
+    chainId?: number;
+}) {
     if (!props || !props.address) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
-    if (subgraphTokenCache[1][props.address]) return subgraphTokenCache[1][props.address];
-    const v2Token = await getV2Token(props);
-    if (v2Token?.token) {
-        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v2Token;
-        if (!decimalsCache[1][props.address])
-            decimalsCache[1][props.address] = Number(v2Token.token?.decimals);
-        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v2Token.token?.symbol;
-        return v2Token;
+    const chainId = props.chainId ? props.chainId : getChainId();
+    switch (chainId) {
+        case 42161: {
+            if (subgraphTokenCache[chainId][props.address])
+                return subgraphTokenCache[chainId][props.address];
+            const v3Token = await getV3Token({ ...props, chainId });
+            if (v3Token?.token) {
+                if (!subgraphTokenCache[chainId][props.address])
+                    subgraphTokenCache[chainId][props.address] = v3Token;
+                if (!decimalsCache[chainId][props.address])
+                    decimalsCache[chainId][props.address] = Number(v3Token.token?.decimals);
+                if (!symbolCache[chainId][props.address])
+                    symbolCache[chainId][props.address] = v3Token.token?.symbol;
+                return v3Token;
+            }
+            return { token: null };
+        }
+        default: {
+            if (subgraphTokenCache[chainId][props.address])
+                return subgraphTokenCache[chainId][props.address];
+            const v2Token = await getV2Token(props);
+            if (v2Token?.token) {
+                if (!subgraphTokenCache[chainId][props.address])
+                    subgraphTokenCache[chainId][props.address] = v2Token;
+                if (!decimalsCache[chainId][props.address])
+                    decimalsCache[chainId][props.address] = Number(v2Token.token?.decimals);
+                if (!symbolCache[chainId][props.address])
+                    symbolCache[chainId][props.address] = v2Token.token?.symbol;
+                return v2Token;
+            }
+            const v3Token = await getV3Token(props);
+            if (v3Token?.token) {
+                if (!subgraphTokenCache[chainId][props.address])
+                    subgraphTokenCache[chainId][props.address] = v3Token;
+                if (!decimalsCache[chainId][props.address])
+                    decimalsCache[chainId][props.address] = Number(v3Token.token?.decimals);
+                if (!symbolCache[chainId][props.address])
+                    symbolCache[chainId][props.address] = v3Token.token?.symbol;
+                return v3Token;
+            }
+            return { token: null };
+        }
     }
-    const v3Token = await getV3Token(props);
-    if (v3Token?.token) {
-        if (!subgraphTokenCache[1][props.address]) subgraphTokenCache[1][props.address] = v3Token;
-        if (!decimalsCache[1][props.address])
-            decimalsCache[1][props.address] = Number(v3Token.token?.decimals);
-        if (!symbolCache[1][props.address]) symbolCache[1][props.address] = v3Token.token?.symbol;
-        return v3Token;
-    }
-    return { token: null };
 }
 
 export async function getManyV2Tokens(addresses: string[]): Promise<any[]> {
@@ -198,7 +234,8 @@ export async function getManyV2Tokens(addresses: string[]): Promise<any[]> {
 }
 
 export async function getEthPrice(): Promise<string> {
-    if (priceCache[1][ZeroAddress]) return priceCache[1][ZeroAddress];
+    const chainId = getChainId();
+    if (priceCache[chainId][ZeroAddress]) return priceCache[chainId][ZeroAddress];
     const response = await fetch(ENDPOINTS['uniswap']['v3'], {
         ...JSON_HEADER_POST,
         body: JSON.stringify({
@@ -212,7 +249,8 @@ export async function getEthPrice(): Promise<string> {
     const {
         data: { bundles },
     } = await response.json();
-    if (!priceCache[1][ZeroAddress]) priceCache[1][ZeroAddress] = bundles[0].ethPriceUSD;
+    if (!priceCache[chainId][ZeroAddress])
+        priceCache[chainId][ZeroAddress] = bundles[0].ethPriceUSD;
     return bundles[0].ethPriceUSD;
 }
 
@@ -279,13 +317,14 @@ export async function getQuote(
         } else {
             givesEthPrice = (
                 Number(
-                    (await tryBoth({ address: toAddress(trade.gives.token) }))?.token?.derivedETH ||
-                        '0',
+                    (await getUniswapToken({ address: toAddress(trade.gives.token) }))?.token
+                        ?.derivedETH || '0',
                 ) * Number(trade.gives.amount)
             ).toString();
         }
         const getsEthPrice =
-            (await tryBoth({ address: toAddress(trade.gets.token) }))?.token?.derivedETH || '0';
+            (await getUniswapToken({ address: toAddress(trade.gets.token) }))?.token?.derivedETH ||
+            '0';
         const quote = Number(givesEthPrice) / Number(getsEthPrice);
         if (quote === 0) return '';
         if (type === 'exact') return quote.toString();

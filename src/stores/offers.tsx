@@ -7,7 +7,6 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { IOffer } from '@pintswap/sdk';
 import { usePintswapContext } from './pintswap';
 import {
     toLimitOrder,
@@ -18,10 +17,8 @@ import {
     renderToast,
     savePintswap,
 } from '../utils';
-import { hashOffer, isERC20Transfer } from '@pintswap/sdk';
+import { hashOffer, isERC20Transfer, detectTradeNetwork, IOffer } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
-import { toast } from 'react-toastify';
-import { usePricesContext } from './prices';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 
@@ -121,8 +118,7 @@ const toFlattened = async (v: any) =>
                     offerList.map(async (v: any) => ({
                         ...v,
                         peer: multiaddr,
-                        chainId: 1,
-                        // chainId: await detectTradeNetwork(v),
+                        chainId: await detectTradeNetwork(v),
                         hash: hashOffer(v),
                     })),
                 ),
@@ -223,7 +219,6 @@ export function OffersStore(props: { children: ReactNode }) {
     });
     const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { eth } = usePricesContext();
 
     const addTrade = async (hash: string, tradeProps: IOffer) => {
         setUserTrades(new Map(userTrades.set(hash, tradeProps)));
@@ -255,23 +250,28 @@ export function OffersStore(props: { children: ReactNode }) {
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
             if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
-                renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
+                renderToast('findOffers', 'pending', 'Found other peers', undefined);
             const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
             const flattenedNftTrades = await toFlattened(grouped.nft);
             const mappedPairs = await Promise.all(
-                flattenedPairs.map(
-                    async (v: any) => await toLimitOrder(v, chainId, allOffers.erc20),
-                ),
+                flattenedPairs.map(async (v: any) => await toLimitOrder(v, allOffers.erc20)),
             );
             const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
             setAllOffers(returnObj);
 
             if (mappedPairs.length) {
-                setUniqueMarkets(getUniqueMarkets(mappedPairs));
-                setIsLoading(false);
+                const filtered = filterByChain(mappedPairs, chainId);
+                setOffersByChain({
+                    nft: filterByChain(flattenedNftTrades, chainId),
+                    erc20: filtered,
+                });
+                setUniqueMarkets(getUniqueMarkets(filtered));
             }
+            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
+                renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
+            setIsLoading(false);
             return returnObj;
         }
         return { nft: [], erc20: [] };
@@ -279,7 +279,7 @@ export function OffersStore(props: { children: ReactNode }) {
 
     // Listen for orderbook
     useQuery({
-        queryKey: ['unique-markets'],
+        queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
         refetchInterval: 1000 * 5,
         enabled: !!module && module.peers.size > 0,
@@ -306,7 +306,8 @@ export function OffersStore(props: { children: ReactNode }) {
     useEffect(() => {
         if (newNetwork) {
             (async () => {
-                setIsLoading(true);
+                // setIsLoading(true);
+                setUniqueMarkets(getUniqueMarkets(filterByChain(allOffers.erc20, chainId)));
                 await getPublicOrderbook();
             })().catch((err) => console.error(err));
         }

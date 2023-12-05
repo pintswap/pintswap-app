@@ -1,7 +1,7 @@
 import { Asset, Button, Card, Header, TextDisplay } from '../components';
 import { CoinInput } from '../features';
 import { useStaking, useUsdPrice, useWindowSize } from '../../hooks';
-import { numberFormatter, percentFormatter } from '../../utils';
+import { getChainId, numberFormatter, percentFormatter } from '../../utils';
 import { MdInfoOutline } from 'react-icons/md';
 
 export const StakingView = () => {
@@ -21,6 +21,7 @@ export const StakingView = () => {
         rewardsGenerated,
         userLoading,
     } = useStaking();
+    const chainId = getChainId();
     const price = useUsdPrice('0x58fB30A61C218A3607e9273D52995a49fF2697Ee');
 
     const determineDecimals = () => {
@@ -102,7 +103,11 @@ export const StakingView = () => {
                             label="Stake"
                             asset="PINT"
                             customButton={
-                                <Button disabled={isLoading} onClick={handleDeposit} checkNetwork>
+                                <Button
+                                    disabled={isLoading || chainId !== 1}
+                                    onClick={handleDeposit}
+                                    checkNetwork
+                                >
                                     Deposit
                                 </Button>
                             }
@@ -118,7 +123,9 @@ export const StakingView = () => {
                                 <Button
                                     onClick={handleRedeem}
                                     type="outline"
-                                    disabled={Number(availableToRedeem) < 1 || isLoading}
+                                    disabled={
+                                        Number(availableToRedeem) < 1 || isLoading || chainId !== 1
+                                    }
                                     checkNetwork
                                 >
                                     Withdraw All

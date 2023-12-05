@@ -1,30 +1,30 @@
 import { formatUnits, isAddress } from 'ethers6';
 import { useEffect, useState } from 'react';
-import { tryBoth } from '../api';
-import { DEFAULT_CHAINID, getTokenListBySymbol, priceCache } from '../utils';
-import { ITransfer } from '@pintswap/sdk';
-import { getNetwork } from '@wagmi/core';
+import { getUniswapToken } from '../api';
+import { getChainId, getTokenListBySymbol, priceCache } from '../utils';
+import { ITransfer, detectTradeNetwork } from '@pintswap/sdk';
 import { getEthPrice } from '../api/subgraph';
 
 export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets?: ITransfer }) => {
-    const activeChainId = getNetwork()?.chain?.id || DEFAULT_CHAINID;
+    const _chainId = await detectTradeNetwork({ gives, gets });
+    let chainId = _chainId ? _chainId : getChainId();
     if (!gives?.token || !gets?.token || !gives?.amount || !gets?.amount)
         return { eth: '0', usd: '0' };
-    if (priceCache[1][`${gives.token}-${gets.token}`])
-        return priceCache[1][`${gives.token}-${gets.token}`];
+    if (priceCache[chainId][`${gives.token}-${gets.token}`])
+        return priceCache[chainId][`${gives.token}-${gets.token}`];
 
     let returnObj;
     try {
         const eth = await getEthPrice();
         const addressA = isAddress(gives?.token)
             ? gives?.token
-            : getTokenListBySymbol(activeChainId)[gives?.token]?.address;
+            : getTokenListBySymbol(chainId)[gives?.token]?.address;
         const addressB = isAddress(gets?.token)
             ? gets?.token
-            : getTokenListBySymbol(activeChainId)[gets?.token]?.address;
+            : getTokenListBySymbol(chainId)[gets?.token]?.address;
         if (addressA && addressB) {
-            const { token: aToken } = await tryBoth({ address: addressA });
-            const { token: bToken } = await tryBoth({ address: addressB });
+            const { token: aToken } = await getUniswapToken({ address: addressA });
+            const { token: bToken } = await getUniswapToken({ address: addressB });
             const aAmount = gives?.amount.startsWith('0x')
                 ? formatUnits(gives.amount, Number(aToken?.decimals || '18'))
                 : gives?.amount;
@@ -44,8 +44,8 @@ export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets
                 usd: '0',
             };
         }
-        if (!priceCache[1][`${gives.token}-${gets.token}`])
-            priceCache[1][`${gives.token}-${gets.token}`] = returnObj;
+        if (!priceCache[chainId][`${gives.token}-${gets.token}`])
+            priceCache[chainId][`${gives.token}-${gets.token}`] = returnObj;
         return returnObj;
     } catch (err) {
         console.error('#calculatePrices', err);

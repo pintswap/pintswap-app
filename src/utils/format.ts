@@ -10,10 +10,12 @@ import { EMPTY_TRADE, TESTING } from './constants';
 import { ethers } from 'ethers';
 import { ITokenProps } from './types';
 import { IOffer } from '@pintswap/sdk';
+import { getChainId } from './provider';
 
 // Trade
-export const buildOffer = async ({ gets, gives }: IOffer, chainId: number = 1): Promise<IOffer> => {
+export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
     if (!gets.token && !gives.token) return EMPTY_TRADE;
+    const chainId = getChainId();
     const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
         | ITokenProps
         | undefined;

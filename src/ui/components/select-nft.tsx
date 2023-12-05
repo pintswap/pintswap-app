@@ -1,20 +1,11 @@
 import { MdExpandMore } from 'react-icons/md';
 import { useSearch } from '../../hooks';
-import {
-    ITokenProps,
-    getTokenList,
-    dropdownItemClass,
-    getSymbol,
-    toAddress,
-    NETWORKS,
-    balanceTokenSort,
-    INFTProps,
-} from '../../utils';
+import { dropdownItemClass, getSymbol, INFTProps } from '../../utils';
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { MdClose } from 'react-icons/md';
 import { ethers } from 'ethers6';
-import { usePintswapContext, useUserContext } from '../../stores';
-import { SmartPrice, Input, Card, TransitionModal, Asset } from '.';
+import { usePintswapContext } from '../../stores';
+import { Input, Card, TransitionModal } from '.';
 
 type ISelectNFT = {
     modalOpen: boolean;

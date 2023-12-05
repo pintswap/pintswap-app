@@ -4,6 +4,7 @@ import { IUserDataProps } from '../stores';
 import { keyBy } from 'lodash';
 import { ethers } from 'ethers6';
 import { ITokenProps } from './types';
+import { getChainId } from './provider';
 
 // COMMON
 export const APP_VERSION = 'v4.0 BETA';
@@ -34,6 +35,7 @@ export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> =
     uniswap: {
         v2: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev',
         v3: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
+        arb: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-arbitrum-one',
     },
     pintswap: {
         eth: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-eth',
@@ -43,18 +45,19 @@ export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> =
 
 // TOKENS
 const TOKENS: ITokenProps[] = require('./token-list.json').tokens;
-export const getTokenList = (chainId = 1) => TOKENS.filter((el) => el.chainId === chainId);
-export const getTokenListBySymbol = (chainId = 1) => keyBy(getTokenList(chainId), 'symbol');
-export const getTokenListByAddress = (chainId = 1) =>
+export const getTokenList = (chainId?: number) =>
+    TOKENS.filter((el) => el.chainId === (chainId ? chainId : getChainId()));
+export const getTokenListBySymbol = (chainId?: number) => keyBy(getTokenList(chainId), 'symbol');
+export const getTokenListByAddress = (chainId?: number) =>
     keyBy(
         getTokenList(chainId).map((v) => ({ ...v, address: ethers.getAddress(v.address) })),
         'address',
     );
 
-export const ETH = (chainId = 1) => getTokenList(chainId).find((v) => v.symbol === 'ETH');
-export const USDC = (chainId = 1) => getTokenList(chainId).find((v) => v.symbol === 'USDC');
-export const USDT = (chainId = 1) => getTokenList(chainId).find((v) => v.symbol === 'USDT');
-export const DAI = (chainId = 1) => getTokenList(chainId).find((v) => v.symbol === 'DAI');
+export const ETH = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'ETH');
+export const USDC = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'USDC');
+export const USDT = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'USDT');
+export const DAI = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'DAI');
 
 // DEFAULT VALS
 export const EMPTY_TRADE: IOffer = {

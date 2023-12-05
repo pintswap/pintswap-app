@@ -10,17 +10,19 @@ import {
 import { SwapModule } from '../features';
 import { useTrade } from '../../hooks';
 import React, { useEffect, useState } from 'react';
-import { BASE_URL, DEFAULT_TIMEOUT, renderToast } from '../../utils';
+import { BASE_URL, DEFAULT_TIMEOUT, getChainId, renderToast } from '../../utils';
 import { usePintswapContext } from '../../stores';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { Tab, Transition } from '@headlessui/react';
+import { hashOffer } from '@pintswap/sdk';
 
 export const SwapView = () => {
     const navigate = useNavigate();
     const {
-        pintswap: { module, chainId },
+        pintswap: { module },
     } = usePintswapContext();
+    const chainId = getChainId();
     const {
         loading,
         trade,
@@ -48,10 +50,15 @@ export const SwapView = () => {
 
     const createTradeLink = () => {
         let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName || module?.address}`;
-        if (trade.gives.tokenId) {
-            finalUrl = `${finalUrl}/nft/${order.orderHash}`;
+        if (order.orderHash) {
+            if (trade.gives?.tokenId) {
+                finalUrl = `${finalUrl}/nft/${order.orderHash}`;
+            } else {
+                finalUrl = `${finalUrl}/${order.orderHash}`;
+            }
         } else {
-            finalUrl = `${finalUrl}/${order.orderHash}`;
+            renderToast('create-offer-link', 'error', 'Error creating share link');
+            return ``;
         }
         return `${finalUrl}/${chainId}`;
     };
@@ -81,11 +88,16 @@ export const SwapView = () => {
         }
     }, [steps[2].status]);
 
+    const determineTabs = () => {
+        // TODO: fix up to work on all chains
+        if (chainId !== 1) return ['ERC20', 'NFT'];
+        return ['MARKET', 'LIMIT', 'NFT'];
+    };
     return (
         <>
             <div className="flex flex-col max-w-lg mx-auto">
                 <h2 className="view-header text-left">Create Offer</h2>
-                <Card type="tabs" tabs={['MARKET', 'LIMIT', 'NFT']} onTabChange={clearTrade}>
+                <Card type="tabs" tabs={determineTabs()} onTabChange={clearTrade}>
                     <div className="mb-3">
                         <SwitchToggle
                             labelOn="Public"
@@ -100,17 +112,20 @@ export const SwapView = () => {
                             ]}
                         />
                     </div>
-                    <Tab.Panel>
-                        <SwapModule
-                            trade={trade}
-                            updateTrade={updateTrade}
-                            disabled={isButtonDisabled()}
-                            onClick={handleSwap}
-                            loading={loading}
-                            setTrade={setTrade}
-                            isPublic={isPublic}
-                        />
-                    </Tab.Panel>
+                    {/* TODO: fix to work on all chains */}
+                    {chainId === 1 && (
+                        <Tab.Panel>
+                            <SwapModule
+                                trade={trade}
+                                updateTrade={updateTrade}
+                                disabled={isButtonDisabled()}
+                                onClick={handleSwap}
+                                loading={loading}
+                                setTrade={setTrade}
+                                isPublic={isPublic}
+                            />
+                        </Tab.Panel>
+                    )}
                     <Tab.Panel>
                         <SwapModule
                             trade={trade}
