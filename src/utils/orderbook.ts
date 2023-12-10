@@ -163,11 +163,24 @@ export async function toLimitOrder(
         getDecimals(base.address, chainId),
     ]);
 
-    const givesEthPrice = parseFloat(givesDetails.token.derivedETH);
+    let givesPrice: number;
+    if (givesDetails?.token?.derivedETH) {
+        const givesEthPrice = parseFloat(givesDetails.token?.derivedETH);
+        givesPrice = givesEthPrice * Number(eth);
+    } else {
+        givesPrice = parseFloat(givesDetails?.token?.lastPriceUSD);
+    }
     const givesAmount = Number(
         ethers.formatUnits(gives.amount || '', Number(givesDetails.token.decimals)),
     );
-    const getsEthPrice = parseFloat(getsDetails.token.derivedETH);
+
+    let getsPrice: number;
+    if (getsDetails?.token?.derivedETH) {
+        const getsEthPrice = parseFloat(getsDetails.token?.derivedETH);
+        getsPrice = getsEthPrice * Number(eth);
+    } else {
+        getsPrice = parseFloat(getsDetails?.token?.lastPriceUSD);
+    }
     const getsAmount = Number(
         ethers.formatUnits(gets.amount || '', Number(getsDetails.token.decimals)),
     );
@@ -184,9 +197,9 @@ export async function toLimitOrder(
     const calculateUsdExchangeRate = () => {
         let rate: number;
         if (type === 'ask') {
-            rate = (getsAmount / givesAmount) * getsEthPrice * Number(eth);
+            rate = (getsAmount / givesAmount) * getsPrice;
         } else {
-            rate = (givesAmount / getsAmount) * givesEthPrice * Number(eth);
+            rate = (givesAmount / getsAmount) * givesPrice;
         }
         return convertExponentialToDecimal(rate); // TODO: do better
     };
