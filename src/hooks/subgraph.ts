@@ -48,11 +48,15 @@ export const useSubgraph = (props: { address?: string; history?: 'day' | 'hour' 
         if (props.address) {
             if (props.address === ZeroAddress) return eth;
             else {
-                return Number(eth) > 0 && tokenDetails.data?.token?.derivedETH
-                    ? (Number(eth) * Number(tokenDetails?.data.token.derivedETH)).toString()
-                    : address === ZeroAddress
-                    ? ''
-                    : '0';
+                if (tokenDetails?.data?.token?.derivedETH) {
+                    return Number(eth) > 0 && tokenDetails.data?.token?.derivedETH
+                        ? (Number(eth) * Number(tokenDetails?.data.token?.derivedETH)).toString()
+                        : address === ZeroAddress
+                        ? ''
+                        : '0';
+                } else {
+                    return tokenDetails?.data?.token?.lastPriceUSD || '0';
+                }
             }
         }
         return '0';

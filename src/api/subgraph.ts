@@ -7,6 +7,7 @@ import {
     priceCache,
     subgraphTokenCache,
     symbolCache,
+    TESTING,
     toAddress,
 } from '../utils';
 import { IOffer } from '@pintswap/sdk';
@@ -143,7 +144,6 @@ export async function getV2Token({
           priceUSD
         }`;
     };
-
     try {
         const response = await fetch(ENDPOINTS['uniswap']['v2'], {
             ...JSON_HEADER_POST,
@@ -165,11 +165,36 @@ export async function getV2Token({
             errors,
             error,
         } = await response.json();
-        if (errors || error) console.error('#getV2Tokens', errors, error);
+        if (errors || error) console.error('#getV2Token', errors, error);
         return { token, tokenDayDatas };
     } catch (err) {
-        console.error('#getV2Tokens', err);
-        return { token: null, tokenDayDatas: [] };
+        try {
+            const response = await fetch(ENDPOINTS['uniswap']['v2Fallback'], {
+                ...JSON_HEADER_POST,
+                body: JSON.stringify({
+                    query: `{
+                  token (id: "${formattedAddress}") {
+                    id
+                    symbol
+                    name
+                    decimals
+                    lastPriceUSD
+                  }
+                  ${buildOptionalQuery()}
+                }`,
+                }),
+            });
+            const {
+                data: { token, tokenDayDatas },
+                errors,
+                error,
+            } = await response.json();
+            if (errors || error) console.error('#getV2Token', errors, error);
+            return { token, tokenDayDatas };
+        } catch (err) {
+            console.error('#getV2Token', err);
+            return { token: null, tokenDayDatas: [] };
+        }
     }
 }
 
@@ -311,21 +336,32 @@ export async function getQuote(
     type?: 'conservative' | 'exact',
 ): Promise<string> {
     if (trade.gives.amount && trade.gives.token && trade.gets.token) {
-        let givesEthPrice: string;
+        let givesPrice: string;
         if ((trade.gives.token === 'ETH' || trade.gives.token === 'WETH') && ethPrice) {
-            givesEthPrice = trade.gives.amount;
+            givesPrice = trade.gives.amount;
         } else {
-            givesEthPrice = (
-                Number(
-                    (await getUniswapToken({ address: toAddress(trade.gives.token) }))?.token
-                        ?.derivedETH || '0',
-                ) * Number(trade.gives.amount)
-            ).toString();
+            const givesDetails = await getUniswapToken({ address: toAddress(trade.gives.token) });
+            if (givesDetails?.token?.derivedETH) {
+                givesPrice = (
+                    Number(givesDetails?.token?.derivedETH || '0') * Number(trade.gives.amount)
+                ).toString();
+            } else {
+                givesPrice = (
+                    Number(givesDetails?.token?.lastPriceUSD || '0') * Number(trade.gives.amount)
+                ).toString();
+            }
         }
-        const getsEthPrice =
-            (await getUniswapToken({ address: toAddress(trade.gets.token) }))?.token?.derivedETH ||
-            '0';
-        const quote = Number(givesEthPrice) / Number(getsEthPrice);
+
+        const getsDetails = await getUniswapToken({ address: toAddress(trade.gets.token) });
+        let getsPrice: string;
+        if (getsDetails?.token?.derivedETH) {
+            getsPrice = getsDetails?.token?.derivedETH || '0';
+        } else {
+            getsPrice = getsDetails?.token?.lastPriceUSD || '0';
+        }
+
+        let quote = Number(givesPrice) / Number(getsPrice);
+        if (!getsDetails?.token?.derivedETH) quote = quote * Number(ethPrice);
         if (quote === 0) return '';
         if (type === 'exact') return quote.toString();
         return (Math.round(quote * 10000) / 10000).toString(); // round down to nearest 4 decimal places

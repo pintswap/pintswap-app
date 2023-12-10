@@ -34,6 +34,8 @@ export const NETWORKS: Record<number, Record<'explorer' | 'logo' | 'name', strin
 export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> = {
     uniswap: {
         v2: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v2-dev',
+        v2Fallback:
+            'https://gateway-arbitrum.network.thegraph.com/api/c392c444696b5b2e99eddc29af68359d/subgraphs/id/J2oP9UNBjsnuDDW1fAoHKskyrNLFNBB2badQU6UvEtJp',
         v3: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
         arb: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-arbitrum-one',
     },

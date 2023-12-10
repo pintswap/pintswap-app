@@ -15,12 +15,17 @@ export const getUsdPrice = async (asset: string, eth: string, setState?: any) =>
         } else {
             const data = await getUniswapToken({ address });
             if (data) {
-                const returnObj =
-                    Number(_eth) > 0 && data?.token?.derivedETH
-                        ? (Number(_eth) * Number(data.token.derivedETH)).toString()
-                        : address === ZeroAddress
-                        ? ''
-                        : '0';
+                let returnObj;
+                if (data?.token?.derivedETH) {
+                    returnObj =
+                        Number(_eth) > 0 && data?.token?.derivedETH
+                            ? (Number(_eth) * Number(data.token.derivedETH)).toString()
+                            : address === ZeroAddress
+                            ? ''
+                            : '0';
+                } else {
+                    returnObj = data?.token?.lastPriceUSD;
+                }
                 setState && setState(returnObj);
                 return returnObj;
             }

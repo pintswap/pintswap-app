@@ -31,13 +31,23 @@ export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets
             const bAmount = gets?.amount.startsWith('0x')
                 ? formatUnits(gets.amount, Number(bToken?.decimals || '18'))
                 : gets?.amount;
-            const ethPrice =
-                (Number(bAmount) * Number(bToken.derivedETH)) /
-                (Number(aAmount) * Number(aToken.derivedETH));
-            returnObj = {
-                eth: ethPrice.toString(),
-                usd: (ethPrice * Number(eth)).toString(),
-            };
+            if (aToken?.derivedETH && bToken?.derivedETH) {
+                const ethPrice =
+                    (Number(bAmount) * Number(bToken?.derivedETH)) /
+                    (Number(aAmount) * Number(aToken?.derivedETH));
+                returnObj = {
+                    eth: ethPrice.toString(),
+                    usd: (ethPrice * Number(eth)).toString(),
+                };
+            } else {
+                const usdPrice =
+                    (Number(bAmount) * Number(bToken?.lastPriceUSD)) /
+                    (Number(aAmount) * Number(aToken?.lastPriceUSD));
+                returnObj = {
+                    usd: usdPrice.toString(),
+                    eth: (usdPrice / Number(eth)).toString(),
+                };
+            }
         } else {
             returnObj = {
                 eth: '0',
