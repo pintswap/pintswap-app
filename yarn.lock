@@ -2970,10 +2970,10 @@
     "@parcel/watcher-win32-ia32" "2.3.0"
     "@parcel/watcher-win32-x64" "2.3.0"
 
-"@pintswap/sdk@^1.4.33":
-  version "1.4.33"
-  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.33.tgz#236192cb99c691eed482b4df5bdbbc4c99fb3d63"
-  integrity sha512-SDvQuKO47fHnwAIeraQ1+pbttoLi049dc7OBOUkiXuFmPBLHYfM0/0x9hbO5Kw7qZASopaziCVec98FTmJPqmw==
+"@pintswap/sdk@^1.4.34":
+  version "1.4.34"
+  resolved "https://registry.yarnpkg.com/@pintswap/sdk/-/sdk-1.4.34.tgz#3eba4cb0be787b5778b3899870686a295d2d6edf"
+  integrity sha512-p69icCR6+qki3i0GEJnTMAQ78xHqO4bdI/zQiseki2EjgSqvni/NUvhI+iFby1nKyETZhZIXEaJKPHy1G+irQg==
   dependencies:
     "@multiformats/multiaddr" "^12.1.0"
     "@noble/ed25519" "^1.6.0"
@@ -2989,7 +2989,7 @@
     chai "^4.2.0"
     cross-fetch "^3.1.5"
     emasm "https://github.com/kungfuflex/emasm"
-    ethers "^6.3.0"
+    ethers "^6.3.1"
     evmdis "https://github.com/kungfuflex/evmdis"
     is-browser "^2.1.0"
     libp2p "^0.36.2"
@@ -8072,7 +8072,7 @@ eth-rpc-errors@^4.0.2:
   dependencies:
     fast-safe-stringify "^2.0.6"
 
-"ethers6@npm:ethers@^6.3.0", ethers@^6.3.0:
+"ethers6@npm:ethers@^6.3.0", ethers@^6.3.1:
   version "6.9.0"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.9.0.tgz#a4534bdcdfde306aee94ef32f3d5c70d7e33fcb9"
   integrity sha512-pmfNyQzc2mseLe91FnT2vmNaTt8dDzhxZ/xItAV7uGsF4dI4ek2ufMu3rAkgQETL/TIs0GS5A+U05g9QyWnv3Q==
