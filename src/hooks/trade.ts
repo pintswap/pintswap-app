@@ -17,6 +17,7 @@ import {
     buildOffer,
     displayOffer,
     convertAmount,
+    getChainId,
 } from '../utils';
 import { useSigner, useSwitchNetwork } from 'wagmi';
 import { toBeHex } from 'ethers6';
@@ -46,8 +47,9 @@ export const useTrade = (isOTC?: boolean) => {
     const { newNetwork } = useNetworkContext();
     const { pathname } = useLocation();
     const {
-        pintswap: { module, chainId },
+        pintswap: { module },
     } = usePintswapContext();
+    const chainId = getChainId();
     const { toggleActive, userData } = useUserContext();
     const { addTrade, userTrades, allOffers } = useOffersContext();
     const { signIfNecessary } = usePintswapContext();
@@ -74,16 +76,16 @@ export const useTrade = (isOTC?: boolean) => {
         e.preventDefault();
         if (module) {
             try {
+                setLoading({ ...loading, broadcast: true });
                 const offer = await buildOffer(trade);
-
                 await signIfNecessary();
                 module.signer = signer;
-
-                module.broadcastOffer(offer);
+                await module.broadcastOffer(offer, chainId, isPublic);
                 setOrder({ ...order, orderHash: hashOffer(offer) });
                 await savePintswap(module);
                 if (isPublic && !userData.active) toggleActive();
                 await addTrade(hashOffer(offer), offer);
+                setLoading({ ...loading, broadcast: false });
             } catch (err) {
                 console.error(err);
             }

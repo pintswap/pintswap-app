@@ -18,6 +18,7 @@ import {
     numberFormatter,
     percentChange,
     convertExponentialToDecimal,
+    getChainId,
 } from '../../utils';
 import { muiCache, muiOptions, muiTheme } from '../../config';
 import { detectTradeNetwork } from '@pintswap/sdk';
@@ -170,11 +171,11 @@ const CustomRow = (props: IDataTableProps) => {
     const { columns, data, loading, type, peer, getRow, activeRow, column } = props;
     const cells = Object.values(data as object);
     (cells as any).index = (data as any).index;
-
+    const chainId = getChainId();
     const { userData } = useUserContext();
     const { pair, base: baseAsset } = useParams();
     const {
-        pintswap: { module, chainId },
+        pintswap: { module },
     } = usePintswapContext();
     const { eth } = usePricesContext();
     const cols = columns as string[];
@@ -223,8 +224,7 @@ const CustomRow = (props: IDataTableProps) => {
             case 'manage': {
                 toast.info('Copied offer share link', { autoClose: 2000 });
                 const found = userTrades.get(firstCell);
-                const offerChainId = 1;
-                // const offerChainId = found ? await detectTradeNetwork(found) : 1;
+                const offerChainId = found ? await detectTradeNetwork(found) : 1;
                 url = `${BASE_URL}/#/fulfill/${
                     userData.name || module?.address || module?.peerId?.toB58String()
                 }`;
