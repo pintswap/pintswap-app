@@ -71,7 +71,8 @@ export const SwapModule = ({
         givesWalletBalance && Number(givesWalletBalance.formatted) < Number(trade?.gives?.amount);
 
     const determineLoadingText = () => {
-        if (loading?.broadcast || loading?.fulfill) return 'Swapping';
+        if (loading?.broadcast) return 'Broadcasting';
+        if (loading?.fulfill) return 'Swapping';
         if (loading?.trade) return 'Loading Offer';
         return 'Loading';
     };
