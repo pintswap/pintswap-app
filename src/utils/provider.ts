@@ -1,5 +1,5 @@
 import { ethers, Signer } from 'ethers6';
-import { ALCHEMY_KEY, DEFAULT_CHAINID, INFURA_PROJECT_ID, LLAMA_NODES_KEY } from './constants';
+import { DEFAULT_CHAINID } from './constants';
 import { getNetwork } from '@wagmi/core';
 import { providerFromChainId } from '@pintswap/sdk';
 

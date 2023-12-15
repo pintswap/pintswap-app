@@ -6,6 +6,11 @@ export const decimalsCache: Record<number, Record<string, number>> = {
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };
 export const symbolCache: Record<number, Record<string, string>> = {
     1: {},
@@ -13,6 +18,11 @@ export const symbolCache: Record<number, Record<string, string>> = {
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };
 export const reverseSymbolCache: Record<number, Record<string, string>> = {
     1: {},
@@ -20,6 +30,11 @@ export const reverseSymbolCache: Record<number, Record<string, string>> = {
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };
 export const totalSupplyCache: Record<number, Record<string, string>> = {
     1: {},
@@ -27,6 +42,11 @@ export const totalSupplyCache: Record<number, Record<string, string>> = {
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };
 
 export const nameCache: Record<number, Record<string, string>> = {
@@ -35,6 +55,11 @@ export const nameCache: Record<number, Record<string, string>> = {
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };
 
 export const priceCache: Record<number, Record<string, any>> = {
@@ -43,6 +68,11 @@ export const priceCache: Record<number, Record<string, any>> = {
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };
 
 export const subgraphTokenCache: Record<number, Record<string, any>> = {
@@ -51,6 +81,11 @@ export const subgraphTokenCache: Record<number, Record<string, any>> = {
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };
 
 export const tokenTaxCache: Record<number, Record<string, { buy: number; sell: number }>> = {
@@ -59,4 +94,9 @@ export const tokenTaxCache: Record<number, Record<string, { buy: number; sell: n
     10: {},
     137: {},
     8453: {},
+    43112: {},
+    324: {},
+    42220: {},
+    43114: {},
+    56: {},
 };

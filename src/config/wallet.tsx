@@ -11,13 +11,8 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { arbitrum, hardhat, mainnet, avalanche } from 'wagmi/chains';
-import {
-    ALCHEMY_KEY,
-    INFURA_PROJECT_ID,
-    LLAMA_NODES_KEY,
-    TESTING,
-    WALLET_CONNECT_ID,
-} from '../utils/constants';
+import { TESTING } from '../utils/constants';
+import { ALCHEMY_KEY, INFURA_PROJECT_ID, WALLET_CONNECT_ID, LLAMA_NODES_KEY } from './env';
 import {
     coinbaseWallet,
     injectedWallet,
@@ -64,8 +59,8 @@ const base: Chain | any = {
 };
 
 const determineChains = () => {
-    const chains = [mainnet, arbitrum, avalanche, base];
-    if (TESTING) chains.push(hardhat);
+    const chains = [mainnet, arbitrum, avalanche];
+    if (process.env.REACT_APP_DEV) chains.push(hardhat as any);
     return chains;
 };
 
