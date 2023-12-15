@@ -14,7 +14,7 @@ export const FulfillView = () => {
     const { loadingTrade, trade: otcTrade, executeTrade, fillingTrade } = useOtcTrade();
     const { fulfillTrade, loading, trade, steps, order, clearTrade } = useTrade(true);
     const { data } = useBalance(
-        trade.gets.token?.toUpperCase() === 'ETH'
+        trade.gets.token?.toUpperCase() === 'ETH' || trade.gets.token?.toUpperCase() === 'AVAX'
             ? { address }
             : { token: toAddress(trade.gets.token || '', chain?.id) as any, address, watch: true },
     );

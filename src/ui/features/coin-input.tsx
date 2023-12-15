@@ -6,6 +6,7 @@ import { useOffersContext, usePintswapContext } from '../../stores';
 import { useUsdPrice } from '../../hooks';
 import { IOffer } from '@pintswap/sdk';
 import { useLocation } from 'react-router-dom';
+import { ZeroAddress } from 'ethers6';
 
 type ICoinInput = {
     label?: string;
@@ -53,7 +54,7 @@ export const CoinInput = ({
     const chainId = getChainId();
     const { allOffers } = useOffersContext();
     const balance = useBalance(
-        asset?.toUpperCase() === 'ETH'
+        asset?.toUpperCase() === 'ETH' || asset?.toUpperCase() === 'AVAX' || asset === ZeroAddress
             ? { address }
             : { token: toAddress(asset || '', chainId) as any, address, watch: true },
     );
