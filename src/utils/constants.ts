@@ -95,4 +95,5 @@ export const WALLET_CONNECT_ID =
 export const LLAMA_NODES_KEY =
     process.env.PROCESS_APP_LLAMA_NODES_KEY || '01HDHGP0YXWDYKRT37QQBDGST5';
 export const ALCHEMY_KEY = process.env.REACT_APP_ALCHEMY_KEY || 'vwnSKKEvi4HqnhPObIph_5GENWoaMb8a';
-export const INFURA_PROJECT_ID = process.env.REACT_APP_INFURA_KEY || '';
+export const INFURA_PROJECT_ID =
+    process.env.REACT_APP_INFURA_KEY || '0a637e97c1d740aca08b080a122e5711';

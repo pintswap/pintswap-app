@@ -9,8 +9,15 @@ import { Chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { arbitrum, hardhat, mainnet } from 'wagmi/chains';
-import { ALCHEMY_KEY, LLAMA_NODES_KEY, TESTING, WALLET_CONNECT_ID } from '../utils/constants';
+import { infuraProvider } from 'wagmi/providers/infura';
+import { arbitrum, hardhat, mainnet, avalanche } from 'wagmi/chains';
+import {
+    ALCHEMY_KEY,
+    INFURA_PROJECT_ID,
+    LLAMA_NODES_KEY,
+    TESTING,
+    WALLET_CONNECT_ID,
+} from '../utils/constants';
 import {
     coinbaseWallet,
     injectedWallet,
@@ -24,7 +31,7 @@ import {
 } from '@rainbow-me/rainbowkit/wallets';
 import merge from 'lodash.merge';
 
-const baseChain: Chain | any = {
+const base: Chain | any = {
     id: 8453,
     name: 'Base',
     network: 'base',
@@ -57,8 +64,9 @@ const baseChain: Chain | any = {
 };
 
 const determineChains = () => {
-    if (TESTING) return [mainnet, arbitrum, hardhat];
-    return [mainnet, arbitrum];
+    const chains = [mainnet, arbitrum, avalanche, base];
+    if (TESTING) chains.push(hardhat);
+    return chains;
 };
 
 export const { chains, provider } = configureChains(determineChains(), [
@@ -68,8 +76,11 @@ export const { chains, provider } = configureChains(determineChains(), [
     //         webSocket: `wss://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`,
     //     }),
     // }),
+    infuraProvider({
+        apiKey: INFURA_PROJECT_ID,
+    }),
     alchemyProvider({
-        apiKey: ALCHEMY_KEY || '',
+        apiKey: ALCHEMY_KEY,
     }),
     publicProvider(),
 ]);
@@ -77,12 +88,14 @@ export const { chains, provider } = configureChains(determineChains(), [
 export const connectors = connectorsForWallets([
     {
         groupName: 'Recommended',
-        wallets: [metaMaskWallet({ chains, projectId: WALLET_CONNECT_ID })],
+        wallets: [
+            metaMaskWallet({ chains, projectId: WALLET_CONNECT_ID }),
+            walletConnectWallet({ chains, projectId: WALLET_CONNECT_ID }),
+        ],
     },
     {
         groupName: 'Popular',
         wallets: [
-            walletConnectWallet({ chains, projectId: WALLET_CONNECT_ID }),
             coinbaseWallet({ appName: 'PintSwap', chains }),
             rainbowWallet({ chains, projectId: WALLET_CONNECT_ID }),
             trustWallet({ chains, projectId: WALLET_CONNECT_ID }),
