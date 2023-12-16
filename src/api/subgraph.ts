@@ -99,15 +99,7 @@ export async function getV3Token({
                 id
                 symbol
                 name
-                decimals
-                totalSupply
-                volume
-                volumeUSD
-                feesUSD
-                txCount
-                poolCount
-                totalValueLocked
-                totalValueLockedUSD
+                decimals    
                 derivedETH
                 `;
             }
@@ -117,19 +109,7 @@ export async function getV3Token({
             body: JSON.stringify({
                 query: `{
               token ${buildParams()} {
-                id
-                symbol
-                name
-                decimals
-                totalSupply
-                volume
-                volumeUSD
-                feesUSD
-                txCount
-                poolCount
-                totalValueLocked
-                totalValueLockedUSD
-                derivedETH
+                ${determineQuery()}
               }
               ${buildOptionalQuery()}
             }`,

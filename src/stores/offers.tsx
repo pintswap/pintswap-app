@@ -269,10 +269,38 @@ export function OffersStore(props: { children: ReactNode }) {
                 });
                 setUniqueMarkets(getUniqueMarkets(filtered));
             }
-            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
+            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill')) {
                 renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
+            }
             setIsLoading(false);
             return returnObj;
+        } else {
+            // Fallback to dialing the team market maker directly
+            const teamMM = await module?.getUserData(
+                'pint1zgsdrg5edwcrfad957x9e8jy9vy8z0xec7jclsq4d90y3vg3mn39s9gcudrd9',
+            );
+            if (teamMM?.offers?.length) {
+                const { offers } = teamMM;
+                const mappedPairs = await Promise.all(
+                    offers.map(async (v: any) => await toLimitOrder(v, allOffers.erc20)),
+                );
+                const returnObj = { nft: offers, erc20: mappedPairs };
+                setAllOffers(returnObj);
+
+                if (mappedPairs.length) {
+                    const filtered = filterByChain(mappedPairs, chainId);
+                    setOffersByChain({
+                        nft: filterByChain(offers, chainId),
+                        erc20: filtered,
+                    });
+                    setUniqueMarkets(getUniqueMarkets(filtered));
+                }
+                if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill')) {
+                    renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
+                }
+                setIsLoading(false);
+                return returnObj;
+            }
         }
         return { nft: [], erc20: [] };
     };
@@ -282,7 +310,7 @@ export function OffersStore(props: { children: ReactNode }) {
         queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
         refetchInterval: 1000 * 5,
-        enabled: !!module && module.peers.size > 0,
+        enabled: !!module && module.isStarted(),
     });
     useEffect(() => {
         if (module) {
