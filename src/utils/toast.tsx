@@ -39,6 +39,7 @@ export const renderToast = (
         case 'pending': {
             toast.loading(<ToastStatus status="pending" transaction={hash} message={msg} />, {
                 toastId,
+                closeButton: true,
             });
             break;
         }

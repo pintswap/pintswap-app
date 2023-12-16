@@ -310,7 +310,7 @@ export function OffersStore(props: { children: ReactNode }) {
         queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
         refetchInterval: 1000 * 5,
-        enabled: !!module && module.peers.size > 0,
+        enabled: !!module && module.isStarted(),
     });
     useEffect(() => {
         if (module) {

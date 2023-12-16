@@ -13,21 +13,51 @@ export const getUsdPrice = async (asset: string, eth: string, setState?: any) =>
             setState && setState(_eth);
             return _eth;
         } else {
-            const data = await getUniswapToken({ address });
-            if (data) {
-                let returnObj;
-                if (data?.token?.derivedETH) {
-                    returnObj =
-                        Number(_eth) > 0 && data?.token?.derivedETH
-                            ? (Number(_eth) * Number(data.token.derivedETH)).toString()
-                            : address === ZeroAddress
-                            ? ''
-                            : '0';
+            try {
+                const data = await fetch(
+                    `https://api.dexscreener.com/latest/dex/tokens/${address}`,
+                );
+                const json = await data.json();
+                if (data.status === 200 && json?.pairs?.length) {
+                    const usdPrice = json.pairs[0].priceUsd;
+                    setState && setState(usdPrice);
+                    return usdPrice;
                 } else {
-                    returnObj = data?.token?.lastPriceUSD;
+                    const data = await getUniswapToken({ address });
+                    if (data) {
+                        let returnObj;
+                        if (data?.token?.derivedETH) {
+                            returnObj =
+                                Number(_eth) > 0 && data?.token?.derivedETH
+                                    ? (Number(_eth) * Number(data.token.derivedETH)).toString()
+                                    : address === ZeroAddress
+                                    ? ''
+                                    : '0';
+                        } else {
+                            returnObj = data?.token?.lastPriceUSD;
+                        }
+                        setState && setState(returnObj);
+                        return returnObj;
+                    }
                 }
-                setState && setState(returnObj);
-                return returnObj;
+            } catch (err) {
+                console.log('#getUsdPrice: dexscreener', err);
+                const data = await getUniswapToken({ address });
+                if (data) {
+                    let returnObj;
+                    if (data?.token?.derivedETH) {
+                        returnObj =
+                            Number(_eth) > 0 && data?.token?.derivedETH
+                                ? (Number(_eth) * Number(data.token.derivedETH)).toString()
+                                : address === ZeroAddress
+                                ? ''
+                                : '0';
+                    } else {
+                        returnObj = data?.token?.lastPriceUSD;
+                    }
+                    setState && setState(returnObj);
+                    return returnObj;
+                }
             }
         }
     }

@@ -63,7 +63,8 @@ export const SwapModule = ({
     const { data: givesWalletBalance } = useBalance(
         trade?.gives?.token === ZeroAddress ||
             !trade.gives?.token ||
-            trade?.gives?.token?.toUpperCase() === 'ETH'
+            trade?.gives?.token?.toUpperCase() === 'ETH' ||
+            trade?.gives?.token?.toUpperCase() === 'AVAX'
             ? { address, watch: true }
             : { token: toAddress(trade.gives.token, chainId) as any, address, watch: true },
     );
@@ -197,7 +198,10 @@ export const SwapModule = ({
         };
 
         useEffect(() => {
-            if (!trade.gives.token && updateTrade) updateTrade('gives.token', 'ETH');
+            if (!trade.gives.token && updateTrade) {
+                if (chainId === 43114) updateTrade('gives.token', 'AVAX');
+                else updateTrade('gives.token', 'ETH');
+            }
         }, [trade]);
 
         useEffect(() => {

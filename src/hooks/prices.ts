@@ -1,9 +1,8 @@
 import { formatUnits, isAddress } from 'ethers6';
 import { useEffect, useState } from 'react';
-import { getUniswapToken } from '../api';
+import { getUniswapToken, getEthPrice } from '../api';
 import { getChainId, getTokenListBySymbol, priceCache } from '../utils';
 import { ITransfer, detectTradeNetwork } from '@pintswap/sdk';
-import { getEthPrice } from '../api/subgraph';
 
 export const calculatePrices = async ({ gives, gets }: { gives?: ITransfer; gets?: ITransfer }) => {
     const _chainId = await detectTradeNetwork({ gives, gets });

@@ -1,33 +1,16 @@
 import { ethers, Signer } from 'ethers6';
-import { ALCHEMY_KEY, DEFAULT_CHAINID, INFURA_PROJECT_ID, LLAMA_NODES_KEY } from './constants';
+import { DEFAULT_CHAINID } from './constants';
 import { getNetwork } from '@wagmi/core';
+import { providerFromChainId } from '@pintswap/sdk';
 
-export function providerFromChainId(chainId: number | string) {
-    switch (Number(chainId)) {
-        case 1:
-            // return new ethers.JsonRpcProvider(`https://eth.llamarpc.com/rpc/${LLAMA_NODES_KEY}`);
-            return new ethers.AlchemyProvider('mainnet', ALCHEMY_KEY);
-        case 137:
-            return new ethers.InfuraProvider('polygon', INFURA_PROJECT_ID);
-        case 42161:
-            return new ethers.InfuraProvider('arbitrum', INFURA_PROJECT_ID);
-        case 43114:
-            return new ethers.JsonRpcProvider('https://api.avax.network/ext/bc/C/rpc');
-        case 10:
-            return new ethers.JsonRpcProvider('https://mainnet.optimism.io');
-        case 8453:
-            return new ethers.JsonRpcProvider('https://base-mainnet.public.blastapi.io');
-        default:
-            return new ethers.InfuraProvider('mainnet', INFURA_PROJECT_ID);
-    }
-}
-
-export async function chainIdFromProvider(provider: Signer) {
+async function chainIdFromProvider(provider: Signer) {
     return Number((await provider?.provider?.getNetwork())?.chainId?.toString()) || DEFAULT_CHAINID;
 }
 
-export function getChainId() {
+function getChainId() {
     return getNetwork().chain?.unsupported
         ? DEFAULT_CHAINID
         : getNetwork().chain?.id || DEFAULT_CHAINID;
 }
+
+export { chainIdFromProvider, getChainId, providerFromChainId };

@@ -10783,6 +10783,14 @@
         },
         {
             "chainId": 43114,
+            "address": "0x0000000000000000000000000000000000000000",
+            "name": "Avalanche",
+            "symbol": "AVAX",
+            "decimals": 18,
+            "logoURI": "https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/avalanchec/assets/0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7/logo.png"
+        },
+        {
+            "chainId": 43114,
             "address": "0xd501281565bf7789224523144Fe5D98e8B28f267",
             "name": "1inch",
             "symbol": "1INCH",
@@ -10902,6 +10910,13 @@
             }
         },
         {
+            "name": "COQINU",
+            "chainId": 43114,
+            "symbol": "COQ",
+            "logoURI": "https://assets.coingecko.com/coins/images/33511/standard/Coin_CoqInu_1200px.png?1702041053",
+            "decimals": 18
+        },
+        {
             "chainId": 43114,
             "address": "0x6b289CCeAA8639e3831095D75A3e43520faBf552",
             "name": "Cartesi",
@@ -10998,6 +11013,14 @@
                     }
                 }
             }
+        },
+        {
+            "chainId": 43114,
+            "address": "0x6e84a6216eA6dACC71eE8E6b0a5B7322EEbC0fDd",
+            "name": "JoeToken",
+            "symbol": "JOE",
+            "decimals": 18,
+            "logoURI": "https://assets.coingecko.com/coins/images/17569/standard/traderjoe.png?1696517104"
         },
         {
             "name": "ChainLink Token",
@@ -11291,6 +11314,14 @@
                     }
                 }
             }
+        },
+        {
+            "chainId": 43114,
+            "address": "0xd1c3f94DE7e5B45fa4eDBBA472491a9f4B166FC4",
+            "name": "Avalaunch",
+            "symbol": "XAVA",
+            "decimals": 18,
+            "logoURI": "https://assets.coingecko.com/coins/images/15466/standard/avalaunch.png?1696515112"
         },
         {
             "name": "0x Protocol Token",

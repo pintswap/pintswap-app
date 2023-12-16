@@ -185,6 +185,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                     });
                     // Subscribe to pubsub
                     await ps.subscribeOffers();
+                    if (TESTING) console.log('Pintswap::Subscribed');
                     resolve(ps);
                 } catch (err) {
                     if (!String(err).includes('user rejected signing'))
@@ -203,6 +204,7 @@ export function PintswapStore(props: { children: ReactNode }) {
                     });
                     // Subscribe to pubsub
                     await pintswap.module?.subscribeOffers();
+                    if (TESTING) console.log('Pintswap::Subscribed');
                     setPintswap({ ...pintswap, loading: false });
                 }
             })().catch(reject);

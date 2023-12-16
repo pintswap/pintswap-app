@@ -15,7 +15,8 @@ export const ActiveText = ({ children, className, route }: IActiveTextProps) => 
                 pathname.includes(route)
                     ? className
                         ? className
-                        : 'text-transparent bg-clip-text bg-gradient-to-tr from-accent-light to-primary'
+                        : // : 'text-transparent bg-clip-text bg-gradient-to-tr from-accent-light to-primary'
+                          'text-accent-light'
                     : ''
             }`}
         >

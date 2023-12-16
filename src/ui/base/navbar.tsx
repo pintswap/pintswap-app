@@ -42,7 +42,7 @@ export const Navbar = () => {
                         {breakpoints.md <= width ? (
                             // Desktop
                             <div className="flex items-center gap-1.5 2xl:gap-2">
-                                <Gas className="mr-2" units="gwei" />
+                                <Gas className="mr-2" />
                                 <ChainDropdown />
                                 {/* {address && <DropdownMenu buttonClass='mr-2' items={[{ text: "0x...01" }]} customIcon={<span>Open Offers</span>} />} */}
                                 <Wallet />

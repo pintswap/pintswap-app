@@ -9,7 +9,7 @@ import {
     formatUnits,
     ZeroAddress,
 } from 'ethers6';
-import { providerFromChainId } from './provider';
+import { getChainId, providerFromChainId } from './provider';
 import {
     reverseSymbolCache,
     symbolCache,
@@ -30,7 +30,7 @@ export function toAddress(symbolOrAddress?: string, chainId = 1): string {
     }
     // Standardize if symbol
     const capSymbolOrAddress = (symbolOrAddress as string).toUpperCase();
-    if (capSymbolOrAddress === 'ETH') return ZeroAddress;
+    if (capSymbolOrAddress === 'ETH' || capSymbolOrAddress === 'AVAX') return ZeroAddress;
     // If in cache
     if (reverseSymbolCache[chainId][capSymbolOrAddress])
         return reverseSymbolCache[chainId][capSymbolOrAddress];
@@ -89,8 +89,16 @@ export async function getTotalSupply(address: string, chainId: number, type?: 'N
 
 export async function getName(address: string, chainId: number) {
     if (!address || !chainId) return address || '';
+    if (address === ZeroAddress) {
+        if (chainId === 43114) return 'Avalanche';
+        return 'Ethereum';
+    }
     address = getAddress(address);
     if (nameCache[chainId][address]) return nameCache[chainId][address];
+    const match = getTokenList(chainId).find(
+        (v) => v?.address?.toLowerCase() === address?.toLowerCase(),
+    );
+    if (match) return match.name;
     const provider = providerFromChainId(chainId);
     const contract = new Contract(address, ['function name() view returns (string)'], provider);
     try {
@@ -103,13 +111,23 @@ export async function getName(address: string, chainId: number) {
     }
 }
 
-export async function getSymbol(address: string, chainId: number) {
-    if (!address || !chainId || !isAddress(address)) return address || '';
+export async function getSymbol(address: string, chainId?: number) {
+    if (!address || !isAddress(address)) return address || '';
     address = getAddress(address);
-    if (address === ZeroAddress) return 'ETH';
-    if (symbolCache[chainId][address]) return symbolCache[chainId][address];
-    const provider = providerFromChainId(chainId);
-    const match = getTokenList(chainId).find((v) => getAddress(v.address) === address);
+
+    let _chainId: number;
+    if (!chainId) _chainId = getChainId();
+    else _chainId = chainId;
+
+    if (address === ZeroAddress) {
+        if (_chainId === 43114) return 'AVAX';
+        return 'ETH';
+    }
+    if (symbolCache[_chainId][address]) return symbolCache[_chainId][address];
+    const provider = providerFromChainId(_chainId);
+    const match = getTokenList(_chainId).find(
+        (v) => v?.address?.toLowerCase() === address?.toLowerCase(),
+    );
     if (match) return match.symbol;
     else {
         const contract = new Contract(
@@ -119,8 +137,9 @@ export async function getSymbol(address: string, chainId: number) {
         );
         try {
             const symbol = await contract?.symbol();
-            symbolCache[chainId][address] = symbol;
-            if (!reverseSymbolCache[chainId][symbol]) reverseSymbolCache[chainId][symbol] = address;
+            symbolCache[_chainId][address] = symbol;
+            if (!reverseSymbolCache[_chainId][symbol])
+                reverseSymbolCache[_chainId][symbol] = address;
         } catch (e) {
             try {
                 if (symbolCache[1][address]) return symbolCache[1][address];
@@ -135,7 +154,7 @@ export async function getSymbol(address: string, chainId: number) {
                 return address;
             }
         }
-        return symbolCache[chainId][address];
+        return symbolCache[_chainId][address];
     }
 }
 
@@ -211,7 +230,9 @@ export async function getDecimals(token: string, chainId: number): Promise<numbe
     if (isAddress(token)) {
         const address = getAddress(token);
         if (address === ZeroAddress) return 18;
-        const match = getTokenList(chainId).find((v) => getAddress(v?.address) === address);
+        const match = getTokenList(chainId).find(
+            (v) => v?.address?.toLowerCase() === address?.toLowerCase(),
+        );
         if (match) return match?.decimals || 18;
         else if (decimalsCache[chainId][address]) {
             return decimalsCache[chainId][address] || 18;

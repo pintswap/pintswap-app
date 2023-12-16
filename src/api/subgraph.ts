@@ -82,38 +82,49 @@ export async function getV3Token({
     try {
         const determineUniGraph = () => {
             if (chainId === 42161) return 'arb';
+            if (chainId === 43114) return 'avax';
             return 'v3';
+        };
+        const determineQuery = () => {
+            if (chainId === 43114) {
+                return `
+                id
+                name
+                symbol
+                decimals
+                lastPriceUSD
+                `;
+            } else {
+                return `
+                id
+                symbol
+                name
+                decimals    
+                derivedETH
+                `;
+            }
         };
         const response = await fetch(ENDPOINTS['uniswap'][determineUniGraph()], {
             ...JSON_HEADER_POST,
             body: JSON.stringify({
                 query: `{
               token ${buildParams()} {
-                id
-                symbol
-                name
-                decimals
-                totalSupply
-                volume
-                volumeUSD
-                feesUSD
-                txCount
-                poolCount
-                totalValueLocked
-                totalValueLockedUSD
-                derivedETH
+                ${determineQuery()}
               }
               ${buildOptionalQuery()}
             }`,
             }),
         });
-        const {
-            data: { token, tokenDayDatas, tokenHourDatas },
-            errors,
-            error,
-        } = await response.json();
-        if (errors || error) console.error('#getV3Token', errors, error);
-        return { token, tokenDayDatas, tokenHourDatas };
+        const { data, errors, error } = await response.json();
+        if (errors || error || !data?.token) {
+            console.error('#getV3Token', errors, error);
+            return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
+        }
+        return {
+            token: data?.token,
+            tokenDayDatas: data?.tokenDayDatas,
+            tokenHourDatas: data?.tokenHourDatas,
+        };
     } catch (err) {
         console.error('#getV3Token', err);
         return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
@@ -206,10 +217,20 @@ export async function getUniswapToken(props: {
     if (!props || !props.address) return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
     const chainId = props.chainId ? props.chainId : getChainId();
     switch (chainId) {
-        case 42161: {
+        case 1: {
             if (subgraphTokenCache[chainId][props.address])
                 return subgraphTokenCache[chainId][props.address];
-            const v3Token = await getV3Token({ ...props, chainId });
+            const v2Token = await getV2Token(props);
+            if (v2Token?.token) {
+                if (!subgraphTokenCache[chainId][props.address])
+                    subgraphTokenCache[chainId][props.address] = v2Token;
+                if (!decimalsCache[chainId][props.address])
+                    decimalsCache[chainId][props.address] = Number(v2Token.token?.decimals);
+                if (!symbolCache[chainId][props.address])
+                    symbolCache[chainId][props.address] = v2Token.token?.symbol;
+                return v2Token;
+            }
+            const v3Token = await getV3Token(props);
             if (v3Token?.token) {
                 if (!subgraphTokenCache[chainId][props.address])
                     subgraphTokenCache[chainId][props.address] = v3Token;
@@ -224,17 +245,7 @@ export async function getUniswapToken(props: {
         default: {
             if (subgraphTokenCache[chainId][props.address])
                 return subgraphTokenCache[chainId][props.address];
-            const v2Token = await getV2Token(props);
-            if (v2Token?.token) {
-                if (!subgraphTokenCache[chainId][props.address])
-                    subgraphTokenCache[chainId][props.address] = v2Token;
-                if (!decimalsCache[chainId][props.address])
-                    decimalsCache[chainId][props.address] = Number(v2Token.token?.decimals);
-                if (!symbolCache[chainId][props.address])
-                    symbolCache[chainId][props.address] = v2Token.token?.symbol;
-                return v2Token;
-            }
-            const v3Token = await getV3Token(props);
+            const v3Token = await getV3Token({ ...props, chainId });
             if (v3Token?.token) {
                 if (!subgraphTokenCache[chainId][props.address])
                     subgraphTokenCache[chainId][props.address] = v3Token;
