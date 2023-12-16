@@ -108,13 +108,16 @@ export async function getV3Token({
             }`,
             }),
         });
-        const {
-            data: { token, tokenDayDatas, tokenHourDatas },
-            errors,
-            error,
-        } = await response.json();
-        if (errors || error) console.error('#getV3Token', errors, error);
-        return { token, tokenDayDatas, tokenHourDatas };
+        const { data, errors, error } = await response.json();
+        if (errors || error || !data?.token) {
+            console.error('#getV3Token', errors, error);
+            return { token: null, tokenDayDatas: [], tokenHourDatas: [] };
+        }
+        return {
+            token: data?.token,
+            tokenDayDatas: data?.tokenDayDatas,
+            tokenHourDatas: data?.tokenHourDatas,
+        };
     } catch (err) {
         console.error('#getV3Token', err);
         return { token: null, tokenDayDatas: [], tokenHourDatas: [] };

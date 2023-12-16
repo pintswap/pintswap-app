@@ -42,7 +42,7 @@ function stringify(obj: any) {
 
 export const useTrade = (isOTC?: boolean) => {
     const params = useParams();
-    const { switchNetwork } = useSwitchNetwork();
+    const { switchNetworkAsync } = useSwitchNetwork();
     const { data: signer } = useSigner();
     const { newNetwork } = useNetworkContext();
     const { pathname } = useLocation();
@@ -193,8 +193,8 @@ export const useTrade = (isOTC?: boolean) => {
         let _offers: Map<string, IOffer> = new Map();
 
         // If chainId
-        if (params.chainid && Number(params.chainid) !== chainId && switchNetwork) {
-            switchNetwork(Number(params.chainid));
+        if (params.chainid && Number(params.chainid) !== chainId && switchNetworkAsync) {
+            await switchNetworkAsync(Number(params.chainid));
         }
 
         // If multiaddr
@@ -308,8 +308,8 @@ export const useTrade = (isOTC?: boolean) => {
 
     // Get trade based on URL
     useEffect(() => {
-        const getter = async () => {
-            if (pathname.includes('/')) {
+        (async () => {
+            if (pathname.includes('/') && module) {
                 const splitUrl = pathname.split('/');
                 if (splitUrl[1] === 'fulfill' && params.hash && !order.orderHash) {
                     // If multiAddr and orderHash
@@ -328,8 +328,7 @@ export const useTrade = (isOTC?: boolean) => {
                     setLoading({ ...loading, allTrades: false });
                 }
             }
-        };
-        if (module) getter().catch((err) => console.error(err));
+        })().catch((err) => console.error(err));
     }, [module, pathname, chainId, foundPeerOffers]);
 
     /*

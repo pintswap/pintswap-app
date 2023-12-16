@@ -30,7 +30,7 @@ export function toAddress(symbolOrAddress?: string, chainId = 1): string {
     }
     // Standardize if symbol
     const capSymbolOrAddress = (symbolOrAddress as string).toUpperCase();
-    if (capSymbolOrAddress === 'ETH') return ZeroAddress;
+    if (capSymbolOrAddress === 'ETH' || capSymbolOrAddress === 'AVAX') return ZeroAddress;
     // If in cache
     if (reverseSymbolCache[chainId][capSymbolOrAddress])
         return reverseSymbolCache[chainId][capSymbolOrAddress];
@@ -89,6 +89,10 @@ export async function getTotalSupply(address: string, chainId: number, type?: 'N
 
 export async function getName(address: string, chainId: number) {
     if (!address || !chainId) return address || '';
+    if (address === ZeroAddress) {
+        if (chainId === 43114) return 'Avalanche';
+        return 'Ethereum';
+    }
     address = getAddress(address);
     if (nameCache[chainId][address]) return nameCache[chainId][address];
     const provider = providerFromChainId(chainId);
@@ -106,7 +110,10 @@ export async function getName(address: string, chainId: number) {
 export async function getSymbol(address: string, chainId: number) {
     if (!address || !chainId || !isAddress(address)) return address || '';
     address = getAddress(address);
-    if (address === ZeroAddress) return 'ETH';
+    if (address === ZeroAddress) {
+        if (chainId === 43114) return 'AVAX';
+        return 'ETH';
+    }
     if (symbolCache[chainId][address]) return symbolCache[chainId][address];
     const provider = providerFromChainId(chainId);
     const match = getTokenList(chainId).find((v) => getAddress(v.address) === address);
