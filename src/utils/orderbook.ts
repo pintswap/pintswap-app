@@ -171,7 +171,7 @@ export async function toLimitOrder(
         givesPrice = parseFloat(givesDetails?.token?.lastPriceUSD);
     }
     const givesAmount = Number(
-        ethers.formatUnits(gives.amount || '', Number(givesDetails.token.decimals)),
+        ethers.formatUnits(gives.amount || '', Number(givesDetails?.token?.decimals || '18')),
     );
 
     let getsPrice: number;
@@ -182,7 +182,7 @@ export async function toLimitOrder(
         getsPrice = parseFloat(getsDetails?.token?.lastPriceUSD);
     }
     const getsAmount = Number(
-        ethers.formatUnits(gets.amount || '', Number(getsDetails.token.decimals)),
+        ethers.formatUnits(gets?.amount || '', Number(getsDetails?.token?.decimals || '18')),
     );
 
     const calculateExchangeRate = () => {
@@ -205,8 +205,8 @@ export async function toLimitOrder(
     };
     const usdExchangeRate = calculateUsdExchangeRate();
     const nativeExchangeRate = calculateExchangeRate();
-    const amount = ethers.formatUnits(trade.amount, tradeDecimals);
-    const baseAmount = ethers.formatUnits(base.amount, baseDecimals);
+    const amount = ethers.formatUnits(trade.amount, tradeDecimals || 18);
+    const baseAmount = ethers.formatUnits(base.amount, baseDecimals || 18);
     const usdPrice = await getUsdPrice(trade.address, eth);
     const usdTotal = Number(usdPrice) * Number(amount);
     return {

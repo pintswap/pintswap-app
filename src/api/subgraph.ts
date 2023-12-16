@@ -85,6 +85,33 @@ export async function getV3Token({
             if (chainId === 43114) return 'avax';
             return 'v3';
         };
+        const determineQuery = () => {
+            if (chainId === 43114) {
+                return `
+                id
+                name
+                symbol
+                decimals
+                lastPriceUSD
+                `;
+            } else {
+                return `
+                id
+                symbol
+                name
+                decimals
+                totalSupply
+                volume
+                volumeUSD
+                feesUSD
+                txCount
+                poolCount
+                totalValueLocked
+                totalValueLockedUSD
+                derivedETH
+                `;
+            }
+        };
         const response = await fetch(ENDPOINTS['uniswap'][determineUniGraph()], {
             ...JSON_HEADER_POST,
             body: JSON.stringify({
