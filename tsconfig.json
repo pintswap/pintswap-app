@@ -19,6 +19,13 @@
         "jsx": "react-jsx",
         "noFallthroughCasesInSwitch": true
     },
-    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "node_modules/subgraph.ts"],
+    "include": [
+        "next-env.d.ts",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.js",
+        "**/*.jsx",
+        "node_modules/subgraph.ts"
+    ],
     "exclude": ["node_modules", "lib"]
 }
