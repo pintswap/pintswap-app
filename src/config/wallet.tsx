@@ -7,11 +7,9 @@ import {
 } from '@rainbow-me/rainbowkit';
 import { Chain, configureChains, createClient, WagmiConfig } from 'wagmi';
 import { publicProvider } from 'wagmi/providers/public';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { arbitrum, hardhat, mainnet, avalanche } from 'wagmi/chains';
-import { TESTING } from '../utils/constants';
 import { ALCHEMY_KEY, INFURA_PROJECT_ID, WALLET_CONNECT_ID, LLAMA_NODES_KEY } from './env';
 import {
     coinbaseWallet,
