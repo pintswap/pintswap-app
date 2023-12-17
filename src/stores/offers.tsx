@@ -17,7 +17,7 @@ import {
     renderToast,
     savePintswap,
 } from '../utils';
-import { hashOffer, isERC20Transfer, detectTradeNetwork, IOffer } from '@pintswap/sdk';
+import { hashOffer, isERC20Transfer, detectTradeNetwork, IOffer, PintP2P } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
 import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
@@ -275,10 +275,11 @@ export function OffersStore(props: { children: ReactNode }) {
             setIsLoading(false);
             return returnObj;
         } else {
+            const teamMMPintAddress =
+                'pint1zgsdrg5edwcrfad957x9e8jy9vy8z0xec7jclsq4d90y3vg3mn39s9gcudrd9';
             // Fallback to dialing the team market maker directly
-            const teamMM = await module?.getUserData(
-                'pint1zgsdrg5edwcrfad957x9e8jy9vy8z0xec7jclsq4d90y3vg3mn39s9gcudrd9',
-            );
+            const teamMM = await module?.getUserData(teamMMPintAddress);
+            if (TESTING && !allOffers.erc20.length) console.log('Team Market Maker:', teamMM);
             if (teamMM?.offers?.length) {
                 const { offers } = teamMM;
                 const mappedPairs = await Promise.all(
@@ -310,7 +311,7 @@ export function OffersStore(props: { children: ReactNode }) {
         queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
         refetchInterval: 1000 * 5,
-        enabled: !!module && module.isStarted(),
+        enabled: !!module && module?.isStarted(),
     });
     useEffect(() => {
         if (module) {
