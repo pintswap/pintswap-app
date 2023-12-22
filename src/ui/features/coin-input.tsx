@@ -78,16 +78,14 @@ export const CoinInput = ({
     }
 
     function isLoadingMax() {
-        return maxLoading !== undefined
-            ? maxLoading ||
-                  maxAmount === '-' ||
-                  balance.isLoading ||
-                  maxAmount === '0' ||
-                  (!allOffers.erc20?.length && !pathname.includes('create'))
-            : maxAmount === '-' ||
-                  balance.isLoading ||
-                  maxAmount === '0' ||
-                  (!allOffers.erc20?.length && !pathname.includes('create'));
+        if (maxLoading !== undefined) return maxLoading;
+        return (
+            balance.isLoading ||
+            maxAmount === '0' ||
+            (!allOffers.erc20?.length &&
+                !pathname.includes('create') &&
+                !pathname.includes('staking'))
+        );
     }
 
     useEffect(() => {

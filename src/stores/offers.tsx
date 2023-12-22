@@ -5,6 +5,7 @@ import {
     SetStateAction,
     useContext,
     useEffect,
+    useMemo,
     useState,
 } from 'react';
 import { usePintswapContext } from './pintswap';
@@ -217,7 +218,6 @@ export function OffersStore(props: { children: ReactNode }) {
         nft: [],
         erc20: [],
     });
-    const [uniqueMarkets, setUniqueMarkets] = useState<IMarketProps[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const addTrade = async (hash: string, tradeProps: IOffer) => {
@@ -246,11 +246,17 @@ export function OffersStore(props: { children: ReactNode }) {
         }
     };
 
+    const settle = () => {
+        if (uniqueMarkets.length === 0 && !pathname.includes('fulfill')) {
+            renderToast('findOffers', 'success', 'Connected successfully', undefined, 2000);
+        } else {
+            setIsLoading(false);
+        }
+    };
+
     // Get Active Trades
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
-            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill'))
-                renderToast('findOffers', 'pending', 'Found other peers', undefined);
             const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
@@ -267,12 +273,8 @@ export function OffersStore(props: { children: ReactNode }) {
                     nft: filterByChain(flattenedNftTrades, chainId),
                     erc20: filtered,
                 });
-                setUniqueMarkets(getUniqueMarkets(filtered));
             }
-            if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill')) {
-                renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
-            }
-            setIsLoading(false);
+            settle();
             return returnObj;
         } else {
             const teamMMPintAddress =
@@ -282,6 +284,8 @@ export function OffersStore(props: { children: ReactNode }) {
             if (TESTING && !allOffers.erc20.length) console.log('Team Market Maker:', teamMM);
             if (teamMM?.offers?.length) {
                 const { offers } = teamMM;
+                if (!allOffers.erc20.length)
+                    renderToast('findOffers', 'pending', 'Getting available markets', undefined);
                 const mappedPairs = await Promise.all(
                     offers.map(async (v: any) => await toLimitOrder(v, allOffers.erc20)),
                 );
@@ -294,23 +298,24 @@ export function OffersStore(props: { children: ReactNode }) {
                         nft: filterByChain(offers, chainId),
                         erc20: filtered,
                     });
-                    setUniqueMarkets(getUniqueMarkets(filtered));
                 }
-                if (allOffers.erc20.length === 0 && !pathname.includes('/fulfill')) {
-                    renderToast('findOffers', 'success', 'Connected successfully', undefined, 3000);
-                }
-                setIsLoading(false);
+
+                settle();
                 return returnObj;
             }
         }
         return { nft: [], erc20: [] };
     };
 
+    const uniqueMarkets = useMemo(() => {
+        return getUniqueMarkets(offersByChain.erc20);
+    }, [offersByChain.erc20.length, newNetwork]);
+
     // Listen for orderbook
     useQuery({
         queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 5,
+        refetchInterval: 1000 * 2,
         enabled: !!module && module?.isStarted(),
     });
     useEffect(() => {
@@ -323,20 +328,11 @@ export function OffersStore(props: { children: ReactNode }) {
         return () => {};
     }, [module]);
 
-    // When orderbook updates, update offersByChain
-    useEffect(() => {
-        setOffersByChain({
-            erc20: filterByChain(allOffers.erc20, chainId),
-            nft: filterByChain(allOffers.nft, chainId),
-        });
-    }, [allOffers.erc20.length, chainId]);
-
     // Request all offers again (just in case)
     useEffect(() => {
         if (newNetwork) {
             (async () => {
                 // setIsLoading(true);
-                setUniqueMarkets(getUniqueMarkets(filterByChain(allOffers.erc20, chainId)));
                 await getPublicOrderbook();
             })().catch((err) => console.error(err));
         }

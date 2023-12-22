@@ -57,7 +57,6 @@ export const MarketsTableView = () => {
             },
         },
     ];
-
     return (
         <div className="flex flex-col">
             <div className="flex items-center justify-between mb-2.5 lg:mb-3 gap-6">
@@ -74,7 +73,7 @@ export const MarketsTableView = () => {
                 <DataTable
                     type="markets"
                     columns={columns}
-                    data={list as IMarketProps[]}
+                    data={query.length > 1 ? (list as IMarketProps[]) : uniqueMarkets}
                     loading={isLoading}
                     pagination
                     options={{
