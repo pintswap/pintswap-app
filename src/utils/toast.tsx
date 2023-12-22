@@ -24,7 +24,7 @@ export const renderToast = (
 ) => {
     switch (type) {
         case 'success': {
-            toast.update(toastId, {
+            return toast.update(toastId, {
                 render: <ToastStatus status="success" transaction={hash} message={msg} />,
                 type: 'success',
                 progressStyle: {
@@ -34,17 +34,18 @@ export const renderToast = (
                 ...defaultToastOptions,
                 autoClose: timer || defaultToastOptions.autoClose,
             });
-            break;
         }
         case 'pending': {
-            toast.loading(<ToastStatus status="pending" transaction={hash} message={msg} />, {
-                toastId,
-                closeButton: true,
-            });
-            break;
+            return toast.loading(
+                <ToastStatus status="pending" transaction={hash} message={msg} />,
+                {
+                    toastId,
+                    closeButton: true,
+                },
+            );
         }
         default: {
-            toast.update(toastId, {
+            return toast.update(toastId, {
                 render: (
                     <ToastStatus
                         status="error"
@@ -60,7 +61,6 @@ export const renderToast = (
                 ...defaultToastOptions,
                 autoClose: timer || defaultToastOptions.autoClose,
             });
-            break;
         }
     }
 };

@@ -139,12 +139,6 @@ export const DataTable = ({
                             },
                         },
                         customRowRender: (data, dataIndex, rowIndex) => {
-                            Object.defineProperty(data, 'index', {
-                                value: dataIndex,
-                                enumerable: false,
-                                writable: false,
-                                configurable: true,
-                            });
                             return (
                                 <CustomRow
                                     key={`data-table-row-${rowIndex}`}
