@@ -270,34 +270,30 @@ export const SwapModule = ({
                         trade={percentDiff ? trade : undefined}
                     />
                 </div>
-                {/* <>
-                {console.log(
-                    fill && output?.value ? 
-                    { gets: { 
-                        amount: fill, 
-                        ...trade.gets 
-                    }, gives: {
-                        amount: output.value,
-                        ...trade.gives
-                    }} : trade
-                )}
-                </> */}
+                <>
+                    {console.log({
+                        gets: {
+                            amount: fill,
+                            ...trade.gets,
+                        },
+                        gives: {
+                            amount: output?.value,
+                            ...trade.gives,
+                        },
+                    })}
+                </>
                 <div className="flex flex-col gap-2 mt-2">
                     <TxDetails
-                        trade={
-                            fill && output?.value
-                                ? {
-                                      gets: {
-                                          amount: fill,
-                                          ...trade.gets,
-                                      },
-                                      gives: {
-                                          amount: output.value,
-                                          ...trade.gives,
-                                      },
-                                  }
-                                : trade
-                        }
+                        trade={{
+                            gives: {
+                                amount: fill,
+                                token: trade.gives?.token?.toUpperCase() || '',
+                            },
+                            gets: {
+                                amount: output?.value,
+                                token: trade.gets?.token?.toUpperCase() || '',
+                            },
+                        }}
                         loading={
                             (typeof loading === 'boolean' ? loading : loading?.trade) ||
                             (output && output.loading)
