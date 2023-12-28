@@ -319,6 +319,7 @@ export function OffersStore(props: { children: ReactNode }) {
         queryFn: getPublicOrderbook,
         refetchInterval: 1000 * 2,
         enabled: !!module && module?.isStarted(),
+        retryDelay: 500,
     });
     useEffect(() => {
         if (module) {
