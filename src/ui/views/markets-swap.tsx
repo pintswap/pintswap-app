@@ -264,7 +264,7 @@ export const MarketsSwapView = () => {
                     setOutput({ value: '', loading: false });
                 }
             }
-        }, 1000);
+        }, 500);
         return () => clearTimeout(waitForUser);
     }, [fill, peerOffers.asks.length, peerOffers.bids.length]);
 
