@@ -270,18 +270,6 @@ export const SwapModule = ({
                         trade={percentDiff ? trade : undefined}
                     />
                 </div>
-                <>
-                    {console.log({
-                        gets: {
-                            amount: fill,
-                            ...trade.gets,
-                        },
-                        gives: {
-                            amount: output?.value,
-                            ...trade.gives,
-                        },
-                    })}
-                </>
                 <div className="flex flex-col gap-2 mt-2">
                     <TxDetails
                         trade={{

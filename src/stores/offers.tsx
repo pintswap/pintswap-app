@@ -311,7 +311,7 @@ export function OffersStore(props: { children: ReactNode }) {
 
     const uniqueMarkets = useMemo(() => {
         return getUniqueMarkets(offersByChain.erc20);
-    }, [offersByChain.erc20.length, newNetwork]);
+    }, [offersByChain.erc20.length, allOffers.erc20.length, newNetwork]);
 
     // Listen for orderbook
     useQuery({
