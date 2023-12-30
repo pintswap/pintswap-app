@@ -30,7 +30,7 @@ export const Button = ({
     const { chain } = useNetwork();
     const { openChainModal } = useChainModal();
     const { openConnectModal } = useConnectModal();
-    const { signIfNecessary, incorrectSigner } = usePintswapContext();
+    const { signIfNecessary, incorrectSigner, signerLoading } = usePintswapContext();
 
     const renderType = () => {
         switch (type) {
@@ -78,7 +78,7 @@ export const Button = ({
         }
         if (incorrectSigner && checkNetwork) {
             return {
-                text: 'Signature Required',
+                text: signerLoading ? 'Signing' : 'Signature Required',
                 onClick: signIfNecessary,
             };
         }
@@ -93,7 +93,7 @@ export const Button = ({
         <button
             type={form ? form : 'button'}
             onClick={render().onClick}
-            disabled={(disabled || loading) && !incorrectSigner && checkNetwork}
+            disabled={((disabled || loading) && !incorrectSigner && checkNetwork) || signerLoading}
             className={`${className} ${renderType()} ${renderBorder()} ${paddingStyle} disabled:opacity-70 border-2 rounded shadow disabled:cursor-not-allowed transition duration-150 flex items-center gap-2 text-center justify-center whitespace-nowrap disabled:text-neutral-400`}
         >
             {type === 'wallet' ? (
@@ -105,7 +105,7 @@ export const Button = ({
                 </div>
             ) : (
                 <>
-                    {loading && <div className="Toastify__spinner" />}
+                    {(loading || signerLoading) && <div className="Toastify__spinner" />}
                     {render().text}
                 </>
             )}

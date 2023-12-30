@@ -17,6 +17,7 @@ import {
     IOfferProps,
     renderToast,
     savePintswap,
+    getChainId,
 } from '../utils';
 import { hashOffer, isERC20Transfer, detectTradeNetwork, IOffer, PintP2P } from '@pintswap/sdk';
 import { useNetworkContext } from './network';
@@ -204,10 +205,11 @@ const filterByChain = (arr: any[], chainId: number) => arr.filter((el) => el.cha
 // Wrapper
 export function OffersStore(props: { children: ReactNode }) {
     const {
-        pintswap: { module, chainId, loading },
+        pintswap: { module, loading },
     } = usePintswapContext();
     const { newNetwork } = useNetworkContext();
     const { pathname } = useLocation();
+    const chainId = getChainId();
 
     const [userTrades, setUserTrades] = useState<Map<string, IOffer>>(new Map());
     const [allOffers, setAllOffers] = useState<Record<'nft' | 'erc20', IOfferProps[]>>({
@@ -309,7 +311,7 @@ export function OffersStore(props: { children: ReactNode }) {
 
     const uniqueMarkets = useMemo(() => {
         return getUniqueMarkets(offersByChain.erc20);
-    }, [offersByChain.erc20.length, newNetwork]);
+    }, [offersByChain.erc20.length, allOffers.erc20.length, newNetwork]);
 
     // Listen for orderbook
     useQuery({
@@ -317,6 +319,7 @@ export function OffersStore(props: { children: ReactNode }) {
         queryFn: getPublicOrderbook,
         refetchInterval: 1000 * 2,
         enabled: !!module && module?.isStarted(),
+        retryDelay: 500,
     });
     useEffect(() => {
         if (module) {
