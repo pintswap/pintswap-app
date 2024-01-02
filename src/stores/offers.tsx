@@ -129,7 +129,7 @@ const toFlattened = async (v: any) =>
     );
 
 // Get unique ERC20 markets
-const getUniqueMarkets = (offers: any[]) => {
+const getUniqueMarkets = (offers: any[], setLoading?: any) => {
     if (offers.length) {
         const _uniqueMarkets: IMarketProps[] = [];
         offers.forEach((m: any) => {
@@ -195,6 +195,7 @@ const getUniqueMarkets = (offers: any[]) => {
                 }
             }
         });
+        setLoading && setLoading(false);
         return _uniqueMarkets;
     }
     return [];
@@ -248,14 +249,6 @@ export function OffersStore(props: { children: ReactNode }) {
         }
     };
 
-    const settle = () => {
-        if (uniqueMarkets.length === 0 && !pathname.includes('fulfill')) {
-            renderToast('findOffers', 'success', 'Connected successfully', undefined, 2000);
-        } else {
-            setIsLoading(false);
-        }
-    };
-
     // Get Active Trades
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
@@ -267,6 +260,8 @@ export function OffersStore(props: { children: ReactNode }) {
                 flattenedPairs.map(async (v: any) => await toLimitOrder(v, allOffers.erc20)),
             );
             const returnObj = { nft: flattenedNftTrades, erc20: mappedPairs };
+            if (TESTING && !allOffers.erc20.length)
+                console.log('#getPublicOrderbook::Offers:', returnObj);
             setAllOffers(returnObj);
 
             if (mappedPairs.length) {
@@ -275,8 +270,9 @@ export function OffersStore(props: { children: ReactNode }) {
                     nft: filterByChain(flattenedNftTrades, chainId),
                     erc20: filtered,
                 });
+                renderToast('findOffers', 'success', 'Connected successfully', undefined, 2000);
+                setIsLoading(false);
             }
-            settle();
             return returnObj;
         } else {
             const teamMMPintAddress =
@@ -301,8 +297,6 @@ export function OffersStore(props: { children: ReactNode }) {
                         erc20: filtered,
                     });
                 }
-
-                settle();
                 return returnObj;
             }
         }
@@ -310,15 +304,15 @@ export function OffersStore(props: { children: ReactNode }) {
     };
 
     const uniqueMarkets = useMemo(() => {
-        return getUniqueMarkets(offersByChain.erc20);
-    }, [offersByChain.erc20.length, allOffers.erc20.length, newNetwork]);
+        return getUniqueMarkets(offersByChain.erc20, setIsLoading);
+    }, [offersByChain.erc20.length, newNetwork]);
 
     // Listen for orderbook
     useQuery({
         queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 2,
-        enabled: !!module && module?.isStarted(),
+        refetchInterval: 1000 * 6,
+        enabled: !!module && module?.peers.size > 0,
         retryDelay: 500,
     });
     useEffect(() => {

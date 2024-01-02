@@ -238,7 +238,7 @@ export const MarketsSwapView = () => {
         if (steps[2].status === 'current' && !trade?.gives.amount && !trade?.gets.amount) {
             renderEmptyTrade();
         }
-    }, [steps[2].status]);
+    }, [steps[2].status, trade?.gives?.amount]);
 
     useEffect(() => {
         if (!fill) {
