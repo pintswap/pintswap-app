@@ -7,8 +7,18 @@ import { ITokenProps } from './types';
 import { getChainId } from './provider';
 import { SUBGRAPH_API_KEY } from '../config';
 
+// ADD LATER TO TOKEN LIST ONCE FIXED
+// {
+//     "chainId": 43114,
+//     "address": "0x0000000000000000000000000000000000000000",
+//     "name": "Avalanche",
+//     "symbol": "AVAX",
+//     "decimals": 18,
+//     "logoURI": "https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/avalanchec/assets/0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7/logo.png"
+// },
+
 // COMMON
-export const APP_VERSION = 'v4.0 BETA';
+export const APP_VERSION = 'v1.0.0';
 export const TESTING: boolean = process.env.REACT_APP_DEV ? true : false;
 export const BASE_URL: string = window.location.origin;
 export const WS_URL: string = `ws://${TESTING ? '127.0.0.1' : BASE_URL}:8545`;
@@ -65,6 +75,7 @@ export const getTokenListByAddress = (chainId?: number) =>
     );
 
 export const ETH = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'ETH');
+export const AVAX = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'AVAX');
 export const USDC = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'USDC');
 export const USDT = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'USDT');
 export const DAI = (chainId?: number) => getTokenList(chainId).find((v) => v.symbol === 'DAI');

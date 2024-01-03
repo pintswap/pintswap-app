@@ -199,7 +199,7 @@ export const SwapModule = ({
 
         useEffect(() => {
             if (!trade.gives.token && updateTrade) {
-                if (chainId === 43114) updateTrade('gives.token', 'AVAX');
+                if (chainId === 43114) updateTrade('gives.token', 'WAVAX');
                 else updateTrade('gives.token', 'ETH');
             }
         }, [trade]);

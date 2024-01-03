@@ -76,7 +76,7 @@ export async function getTotalSupply(address: string, chainId: number, type?: 'N
     address = getAddress(address);
     if (totalSupplyCache[chainId][address]) return totalSupplyCache[chainId][address];
     const provider = providerFromChainId(chainId);
-    const contract = new Contract(address, MIN_ABIS[type || 'NFT'], provider);
+    const contract = new Contract(address, MIN_ABIS[type || 'NFT'], provider as any);
     try {
         const totalSupply = await contract?.totalSupply();
         totalSupplyCache[chainId][address] = totalSupply;
@@ -100,7 +100,11 @@ export async function getName(address: string, chainId: number) {
     );
     if (match) return match.name;
     const provider = providerFromChainId(chainId);
-    const contract = new Contract(address, ['function name() view returns (string)'], provider);
+    const contract = new Contract(
+        address,
+        ['function name() view returns (string)'],
+        provider as any,
+    );
     try {
         const name = await contract?.name();
         nameCache[chainId][address] = name;
@@ -133,7 +137,7 @@ export async function getSymbol(address: string, chainId?: number) {
         const contract = new Contract(
             address,
             ['function symbol() view returns (string)'],
-            provider,
+            provider as any,
         );
         try {
             const symbol = await contract?.symbol();
@@ -146,7 +150,7 @@ export async function getSymbol(address: string, chainId?: number) {
                 const mainnetTry = await new Contract(
                     address,
                     ['function symbol() view returns (string)'],
-                    providerFromChainId(1),
+                    providerFromChainId(1) as any,
                 )?.symbol();
                 if (mainnetTry) symbolCache[1][address] = mainnetTry;
                 return mainnetTry;
@@ -241,7 +245,7 @@ export async function getDecimals(token: string, chainId: number): Promise<numbe
                 const contract = new Contract(
                     address,
                     ['function decimals() view returns (uint8)'],
-                    provider,
+                    provider as any,
                 );
                 const decimals = Number((await contract?.decimals()) || '18');
                 decimalsCache[chainId][address] = decimals;
@@ -252,7 +256,7 @@ export async function getDecimals(token: string, chainId: number): Promise<numbe
                     const mainnetTry = await new Contract(
                         address,
                         ['function decimals() view returns (uint8)'],
-                        providerFromChainId(1),
+                        providerFromChainId(1) as any,
                     ).decimals();
                     if (mainnetTry) decimalsCache[1][address] = Number(mainnetTry);
                     return mainnetTry || 18;

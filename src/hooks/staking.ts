@@ -18,12 +18,12 @@ export const useStaking = () => {
     const [initialLoading, setInitialLoading] = useState(true);
 
     // Contracts
-    const pint = new Contract(CONTRACTS.mainnet.PINT, erc20ABI, providerFromChainId(1));
+    const pint = new Contract(CONTRACTS.mainnet.PINT, erc20ABI, providerFromChainId(1) as any);
 
     const sipPINT = new Contract(
         CONTRACTS.mainnet.sipPINT,
         MIN_ABIS.ERC4626,
-        providerFromChainId(1),
+        providerFromChainId(1) as any,
     );
 
     // Contracts Data
