@@ -32,7 +32,7 @@ export async function fetchNFT(
     const hash = hashNftIdentifier({ token, tokenId });
     if (nftCache[hash]) return nftCache[hash];
     chainId = chainId || getChainId();
-    const contract = new ethers.Contract(token, MIN_ABIS.NFT, providerFromChainId(chainId));
+    const contract = new ethers.Contract(token, MIN_ABIS.NFT, providerFromChainId(chainId) as any);
     const uri = await contract.tokenURI(tokenId);
     let nft;
     try {

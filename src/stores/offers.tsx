@@ -252,6 +252,7 @@ export function OffersStore(props: { children: ReactNode }) {
     // Get Active Trades
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
+if(newNetwork) setIsLoading(true)
             const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
@@ -305,7 +306,7 @@ export function OffersStore(props: { children: ReactNode }) {
 
     const uniqueMarkets = useMemo(() => {
         return getUniqueMarkets(offersByChain.erc20, setIsLoading);
-    }, [offersByChain.erc20.length, newNetwork]);
+    }, [offersByChain.erc20.length, newNetwork, chainId]);
 
     // Listen for orderbook
     useQuery({
