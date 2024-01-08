@@ -252,7 +252,7 @@ export function OffersStore(props: { children: ReactNode }) {
     // Get Active Trades
     const getPublicOrderbook = async () => {
         if (module?.peers?.size) {
-if(newNetwork) setIsLoading(true)
+            if (newNetwork) setIsLoading(true);
             const grouped = groupByType(module?.peers);
             // All trades converted to Array for DataTables
             const flattenedPairs = await toFlattened(grouped.erc20);
@@ -312,7 +312,7 @@ if(newNetwork) setIsLoading(true)
     useQuery({
         queryKey: ['unique-markets', chainId],
         queryFn: getPublicOrderbook,
-        refetchInterval: 1000 * 6,
+        refetchInterval: 1000 * 8,
         enabled: !!module && module?.peers.size > 0,
         retryDelay: 500,
     });
