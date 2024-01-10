@@ -30,7 +30,7 @@ export const Card = ({
 }: ICardProps) => {
     const backgroundColor = bg
         ? bg
-        : `bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-950 via-brand-dashboard to-brand-dashboard`;
+        : `bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-800 to-neutral-900`;
 
     if (type === 'skeleton') {
         return (
@@ -38,7 +38,7 @@ export const Card = ({
                 <div
                     className={`${
                         className ? className : ''
-                    } bg-neutral-800 h-[5rem] rounded-lg shadow w-full`}
+                    } bg-[rgba(255,255,255,0.1)] h-[5rem] rounded-lg shadow w-full`}
                 ></div>
             </div>
         );

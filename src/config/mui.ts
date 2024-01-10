@@ -15,7 +15,8 @@ export function muiTheme() {
         palette: {
             mode: 'dark',
             background: {
-                paper: '#0a0a0a',
+                // paper: '#0a0a0a',
+                paper: 'transparent',
             },
             primary: {
                 main: '#fff',

@@ -85,7 +85,7 @@ function App() {
                 draggable
                 pauseOnHover
                 theme="dark"
-                toastClassName="!bg-brand-dashboard"
+                toastClassName="!bg-neutral-900"
             />
         </>
     );

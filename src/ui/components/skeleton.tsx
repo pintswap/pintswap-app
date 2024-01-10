@@ -30,7 +30,9 @@ export const Skeleton = ({
         <div role="status" className={`${loading ? 'animate-pulse' : ''} ${wrapperClass || ''}`}>
             <div
                 className={`${rounding} ${maxW || ''} px-2 ${
-                    loading ? `${color ? color : 'bg-neutral-800'} text-transparent` : ''
+                    loading
+                        ? `${color ? color : 'bg-[rgba(255,255,255,0.1)]'} text-transparent`
+                        : ''
                 } ${innerClass || ''}`}
             >
                 {children}
