@@ -28,6 +28,8 @@ type ICoinInput = {
     maxText?: string;
 };
 
+const inputBgColor = `bg-neutral-900`;
+
 export const CoinInput = ({
     label,
     value,
@@ -105,15 +107,19 @@ export const CoinInput = ({
     }, [value, asset]);
 
     return (
-        <div className="w-full bg-neutral-900 px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black">
+        <div
+            className={`${inputBgColor} w-full px-2 lg:px-3 pb-2 pt-1 rounded-lg shadow-inner shadow-black`}
+        >
             {label && <span className="text-xs text-gray-400">{label}</span>}
             <div className="flex justify-between items-center gap-0.5 pt-4 pb-1">
                 <Skeleton loading={loading} innerClass="!p-0 min-w-[160px] min-h-[28px]">
                     {loading ? (
-                        <span className="h-full text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] md:max-w-[240px] 2xl:max-w-[280px] min-w-0 w-fit" />
+                        <span
+                            className={`${inputBgColor} h-full text-2xl outline-none ring-0 remove-arrow max-w-[180px] md:max-w-[240px] 2xl:max-w-[280px] min-w-0 w-fit`}
+                        />
                     ) : (
                         <input
-                            className="text-2xl outline-none ring-0 bg-neutral-900 remove-arrow max-w-[180px] md:max-w-[240px] 2xl:max-w-[280px] min-w-0 w-fit"
+                            className={`${inputBgColor} text-2xl outline-none ring-0 remove-arrow max-w-[180px] md:max-w-[240px] 2xl:max-w-[280px] min-w-0 w-fit`}
                             placeholder="0"
                             type="number"
                             onChange={onAmountChange}

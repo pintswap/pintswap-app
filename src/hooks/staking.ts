@@ -73,7 +73,7 @@ export const useStaking = () => {
             return {
                 totalAssets: formatEther(totalAssets).toString(),
                 totalSupply: formatEther(totalSupply).toString(),
-                apr: differencePercentChange / 26, // divided by 26 to get annual rate
+                apr: Math.abs(differencePercentChange / 26), // divided by 26 to get annual rate
                 totalRewards: formatEther(currentDifference).toString(),
             };
         } catch (err) {

@@ -189,7 +189,7 @@ const CustomRow = (props: IDataTableProps) => {
         type === 'staking' || loading ? '' : 'hover:bg-neutral-900 hover:cursor-pointer'
     }`;
 
-    const baseStyle = `${hasHoverState} text-left transition duration-150 border-y-[1px] first:border-transparent border-neutral-800 first:border-transparent mui:first:border-neutral-800 ${
+    const baseStyle = `${hasHoverState} text-left transition duration-150 border-y-[1px] first:border-transparent border-neutral-700 first:border-transparent mui:first:border-neutral-700 ${
         activeRow === `${type}-${(cells as any).index}` ? '!bg-neutral-800' : ''
     }`;
 

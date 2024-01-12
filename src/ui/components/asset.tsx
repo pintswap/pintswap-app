@@ -1,5 +1,6 @@
-import { getTokenList } from '../../utils';
+import { getTokenList, toAddress } from '../../utils';
 import { usePintswapContext } from '../../stores';
+import { TooltipWrapper } from './tooltip';
 
 type IAssetProps = {
     symbol?: string;
@@ -29,6 +30,7 @@ export const Asset = ({
             icon: '/img/generic.svg',
             alt: 'unknown token',
             symbol: 'Unknown',
+            address: '',
         };
         const found = getTokenList(chainId).find(
             (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
@@ -38,6 +40,7 @@ export const Asset = ({
                 icon: found?.logoURI || DEFAULT.icon,
                 alt: alt || found?.symbol || DEFAULT.alt,
                 symbol: found?.symbol || DEFAULT.symbol,
+                address: found?.address || toAddress(found?.symbol),
             };
         const mainnetFound = getTokenList(1).find(
             (token) => token?.symbol?.toLowerCase() === symbol?.toLowerCase().trim(),
@@ -47,6 +50,7 @@ export const Asset = ({
                 icon: mainnetFound?.logoURI || DEFAULT.icon,
                 alt: alt || mainnetFound?.symbol || DEFAULT.alt,
                 symbol: mainnetFound?.symbol || DEFAULT.symbol,
+                address: mainnetFound?.address || toAddress(mainnetFound?.symbol),
             };
         return DEFAULT;
     };
@@ -70,14 +74,20 @@ export const Asset = ({
                 </>
             ) : (
                 <>
-                    <img
-                        src={assetProps()?.icon}
-                        alt={assetProps()?.alt || assetProps()?.symbol}
-                        width={size}
-                        height={size}
-                        className="rounded-full contain"
-                        style={{ contain: 'strict' }}
-                    />
+                    <TooltipWrapper
+                        id={`${assetProps()?.symbol}-${chainId}`}
+                        text={assetProps().address}
+                        position="top"
+                    >
+                        <img
+                            src={assetProps()?.icon}
+                            alt={assetProps()?.alt || assetProps()?.symbol}
+                            width={size}
+                            height={size}
+                            className="rounded-full contain"
+                            style={{ contain: 'strict' }}
+                        />
+                    </TooltipWrapper>
                     <div className="flex flex-col">
                         <span className={`${fontSize} ${subSymbol ? 'leading-tight' : ''}`}>
                             {assetProps()?.symbol}

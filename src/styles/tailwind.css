@@ -22,7 +22,7 @@
     /* font-family: 'Days One', sans-serif; */
     font-family: 'Chakra Petch', sans-serif;
     color: #fff;
-    @apply md:overflow-y-hidden bg-brand-dashboard;
+    @apply md:overflow-y-hidden bg-neutral-900;
   }
 
   .view-header {

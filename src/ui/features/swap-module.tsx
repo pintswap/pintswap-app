@@ -5,10 +5,9 @@ import { INFTProps, fetchNFT, getChainId, toAddress, tokenTaxCache } from '../..
 import { Button, TxDetails } from '../components';
 import { NFTInput, CoinInput } from '../features';
 import { getQuote } from '../../api';
-import { usePintswapContext, usePricesContext } from '../../stores';
+import { usePricesContext } from '../../stores';
 import { useAccount, useBalance } from 'wagmi';
 import { ZeroAddress } from 'ethers6';
-import { BigNumber } from 'ethers';
 
 type ISwapModule = {
     trade: IOffer;
@@ -34,6 +33,17 @@ type ISwapModule = {
     offers?: number;
     maxText?: string;
 };
+
+const SwapSwitchButton = ({ reverse }: { reverse?: () => void }) => (
+    <button
+        className={`bg-neutral-800 absolute p-1 hover:bg-neutral-700 transition duration-150 rounded-lg mt-1`}
+        onClick={reverse}
+    >
+        <div className="bg-neutral-900 p-1 rounded-md">
+            <MdArrowDownward />
+        </div>
+    </button>
+);
 
 export const SwapModule = ({
     trade,
@@ -134,13 +144,7 @@ export const SwapModule = ({
                     nft={nft}
                     nftLoading={nftLoading}
                 />
-                <button
-                    className={`absolute p-1.5 bg-brand-dashboard rounded-lg cursor-default mb-14`}
-                >
-                    <div className="bg-neutral-800 p-1 rounded-md">
-                        <MdArrowDownward />
-                    </div>
-                </button>
+                <SwapSwitchButton />
                 <CoinInput
                     label="You get"
                     value={trade.gets?.amount}
@@ -244,15 +248,7 @@ export const SwapModule = ({
                         type={type}
                         id="swap-module-give"
                     />
-
-                    <button
-                        className="absolute p-1.5 bg-brand-dashboard hover:bg-black transition duration-150 rounded-lg mt-1"
-                        onClick={reverse}
-                    >
-                        <div className="bg-neutral-800 p-1 rounded-md">
-                            <MdArrowDownward />
-                        </div>
-                    </button>
+                    <SwapSwitchButton reverse={reverse} />
                     <CoinInput
                         label="You get"
                         value={output?.value || trade.gets?.amount}

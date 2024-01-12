@@ -12,6 +12,7 @@ import {
 import { useDashNav, useWindowSize } from '../../hooks';
 import { APP_VERSION } from '../../utils/constants';
 import { useAccount } from 'wagmi';
+import { layoutBgColor } from './dashboard';
 
 export const Navbar = () => {
     const { NAV_ITEMS } = useDashNav();
@@ -25,7 +26,7 @@ export const Navbar = () => {
     return (
         <>
             <nav
-                className={`bg-brand-dashboard py-2.5 lg:py-3 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
+                className={`${layoutBgColor} py-2.5 lg:py-3 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
             >
                 <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
                     <button onClick={() => navigate('/')} className="flex gap-1 w-fit">
@@ -37,7 +38,7 @@ export const Navbar = () => {
                         />
                     </button>
                     <div
-                        className={`flex items-center gap-1.5 2xl:gap-2 justify-self-end bg-brand-dashboard`}
+                        className={`${layoutBgColor} flex items-center gap-1.5 2xl:gap-2 justify-self-end`}
                     >
                         {breakpoints.md <= width ? (
                             // Desktop
@@ -73,7 +74,7 @@ export const Navbar = () => {
                 leaveTo="-translate-y-[100vw]"
                 className="absolute z-30 right-0 top-[50px]"
             >
-                <ul className="flex flex-col w-screen bg-brand-dashboard shadow-md p-2 items-start">
+                <ul className={`${layoutBgColor} flex flex-col w-screen shadow-md p-2 items-start`}>
                     {NAV_ITEMS.map((item, i) => (
                         <li key={`nav-item-${i}`} className="w-full">
                             <button

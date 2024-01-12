@@ -13,7 +13,8 @@ type IDashboardProps = {
     children: ReactNode;
 };
 
-const backgroundClass = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-neutral-800 via-black to-neutral-800`;
+export const dashboardBgColor = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-brand-dashboard via-[#1e1e1e] to-brand-dashboard`;
+export const layoutBgColor = `bg-neutral-900`;
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
     const { address } = useAccount();
@@ -31,7 +32,9 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         // Desktop
         return (
             <div className={`3xl:max-w-8xl 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 flex-grow`}>
-                <div className="flex flex-col justify-between bg-brand-dashboard p-4 py-6 pl-0 gap-2 pr-10 2xl:pr-12">
+                <div
+                    className={`${layoutBgColor} flex flex-col justify-between p-4 py-6 pl-0 gap-2 pr-10 2xl:pr-12`}
+                >
                     <ul className={`flex flex-col gap-0.5 2xl:gap-1`}>
                         {NAV_ITEMS.map((el, i) => {
                             return (
@@ -100,7 +103,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </div>
                 </div>
                 <div
-                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-5 lg:px-8 xl:px-10 2xl:px-24 3xl:px-48 ${backgroundClass} shadow-[rgba(0,0,0,1)_0px_0px_10px_0px] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
+                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-5 lg:px-8 xl:px-10 2xl:px-24 3xl:px-48 ${dashboardBgColor} shadow-inner shadow-[rgba(0,0,0,1)] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
                 >
                     <main className="mx-auto pb-2">{children}</main>
                 </div>
@@ -111,7 +114,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
         return (
             <>
                 <div className="flex flex-grow justify-center">
-                    <main className={`w-full pt-3 px-2 pb-12 ${backgroundClass} h-full`}>
+                    <main className={`w-full pt-3 px-2 pb-12 ${dashboardBgColor} h-full`}>
                         {children}
                     </main>
                 </div>
