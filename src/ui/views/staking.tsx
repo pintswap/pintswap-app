@@ -104,7 +104,8 @@ export const StakingView = () => {
                             asset="PINT"
                             customButton={
                                 <Button
-                                    disabled={isLoading || chainId !== 1}
+                                    // disabled={isLoading || chainId !== 1}
+                                    disabled={true}
                                     onClick={handleDeposit}
                                     checkNetwork
                                 >
