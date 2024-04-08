@@ -2,7 +2,7 @@
 
 Frontend for PintSwap, the token swap protocol enabled by peer-to-peer networking.
 
-[Take a look for yourself.](https://app.pintswap.exchange)
+[Take a look for yourself.](https://app.pintswap.com)
 
 ## Table of Contents
 

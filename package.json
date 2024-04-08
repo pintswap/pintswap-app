@@ -2,7 +2,7 @@
     "name": "pintswap-app",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://app.pintswap.exchange",
+    "homepage": "https://app.pintswap.com",
     "license": "MIT",
     "repository": {
         "type": "git",
