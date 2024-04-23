@@ -80,7 +80,7 @@ export const SelectCoin = ({
                                               ? ''
                                               : 'hover:bg-neutral-500'
                                       }`
-                                    : `bg-primary  ${disabled ? '' : 'hover:bg-primary-hover'}`
+                                    : `bg-rebrand-deep  ${disabled ? '' : 'hover:bg-primary-hover'}`
                             } ${type === 'fulfill' || noSelect ? 'pr-2.5' : ''}`}
                         >
                             {asset ? (

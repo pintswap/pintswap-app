@@ -8,6 +8,7 @@ import {
     DropdownMenu,
     Gas,
     Wallet,
+    TooltipWrapper
 } from '../../ui/components';
 import { useDashNav, useWindowSize } from '../../hooks';
 import { APP_VERSION } from '../../utils/constants';
@@ -28,15 +29,44 @@ export const Navbar = () => {
             <nav
                 className={`${layoutBgColor} py-2.5 lg:py-3 2xl:py-4 px-2 md:px-3 lg:px-6 w-full z-50 md:z-auto relative`}
             >
-                <div className="3xl:max-w-8xl mx-auto grid grid-cols-2 items-center">
-                    <button onClick={() => navigate('/')} className="flex gap-1 w-fit">
+                <div className="3xl:max-w-8xl mx-auto flex justify-between items-center">
+                    <div className='flex '>
+                    <button onClick={() => navigate('/')} className="flex gap-1 w-fit md:pr-6">
                         <img
-                            src="/logo/pintswap-logo.svg"
+                            src="/logo/pintswap-blue-logo.svg"
                             alt="PintSwap Logo"
                             height={logoSize.height}
                             width={logoSize.width}
                         />
                     </button>
+                    <ul className={`flex items-center gap-0.5 2xl:gap-1`}>
+                        {NAV_ITEMS.map((el, i) => {
+                            return (
+                                <li key={`sidebar-nav-${i}`}>
+                                    <TooltipWrapper
+                                        id={`sidebar-nav-${i}`}
+                                        text={el.tooltip}
+                                        position="right"
+                                    >
+                                        <button
+                                            onClick={() => navigate(el.route || '/')}
+                                            className={`w-full text-left py-1.5 flex items-center gap-1 lg:gap-2 transition duration-150 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed pr-4`}
+                                            disabled={el.text === 'NFTs'}
+                                        >
+                                            <ActiveText
+                                                route={el.route}
+                                                className="text-rebrand-purple"
+                                            >
+                                                {el.icon}
+                                            </ActiveText>
+                                            <ActiveText route={el.route}>{el.text}</ActiveText>
+                                        </button>
+                                    </TooltipWrapper>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                    </div>
                     <div
                         className={`${layoutBgColor} flex items-center gap-1.5 2xl:gap-2 justify-self-end`}
                     >

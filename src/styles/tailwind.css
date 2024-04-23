@@ -1,5 +1,6 @@
 /* @import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=GT+Walsheim:wght@400;500;600;700&display=swap');
 
 .Toastify__toast {
   min-height: 58px !important;
@@ -20,7 +21,7 @@
     padding: 0;
     margin: 0;
     /* font-family: 'Days One', sans-serif; */
-    font-family: 'Chakra Petch', sans-serif;
+    font-family:'GT Walsheim', sans-serif;
     color: #fff;
     @apply md:overflow-y-hidden bg-neutral-900;
   }

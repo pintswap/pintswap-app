@@ -3,6 +3,7 @@ import { PageStatus } from '../components';
 import { DashboardLayout } from './dashboard';
 import { Navbar } from './navbar';
 import { Transition } from '@headlessui/react';
+import { dashboardBgColor } from './dashboard';
 
 type IBaseProps = {
     children: ReactNode;
@@ -24,7 +25,7 @@ export const Base = ({ children, loading }: IBaseProps) => {
             >
                 <PageStatus type="loading" />
             </Transition>
-            <div className="flex flex-col h-screen">
+            <div className={`flex flex-col h-screen ${dashboardBgColor}`}>
                 <Navbar />
                 <DashboardLayout>{children}</DashboardLayout>
             </div>

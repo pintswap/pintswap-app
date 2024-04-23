@@ -14,7 +14,7 @@ type IDashboardProps = {
 };
 
 export const dashboardBgColor = `bg-[conic-gradient(at_bottom,_var(--tw-gradient-stops))] from-brand-dashboard via-[#1e1e1e] to-brand-dashboard`;
-export const layoutBgColor = `bg-neutral-900`;
+export const layoutBgColor = ``;
 
 export const DashboardLayout = ({ children }: IDashboardProps) => {
     const { address } = useAccount();
@@ -31,38 +31,12 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
     if (width >= breakpoints.md) {
         // Desktop
         return (
-            <div className={`3xl:max-w-8xl 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 flex-grow`}>
+            <div className={`3xl:max-w-8xl 3xl:w-full 3xl:mx-auto flex 3xl:gap-6 flex-grow ${dashboardBgColor}`}>
                 <div
-                    className={`${layoutBgColor} flex flex-col justify-between p-4 py-6 pl-0 gap-2 pr-10 2xl:pr-12`}
+                    className={`bg-transparent flex flex-col justify-end p-4 py-6 pl-0 gap-2 pr-10 2xl:pr-12`}
                 >
-                    <ul className={`flex flex-col gap-0.5 2xl:gap-1`}>
-                        {NAV_ITEMS.map((el, i) => {
-                            return (
-                                <li key={`sidebar-nav-${i}`}>
-                                    <TooltipWrapper
-                                        id={`sidebar-nav-${i}`}
-                                        text={el.tooltip}
-                                        position="right"
-                                    >
-                                        <button
-                                            onClick={() => navigate(el.route || '/')}
-                                            className={`w-full text-left pl-4 lg:pl-6 py-1.5 flex items-center gap-1 lg:gap-2 transition duration-150 hover:text-neutral-300 disabled:text-neutral-500 disabled:hover:text-neutral-500 disabled:cursor-not-allowed pr-4`}
-                                            disabled={el.text === 'NFTs'}
-                                        >
-                                            <ActiveText
-                                                route={el.route}
-                                                className="text-accent-light"
-                                            >
-                                                {el.icon}
-                                            </ActiveText>
-                                            <ActiveText route={el.route}>{el.text}</ActiveText>
-                                        </button>
-                                    </TooltipWrapper>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                    <div className="flex flex-col gap-2 w-fit pl-4 lg:pl-6">
+                    
+                    <div className="flex flex-col gap-2 w-fit pl-4 lg:pl-6 absolute ">
                         <FadeIn show={!incorrectSigner}>
                             <div className="flex flex-col gap-2 w-fit">
                                 <div className="flex flex-col">
@@ -103,7 +77,7 @@ export const DashboardLayout = ({ children }: IDashboardProps) => {
                     </div>
                 </div>
                 <div
-                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-5 lg:px-8 xl:px-10 2xl:px-24 3xl:px-48 ${dashboardBgColor} shadow-inner shadow-[rgba(0,0,0,1)] h-full rounded-tl-2xl 3xl:rounded-t-3xl`}
+                    className={`md:max-h-[calc(100vh-50px)] overflow-y-auto w-full p-5 lg:px-8 xl:px-10 2xl:px-24 3xl:px-48 h-full`}
                 >
                     <main className="mx-auto pb-2">{children}</main>
                 </div>

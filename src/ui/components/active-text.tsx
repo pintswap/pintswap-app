@@ -16,7 +16,7 @@ export const ActiveText = ({ children, className, route }: IActiveTextProps) => 
                     ? className
                         ? className
                         : // : 'text-transparent bg-clip-text bg-gradient-to-tr from-accent-light to-primary'
-                          'text-accent-light'
+                          'text-rebrand-purple'
                     : ''
             }`}
         >

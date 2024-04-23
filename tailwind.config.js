@@ -43,6 +43,15 @@ module.exports = {
                     dark: '#e51b4a',
                     DEFAULT: '#FF4878',
                 },
+                rebrand: {
+                    blue: '#6052FF',
+                    indigo: '#4F46E5',
+                    purple: '#5D10C9',
+                    deep:"#4f46e5",
+                    secondary: '#7e1dac',
+                    gray: '#B8BAC8',
+                    night: '#121212',
+                },
             },
             maxWidth: {
                 '8xl': '1920px',

@@ -42,7 +42,7 @@ export const Button = ({
             case 'transparent':
                 return '!bg-transparent !text-neutral-100 hover:text-neutral-300 hover:fill-neutral-300 !p-0';
             default:
-                return 'bg-primary-regular hover:bg-primary-hover disabled:bg-primary-disabled disabled:text-neutral-400 disabled:border-primary-disabled';
+                return 'bg-rebrand-deep hover:bg-rebrand-indigo disabled:bg-primary-disabled disabled:text-neutral-400 disabled:border-primary-disabled';
         }
     };
 
