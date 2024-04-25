@@ -44,6 +44,11 @@ export const NETWORKS: Record<number, Record<'explorer' | 'logo' | 'name', strin
         logo: '/networks/avalanche.svg',
         name: 'Avalanche',
     },
+    666666666:{
+        explorer: 'https://explorer.degen.tips/',
+        logo: '/networks/degen.svg',
+        name: 'Degen',
+    }
 };
 
 // ENDPOINTS
