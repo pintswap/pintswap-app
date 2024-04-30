@@ -18,7 +18,7 @@ export const decimalsCache: Record<number, Record<string, number>> = {
     },
     56: {},
     666666666:{
-        '0x0000000000000000000000000000000000000000': 18,
+        "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed": 18,
     }
 };
 export const symbolCache: Record<number, Record<string, string>> = {
@@ -39,7 +39,7 @@ export const symbolCache: Record<number, Record<string, string>> = {
     },
     56: {},
     666666666:{
-        '0x0000000000000000000000000000000000000000': 'DEGEN',
+        "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed": 'DEGEN',
     }
 };
 export const reverseSymbolCache: Record<number, Record<string, string>> = {
@@ -60,7 +60,7 @@ export const reverseSymbolCache: Record<number, Record<string, string>> = {
     },
     56: {},
     666666666:{
-        DEGEN:'0x0000000000000000000000000000000000000000'
+        DEGEN:"0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed"
     }
 };
 export const totalSupplyCache: Record<number, Record<string, string>> = {
@@ -94,7 +94,7 @@ export const nameCache: Record<number, Record<string, string>> = {
         '0x0000000000000000000000000000000000000000': 'Avalanche',
     },
     56: {},
-    666666666:{'0x0000000000000000000000000000000000000000': 'Degen',}
+    666666666:{"0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed": 'Degen',}
 };
 
 export const priceCache: Record<number, Record<string, any>> = {
