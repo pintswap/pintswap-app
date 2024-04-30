@@ -11475,6 +11475,20 @@
             "chainId": 11155111,
             "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png"
         },
+        {
+            "address":"0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed",
+            "circulating_market_cap": null,
+            "decimals": 18,
+            "exchange_rate": null,
+            "name":"Degen",
+            "symbol":"DEGEN",
+            "holders":"366,275",
+            "logoURI":"/networks/degen.svg",
+            "total_supply":"36,965,730,332.999999999826460672",
+            "type":"ERC-20",
+            "volume_24h": null,
+            "chainId": 666666666
+        },
         
             {
               "address": "0x8464D5DD3Ec1B2EDe357F291f0AdE21E138CA224",
