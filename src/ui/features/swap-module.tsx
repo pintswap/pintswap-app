@@ -64,7 +64,7 @@ export const SwapModule = ({
         trade?.gives?.token === ZeroAddress ||
             !trade.gives?.token ||
             trade?.gives?.token?.toUpperCase() === 'ETH' ||
-            trade?.gives?.token?.toUpperCase() === 'AVAX' || 
+            trade?.gives?.token?.toUpperCase() === 'AVAX' ||
             trade?.gives?.token?.toUpperCase() === 'DEGEN'
             ? { address, watch: true }
             : { token: toAddress(trade.gives.token, chainId) as any, address, watch: true },

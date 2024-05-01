@@ -11,6 +11,18 @@ import { ethers } from 'ethers';
 import { ITokenProps } from './types';
 import { IOffer } from '@pintswap/sdk';
 import { getChainId } from './provider';
+import { get } from 'http';
+
+type TradeObject = {
+    gets: {
+        token: string;
+        amount: string;
+    };
+    gives: {
+        token: string;
+        amount: string;
+    };
+};
 
 // Trade
 export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
@@ -45,14 +57,32 @@ export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
     }
     // ERC20
     console.log('gives', gives, 'gets', gets);
-    const builtObj = {
+
+    const givesToken = getTokenAddress(foundGivesToken, gives, chainId);
+    let givesAmount;
+    try {
+        givesAmount = await convertAmount('hex', gives?.amount || '0', gives.token, chainId);
+    } catch (err) {
+        console.error(err);
+        givesAmount = '0';
+    }
+    const getsToken = getTokenAddress(foundGetsToken, gets, chainId);
+    let getsAmount;
+    try {
+        getsAmount = await convertAmount('hex', gets?.amount || '0', gets.token, chainId);
+    } catch (err) {
+        console.error(err);
+        getsAmount = '0';
+    }
+
+    const builtObj: TradeObject = {
         gets: {
-            token: getTokenAddress(foundGetsToken, gets, chainId),
-            amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
+            token: getsToken,
+            amount: getsAmount,
         },
         gives: {
-            token: getTokenAddress(foundGivesToken, gives, chainId),
-            amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
+            token: givesToken,
+            amount: givesAmount,
         },
     };
     if (TESTING) console.log('#buildTradeObj:', builtObj);
