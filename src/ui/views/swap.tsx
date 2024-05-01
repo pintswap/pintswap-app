@@ -49,6 +49,7 @@ export const SwapView = () => {
     };
 
     const createTradeLink = () => {
+        // console.log("resolvedName:", resolvedName, "orderhash", order.orderHash, "order", order)
         let finalUrl = `${BASE_URL}/#/fulfill/${resolvedName || module?.address}`;
         if (order.orderHash) {
             if (trade.gives?.tokenId) {

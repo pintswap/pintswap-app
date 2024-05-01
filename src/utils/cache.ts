@@ -17,9 +17,9 @@ export const decimalsCache: Record<number, Record<string, number>> = {
         '0x0000000000000000000000000000000000000000': 18,
     },
     56: {},
-    666666666:{
-        "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed": 18,
-    }
+    666666666: {
+        '0x0000000000000000000000000000000000000000': 18,
+    },
 };
 export const symbolCache: Record<number, Record<string, string>> = {
     1: {
@@ -38,9 +38,9 @@ export const symbolCache: Record<number, Record<string, string>> = {
         '0x0000000000000000000000000000000000000000': 'AVAX',
     },
     56: {},
-    666666666:{
-        "0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed": 'DEGEN',
-    }
+    666666666: {
+        '0x0000000000000000000000000000000000000000': 'DEGEN',
+    },
 };
 export const reverseSymbolCache: Record<number, Record<string, string>> = {
     1: {
@@ -59,9 +59,9 @@ export const reverseSymbolCache: Record<number, Record<string, string>> = {
         AVAX: '0x0000000000000000000000000000000000000000',
     },
     56: {},
-    666666666:{
-        DEGEN:"0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed"
-    }
+    666666666: {
+        DEGEN: '0x0000000000000000000000000000000000000000',
+    },
 };
 export const totalSupplyCache: Record<number, Record<string, string>> = {
     1: {},
@@ -74,7 +74,7 @@ export const totalSupplyCache: Record<number, Record<string, string>> = {
     42220: {},
     43114: {},
     56: {},
-    666666666:{}
+    666666666: {},
 };
 
 export const nameCache: Record<number, Record<string, string>> = {
@@ -94,7 +94,7 @@ export const nameCache: Record<number, Record<string, string>> = {
         '0x0000000000000000000000000000000000000000': 'Avalanche',
     },
     56: {},
-    666666666:{"0x4ed4E862860beD51a9570b96d89aF5E1B0Efefed": 'Degen',}
+    666666666: { '0x0000000000000000000000000000000000000000': 'Degen' },
 };
 
 export const priceCache: Record<number, Record<string, any>> = {
@@ -108,7 +108,7 @@ export const priceCache: Record<number, Record<string, any>> = {
     42220: {},
     43114: {},
     56: {},
-    666666666:{}
+    666666666: {},
 };
 
 export const subgraphTokenCache: Record<number, Record<string, any>> = {
@@ -122,7 +122,7 @@ export const subgraphTokenCache: Record<number, Record<string, any>> = {
     42220: {},
     43114: {},
     56: {},
-    666666666:{}
+    666666666: {},
 };
 
 export const tokenTaxCache: Record<number, Record<string, { buy: number; sell: number }>> = {
@@ -136,5 +136,5 @@ export const tokenTaxCache: Record<number, Record<string, { buy: number; sell: n
     42220: {},
     43114: {},
     56: {},
-    666666666:{}
+    666666666: {},
 };

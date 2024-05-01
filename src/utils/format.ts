@@ -16,15 +16,19 @@ import { getChainId } from './provider';
 export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
     if (!gets.token && !gives.token) return EMPTY_TRADE;
     const chainId = getChainId();
+    console.log('getting tokenAttributes');
     const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
         | ITokenProps
         | undefined;
+
+    console.log('foundGivesToken:', foundGivesToken);
     const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
         | ITokenProps
         | undefined;
-
+    console.log('foundGetsToken:', foundGetsToken);
     // NFT
     if (gives?.tokenId) {
+        console.log('gives.tokenId:', gives.tokenId);
         const builtObj = {
             gives: {
                 ...gives,
@@ -40,17 +44,19 @@ export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
         return builtObj;
     }
     // ERC20
+    console.log('gives', gives, 'gets', gets);
     const builtObj = {
-        gives: {
-            token: getTokenAddress(foundGivesToken, gives, chainId),
-            amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
-        },
         gets: {
             token: getTokenAddress(foundGetsToken, gets, chainId),
             amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
         },
+        gives: {
+            token: getTokenAddress(foundGivesToken, gives, chainId),
+            amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
+        },
     };
     if (TESTING) console.log('#buildTradeObj:', builtObj);
+    console.log('builtObj:', builtObj);
     return builtObj;
 };
 
