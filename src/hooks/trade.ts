@@ -74,12 +74,10 @@ export const useTrade = (isOTC?: boolean) => {
     // Create trade
     const broadcastTrade = async (e: React.SyntheticEvent, isPublic = true) => {
         e.preventDefault();
-        console.log('##trade in broadcast', trade, 'module', !!module, 'signer', !!signer);
         if (module) {
             try {
                 setLoading({ ...loading, broadcast: true });
                 const offer = await buildOffer(trade);
-                console.log('##offer in trade', offer);
                 await signIfNecessary();
                 module.signer = signer;
                 await module.broadcastOffer(offer, chainId, isPublic);
@@ -492,7 +490,7 @@ export const useTrade = (isOTC?: boolean) => {
         (async () => {
             if (module) {
                 const broadcastListener = async (hash: string) => {
-                    if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
+                    // if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
                     setOrder({
                         multiAddr: module && module.peerId && module.address,
                         orderHash: hash,

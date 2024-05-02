@@ -63,7 +63,6 @@ export const getTokenAddress = (
     raw: ITransfer,
     chainId: number,
 ) => {
-    console.log('getting tokenaddress', token?.address, raw?.token);
     if (token?.address) return token.address;
     else if (raw?.token) {
         if (isAddress(raw?.token)) return raw.token;
@@ -283,7 +282,6 @@ export async function convertAmount(
         return `${(await getTokenAttributes(token, chainId, 'symbol')) || ''} ${output} NFT`;
     }
     if (to === 'hex') {
-        console.log('converting amount to hex', amount, token, chainId);
         if (amount.startsWith('0x')) output = amount;
         else output = toBeHex(parseUnits(amount, (await getDecimals(token, chainId)) || 18));
     } else {

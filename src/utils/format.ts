@@ -28,16 +28,15 @@ type TradeObject = {
 export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
     if (!gets.token && !gives.token) return EMPTY_TRADE;
     const chainId = getChainId();
-    console.log('getting tokenAttributes');
+
     const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
         | ITokenProps
         | undefined;
 
-    console.log('foundGivesToken:', foundGivesToken);
     const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
         | ITokenProps
         | undefined;
-    console.log('foundGetsToken:', foundGetsToken);
+
     // NFT
     if (gives?.tokenId) {
         console.log('gives.tokenId:', gives.tokenId);
@@ -52,11 +51,10 @@ export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
                 amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
             },
         };
-        if (TESTING) console.log('#buildTradeObj:', builtObj);
+        // if (TESTING) console.log('#buildTradeObj:', builtObj);
         return builtObj;
     }
     // ERC20
-    console.log('gives', gives, 'gets', gets);
 
     const givesToken = getTokenAddress(foundGivesToken, gives, chainId);
     let givesAmount;
@@ -85,8 +83,8 @@ export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
             amount: givesAmount,
         },
     };
-    if (TESTING) console.log('#buildTradeObj:', builtObj);
-    console.log('builtObj:', builtObj);
+    // if (TESTING) console.log('#buildTradeObj:', builtObj);
+
     return builtObj;
 };
 

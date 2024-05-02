@@ -295,7 +295,6 @@ export async function getDegenPrice(): Promise<string> {
     if (priceCache[chainId][ZeroAddress]) return priceCache[chainId][ZeroAddress];
     const response = await fetch(ENDPOINTS['uniswap']['degen']);
     const data = await response.json();
-    console.log('data in getDegen', data);
     if (!priceCache[chainId][ZeroAddress])
         priceCache[chainId][ZeroAddress] = data['degen-base'].usd;
     return data['degen-base'].usd;
