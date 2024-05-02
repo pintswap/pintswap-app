@@ -11,20 +11,35 @@ import { ethers } from 'ethers';
 import { ITokenProps } from './types';
 import { IOffer } from '@pintswap/sdk';
 import { getChainId } from './provider';
+import { get } from 'http';
+
+type TradeObject = {
+    gets: {
+        token: string;
+        amount: string;
+    };
+    gives: {
+        token: string;
+        amount: string;
+    };
+};
 
 // Trade
 export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
     if (!gets.token && !gives.token) return EMPTY_TRADE;
     const chainId = getChainId();
+
     const foundGivesToken = (await getTokenAttributes(gives.token, chainId)) as
         | ITokenProps
         | undefined;
+
     const foundGetsToken = (await getTokenAttributes(gets.token, chainId)) as
         | ITokenProps
         | undefined;
 
     // NFT
     if (gives?.tokenId) {
+        console.log('gives.tokenId:', gives.tokenId);
         const builtObj = {
             gives: {
                 ...gives,
@@ -36,21 +51,40 @@ export const buildOffer = async ({ gets, gives }: IOffer): Promise<IOffer> => {
                 amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
             },
         };
-        if (TESTING) console.log('#buildTradeObj:', builtObj);
+        // if (TESTING) console.log('#buildTradeObj:', builtObj);
         return builtObj;
     }
     // ERC20
-    const builtObj = {
-        gives: {
-            token: getTokenAddress(foundGivesToken, gives, chainId),
-            amount: await convertAmount('hex', gives?.amount || '0', gives.token, chainId),
-        },
+
+    const givesToken = getTokenAddress(foundGivesToken, gives, chainId);
+    let givesAmount;
+    try {
+        givesAmount = await convertAmount('hex', gives?.amount || '0', gives.token, chainId);
+    } catch (err) {
+        console.error(err);
+        givesAmount = '0';
+    }
+    const getsToken = getTokenAddress(foundGetsToken, gets, chainId);
+    let getsAmount;
+    try {
+        getsAmount = await convertAmount('hex', gets?.amount || '0', gets.token, chainId);
+    } catch (err) {
+        console.error(err);
+        getsAmount = '0';
+    }
+
+    const builtObj: TradeObject = {
         gets: {
-            token: getTokenAddress(foundGetsToken, gets, chainId),
-            amount: await convertAmount('hex', gets?.amount || '0', gets.token, chainId),
+            token: getsToken,
+            amount: getsAmount,
+        },
+        gives: {
+            token: givesToken,
+            amount: givesAmount,
         },
     };
-    if (TESTING) console.log('#buildTradeObj:', builtObj);
+    // if (TESTING) console.log('#buildTradeObj:', builtObj);
+
     return builtObj;
 };
 

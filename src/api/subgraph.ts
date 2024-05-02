@@ -290,6 +290,16 @@ export async function getEthPrice(): Promise<string> {
     return bundles[0].ethPriceUSD;
 }
 
+export async function getDegenPrice(): Promise<string> {
+    const chainId = getChainId();
+    if (priceCache[chainId][ZeroAddress]) return priceCache[chainId][ZeroAddress];
+    const response = await fetch(ENDPOINTS['uniswap']['degen']);
+    const data = await response.json();
+    if (!priceCache[chainId][ZeroAddress])
+        priceCache[chainId][ZeroAddress] = data['degen-base'].usd;
+    return data['degen-base'].usd;
+}
+
 export async function getUserHistory(address: string, signer: Signer) {
     const params = ['taker', 'maker'];
     const res = await Promise.all(

@@ -139,7 +139,7 @@ export const CoinInput = ({
             <div className="w-full flex justify-between items-center">
                 {/* TODO: fix for all chains */}
                 <small className="text-gray-400 flex items-center gap-0.5">
-                    {chainId === 1 ? (
+                    {chainId === 1 || chainId === 666666666 ? (
                         <>
                             <span>$</span>
                             <Skeleton

@@ -34,6 +34,11 @@ export const NETWORKS: Record<number, Record<'explorer' | 'logo' | 'name', strin
         logo: '/networks/avalanche.svg',
         name: 'Avalanche',
     },
+    666666666: {
+        explorer: 'https://explorer.degen.tips/',
+        logo: '/networks/degen.svg',
+        name: 'Degen',
+    },
 };
 
 // ENDPOINTS
@@ -44,6 +49,7 @@ export const ENDPOINTS: Record<'uniswap' | 'pintswap', Record<string, string>> =
         v3: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3',
         arb: 'https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-arbitrum-one',
         avax: `https://gateway-arbitrum.network.thegraph.com/api/${SUBGRAPH_API_KEY}/subgraphs/id/4KgG6aek9cEp8MXQZKWCmeJWj5Y77mK9tPRAD1kDQa8Q`,
+        degen: `https://api.coingecko.com/api/v3/simple/price?ids=degen-base&vs_currencies=usd`,
     },
     pintswap: {
         eth: 'https://api.thegraph.com/subgraphs/name/pintswap/token-transfers-eth',

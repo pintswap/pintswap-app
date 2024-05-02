@@ -56,8 +56,33 @@ const base: Chain | any = {
     },
 };
 
+const degen: Chain | any = {
+    id: 666666666,
+    name: 'Degen',
+    network: 'degen',
+    nativeCurrency: { name: 'Degen', symbol: 'DGN', decimals: 18 },
+    iconUrl: '/networks/degen.svg',
+    iconBackground: '#fff',
+    rpcUrls: {
+        default: {
+            http: ['https://rpc.degen.tips'],
+        },
+        public: {
+            http: ['https://rpc.degen.tips'],
+        },
+    },
+    blockExplorers: {
+        default: {
+            http: ['https://explorer.degen.tips'],
+        },
+        public: {
+            http: ['https://explorer.degen.tips'],
+        },
+    },
+};
+
 const determineChains = () => {
-    const chains = [mainnet, arbitrum, avalanche];
+    const chains = [mainnet, arbitrum, avalanche, degen];
     if (process.env.REACT_APP_DEV) chains.push(hardhat as any);
     return chains;
 };

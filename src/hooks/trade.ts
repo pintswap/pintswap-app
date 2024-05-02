@@ -490,7 +490,7 @@ export const useTrade = (isOTC?: boolean) => {
         (async () => {
             if (module) {
                 const broadcastListener = async (hash: string) => {
-                    if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
+                    // if (TESTING) console.log(`#broadcastListener: trade broadcasted (${hash})`);
                     setOrder({
                         multiAddr: module && module.peerId && module.address,
                         orderHash: hash,
